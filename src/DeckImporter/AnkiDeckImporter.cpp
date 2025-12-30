@@ -1,0 +1,243 @@
+// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// A class that regulates the learning process. It determines which cards will be included in today's selection and
+// manages the training process for the selected deck.
+
+#pragma once
+
+#include <DeckImporter/AnkiDeckImporter.hpp> // for AnkiDeckImporter
+#include <QDir>                              // for QDir
+#include <QStandardPaths>                    // for QStandardPaths
+#include <QUuid>                             // for QUuid
+#include <quazip.h>                          // for QuaZip
+#include <quazipfile.h>                      // for QuaZipFile
+#include <zstd.h>                            // for ZSTD
+
+namespace revise {
+
+// Public method
+std::expected<ImportResult, QString> AnkiDeckImporter::import_from_file(const QString& path) {
+    ImportResult res;
+
+    QString base_temp_dir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+    QString import_dir = base_temp_dir + "/anki_import_" + QUuid::createUuid().toString(QUuid::WithoutBraces);
+    QString db_path = import_dir + "/collection";
+
+    QDir().mkdir(import_dir); // make import directory
+
+    // Unzip .apkg
+    if (auto res = unzip(path, import_dir); !res.has_value()) {
+        return std::unexpected(res.error());
+    }
+
+    // Unzip collection.anki21b
+    if (auto res = decompress_zstd_file(import_dir + "/collection.anki21b", db_path); !res.has_value()) {
+        return std::unexpected(res.error());
+    }
+
+    if (!QFile::exists(db_path)) {
+        return std::unexpected(QString("DB %1 not found").arg(db_path));
+    }
+
+    QSqlDatabase anki_db = QSqlDatabase::addDatabase("QSQLITE", "anki_import");
+    anki_db.setDatabaseName(db_path);
+
+    if (!anki_db.open()) {
+        ErrorReporter::instance()->report(
+            "Failed to open Anki DB", anki_db.lastError().text(), "DecksIO::import_anki_deck()");
+        return;
+    }
+
+    qDebug() << "DecksIO::import_anki_deck(): DB is opened";
+
+    // Select cards
+    {
+        QSqlQuery cards_query(anki_db);
+        QSqlQuery deck_name_query(anki_db);
+
+        cards_query.prepare("SELECT notes.flds FROM cards JOIN notes ON notes.id = cards.nid");
+        deck_name_query.prepare("SELECT name FROM decks");
+
+        if (!cards_query.exec()) {
+            ErrorReporter::instance()->report(
+                "Failed to fetch cards from Anki DB", cards_query.lastError().text(), "DecksIO::import_anki_deck()");
+            return;
+        }
+
+        if (!deck_name_query.exec()) {
+            ErrorReporter::instance()->report("Failed to fetch deck name from Anki DB",
+                                              deck_name_query.lastError().text(),
+                                              "DecksIO::import_anki_deck()");
+            return;
+        }
+
+        deck_name_query.next(); // skip `Default`
+        if (!deck_name_query.next()) {
+            ErrorReporter::instance()->report("Decks table is empty", {}, "DecksIO::import_anki_deck()");
+            return;
+        }
+
+        auto deck_id = db.push_deck(deck_name_query.value("name").toString()); // Create new deck and get deck id
+
+        if (!deck_id.has_value()) {
+            ErrorReporter::instance()->report("Failed to get deck id", deck_id.error(), "DecksIO::import_anki_deck()");
+            return;
+        }
+
+        constexpr QChar FIELD_SEP{31}; // anki separator
+        db.begin_bulk_updates();
+
+        while (cards_query.next()) {
+            const QString     flds = cards_query.value("flds").toString();
+            const QStringList fields = flds.split(FIELD_SEP);
+
+            if (fields.size() < 2) {
+                continue; // broken note
+            }
+
+            QString front = fields.at(0).trimmed();
+            QString back = fields.at(1).trimmed();
+
+            if (auto res = db.push_card(deck_id.value(), front, back); !res.has_value()) {
+                db.end_bulk_updates();
+                ErrorReporter::instance()->report(
+                    "Failed to push card to database", res.error(), "DecksIO::import_anki_deck()");
+                return;
+            } else {
+                ++imported_decks;
+            }
+        }
+    }
+
+    // qWarning() << "END BULK!";
+    db.end_bulk_updates();
+
+    qDebug() << "DecksIO::import_anki_deck(): Imported. Clearing resources";
+
+    // Clear resources
+    anki_db.close();
+    QSqlDatabase::removeDatabase("anki_import");
+    QDir(import_dir).removeRecursively();
+}
+
+// Public method
+QString AnkiDeckImporter::format_name() const noexcept {
+    return "anki";
+}
+
+
+// Private method
+std::expected<void, QString> AnkiDeckImporter::unzip(const QString& zip_path, const QString& target_dir) {
+    QuaZip zip(zip_path);
+    if (!zip.open(QuaZip::mdUnzip)) {
+        return std::unexpected("Cannot open zip file " + zip_path);
+    }
+
+    QuaZipFile file(&zip);
+    QDir       dir(target_dir);
+
+    for (bool more = zip.goToFirstFile(); more; more = zip.goToNextFile()) {
+        file.open(QIODevice::ReadOnly);
+
+        QString out_path = dir.filePath(zip.getCurrentFileName());
+
+        QFile out(out_path);
+        QDir().mkpath(QFileInfo(out).absolutePath());
+
+        out.open(QIODevice::WriteOnly);
+        out.write(file.readAll());
+
+        file.close();
+        out.close();
+    }
+
+    zip.close();
+    return {};
+}
+
+
+// Private method
+std::expected<void, QString> AnkiDeckImporter::decompress_zstd_file(const QString& src_path, const QString& dest_path) {
+    QFile in(src_path);
+    if (!in.open(QIODevice::ReadOnly))
+        return std::unexpected(QString("Failed to open source: %1").arg(src_path));
+
+    QFile out(dest_path);
+    if (!out.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return std::unexpected(QString("Failed to open destination: %1").arg(dest_path));
+
+    ZSTD_DCtx* dctx = ZSTD_createDCtx();
+    if (!dctx)
+        return std::unexpected("ZSTD_createDCtx failed");
+
+    const size_t inBufSize = ZSTD_DStreamInSize();   // recommended input buffer size
+    const size_t outBufSize = ZSTD_DStreamOutSize(); // recommended output buffer size
+
+    std::vector<char> inBuf(inBufSize);
+    std::vector<char> outBuf(outBufSize);
+
+    ZSTD_inBuffer  input{inBuf.data(), 0, 0};
+    ZSTD_outBuffer output{outBuf.data(), outBufSize, 0};
+
+    std::optional<QString> error;
+
+    while (!in.atEnd()) {
+        qint64 bytesRead = in.read(inBuf.data(), static_cast<qint64>(inBufSize));
+        if (bytesRead <= 0) {
+            error = "Read error";
+            break;
+        }
+        input.src = inBuf.data();
+        input.size = static_cast<size_t>(bytesRead);
+        input.pos = 0;
+
+        while (input.pos < input.size) {
+            output.pos = 0;
+            size_t ret = ZSTD_decompressStream(dctx, &output, &input);
+            if (ZSTD_isError(ret)) {
+                error = QString("ZSTD_decompressStream failed: %1").arg(ZSTD_getErrorName(ret));
+                break;
+            }
+            if (output.pos > 0) {
+                qint64 wrote = out.write(outBuf.data(), static_cast<qint64>(output.pos));
+                if (wrote != static_cast<qint64>(output.pos)) {
+                    error = "Write error";
+                    break;
+                }
+            }
+        }
+        if (error)
+            break;
+    }
+
+    // flush final frames
+    while (!error) {
+        output.pos = 0;
+        ZSTD_inBuffer emptyIn{nullptr, 0, 0};
+        size_t        ret = ZSTD_decompressStream(dctx, &output, &emptyIn);
+        if (ZSTD_isError(ret)) {
+            error = QString("ZSTD final flush failed: %1").arg(ZSTD_getErrorName(ret));
+            break;
+        }
+        if (output.pos == 0)
+            break;
+        qint64 wrote = out.write(outBuf.data(), static_cast<qint64>(output.pos));
+        if (wrote != static_cast<qint64>(output.pos)) {
+            error = "Write error";
+            break;
+        }
+    }
+
+    ZSTD_freeDCtx(dctx);
+    out.close();
+    in.close();
+
+    if (error) {
+        QFile::remove(dest_path);
+        return std::unexpected(*error);
+    }
+
+    return {};
+}
+
+
+} // namespace revise
