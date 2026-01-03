@@ -1,5 +1,5 @@
 import QtQuick
-import "qrc:/ui/theme"
+import "../theme"
 
 Text {
     color: "white"

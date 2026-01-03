@@ -28,37 +28,47 @@ qt_add_qml_module(apprevise
         ui/Main.qml
 
         # Components
+        ui/components/CheckupableOption.qml
+        ui/components/ColorfulProgressbar.qml
         ui/components/GlassRectangle.qml
         ui/components/StatefulIndicator.qml
-        ui/components/Button.qml
-        ui/components/Toggle.qml
-        ui/components/ColorfulProgressbar.qml
-        ui/components/ToolButton.qml
-        ui/components/ToolBar.qml
-        ui/components/StreakIndicator.qml
-        ui/components/InfoPopup.qml
-        ui/components/AddDeckPopup.qml
-        ui/components/Deck.qml
-        ui/components/AppText.qml
-        ui/components/TrainingBar.qml
-        ui/components/ScrollableInfoPopup.qml
-        ui/components/CheckupableOption.qml
-        ui/components/Checkbox.qml
-        ui/components/DeckModalDialog.qml
-        ui/components/CreateDeckPopup.qml
-        ui/components/ValidatedTextField.qml
-        ui/components/Card.qml
+
+        # Controls
+        ui/controls/AppText.qml
+        ui/controls/Button.qml
+        ui/controls/Checkbox.qml
+        ui/controls/Toggle.qml
+        ui/controls/ValidatedTextField.qml
+        ui/controls/ValidatedMultilineTextField.qml
+
+        # Dialogs
+        ui/dialogs/AddDeckPopup.qml
+        ui/dialogs/CreateDeckPopup.qml
+        ui/dialogs/InfoPopup.qml
+        ui/dialogs/ScrollableInfoPopup.qml
+        ui/dialogs/CreateCardPopup.qml
+
+        # Navigation
+        ui/navigation/ToolBar.qml
+        ui/navigation/ToolButton.qml
 
         # Pages
+        ui/pages/EditDeck.qml
         ui/pages/Home.qml
         ui/pages/Statistics.qml
         ui/pages/Training.qml
-        ui/pages/EditDeck.qml
+        ui/pages/CreateDeck.qml
 
         # Theme
-        ui/theme/Theme.qml
         ui/theme/Fonts.qml
+        ui/theme/Theme.qml
 
+        # Views
+        ui/views/decks/DeckItem.qml
+        ui/views/decks/DeckModalDialog.qml
+        ui/views/statistics/StreakIndicator.qml
+        ui/views/training/CardView.qml
+        ui/views/training/TrainingBar.qml
 )
 
 qt_add_resources(apprevise

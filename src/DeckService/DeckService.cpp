@@ -303,6 +303,73 @@ void DeckService::update_deck(int deckId,
 }
 
 // Public method
+bool DeckService::is_deck_exists(const QString& deck_name)
+{
+    auto res = m_repo->is_deck_exists(deck_name.trimmed());
+
+    if (!res.has_value()) {
+        ErrorReporter::instance()->report(
+            QString("Unable to verify whether a deck with the name exists: %1").arg(deck_name),
+            res.error(),
+            "DeckService::is_deck_exists()"
+        );
+        return false;
+    }
+
+    return res.value();
+}
+
+// Public method
+bool DeckService::is_card_exists(int deckId, const QString& card_front)
+{
+    auto res = m_repo->is_card_exists(deckId, card_front.trimmed());
+
+    if (!res.has_value()) {
+        ErrorReporter::instance()->report(
+            QString("Unable to verify whether a card with the front '%1' and deck id '%2' exists")
+                .arg(card_front)
+                .arg(deckId),
+            res.error(),
+            "DeckService::is_card_exists()"
+        );
+        return false;
+    }
+
+    return res.value();
+}
+
+// Public method
+void DeckService::create_card(int deckId, const QString &front, const QString &back)
+{
+    auto res = m_repo->insert_card(
+        deckId,
+        Card {
+            .state = 0,
+            .incorrect_streak = 0,
+            .interval = 0,
+            .difficulty = 2.5,
+            .next_review = QDateTime::currentDateTime(),
+            .created_at = QDateTime::currentDateTime(),
+            .updated_at = QDateTime::currentDateTime(),
+            .front = front,
+            .back = back });
+
+    if (!res.has_value()) {
+        ErrorReporter::instance()->report(
+            QString("Unable to insert card with front = %1, back = %2, deckId = %3")
+                .arg(front)
+                .arg(back)
+                .arg(deckId),
+            res.error(),
+            "DeckService::create_card()"
+        );
+        return;
+    }
+
+    emit deckUpdated();
+}
+
+// Public method
 bool DeckService::import_in_progress() const noexcept
 {
     return m_import_in_progress;

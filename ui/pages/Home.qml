@@ -2,7 +2,7 @@
 
 import QtQuick
 import QtQuick.Layouts
-import "../components"
+import "../views/decks"
 
 Item {
     id: root
@@ -24,7 +24,7 @@ Item {
             width: ListView.view.width
             height: childrenRect.height
 
-            Deck {
+            DeckItem {
                 width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
 

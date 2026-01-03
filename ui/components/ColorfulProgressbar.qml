@@ -1,7 +1,7 @@
 // Colorful progressbar
 
 import QtQuick
-import "qrc:/ui/theme"
+import "../theme"
 
 Item {
     id: root

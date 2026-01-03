@@ -2,7 +2,8 @@
 
 import QtQuick
 import QtQuick.Layouts
-import "qrc:/ui/theme"
+import "../theme"
+import "."
 
 Item {
     id: root
@@ -60,7 +61,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        radius: 5
+        radius: root.radius
         color: "black"
         opacity: 0.4
         visible: !root.clickable

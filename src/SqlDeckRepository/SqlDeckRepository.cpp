@@ -321,4 +321,54 @@ std::expected<void, QString> SqlDeckRepository::insert_cards_batch(int deckId, c
     return {};
 }
 
+// Public method
+std::expected<void, QString> SqlDeckRepository::insert_card(int deckId, const Card &card)
+{
+    QSqlQuery q(m_db.raw_db());
+
+    q.prepare(R"(
+        INSERT INTO cards (deck_id, front, back, state, difficulty, interval, next_review, incorrect_streak, created_at, updated_at)
+        VALUES (:deck_id, :front, :back, :state, :difficulty, :interval, :next_review, :incorrect_streak, :created_at, :updated_at)
+    )");
+
+    q.bindValue(":deck_id", deckId);
+    q.bindValue(":front", card.front);
+    q.bindValue(":back", card.back);
+    q.bindValue(":state", card.state);
+    q.bindValue(":difficulty", card.difficulty);
+    q.bindValue(":interval", card.interval);
+    q.bindValue(":next_review", card.next_review);
+    q.bindValue(":incorrect_streak", card.incorrect_streak);
+    q.bindValue(":created_at", card.created_at);
+    q.bindValue(":updated_at", card.updated_at);
+
+    if (!q.exec()) {
+        return std::unexpected(q.lastError().text());
+    }
+
+    emit data_changed();
+    return {};
+}
+
+// Public method
+std::expected<bool, QString> SqlDeckRepository::is_card_exists(int deckId, const QString& card_front)
+{
+    QSqlQuery q(m_db.raw_db());
+
+    q.prepare("SELECT COUNT(*) FROM cards WHERE front = :front AND deck_id = :deck_id");
+    q.bindValue(":front", card_front);
+    q.bindValue(":deck_id", deckId);
+
+    if (!q.exec()) {
+        return std::unexpected(q.lastError().text());
+    }
+
+    if (!q.next()) {
+        return std::unexpected("Failed to read query result");
+    }
+
+    int count = q.value(0).toInt();
+    return count > 0;
+}
+
 } // namespace revise

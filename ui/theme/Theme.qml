@@ -32,6 +32,8 @@ QtObject {
     readonly property color textInputValidBorder: "#6DD23E"
     readonly property color textInputInvalidBorder: "#E84747"
 
+    readonly property color popupBorder: "#5e5e5e"
+
     readonly property real textSizeDefault: 19
     readonly property real textSizeMedium: 24
     readonly property real textSizeBig: 38

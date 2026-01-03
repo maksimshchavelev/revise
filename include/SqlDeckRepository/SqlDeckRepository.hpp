@@ -31,6 +31,8 @@ class SqlDeckRepository : public QObject, public IDeckRepository {
 
     std::expected<void, QString> update_card(const Card& card) override;
     std::expected<void, QString> insert_cards_batch(int deckId, const QVector<Card>& cards) override;
+    std::expected<void, QString> insert_card(int deckId, const Card& card) override;
+    std::expected<bool, QString> is_card_exists(int deckId, const QString& card_front) override;
 
   signals:
     /**

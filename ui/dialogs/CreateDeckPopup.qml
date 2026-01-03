@@ -3,7 +3,9 @@ import QtQuick
 import QtQuick.Controls as QC
 import QtQuick.Layouts
 import QtQuick.Effects
-import "qrc:/ui/theme"
+import "../theme"
+import "../controls"
+import "../components"
 
 Item {
     id: root
@@ -108,6 +110,9 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 35
                         placeholderText: qsTr("Имя колоды")
+                        onTextChanged: {
+                            valid = !deckService.is_deck_exists(deckName.text)
+                        }
                     }
 
                     // Deck description
@@ -255,5 +260,6 @@ Item {
         deckNewLimit.text = ""
         deckConsolidateLimit.text = ""
         deckIncorrectLimit.text = ""
+        Qt.inputMethod.hide()
     }
 }

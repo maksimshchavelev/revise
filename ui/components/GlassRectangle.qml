@@ -4,7 +4,7 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Controls
-import "qrc:/ui/theme"
+import "../theme"
 
 Item {
     id: root

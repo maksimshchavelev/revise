@@ -4,9 +4,12 @@ import QtQuick.Effects
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import Revise
-import "components"
+import "views/statistics"
+import "navigation"
 import "pages"
-import "qrc:/ui/theme"
+import "dialogs"
+import "views/decks"
+import "theme"
 
 ApplicationWindow {
     visible: true

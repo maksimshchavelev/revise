@@ -7,7 +7,9 @@
 namespace revise {
 
 // Public method
-CardsModel::CardsModel(DeckService& service) : m_deck_service(service) {}
+CardsModel::CardsModel(DeckService& service) : m_deck_service(service) {
+    QObject::connect(&m_deck_service, &DeckService::deckUpdated, this, [this]() { load(m_last_deckId); });
+}
 
 // Public method
 int CardsModel::rowCount(const QModelIndex& parent) const {
@@ -45,6 +47,8 @@ QHash<int, QByteArray> CardsModel::roleNames() const {
 
 // Public method
 void CardsModel::load(int deckId) {
+    m_last_deckId = deckId;
+
     beginResetModel();
 
     auto res = m_deck_service.list_cards(deckId);

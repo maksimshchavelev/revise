@@ -2,7 +2,7 @@
 // icon when enabled and an inactive icon when disabled.
 
 import QtQuick
-import "qrc:/ui/theme"
+import "../theme"
 
 Item {
     id: root

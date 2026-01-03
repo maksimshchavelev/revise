@@ -33,6 +33,8 @@ class IDeckRepository {
 
     virtual std::expected<void, QString> update_card(const Card& card) = 0;
     virtual std::expected<void, QString> insert_cards_batch(int deckId, const QVector<Card>& cards) = 0;
+    virtual std::expected<void, QString> insert_card(int deckId, const Card& card) = 0;
+    virtual std::expected<bool, QString> is_card_exists(int deckId, const QString& card_front) = 0;
 };
 
 } // namespace revise

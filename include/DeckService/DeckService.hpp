@@ -102,6 +102,29 @@ class DeckService : public QObject {
                                  int            incorrect_limit);
 
     /**
+     * @brief Checks whether a deck with that name exists in the database
+     * @param deck_name Name of the deck
+     * @return `true` if exists
+     */
+    Q_INVOKABLE bool is_deck_exists(const QString& deck_name);
+
+    /**
+     * @brief Checks whether a card exists in the specified deck
+     * @param deckId ID of the deck
+     * @param card_front Front of the card
+     * @return `true` if exists
+     */
+    Q_INVOKABLE bool is_card_exists(int deckId, const QString& card_front);
+
+    /**
+     * @brief Create a card
+     * @param deckId ID of the deck to which the card will belong
+     * @param front Front of the card
+     * @param back Back of the card
+     */
+    Q_INVOKABLE void create_card(int deckId, const QString& front, const QString& back);
+
+    /**
      * @brief Is the deck being imported now?
      * @return `true` if true
      */

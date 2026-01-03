@@ -2,14 +2,14 @@
 
 import QtQuick
 import QtQuick.Layouts
-import "../components"
+import "../views/training"
 
 Item {
     ColumnLayout {
         anchors.fill: parent
         spacing: 10
 
-        Card {
+        CardView {
             front: "Hello sdkjglksfjg lkdfj glkdsfjkl gjdslk"
             Layout.fillWidth: true
         }

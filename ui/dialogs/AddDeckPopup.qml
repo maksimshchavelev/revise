@@ -3,7 +3,8 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
-import "qrc:/ui/theme"
+import "../theme"
+import "../controls"
 
 Item {
     id: root

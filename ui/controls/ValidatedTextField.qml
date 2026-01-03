@@ -2,7 +2,7 @@
 
 import QtQuick
 import QtQuick.Controls
-import "qrc:/ui/theme"
+import "../theme"
 
 Item {
     id: root
@@ -110,6 +110,12 @@ Item {
                 focus = false
             }
         }
+    }
+
+    MouseArea {
+        visible: !textInput.focus
+        anchors.fill: parent
+        onClicked: textInput.focus = true
     }
 
     Rectangle {

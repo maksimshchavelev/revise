@@ -2,7 +2,9 @@
 
 import QtQuick
 import QtQuick.Layouts
-import "qrc:/ui/theme"
+import "../../theme"
+import "../../components"
+import "../../controls"
 
 Item {
     id: root

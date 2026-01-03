@@ -34,6 +34,7 @@ public:
 private:
     DeckService&  m_deck_service;
     QVector<Card> m_cards;
+    int           m_last_deckId{0};
 };
 
 } // namespace revise
