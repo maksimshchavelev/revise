@@ -16,17 +16,16 @@ namespace revise {
 
 /**
  * @brief Service that manages study sessions for a deck.
- *
- * This class is a refactored replacement of the old StudyController.
- * It preserves the original logic (card selection, limits, timer, scheduling)
- * but is implemented as a service that depends on IDeckRepository and IAlgorithm.
- *
- * All public API methods return std::expected for C++ consumers.
  */
 class StudyService : public QObject {
     Q_OBJECT
 
   public:
+    Q_PROPERTY(int timeLimit READ time_limit NOTIFY time_limit_changed)
+    Q_PROPERTY(float timeRemaining READ time_remaining NOTIFY time_remaining_changed)
+    Q_PROPERTY(QString cardText READ card_text NOTIFY card_text_changed)
+    Q_PROPERTY(bool flipped READ flipped NOTIFY flipped_changed)
+
     /**
      * @brief Study statistics for a deck (used by UI models).
      */
@@ -47,7 +46,6 @@ class StudyService : public QObject {
 
     ~StudyService() override = default;
 
-    /** Property-like getters (C++). UI adapter will use signals to notify QML. */
     QString card_text() const noexcept;
     int     time_limit() const noexcept;
     float   time_remaining() const noexcept;
@@ -57,21 +55,21 @@ class StudyService : public QObject {
      * @brief Prepare and start training for the specified deck.
      * This method loads cards from repository, applies limits and fills the internal queue.
      * @param deck_id Deck id
-     * @return empty std::expected on success, error string otherwise.
+     * @note In case of an error, `ErrorReporter` is called.
      */
-    std::expected<void, QString> start_training(int deck_id);
+    Q_INVOKABLE void start_training(int deck_id);
 
     /**
      * @brief Process next card with user's selected difficulty.
      * @param current_difficulty float in [0..5], where 5.0 means "I failed".
-     * @return empty std::expected on success, error string otherwise.
+     * @note In case of an error, `ErrorReporter` is called.
      */
-    std::expected<void, QString> next_card(float current_difficulty);
+    Q_INVOKABLE void next_card(float current_difficulty);
 
     /**
      * @brief Flip the current card (show back) and reset timer.
      */
-    void flip() noexcept;
+    Q_INVOKABLE void flip() noexcept;
 
     /**
      * @brief Get study info for a deck (counts of new/consolidate/incorrect and time limit).
@@ -83,7 +81,7 @@ class StudyService : public QObject {
     /**
      * @brief Whether a training session is active.
      */
-    bool is_session_active() const noexcept {
+    Q_INVOKABLE bool is_session_active() const noexcept {
         return !m_cards.isEmpty();
     }
 

@@ -13,6 +13,7 @@ Item {
     property bool pressed: false
     property bool textBold: false
     property color textColor: Theme.textColor
+    property bool clickable: true
     signal clicked()
 
     implicitWidth: textElement.implicitWidth + 40
@@ -54,6 +55,21 @@ Item {
         NumberAnimation {
             easing.type: Easing.OutBack
             duration: 90
+        }
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        radius: 5
+        color: "black"
+        opacity: 0.4
+        visible: !root.clickable
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {}
+            onPressed: {}
+            onReleased: {}
         }
     }
 }

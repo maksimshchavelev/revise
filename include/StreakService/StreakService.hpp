@@ -11,7 +11,8 @@ class StreakService : public QObject {
     Q_OBJECT
 
   public:
-    Q_PROPERTY(int streak READ streak NOTIFY streak_changed)
+    Q_PROPERTY(int streak READ streak NOTIFY streakChanged)
+    Q_PROPERTY(bool updatedToday READ updated_today NOTIFY updatedTodayChanged)
 
     /**
      * @brief StreakService constructor
@@ -25,6 +26,12 @@ class StreakService : public QObject {
      * @return Streak value
      */
     int streak();
+
+    /**
+     * @brief Is streak updated today?
+     * @return `bool`
+     */
+    bool updated_today();
 
     /**
      * @brief Set streak
@@ -48,6 +55,7 @@ class StreakService : public QObject {
 
   signals:
     void streakChanged();
+    void updatedTodayChanged();
 
   private:
     Database& m_db;

@@ -9,6 +9,8 @@ namespace revise {
 // Public method
 DecksModel::DecksModel(DeckService& service) : m_deck_service(service) {
     QObject::connect(&m_deck_service, &DeckService::decksUpdated, this, [this]() { update(); });
+    QObject::connect(&m_deck_service, &DeckService::deckUpdated, this, [this]() { update(); });
+
     update();
 }
 

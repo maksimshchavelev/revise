@@ -4,15 +4,15 @@
 
 #pragma once
 
-#include <IDeckImporter/IDeckImporter.hpp> // for IDeckImporter
+#include <IDeckImporter/IDeckImporter.hpp>         // for IDeckImporter
 
 namespace revise {
 
 class AnkiDeckImporter : public IDeckImporter {
 public:
-    std::expected<ImportResult, QString> import_from_file(const QString& path) = 0;
+    std::expected<ImportResult, QString> import_from_file(const QString& path) override;
 
-    QString format_name() const noexcept = 0;
+    QString format_name() const noexcept override;
 
 private:
     /**

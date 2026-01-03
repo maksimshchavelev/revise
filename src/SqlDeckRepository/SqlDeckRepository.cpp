@@ -69,8 +69,10 @@ std::expected<QVector<Card>, QString> SqlDeckRepository::get_cards(int deckId) {
     QVector<Card> result;
 
     q.prepare(R"(
-        SELECT id, deck_id, front, back, state, incorrect_streak, interval, time_limit, difficulty, next_review, created_at, updated_at
-        FROM cards WHERE deck_id = :deck_id
+        SELECT cards.*, decks.time_limit
+        FROM cards
+        JOIN decks ON cards.deck_id = decks.id
+        WHERE cards.deck_id = :deck_id
     )");
 
     q.bindValue(":deck_id", deckId);
@@ -136,7 +138,7 @@ std::expected<int, QString> SqlDeckRepository::create_deck(const Deck &deck)
     q.bindValue(":description", deck.description);
     q.bindValue(":time_limit", deck.time_limit);
     q.bindValue(":new_limit", deck.new_limit);
-    q.bindValue("consolidate_limit", deck.consolidate_limit);
+    q.bindValue(":consolidate_limit", deck.consolidate_limit);
     q.bindValue(":incorrect_limit", deck.incorrect_limit);
 
     if (!q.exec()) {
@@ -196,6 +198,47 @@ std::expected<void, QString> SqlDeckRepository::delete_deck(int deckId)
 
     emit data_changed();
     return {};
+}
+
+
+// Public method
+std::expected<bool, QString> SqlDeckRepository::is_deck_exists(const QString& deck_name)
+{
+    QSqlQuery q(m_db.raw_db());
+
+    q.prepare("SELECT COUNT(*) FROM decks WHERE name = :name");
+    q.bindValue(":name", deck_name);
+
+    if (!q.exec()) {
+        return std::unexpected(q.lastError().text());
+    }
+
+    if (!q.next()) {
+        return std::unexpected("Failed to read query result");
+    }
+
+    int count = q.value(0).toInt();
+    return count > 0;
+}
+
+
+// Public method
+std::expected<int, QString> SqlDeckRepository::deck_id(const QString& deck_name)
+{
+    QSqlQuery q(m_db.raw_db());
+
+    q.prepare("SELECT id FROM decks WHERE name = :name");
+    q.bindValue(":name", deck_name);
+
+    if (!q.exec()) {
+        return std::unexpected(q.lastError().text());
+    }
+
+    if (!q.next()) {
+        return std::unexpected("The query returned an empty result");
+    }
+
+    return q.value("id").toInt();
 }
 
 

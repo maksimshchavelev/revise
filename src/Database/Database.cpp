@@ -4,7 +4,7 @@
 #include <Database/Database.hpp>
 #include <QDateTime> // for QDateTime
 #include <QDebug>    // for QDebug, QWarning
-#include <QDir>
+#include <QDir>      // for QDir
 #include <QFileInfo> // for QFileInfo
 #include <QSqlError> // for QSqlError
 #include <QSqlQuery> // for QSqlQuery
@@ -38,6 +38,12 @@ std::expected<void, QString> Database::init_db() {
     QSqlQuery streak_query(m_db);
     QSqlQuery decks_query(m_db);
     QSqlQuery cards_query(m_db);
+    QSqlQuery fk_query(m_db);
+
+    // Enable foreign key support
+    if (!fk_query.exec("PRAGMA foreign_keys = ON")) {
+        return std::unexpected(fk_query.lastError().text());
+    }
 
     // Create STREAK table
     streak_query.prepare(R"(
@@ -64,8 +70,8 @@ std::expected<void, QString> Database::init_db() {
     decks_query.prepare(R"(
         CREATE TABLE IF NOT EXISTS decks (
             id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            description TEXT NOT NULL,
+            name TEXT NOT NULL UNIQUE,
+            description TEXT,
             time_limit INTEGER DEFAULT 0,
             new_limit INTEGER DEFAULT 30,
             consolidate_limit INTEGER DEFAULT 30,
@@ -90,7 +96,8 @@ std::expected<void, QString> Database::init_db() {
             incorrect_streak INTEGER DEFAULT 0,  -- number of consecutive incorrect answers
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE
+            FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE,
+            UNIQUE(deck_id, front)
     ))");
 
     if (!cards_query.exec()) {

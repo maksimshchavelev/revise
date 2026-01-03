@@ -2,11 +2,11 @@
 // A class that regulates the learning process. It determines which cards will be included in today's selection and
 // manages the training process for the selected deck.
 
-#pragma once
-
 #include <DeckImporter/AnkiDeckImporter.hpp> // for AnkiDeckImporter
 #include <QDir>                              // for QDir
 #include <QStandardPaths>                    // for QStandardPaths
+#include <QSqlError>                         // for QSqlError
+#include <QSqlQuery>                         // for QSqlQuery
 #include <QUuid>                             // for QUuid
 #include <quazip.h>                          // for QuaZip
 #include <quazipfile.h>                      // for QuaZipFile
@@ -38,92 +38,80 @@ std::expected<ImportResult, QString> AnkiDeckImporter::import_from_file(const QS
         return std::unexpected(QString("DB %1 not found").arg(db_path));
     }
 
+    // Anki database
     QSqlDatabase anki_db = QSqlDatabase::addDatabase("QSQLITE", "anki_import");
     anki_db.setDatabaseName(db_path);
 
     if (!anki_db.open()) {
-        ErrorReporter::instance()->report(
-            "Failed to open Anki DB", anki_db.lastError().text(), "DecksIO::import_anki_deck()");
-        return;
+        return std::unexpected(QString("Failed to import anki DB: %1").arg(anki_db.lastError().text()));
     }
-
-    qDebug() << "DecksIO::import_anki_deck(): DB is opened";
 
     // Select cards
-    {
-        QSqlQuery cards_query(anki_db);
-        QSqlQuery deck_name_query(anki_db);
+    QSqlQuery cards_query(anki_db);
+    QSqlQuery deck_name_query(anki_db);
 
-        cards_query.prepare("SELECT notes.flds FROM cards JOIN notes ON notes.id = cards.nid");
-        deck_name_query.prepare("SELECT name FROM decks");
+    cards_query.prepare("SELECT notes.flds FROM cards JOIN notes ON notes.id = cards.nid");
+    deck_name_query.prepare("SELECT name FROM decks");
 
-        if (!cards_query.exec()) {
-            ErrorReporter::instance()->report(
-                "Failed to fetch cards from Anki DB", cards_query.lastError().text(), "DecksIO::import_anki_deck()");
-            return;
-        }
-
-        if (!deck_name_query.exec()) {
-            ErrorReporter::instance()->report("Failed to fetch deck name from Anki DB",
-                                              deck_name_query.lastError().text(),
-                                              "DecksIO::import_anki_deck()");
-            return;
-        }
-
-        deck_name_query.next(); // skip `Default`
-        if (!deck_name_query.next()) {
-            ErrorReporter::instance()->report("Decks table is empty", {}, "DecksIO::import_anki_deck()");
-            return;
-        }
-
-        auto deck_id = db.push_deck(deck_name_query.value("name").toString()); // Create new deck and get deck id
-
-        if (!deck_id.has_value()) {
-            ErrorReporter::instance()->report("Failed to get deck id", deck_id.error(), "DecksIO::import_anki_deck()");
-            return;
-        }
-
-        constexpr QChar FIELD_SEP{31}; // anki separator
-        db.begin_bulk_updates();
-
-        while (cards_query.next()) {
-            const QString     flds = cards_query.value("flds").toString();
-            const QStringList fields = flds.split(FIELD_SEP);
-
-            if (fields.size() < 2) {
-                continue; // broken note
-            }
-
-            QString front = fields.at(0).trimmed();
-            QString back = fields.at(1).trimmed();
-
-            if (auto res = db.push_card(deck_id.value(), front, back); !res.has_value()) {
-                db.end_bulk_updates();
-                ErrorReporter::instance()->report(
-                    "Failed to push card to database", res.error(), "DecksIO::import_anki_deck()");
-                return;
-            } else {
-                ++imported_decks;
-            }
-        }
+    if (!cards_query.exec()) {
+        return std::unexpected(QString("Failed to fetch cards from Anki DB: %1")
+                                    .arg(cards_query.lastError().text()));
     }
 
-    // qWarning() << "END BULK!";
-    db.end_bulk_updates();
+    if (!deck_name_query.exec()) {
+        return std::unexpected(QString("Failed to fetch name from Anki DB: %1")
+                                   .arg(deck_name_query.lastError().text()));
+    }
 
-    qDebug() << "DecksIO::import_anki_deck(): Imported. Clearing resources";
+    deck_name_query.next(); // skip `Default`
+    if (!deck_name_query.next()) {
+        return std::unexpected(QString("Decks table is empty (Anki DB)"));
+    }
+
+    res.deck_name = deck_name_query.value("name").toString();
+    res.deck_description = QString(); // TODO: implement reading description from Anki DB
+
+    constexpr QChar FIELD_SEP{31}; // anki separator
+
+    while (cards_query.next()) {
+        const QString     flds = cards_query.value("flds").toString();
+        const QStringList fields = flds.split(FIELD_SEP);
+
+        if (fields.size() < 2) {
+                continue; // broken note
+        }
+
+        QString front = fields.at(0).trimmed();
+        QString back = fields.at(1).trimmed();
+
+        res.cards.push_back(Card {
+            .id = 0, // not taken into account
+            .deck_id = 0, // not taken into account
+            .state = 0, // new
+            .incorrect_streak = 0,
+            .interval = 0,
+            .time_limit = 0, // not taken into account
+            .difficulty = 2.5f,
+            .next_review = QDateTime::currentDateTime(),
+            .created_at = QDateTime::currentDateTime(),
+            .updated_at = QDateTime::currentDateTime(),
+            .front = std::move(front),
+            .back = std::move(back)
+        });
+    }
 
     // Clear resources
     anki_db.close();
     QSqlDatabase::removeDatabase("anki_import");
     QDir(import_dir).removeRecursively();
+
+    return res;
 }
 
 // Public method
 QString AnkiDeckImporter::format_name() const noexcept {
     return "anki";
 }
-
 
 // Private method
 std::expected<void, QString> AnkiDeckImporter::unzip(const QString& zip_path, const QString& target_dir) {
@@ -153,7 +141,6 @@ std::expected<void, QString> AnkiDeckImporter::unzip(const QString& zip_path, co
     zip.close();
     return {};
 }
-
 
 // Private method
 std::expected<void, QString> AnkiDeckImporter::decompress_zstd_file(const QString& src_path, const QString& dest_path) {

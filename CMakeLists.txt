@@ -45,11 +45,15 @@ qt_add_qml_module(apprevise
         ui/components/CheckupableOption.qml
         ui/components/Checkbox.qml
         ui/components/DeckModalDialog.qml
+        ui/components/CreateDeckPopup.qml
+        ui/components/ValidatedTextField.qml
+        ui/components/Card.qml
 
         # Pages
         ui/pages/Home.qml
         ui/pages/Statistics.qml
         ui/pages/Training.qml
+        ui/pages/EditDeck.qml
 
         # Theme
         ui/theme/Theme.qml

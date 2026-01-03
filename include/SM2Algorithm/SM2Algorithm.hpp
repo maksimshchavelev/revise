@@ -21,12 +21,6 @@ public:
     ~SM2Algorithm() override = default;
 
     AlgorithmResult process_answer(const Card& old_card, float user_difficulty) noexcept override;
-
-private:
-    // Helpers
-    static float difficulty_to_ef(float difficulty) noexcept;
-    static float ef_to_difficulty(float ef) noexcept;
-    static int quality_from_user_difficulty(float user_difficulty) noexcept;
 };
 
 } // namespace revise

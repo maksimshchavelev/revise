@@ -32,8 +32,8 @@ Item {
                 anchors.centerIn: parent
                 width: parent.width * 0.95
                 height: 20
-                visible: studyController.timeLimit > 0 && !studyController.flipped
-                progress: studyController.timeLimit > 0 ? studyController.timeRemaining / studyController.timeLimit : 0
+                visible: studyService.timeLimit > 0 && !studyService.flipped
+                progress: studyService.timeLimit > 0 ? studyService.timeRemaining / studyService.timeLimit : 0
             }
         }
 
@@ -59,7 +59,7 @@ Item {
                     width: parent.width
                     font.pixelSize: Theme.textSizeMedium
                     wrapMode: Text.WordWrap
-                    text: studyController.cardText
+                    text: studyService.cardText
 
                     // Center horizontally and vertically
                     anchors.centerIn: parent
@@ -96,15 +96,15 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignBottom
             Layout.topMargin: 8
-            onEasyClicked: studyController.next_card(0);
-            onNormalClicked: studyController.next_card(1.5);
-            onHardClicked: studyController.next_card(3);
-            onBadClicked: studyController.next_card(5);
+            onEasyClicked: studyService.next_card(0);
+            onNormalClicked: studyService.next_card(1.5);
+            onHardClicked: studyService.next_card(3);
+            onBadClicked: studyService.next_card(5);
         }
     }
 
     Connections {
-        target: studyController
+        target: studyService
 
         function onTraining_finished() {
             console.log("Training finished")

@@ -1,7 +1,8 @@
 // Copyright 2025 Maksim Shchavelev
 // StudyService implementation (refactored StudyController)
 
-#include <StudyService/StudyService.hpp> // for StudyService
+#include <StudyService/StudyService.hpp>   // for StudyService
+#include <ErrorReporter/ErrorReporter.hpp> // for ErrorReporter
 
 namespace revise {
 
@@ -50,16 +51,12 @@ void StudyService::on_timer_timeout() {
     if (m_time_limit > 0 && m_time_remaining <= 0.0f) {
         // schedule forced failure on next event loop to avoid reentrancy
         QMetaObject::invokeMethod(this, [this]() {
-            auto res = this->next_card(FAILURE_THRESHOLD);
-            if (!res.has_value()) {
-                qWarning() << "StudyService::on_timer_timeout(): next_card failed:" << res.error();
-                emit error_occurred(res.error());
-            }
+            this->next_card(FAILURE_THRESHOLD);
         }, Qt::QueuedConnection);
     }
 }
 
-std::expected<void, QString> StudyService::start_training(int deck_id) {
+void StudyService::start_training(int deck_id) {
     m_cards.clear();
     m_trained.clear();
     m_flipped = false;
@@ -69,8 +66,11 @@ std::expected<void, QString> StudyService::start_training(int deck_id) {
 
     auto cards_res = m_repo.get_cards(deck_id);
     if (!cards_res.has_value()) {
-        qWarning() << "StudyService::start_training():" << cards_res.error();
-        return std::unexpected(cards_res.error());
+        ErrorReporter::instance()->report(
+            "Failed to fetch cards",
+            cards_res.error(),
+            "StudyService::start_training()");
+        return;
     }
 
     QList<Card> failed;
@@ -111,7 +111,11 @@ std::expected<void, QString> StudyService::start_training(int deck_id) {
         incorrect_limit = d.incorrect_limit;
         deck_time_limit = d.time_limit;
     } else {
-        qWarning() << "StudyService::start_training(): failed to get deck info:" << deck_res.error();
+        ErrorReporter::instance()->report(
+            "Failed to get deck info",
+            deck_res.error(),
+            "StudyService::start_training");
+        return;
     }
 
     // sort review by oldest next_review first
@@ -149,30 +153,31 @@ std::expected<void, QString> StudyService::start_training(int deck_id) {
     emit card_text_changed();
     emit time_limit_changed();
     emit time_remaining_changed();
-
-    return {};
 }
 
-std::expected<void, QString> StudyService::next_card(float current_difficulty) {
+void StudyService::next_card(float current_difficulty) {
     // If no cards left -> finish and persist trained
     if (m_cards.isEmpty()) {
-        qDebug() << "StudyService::next_card(): no cards, finishing session";
+        qDebug() << "StudyService::next_card(): training finished (queue empty)";
 
         for (const Card& c : m_trained) {
             auto res = m_repo.update_card(c);
             if (!res.has_value()) {
-                qWarning() << "StudyService::next_card(): failed to update card" << c.id << ":" << res.error();
-                emit error_occurred(res.error());
-                // continue trying other updates
-            } else {
-                qDebug() << "Updated card" << c.id;
+                ErrorReporter::instance()->report("Failed to update card",
+                                                  QString("Card IS: %1, cause: %2")
+                                                  .arg(c.id).arg(res.error()),
+                                                  "StudyService::next_card");
+                return;
             }
-            qDebug() << c.id << ':' << c.front << ": difficulty =" << c.difficulty << " state =" << c.state;
         }
 
-        if (m_timer.isActive()) m_timer.stop();
+        if (m_timer.isActive())
+            m_timer.stop();
         emit training_finished();
-        return {};
+        emit card_text_changed();
+        emit flipped_changed();
+        emit time_remaining_changed();
+        return;
     }
 
     // Dequeue current card
@@ -194,35 +199,10 @@ std::expected<void, QString> StudyService::next_card(float current_difficulty) {
     m_flipped = false;
     m_time_remaining = static_cast<float>(m_time_limit);
 
-    // If finished after processing this card, persist and stop
-    if (m_cards.isEmpty()) {
-        qDebug() << "StudyService::next_card(): training finished (queue empty)";
-
-        for (const Card& c : m_trained) {
-            auto res = m_repo.update_card(c);
-            if (!res.has_value()) {
-                qWarning() << "StudyService::next_card(): failed to update card" << c.id << ":" << res.error();
-                emit error_occurred(res.error());
-            } else {
-                qDebug() << "Updated card" << c.id;
-            }
-            qDebug() << c.id << ':' << c.front << ": difficulty =" << c.difficulty << " state =" << c.state;
-        }
-
-        if (m_timer.isActive()) m_timer.stop();
-        emit training_finished();
-        emit card_text_changed();
-        emit flipped_changed();
-        emit time_remaining_changed();
-        return {};
-    }
-
     // Notify UI to update to next card
     emit card_text_changed();
     emit flipped_changed();
     emit time_remaining_changed();
-
-    return {};
 }
 
 void StudyService::flip() noexcept {

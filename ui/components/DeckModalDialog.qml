@@ -18,8 +18,9 @@ Item {
 
     // Deck options
     property real deckId: 0
+    property bool repeatableToday: false
 
-    signal trainClicked(int deckId)
+    signal trainClicked(int deckId, bool repeatableToday)
     signal editClicked(int deckId)
     signal removeClicked(int deckId)
 
@@ -79,7 +80,7 @@ Item {
                 Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
                 Layout.topMargin: 15
                 onClicked: {
-                    trainClicked(root.deckId)
+                    trainClicked(root.deckId, repeatableToday)
                     root.close()
                 }
             }
@@ -128,8 +129,9 @@ Item {
         }
     }
 
-    function open(deckId) {
+    function open(deckId, repeatableToday) {
         root.deckId = deckId
+        root.repeatableToday = repeatableToday
         root.visible = true
     }
 

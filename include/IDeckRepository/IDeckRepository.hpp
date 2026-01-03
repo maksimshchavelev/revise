@@ -28,6 +28,8 @@ class IDeckRepository {
     virtual std::expected<int, QString>  create_deck(const Deck& deck) = 0;
     virtual std::expected<void, QString> update_deck(const Deck& deck) = 0;
     virtual std::expected<void, QString> delete_deck(int deckId) = 0;
+    virtual std::expected<bool, QString> is_deck_exists(const QString& deck_name) = 0;
+    virtual std::expected<int, QString> deck_id(const QString& deck_name) = 0;
 
     virtual std::expected<void, QString> update_card(const Card& card) = 0;
     virtual std::expected<void, QString> insert_cards_batch(int deckId, const QVector<Card>& cards) = 0;

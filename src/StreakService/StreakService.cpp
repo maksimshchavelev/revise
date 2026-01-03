@@ -3,6 +3,7 @@
 #include <QSqlError>                       // for QSqlError
 #include <QSqlQuery>                       // for QSqlQuery
 #include <StreakService/StreakService.hpp> // for StreakService
+#include <ErrorReporter/ErrorReporter.hpp> // for ErrorReporter
 
 namespace revise {
 
@@ -24,6 +25,33 @@ int StreakService::streak() {
     return q.value("value").toInt();
 }
 
+// Public method
+bool StreakService::updated_today()
+{
+    QSqlQuery q(m_db.raw_db());
+
+    QDateTime today = QDateTime::currentDateTime();
+    today.setTime(QTime(0, 0, 0));
+
+    if (!q.exec("SELECT last_updated FROM streak WHERE id = 1")) {
+        ErrorReporter::instance()->report(
+            "Failed to fetch streak update date",
+            q.lastError().text(),
+            "StreakService::updated_today");
+        return false;
+    }
+
+    if (!q.next()) {
+        ErrorReporter::instance()->report(
+            "'streak' table is empty",
+            "",
+            "StreakService::updated_today");
+        return false;
+    }
+
+    return today <= q.value("last_updated").toDateTime();
+}
+
 // public method
 std::expected<void, QString> StreakService::set_streak(int streak) {
     QSqlQuery q(m_db.raw_db());
@@ -37,6 +65,7 @@ std::expected<void, QString> StreakService::set_streak(int streak) {
     }
 
     emit streakChanged();
+    emit updatedTodayChanged();
     return {};
 }
 
@@ -86,6 +115,7 @@ std::expected<void, QString> StreakService::reset() {
         return std::unexpected(q.lastError().text());
     }
 
+    // Caution: We don't need to change the streak update date.
     emit streakChanged();
     return {};
 }

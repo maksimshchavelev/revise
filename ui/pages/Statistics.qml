@@ -9,8 +9,8 @@ Item {
         anchors.fill: parent
         spacing: 10
 
-        CheckupableOption {
-            text: "Check me"
+        Card {
+            front: "Hello sdkjglksfjg lkdfj glkdsfjkl gjdslk"
             Layout.fillWidth: true
         }
     }

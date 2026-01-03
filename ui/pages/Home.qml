@@ -7,8 +7,7 @@ import "../components"
 Item {
     id: root
 
-    signal deckClicked(int deckId) // Emitted when the user clicks on the deck. Passes the deck ID.
-    signal deckIsUnrepeatableToday(string deckName)
+    signal deckClicked(int deckId, bool repeatableToday) // Emitted when the user clicks on the deck. Passes the deck ID.
 
     ListView {
         model: decksModel
@@ -38,10 +37,7 @@ Item {
                 repeatableToday: model.repeatableToday
 
                 onClicked: {
-                    if (repeatableToday)
-                        root.deckClicked(deckId)
-                    else
-                        root.deckIsUnrepeatableToday(deckName)
+                    root.deckClicked(deckId, repeatableToday)
                 }
             }
         }

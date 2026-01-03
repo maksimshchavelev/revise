@@ -7,24 +7,36 @@
 #include <QQmlApplicationEngine>                       // for QQmlApplicationEngine
 #include <QQmlContext>                                 // for QQmlContext
 #include <QtCore/private/qandroidextras_p.h>           // for QtAndroidPrivate
+#include <QUuid>                                       // for QUuid
+#include <QSqlError>                                   // for QSqlError
+#include <Entities/Deck.hpp>                           // for Deck
 
 namespace revise {
 
 // Public method
 Core::Core(QGuiApplication& app, QObject* parent) :
-    QObject(parent), m_app(app), m_db("default", this), m_streak_backend(m_db), m_study_controller(m_db),
-    m_decks_model(m_db, m_study_controller), m_decks_io() {
+    QObject(parent),
+    m_app(app),
+    m_db("revise_main", "revise.db", this),
+    m_sql_deck_repo(m_db, this),
+    m_sm2_algo(),
+    m_streak_service(m_db, this),
+    m_study_service(m_sql_deck_repo, m_sm2_algo),
+    m_anki_importer(),
+    m_deck_service([this]() -> std::unique_ptr<IDeckRepository> {
+        const QString connName = QStringLiteral("repo_conn_%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
+        return make_thread_local_sql_repo(connName);
+    }, m_anki_importer, this),
+    m_decks_model(m_deck_service),
+    m_cards_model(m_deck_service) {
 
-    // Update streak and decks model when training finished
-    connect(&m_study_controller, &StudyController::training_finished, this, [this]() {
-        if (!m_streak_backend.is_updated_today()) {
-            m_streak_backend.set_streak(m_streak_backend.streak() + 1);
+    connect(&m_study_service, &StudyService::training_finished, this, [this]() {
+        if (!m_streak_service.updated_today()) {
+            m_streak_service.set_streak(m_streak_service.streak() + 1);
         }
 
         m_decks_model.update();
     });
-
-    connect(&m_decks_io, &DecksIO::import_finished, this, [this](int) { m_decks_model.update(); });
 
     auto permission_check_future = QtAndroidPrivate::checkPermission("android.permission.POST_NOTIFICATIONS");
     auto permission_check_result = permission_check_future.result(); // wait for result
@@ -50,8 +62,13 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     // weekly shedule
     for (int i = 0; i < 7; ++i) {
         int base_id = qAbs(qHash(QDateTime::currentDateTime().toMSecsSinceEpoch())) % 1000000;
-        QDateTime time = QDateTime::currentDateTime().addDays(i + 1);
+        QDateTime time = QDateTime::currentDateTime().addDays(i);
         time.setTime(QTime(12, 00, 0)); // 12::00::00 by the local time
+
+        // If the current time is after 12:00, then skip the notification
+        if (QDateTime::currentDateTime() >= time)
+            continue;
+
         NotificationManager::schedule_notification(notifications[i], time, base_id);
     }
 }
@@ -60,18 +77,22 @@ Core::Core(QGuiApplication& app, QObject* parent) :
 // Public method
 int Core::run() {
     // Reset streak if overdue
-    m_streak_backend.reset_streak_if_overdue();
+    m_streak_service.reset_if_overdue();
 
     QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty("streakBackend", &m_streak_backend);
+    engine.rootContext()->setContextProperty("streakService", &m_streak_service);
     engine.rootContext()->setContextProperty("decksModel", &m_decks_model);
-    engine.rootContext()->setContextProperty("studyController", &m_study_controller);
-    engine.rootContext()->setContextProperty("decksIO", &m_decks_io);
+    engine.rootContext()->setContextProperty("cardsModel", &m_cards_model);
+    engine.rootContext()->setContextProperty("studyService", &m_study_service);
+    engine.rootContext()->setContextProperty("deckService", &m_deck_service);
     engine.rootContext()->setContextProperty("errorReporter", ErrorReporter::instance());
 
     qmlRegisterUncreatableType<AppError>(
         "Revise", 1, 0, "AppError", "AppError is only available via the ErrorReporter");
+
+    qmlRegisterUncreatableType<Deck>("Revise", 1, 0, "Deck",
+                                             "Deck is a value type; use DeckService to create/edit decks");
 
     QObject::connect(
         &engine,
@@ -82,6 +103,30 @@ int Core::run() {
     engine.loadFromModule("revise", "Main");
 
     return m_app.exec();
+}
+
+
+
+// Private method
+std::unique_ptr<IDeckRepository> Core::make_thread_local_sql_repo(const QString &conn_name)
+{
+    // create database object that opens connection with given name
+    auto db = std::make_unique<Database>(conn_name, "revise.db");
+
+    if (!db->raw_db().isOpen()) {
+        qWarning() << "make_thread_local_sql_repo: Database failed to open. Conn:" << conn_name
+                   << " Err:" << db->raw_db().lastError();
+        return nullptr;
+    }
+
+    // OwnedRepo pattern (clearer when placed in .cpp than inside lambda)
+    struct OwnedRepo : public SqlDeckRepository {
+        std::unique_ptr<Database> owned_db;
+        explicit OwnedRepo(std::unique_ptr<Database> db_ptr)
+            : SqlDeckRepository(*db_ptr), owned_db(std::move(db_ptr)) {}
+    };
+
+    return std::make_unique<OwnedRepo>(std::move(db));
 }
 
 

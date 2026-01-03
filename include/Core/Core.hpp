@@ -3,13 +3,17 @@
 
 #pragma once
 
-#include <Database/Database.hpp>               // for Database
-#include <DecksIO/DecksIO.hpp>                 // for DecksIO
-#include <DecksModel/DecksModel.hpp>           // for DecksModel
-#include <QGuiApplication>                     // for QGuiApplication
-#include <QObject>                             // for QObject
-#include <StreakBackend/StreakBackend.hpp>     // for StreakBackend
-#include <StudyController/StudyController.hpp> // for StudyController
+#include <Database/Database.hpp>                   // for Database
+#include <DecksModel/DecksModel.hpp>               // for DecksModel
+#include <CardsModel/CardsModel.hpp>               // for CardsModel
+#include <StreakService/StreakService.hpp>         // for StreakService
+#include <DeckImporter/AnkiDeckImporter.hpp>       // for DeckImporter
+#include <SM2Algorithm/SM2Algorithm.hpp>           // for SM2
+#include <SqlDeckRepository/SqlDeckRepository.hpp> // for SqlDeckRepository
+#include <StudyService/StudyService.hpp>           // for StudyService
+#include <DeckService/DeckService.hpp>             // for DeckService
+#include <QGuiApplication>                         // for QGuiApplication
+#include <QObject>                                 // for QObject
 
 namespace revise {
 
@@ -22,12 +26,19 @@ class Core : public QObject {
     int run();
 
   private:
-    QGuiApplication& m_app;
-    Database         m_db;
-    StreakBackend    m_streak_backend;
-    StudyController  m_study_controller;
-    DecksModel       m_decks_model;
-    DecksIO          m_decks_io;
+    QGuiApplication&  m_app;
+    Database          m_db;
+    SqlDeckRepository m_sql_deck_repo;
+    SM2Algorithm      m_sm2_algo;
+    StreakService     m_streak_service;
+    StudyService      m_study_service;
+    AnkiDeckImporter  m_anki_importer;
+    DeckService       m_deck_service;
+    DecksModel        m_decks_model;
+    CardsModel        m_cards_model;
+
+    // Helper
+    std::unique_ptr<IDeckRepository> make_thread_local_sql_repo(const QString& conn_name);
 };
 
 } // namespace revise

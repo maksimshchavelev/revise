@@ -16,8 +16,9 @@ namespace revise {
  * Contains logical deck name and the list of cards parsed from the source file.
  */
 struct ImportResult {
-    QString       deck_name; ///< human-readable deck name
-    QVector<Card> cards;     ///< parsed cards (front/back and meta). Use repository Card DTO.
+    QString       deck_name;        ///< human-readable deck name
+    QString       deck_description; ///< descriotion
+    QVector<Card> cards;            ///< parsed cards (front/back and meta). Use repository Card DTO.
 };
 
 /**

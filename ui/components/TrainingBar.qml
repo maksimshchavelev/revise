@@ -24,7 +24,7 @@ Item {
 
     // Flipped
     RowLayout {
-        visible: studyController.flipped
+        visible: studyService.flipped
         anchors.margins: 12
         anchors.fill: parent
         clip: true
@@ -72,7 +72,7 @@ Item {
 
     // Not reversed
     RowLayout {
-        visible: !studyController.flipped
+        visible: !studyService.flipped
         anchors.margins: 12
         anchors.fill: parent
         clip: true
@@ -81,7 +81,7 @@ Item {
             text: qsTr("Перевернуть")
             Layout.alignment: Qt.AlignCenter
             Layout.fillWidth: true
-            onClicked: studyController.flip()
+            onClicked: studyService.flip()
             textBold: true
         }
     }
