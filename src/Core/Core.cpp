@@ -100,7 +100,7 @@ int Core::run() {
         &m_app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.loadFromModule("revise", "Main");
+    engine.loadFromModule("revise", "App");
 
     return m_app.exec();
 }

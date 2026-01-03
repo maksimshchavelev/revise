@@ -1,7 +1,7 @@
 // Checkbox
 
 import QtQuick
-import "../theme"
+import "qrc:/ui/theme"
 
 Item {
     id: root

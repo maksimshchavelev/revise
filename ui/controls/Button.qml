@@ -2,7 +2,7 @@
 
 import QtQuick
 import QtQuick.Layouts
-import "../theme"
+import "qrc:/ui/theme"
 import "."
 
 Item {

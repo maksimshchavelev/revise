@@ -1,7 +1,7 @@
 // ValidatedMultilineTextField.qml
 import QtQuick
 import QtQuick.Controls
-import "../theme"
+import "qrc:/ui/theme"
 
 Item {
     id: root

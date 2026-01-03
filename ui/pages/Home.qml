@@ -1,25 +1,22 @@
 // Home page
-
 import QtQuick
 import QtQuick.Layouts
 import "../views/decks"
+import "../controls"
+import "../theme"
 
 Item {
     id: root
 
-    signal deckClicked(int deckId, bool repeatableToday) // Emitted when the user clicks on the deck. Passes the deck ID.
+    signal deckClicked(int deckId, bool repeatableToday)
 
     ListView {
         model: decksModel
         spacing: 10
         boundsBehavior: Flickable.StopAtBounds
-
-        width: parent.width * 0.95
-        height: parent.height
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 10
-
+        anchors.fill: parent
+        anchors.margins: 5
+        
         delegate: Item {
             width: ListView.view.width
             height: childrenRect.height

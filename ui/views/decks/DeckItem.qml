@@ -2,7 +2,7 @@
 
 import QtQuick
 import QtQuick.Layouts
-import "../../theme"
+import "qrc:/ui/theme"
 import "../../components"
 import "../../controls"
 
@@ -113,7 +113,3 @@ Item {
         }
     }
 }
-
-
-
-

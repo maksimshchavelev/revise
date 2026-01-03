@@ -18,62 +18,29 @@ qt_add_executable(apprevise ${SOURCES})
 
 set_source_files_properties(
     ui/theme/Theme.qml
+    ui/navigation/Router.qml
     ui/theme/Fonts.qml
     PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
+set_source_files_properties(
+    ui/theme/Theme.qml
+    ui/theme/Fonts.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
+file(GLOB_RECURSE QML_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.qml"
+)
 
 qt_add_qml_module(apprevise
     URI revise
     VERSION 1.0
-    QML_FILES
-        ui/Main.qml
-
-        # Components
-        ui/components/CheckupableOption.qml
-        ui/components/ColorfulProgressbar.qml
-        ui/components/GlassRectangle.qml
-        ui/components/StatefulIndicator.qml
-
-        # Controls
-        ui/controls/AppText.qml
-        ui/controls/Button.qml
-        ui/controls/Checkbox.qml
-        ui/controls/Toggle.qml
-        ui/controls/ValidatedTextField.qml
-        ui/controls/ValidatedMultilineTextField.qml
-
-        # Dialogs
-        ui/dialogs/AddDeckPopup.qml
-        ui/dialogs/CreateDeckPopup.qml
-        ui/dialogs/InfoPopup.qml
-        ui/dialogs/ScrollableInfoPopup.qml
-        ui/dialogs/CreateCardPopup.qml
-
-        # Navigation
-        ui/navigation/ToolBar.qml
-        ui/navigation/ToolButton.qml
-
-        # Pages
-        ui/pages/EditDeck.qml
-        ui/pages/Home.qml
-        ui/pages/Statistics.qml
-        ui/pages/Training.qml
-        ui/pages/CreateDeck.qml
-
-        # Theme
-        ui/theme/Fonts.qml
-        ui/theme/Theme.qml
-
-        # Views
-        ui/views/decks/DeckItem.qml
-        ui/views/decks/DeckModalDialog.qml
-        ui/views/statistics/StreakIndicator.qml
-        ui/views/training/CardView.qml
-        ui/views/training/TrainingBar.qml
+    QML_FILES ${QML_FILES}
 )
 
 qt_add_resources(apprevise
     PREFIX "/"
     FILES
+        ${QML_FILES}
         res/img/background_blurred.png
         res/img/add_deck.png
         res/img/clocks.png
@@ -90,9 +57,6 @@ qt_add_resources(apprevise
         res/fonts/anonymous_pro/AnonymousPro-BoldItalic.ttf
         res/fonts/anonymous_pro/AnonymousPro-Italic.ttf
         res/fonts/anonymous_pro/AnonymousPro-Regular.ttf
-
-        # Qml files
-        ui/theme/Theme.qml
 )
 
 include(FetchContent)

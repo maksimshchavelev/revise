@@ -2,7 +2,7 @@
 
 import QtQuick
 import QtQuick.Controls
-import "../theme"
+import "qrc:/ui/theme"
 
 Item {
     id: root
@@ -42,6 +42,8 @@ Item {
             return invalidBorderColor
         }
     }
+    // ... rest of file
+    
 
     // Component dimensions
     width: 200
