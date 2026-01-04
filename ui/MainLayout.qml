@@ -5,6 +5,7 @@ import Revise
 import "pages"
 import "views/statistics"
 import "navigation"
+import "dialogs"
 import "views/decks"
 import "qrc:/ui/theme"
 
@@ -14,6 +15,16 @@ Item {
 
     signal deckClicked(int deckId, bool repeatableToday)
     signal addDeckClicked()
+
+    // This function is called when the back button is pressed.
+    // Ideally, it should be on every page.
+    function exitClicked() {
+        if (toolbar.currentIndex === 1) {
+            toolbar.currentIndex = 0
+        } else if (toolbar.currentIndex === 0 && !exitQuestionPopup.visible) {
+            exitQuestionPopup.open(qsTr("Выйти?"))
+        }
+    }
 
     Item {
         id: headerItem
@@ -80,5 +91,11 @@ Item {
         }
 
         Statistics {}
+    }
+
+    QuestionPopup {
+        id: exitQuestionPopup
+
+        onAcceptClicked: Qt.exit(0)
     }
 }

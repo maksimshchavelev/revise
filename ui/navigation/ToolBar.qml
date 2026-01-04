@@ -33,12 +33,14 @@ Item {
         }
     }
 
+    onCurrentIndexChanged: {
+        for (let j = 0; j < row.children.length; ++j) {
+            row.children[j].active = (j === currentIndex)
+        }
+    }
+
     function setCurrent(i) {
         currentIndex = i
-
-        for (let j = 0; j < row.children.length; ++j)
-            row.children[j].active = (j === i)
-
         pageChanged(i)
     }
 }

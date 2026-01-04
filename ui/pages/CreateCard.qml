@@ -1,4 +1,3 @@
-
 // Card creation page
 import QtQuick
 import QtQuick.Layouts
@@ -7,7 +6,7 @@ import "../controls"
 
 Item {
     id: root
-    
+
     property int deckId: 0
 
     signal createClicked(int deckId, string front, string back)
@@ -18,7 +17,6 @@ Item {
         anchors.fill: parent
         anchors.margins: 8
         spacing: 8
-
 
         AppText {
             text: qsTr("Текст спереди")
@@ -49,28 +47,39 @@ Item {
             spacing: 5
             Layout.fillWidth: true
 
-            Button {
-                id: btnAdd
+            Item {
                 Layout.fillWidth: true
-                text: qsTr("Добавить")
-                clickable: cardFront.valid && cardFront.text.trim() !== ""
-                           && cardBack.valid && cardBack.text.trim() !== ""
-                onClicked: {
-                    createClicked(root.deckId, cardFront.text, cardBack.text)
-                    // Clear fields after adding
-                    cardFront.text = ""
-                    cardBack.text = ""
+                Layout.preferredHeight: 40
+
+                Button {
+                    id: btnAdd
+                    anchors.fill: parent
+                    text: qsTr("Добавить")
+                    clickable: cardFront.valid && cardFront.text.trim() !== ""
+                               && cardBack.valid && cardBack.text.trim() !== ""
+                    onClicked: {
+                        createClicked(root.deckId, cardFront.text,
+                                      cardBack.text)
+                        // Clear fields after adding
+                        cardFront.text = ""
+                        cardBack.text = ""
+                    }
                 }
             }
 
-            Button {
-                id: btnPreview
+            Item {
                 Layout.fillWidth: true
-                text: qsTr("Превью")
-                clickable: cardFront.valid && cardFront.text.trim() !== ""
-                           && cardBack.valid && cardBack.text.trim() !== ""
-                onClicked: {
-                    previewClicked(cardFront.text, cardBack.text)
+                Layout.preferredHeight: 40
+
+                Button {
+                    id: btnPreview
+                    anchors.fill: parent
+                    text: qsTr("Превью")
+                    clickable: cardFront.valid && cardFront.text.trim() !== ""
+                               && cardBack.valid && cardBack.text.trim() !== ""
+                    onClicked: {
+                        previewClicked(cardFront.text, cardBack.text)
+                    }
                 }
             }
         }

@@ -72,6 +72,9 @@ ApplicationWindow {
                                          })
                 })
             }
+            if (item.updateClicked) {
+                item.updateClicked.connect(deckService.update_deck)
+            }
         }
     }
 
@@ -162,6 +165,16 @@ ApplicationWindow {
 
         function onDeckUpdated() {
             infoPopup.open(qsTr("Колода обновлена"))
+        }
+    }
+
+    onClosing: function(close) {
+        close.accepted = false
+
+        if (pageLoader.item && typeof pageLoader.item.exitClicked === 'function') {
+            pageLoader.item.exitClicked()
+        } else {
+            console.warn("Failed to check pageLoader.item && typeof pageLoader.item.exitClicked === 'function'")
         }
     }
 }
