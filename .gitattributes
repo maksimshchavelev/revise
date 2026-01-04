@@ -1,0 +1,5 @@
+docs/** linguist-vendored
+CMakeLists.txt linguist-vendored 
+CMakeLists.txt.user linguist-vendored
+pull_db.sh linguist-vendored
+push_db.sh linguist-vendored
