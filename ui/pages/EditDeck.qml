@@ -11,9 +11,8 @@ import "../theme"
 Item {
     id: root
 
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    Layout.margins: 5
+    anchors.fill: parent
+    anchors.margins: 5
 
     property int deckId: 0
     property var deck: ({
@@ -30,10 +29,11 @@ Item {
     signal updateClicked(int deckId, string name, string description, int timeLimit, int newLimit, int consolidateLimit, int incorrectLimit)
     signal addCardClicked(int deckId)
 
-    function load(deckId) {
-        root.deckId = deckId
-        root.deck = deckService.deck_info(deckId)
-        cardsModel.load(deckId)
+    onDeckIdChanged: {
+        if (deckId > 0) {
+            root.deck = deckService.deck_info(deckId)
+            cardsModel.load(deckId)
+        }
     }
 
     Flickable {
@@ -45,8 +45,10 @@ Item {
 
         ColumnLayout {
             id: layout
-            Layout.fillWidth: true
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 3
+            anchors.rightMargin: 3
             spacing: 8
 
             AppText {

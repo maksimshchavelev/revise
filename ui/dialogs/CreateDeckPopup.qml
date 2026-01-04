@@ -67,7 +67,7 @@ Item {
     Item {
         id: popupContainer
         width: parent.width * 0.85
-        height: parent.height * 0.85
+        height: parent.height * 0.65
         anchors.centerIn: parent
         clip: true
         scale: root.visible ? 1 : 0.85

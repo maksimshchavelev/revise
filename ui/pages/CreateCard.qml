@@ -19,11 +19,6 @@ Item {
         anchors.margins: 8
         spacing: 8
 
-        AppText {
-            text: qsTr("Новая карточка")
-            font.pixelSize: Theme.textSizeLarge
-            Layout.alignment: Qt.AlignHCenter
-        }
 
         AppText {
             text: qsTr("Текст спереди")
