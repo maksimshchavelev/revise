@@ -207,15 +207,15 @@ Item {
                 Layout.fillWidth: true
                 Layout.topMargin: 4
                 text: qsTr("Обновить")
-                clickable: deckName.valid && deckName.text !== ""
-                           && (deckDescription.valid || deckDescription.text
+                clickable: deckName.valid && deckName.text.trim() !== ""
+                           && (deckDescription.valid || deckDescription.text.trim()
                                === "") && (!limitTime.checked
-                                           || (deckTimeLimit.valid && deckTimeLimit.text
+                                           || (deckTimeLimit.valid && deckTimeLimit.text.trim()
                                                !== "")) && deckNewLimit.valid
-                           && deckNewLimit.text !== ""
-                           && deckConsolidateLimit.valid && deckConsolidateLimit.text
+                           && deckNewLimit.text.trim() !== ""
+                           && deckConsolidateLimit.valid && deckConsolidateLimit.text.trim()
                            !== "" && deckIncorrectLimit.valid
-                           && deckIncorrectLimit.text !== ""
+                           && deckIncorrectLimit.text.trim() !== ""
                 onClicked: {
                     updateClicked(
                                 root.deckId, deckName.text,
