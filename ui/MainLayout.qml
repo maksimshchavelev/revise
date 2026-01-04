@@ -74,7 +74,9 @@ Item {
         currentIndex: toolbar.currentIndex
 
         Home {
-            onDeckClicked: root.deckClicked(deckId, repeatableToday)
+            onDeckClicked: function (deckId, repeatableToday) {
+                root.deckClicked(deckId, repeatableToday)
+            }
         }
 
         Statistics {}
