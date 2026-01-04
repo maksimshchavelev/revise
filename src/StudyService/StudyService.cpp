@@ -62,8 +62,6 @@ void StudyService::start_training(int deck_id) {
     m_flipped = false;
     emit flipped_changed();
 
-    qDebug() << "StudyService::start_training(): fetching cards for deck" << deck_id;
-
     auto cards_res = m_repo.get_cards(deck_id);
     if (!cards_res.has_value()) {
         ErrorReporter::instance()->report(
@@ -156,30 +154,6 @@ void StudyService::start_training(int deck_id) {
 }
 
 void StudyService::next_card(float current_difficulty) {
-    // If no cards left -> finish and persist trained
-    if (m_cards.isEmpty()) {
-        qDebug() << "StudyService::next_card(): training finished (queue empty)";
-
-        for (const Card& c : m_trained) {
-            auto res = m_repo.update_card(c);
-            if (!res.has_value()) {
-                ErrorReporter::instance()->report("Failed to update card",
-                                                  QString("Card IS: %1, cause: %2")
-                                                  .arg(c.id).arg(res.error()),
-                                                  "StudyService::next_card");
-                return;
-            }
-        }
-
-        if (m_timer.isActive())
-            m_timer.stop();
-        emit training_finished();
-        emit card_text_changed();
-        emit flipped_changed();
-        emit time_remaining_changed();
-        return;
-    }
-
     // Dequeue current card
     Card card = m_cards.dequeue();
 
@@ -198,6 +172,28 @@ void StudyService::next_card(float current_difficulty) {
     // Reset flip/time for next card
     m_flipped = false;
     m_time_remaining = static_cast<float>(m_time_limit);
+
+    // If no cards left -> finish and persist trained
+    if (m_cards.isEmpty()) {
+        for (const Card& c : m_trained) {
+            auto res = m_repo.update_card(c);
+            if (!res.has_value()) {
+                ErrorReporter::instance()->report("Failed to update card",
+                                                  QString("Card IS: %1, cause: %2")
+                                                      .arg(c.id).arg(res.error()),
+                                                  "StudyService::next_card");
+                return;
+            }
+        }
+
+        if (m_timer.isActive())
+            m_timer.stop();
+        emit training_finished();
+        emit card_text_changed();
+        emit flipped_changed();
+        emit time_remaining_changed();
+        return;
+    }
 
     // Notify UI to update to next card
     emit card_text_changed();
