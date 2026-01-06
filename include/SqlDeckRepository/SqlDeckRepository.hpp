@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include <Database/Database.hpp>               // for Database
-#include <IDeckRepository/IDeckRepository.hpp> // for IDeckRepository
+#include <Database/Database.hpp>                 // for Database
+#include <IDeckRepository/IDeckRepository.hpp>   // for IDeckRepository
+#include <DeckMediaStorage/DeckMediaStorage.hpp> // for DeckMediaStorage
 
 namespace revise {
 
@@ -43,7 +44,8 @@ class SqlDeckRepository : public QObject, public IDeckRepository {
     void data_changed();
 
   private:
-    Database& m_db;
+    Database&        m_db;
+    DeckMediaStorage m_media;
 };
 
 } // namespace revise

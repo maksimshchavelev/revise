@@ -62,7 +62,11 @@ void DeckService::remove_deck(int deckId)
     auto res = m_repo->delete_deck(deckId);
 
     if (!res.has_value()) {
-        emit errorOccured(res.error());
+        ErrorReporter::instance()->report(
+            "Failed to remove deck",
+            res.error(),
+        "DeckService::remove_deck");
+        emit decksUpdated(); // maybe updated
         return;
     }
 

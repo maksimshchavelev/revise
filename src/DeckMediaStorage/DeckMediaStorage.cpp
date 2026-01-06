@@ -35,4 +35,18 @@ std::expected<QString, QString> DeckMediaStorage::save_image(int               d
     }
 }
 
+// Public method
+std::expected<void, QString> DeckMediaStorage::remove_media(int deckId) const
+{
+    QDir dir(QString("%1/%2").arg(m_dir).arg(deckId));
+
+    if (dir.exists()) {
+        if (!dir.removeRecursively()) {
+            return std::unexpected(QString("Failed to remove deck media directory: %1").arg(dir.path()));
+        }
+    }
+
+    return {};
+}
+
 } // namespace revise

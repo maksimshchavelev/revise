@@ -196,6 +196,10 @@ std::expected<void, QString> SqlDeckRepository::delete_deck(int deckId)
         return std::unexpected(q.lastError().text());
     }
 
+    if (auto res = m_media.remove_media(deckId); !res.has_value()) {
+        return std::unexpected(res.error());
+    }
+
     emit data_changed();
     return {};
 }

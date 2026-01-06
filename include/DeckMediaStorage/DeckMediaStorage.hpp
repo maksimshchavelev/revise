@@ -27,6 +27,13 @@ public:
                                                const QString& image_name,
                                                const QByteArray& binary_data) const;
 
+    /**
+     * @brief Deletes all media data from the specified deck
+     * @param deckId ID of the deck
+     * @return `std::expected<void, QString>`
+     */
+    std::expected<void, QString> remove_media(int deckId) const;
+
 private:
     const QString m_dir; ///< Directory with media
 };
