@@ -31,6 +31,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 35
             placeholderText: qsTr("Текст спереди")
+            inputMethodHints: Qt.ImhNoAutoUppercase
             onTextChanged: {
                 valid = !deckService.is_card_exists(root.deckId, cardFront.text)
             }
@@ -44,6 +45,7 @@ Item {
             id: cardBack
             Layout.fillWidth: true
             Layout.fillHeight: true
+            inputMethodHints: Qt.ImhNoAutoUppercase
             placeholderText: qsTr("Текст сзади")
         }
 
