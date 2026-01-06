@@ -9,11 +9,15 @@ namespace revise {
 
 // Public method
 DeckService::DeckService(std::function<std::unique_ptr<IDeckRepository>()> repo_factory,
-                         IDeckImporter& importer,
+                         IDeckImporter&    importer,
+                         DeckMediaStorage& media_storage,
+                         HtmlHelper&        html_helper,
                          QObject* parent) :
     QObject(parent),
     m_repo_factory(std::move(repo_factory)),
-    m_importer(importer) {
+    m_importer(importer),
+    m_media_storage(media_storage),
+    m_html_helper(html_helper) {
     m_repo = m_repo_factory();
 }
 
@@ -164,8 +168,31 @@ void DeckService::import_deck_async(const QString& path)
             }
         }
 
+        // Save all images
+        QMap<QString, QByteArray> images = import_res->user_data.value<QMap<QString, QByteArray>>();
+        QMap<QString /* image name */, QString /* path to image */> mapped_images;
+        for(const auto& [name, data] : images.toStdMap()) {
+            if (auto res = m_media_storage.save_image(deckId, name, data); !res.has_value()) {
+                ErrorReporter::instance()->report(
+                    QString("Failed to save image with name %1, deck ID = %2").arg(name).arg(deckId),
+                    res.error(),
+                    "DeckService::import_deck_async()"
+                );
+                m_import_in_progress = false;
+                emit importInProgressChanged();
+                return;
+            } else {
+                mapped_images[name] = "file://" + res.value();
+            }
+        }
+
+        // Update img sources
+        for (auto& imported_card : import_res->cards) {
+            imported_card.back = m_html_helper.replace_image_src(imported_card.back, mapped_images);
+            qDebug() << imported_card.back;
+        }
+
         // Update cards if deck exists
-        // TODO TODO TODO TODO TODO TODO TODO TODO: implement updating deck, for example, time limit
         if (deck_exists) {
             auto cards = repo->get_cards(deckId);
 

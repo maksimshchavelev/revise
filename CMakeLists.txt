@@ -5,7 +5,9 @@ project(revise VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql Concurrent)
+set(JSONCPP_ANDROID_DIR "/usr/local/jsoncpp-android")
+
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql Concurrent Svg)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
@@ -57,8 +59,14 @@ qt_add_resources(apprevise
         res/fonts/anonymous_pro/AnonymousPro-BoldItalic.ttf
         res/fonts/anonymous_pro/AnonymousPro-Italic.ttf
         res/fonts/anonymous_pro/AnonymousPro-Regular.ttf
+
+        # math
+        res/math/katex.min.js
+        res/math/katex.js
+        res/math/katex.css
 )
 
+include(${ANDROID_SDK_ROOT}/android_openssl/CMakeLists.txt)
 include(FetchContent)
 
 set(QUAZIP_QT_MAJOR_VERSION 6 CACHE STRING "" FORCE)
@@ -82,6 +90,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(zstd)
 get_target_property(ZSTD_SOURCE_DIR libzstd_static SOURCE_DIR)
 
+# Boost stacktrace
 set(BOOST_ENABLE_CMAKE ON)
 set(BOOST_INCLUDE_LIBRARIES stacktrace headers config)
 set(BOOST_EXCLUDE_LIBRARIES fiber serialization graph wave stacktrace_test)
@@ -105,6 +114,8 @@ set_target_properties(apprevise PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
+    QT_ANDROID_EXTRA_LIBS
+        "${ANDROID_SDK_ROOT}/android_openssl/ssl_3/${CMAKE_ANDROID_ARCH_ABI}/libcrypto_3.so;${ANDROID_SDK_ROOT}/android_openssl/ssl_3/${CMAKE_ANDROID_ARCH_ABI}/libssl_3.so"
 )
 
 set_property(TARGET apprevise APPEND PROPERTY
@@ -115,9 +126,11 @@ target_link_libraries(apprevise PRIVATE
     Qt6::Quick
     Qt6::Sql
     Qt6::Concurrent
+    Qt6::Svg
     QuaZip::QuaZip
     Boost::stacktrace_basic
     libzstd_static
+    PRIVATE ${JSONCPP_ANDROID_DIR}/lib
 )
 
 target_include_directories(apprevise PRIVATE

@@ -3,6 +3,7 @@
 // manages the training process for the selected deck.
 
 #include <DeckImporter/AnkiDeckImporter.hpp> // for AnkiDeckImporter
+#include <QRegularExpressionMatchIterator>   // for QRegularExpressionMatchIterator
 #include <QDir>                              // for QDir
 #include <QStandardPaths>                    // for QStandardPaths
 #include <QSqlError>                         // for QSqlError
@@ -18,9 +19,11 @@ namespace revise {
 std::expected<ImportResult, QString> AnkiDeckImporter::import_from_file(const QString& path) {
     ImportResult res;
 
-    QString base_temp_dir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
-    QString import_dir = base_temp_dir + "/anki_import_" + QUuid::createUuid().toString(QUuid::WithoutBraces);
-    QString db_path = import_dir + "/collection";
+    const QString base_temp_dir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+    const QString import_dir = base_temp_dir + "/anki_import_" + QUuid::createUuid().toString(QUuid::WithoutBraces);
+    const QString db_path = import_dir + "/collection";
+    const QString unpacked_media_path = import_dir + "/unpacked_media";
+    QMap<QString /* image name */, QByteArray /* binary image */> mapped_images;
 
     QDir().mkdir(import_dir); // make import directory
 
@@ -37,6 +40,41 @@ std::expected<ImportResult, QString> AnkiDeckImporter::import_from_file(const QS
     if (!QFile::exists(db_path)) {
         return std::unexpected(QString("DB %1 not found").arg(db_path));
     }
+
+    // Unzip media
+    if (auto res = decompress_zstd_file(import_dir + "/media", unpacked_media_path); !res.has_value()) {
+        return std::unexpected(res.error());
+    }
+
+    if (!QFile::exists(unpacked_media_path)) {
+        return std::unexpected(QString("Unpacked media '%1' not found").arg(unpacked_media_path));
+    }
+
+    // Map media
+    for(const auto& [image_name, archive_name] : map_images(unpacked_media_path).toStdMap()) {
+        // We need to unpack the archive using zstd, read it, and write it to QByteArray.
+
+        // Decompress zstd
+        const QString archive_path = QString("%1/%2").arg(import_dir).arg(archive_name);
+        const QString unpacked_path = QString("%1/unpacked_%2").arg(import_dir).arg(archive_name);
+        if (auto res = decompress_zstd_file(archive_path, unpacked_path); !res.has_value()) {
+            return std::unexpected(res.error());
+        }
+
+        // Read decompressed zstd
+        QFile file(unpacked_path);
+        if (file.open(QIODevice::ReadOnly)) {
+            QByteArray data = file.readAll();
+            file.close();
+            // Save
+            mapped_images[image_name] = std::move(data);
+        } else {
+            return std::unexpected(QString("Failed to read unpacked image file '%1'").arg(unpacked_path));
+        }
+    }
+
+    // Save to res
+    res.user_data = QVariant::fromValue(std::move(mapped_images));
 
     // Anki database
     QSqlDatabase anki_db = QSqlDatabase::addDatabase("QSQLITE", "anki_import");
@@ -224,6 +262,62 @@ std::expected<void, QString> AnkiDeckImporter::decompress_zstd_file(const QStrin
     }
 
     return {};
+}
+
+// Private method
+QMap<QString, QString> AnkiDeckImporter::map_images(const QString &media_path)
+{
+    QMap<QString, QString> result;
+
+    QFile file(media_path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "map_images: failed to open media file:" << media_path;
+        return result;
+    }
+
+    // Read entire file (media files are typically not huge)
+    const QByteArray raw = file.readAll();
+    file.close();
+
+    // Convert to QString using Latin1 to reliably preserve ASCII ranges inside arbitrary binary data.
+    // Filenames like "paste-...jpg" are ASCII, so this is safe and avoids UTF-8 decoding quirks.
+    const QString text = QString::fromLatin1(raw);
+
+    // Regular expression to find image filenames like:
+    //   paste-<hex-or-alphanum>.jpg
+    //   paste-<...>.png
+    // Adjust regex if you have other naming schemes.
+    static const QRegularExpression re(R"(paste-[A-Za-z0-9_\-]+(?:\.[A-Za-z0-9]+))",
+                                       QRegularExpression::CaseInsensitiveOption);
+
+    QRegularExpressionMatchIterator it = re.globalMatch(text);
+
+    int index = 0;
+    while (it.hasNext()) {
+        const QRegularExpressionMatch m = it.next();
+        if (!m.hasMatch())
+            continue;
+
+        const QString image_name = m.captured(0).trimmed();
+        if (image_name.isEmpty())
+            continue;
+
+        // If duplicate image_name appears, we *do not* remap the key; keep first mapping.
+        // This behaviour is intentional: QMap keys must be unique and typical Anki exports
+        // have unique paste-... filenames. If duplicates are possible and undesirable,
+        // consider using QMultiMap or mapping to QVector<QString>.
+        if (!result.contains(image_name)) {
+            result.insert(image_name, QString::number(index));
+            ++index;
+        } else {
+            // Duplicate encountered: still increment index to keep archive counting consistent
+            // (so the next unique name maps to the correct numeric archive).
+            ++index;
+        }
+    }
+
+    // If nothing matched, result will be empty.
+    return result;
 }
 
 

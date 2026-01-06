@@ -20,5 +20,12 @@ Item {
             front: "Hello sdkjglksfjg lkdfj glkdsfjkl gjdslk"
             Layout.fillWidth: true
         }
+
+        Image {
+            width: 50
+            height: 25
+            source: "image://math/\\frac{a^2+b^2}{c}"
+            fillMode: Image.PreserveAspectFit
+        }
     }
 }

@@ -48,16 +48,25 @@ Item {
             contentHeight: Math.max(text.implicitHeight, height)
             clip: true
             boundsBehavior: Flickable.StopAtBounds
+            flickableDirection: htmlHelper.has_mathjax(text) ?
+                                    Flickable.HorizontalFlick :
+                                    Flickable.VerticalFlick
 
             AppText {
                 id: text
                 width: parent.width
                 anchors.centerIn: parent
                 font.pixelSize: Theme.textSizeMedium
-                wrapMode: Text.WordWrap
-                text: studyService.cardText
+                wrapMode: htmlHelper.has_mathjax(text) ? Text.NoWrap : Text.WordWrap
+                text: {
+                    var prepared_text = htmlHelper.scale_images_to_width(studyService.cardText, parent.width)
+                    prepared_text = htmlHelper.replace_mathjax_to_images(prepared_text,
+                                                                         Theme.textColor,
+                                                                         Theme.textSizeMedium)
+                }
+
                 textFormat: Text.RichText
-                horizontalAlignment: Text.AlignHCenter
+                horizontalAlignment: htmlHelper.has_mathjax(text) ? Text.AlignLeft : Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
         }

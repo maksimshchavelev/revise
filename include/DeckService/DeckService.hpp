@@ -2,11 +2,13 @@
 
 #pragma once
 
-#include <IDeckRepository/IDeckRepository.hpp> // for IDeckRepository
-#include <IDeckImporter/IDeckImporter.hpp>     // for IDeckImporter
-#include <QObject>                             // for QObject
-#include <memory>                              // for std::unique_ptr
-#include <functional>                          // for std::function
+#include <IDeckRepository/IDeckRepository.hpp>   // for IDeckRepository
+#include <IDeckImporter/IDeckImporter.hpp>       // for IDeckImporter
+#include <QObject>                               // for QObject
+#include <memory>                                // for std::unique_ptr
+#include <functional>                            // for std::function
+#include <DeckMediaStorage/DeckMediaStorage.hpp> // for DeckMediaStorage
+#include <HtmlHelper/HtmlHelper.hpp>             // for HtmlHelper
 
 namespace revise {
 
@@ -20,8 +22,10 @@ class DeckService : public QObject {
     Q_PROPERTY(bool importInProgress READ import_in_progress NOTIFY importInProgressChanged)
 
     DeckService(std::function<std::unique_ptr<IDeckRepository>()> repo_factory,
-                IDeckImporter& importer,
-                QObject* parent = nullptr);
+                IDeckImporter&    importer,
+                DeckMediaStorage& media_storage,
+                HtmlHelper&       html_helper,
+                QObject*          parent = nullptr);
 
     /**
      * @brief Get a list of decks
@@ -142,6 +146,8 @@ class DeckService : public QObject {
   private:
     std::function<std::unique_ptr<IDeckRepository>()> m_repo_factory;
     IDeckImporter&                                    m_importer;
+    DeckMediaStorage&                                 m_media_storage;
+    HtmlHelper&                                       m_html_helper;
     std::unique_ptr<IDeckRepository>                  m_repo; ///< Create in ctor
 
     bool m_import_in_progress{false};

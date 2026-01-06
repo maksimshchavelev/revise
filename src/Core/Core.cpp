@@ -18,6 +18,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     QObject(parent),
     m_app(app),
     m_db("revise_main", "revise.db", this),
+    m_html_helper(this),
     m_sql_deck_repo(m_db, this),
     m_sm2_algo(),
     m_streak_service(m_db, this),
@@ -26,7 +27,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     m_deck_service([this]() -> std::unique_ptr<IDeckRepository> {
         const QString connName = QStringLiteral("repo_conn_%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
         return make_thread_local_sql_repo(connName);
-    }, m_anki_importer, this),
+    }, m_anki_importer, m_deck_media_storage, m_html_helper, this),
     m_decks_model(m_deck_service),
     m_cards_model(m_deck_service) {
 
@@ -86,6 +87,7 @@ int Core::run() {
     engine.rootContext()->setContextProperty("cardsModel", &m_cards_model);
     engine.rootContext()->setContextProperty("studyService", &m_study_service);
     engine.rootContext()->setContextProperty("deckService", &m_deck_service);
+    engine.rootContext()->setContextProperty("htmlHelper", &m_html_helper);
     engine.rootContext()->setContextProperty("errorReporter", ErrorReporter::instance());
 
     qmlRegisterUncreatableType<AppError>(
@@ -93,6 +95,8 @@ int Core::run() {
 
     qmlRegisterUncreatableType<Deck>("Revise", 1, 0, "Deck",
                                              "Deck is a value type; use DeckService to create/edit decks");
+
+    engine.addImageProvider("math", &m_mathjax_renderer);
 
     QObject::connect(
         &engine,

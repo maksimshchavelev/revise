@@ -19,6 +19,7 @@ struct ImportResult {
     QString       deck_name;        ///< human-readable deck name
     QString       deck_description; ///< descriotion
     QVector<Card> cards;            ///< parsed cards (front/back and meta). Use repository Card DTO.
+    QVariant      user_data;        ///< Custom data. Depends on the specific implementation of the importer.
 };
 
 /**

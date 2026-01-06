@@ -14,6 +14,9 @@
 #include <DeckService/DeckService.hpp>             // for DeckService
 #include <QGuiApplication>                         // for QGuiApplication
 #include <QObject>                                 // for QObject
+#include <DeckMediaStorage/DeckMediaStorage.hpp>   // for DeckMediaStorage
+#include <HtmlHelper/HtmlHelper.hpp>               // for HtmlHelper
+#include <MathJaxRenderer/MathJaxRenderer.hpp>     // for MathJaxRenderer
 
 namespace revise {
 
@@ -28,6 +31,8 @@ class Core : public QObject {
   private:
     QGuiApplication&  m_app;
     Database          m_db;
+    DeckMediaStorage  m_deck_media_storage;
+    HtmlHelper        m_html_helper;
     SqlDeckRepository m_sql_deck_repo;
     SM2Algorithm      m_sm2_algo;
     StreakService     m_streak_service;
@@ -36,6 +41,7 @@ class Core : public QObject {
     DeckService       m_deck_service;
     DecksModel        m_decks_model;
     CardsModel        m_cards_model;
+    MathJaxRenderer   m_mathjax_renderer;
 
     // Helper
     std::unique_ptr<IDeckRepository> make_thread_local_sql_repo(const QString& conn_name);
