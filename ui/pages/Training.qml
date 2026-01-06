@@ -77,7 +77,7 @@ Item {
             Layout.alignment: Qt.AlignBottom
             Layout.topMargin: 8
             onEasyClicked: studyService.next_card(0);
-            onNormalClicked: studyService.next_card(1.5);
+            onNormalClicked: studyService.next_card(1.35);
             onHardClicked: studyService.next_card(3);
             onBadClicked: studyService.next_card(5);
         }
