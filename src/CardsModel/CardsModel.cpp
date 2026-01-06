@@ -60,5 +60,9 @@ void CardsModel::load(int deckId) {
     endResetModel();
 }
 
+// Public method
+int CardsModel::cards_count() const noexcept {
+    return m_cards.size();
+}
 
 } // namespace revise

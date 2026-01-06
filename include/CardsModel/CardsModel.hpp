@@ -27,6 +27,13 @@ public:
      */
     Q_INVOKABLE void load(int deckId);
 
+    /**
+     * @brief Get cards count
+     * @return Count of the cards
+     * @note First, call the `load` method to load information about the deck.
+     */
+    Q_INVOKABLE int cards_count() const noexcept;
+
     int                    rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant               data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;

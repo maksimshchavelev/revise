@@ -155,7 +155,8 @@ Item {
                 Layout.fillWidth: true
 
                 AppText {
-                    text: qsTr("Список карточек:")
+                    Layout.fillWidth: true
+                    text: qsTr("Список карточек (всего " + cardsModel.cards_count() + "):")
                 }
 
                 Item {
