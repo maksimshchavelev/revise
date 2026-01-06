@@ -86,7 +86,9 @@ void DeckService::import_deck_async(const QString& path)
 
     [[maybe_unused]] QFuture res = QtConcurrent::run([this, path](){
         auto import_res = m_importer.import_from_file(path);
-        int  imported{0};
+
+        QVector<CardBackUpdate> cards_to_update;
+        QVector<Card>           cards_to_insert;
 
         if (!import_res.has_value()) {
             QMetaObject::invokeMethod(this, [this, import_res]() {
@@ -193,7 +195,6 @@ void DeckService::import_deck_async(const QString& path)
         // Update img sources
         for (auto& imported_card : import_res->cards) {
             imported_card.back = m_html_helper.replace_image_src(imported_card.back, mapped_images);
-            qDebug() << imported_card.back;
         }
 
         // Update cards if deck exists
@@ -213,8 +214,6 @@ void DeckService::import_deck_async(const QString& path)
             }
 
             // update cards
-            QVector<Card> new_cards; // New cards that were not previously in the database
-
             for(const auto& card : import_res->cards) {
                 auto iter = std::find_if(cards.value().begin(), cards.value().end(), [&card](const Card& i){
                     return card.front == i.front;
@@ -222,65 +221,51 @@ void DeckService::import_deck_async(const QString& path)
 
                 // if card found in database
                 if (iter != cards.value().end()) {
-                    // update card
-                    iter->back = card.back;
-                    iter->updated_at = QDateTime::currentDateTime();
-                    iter->created_at = iter->created_at;
+                    // update card and save to vector
+                    cards_to_update.push_back(CardBackUpdate{
+                        .cardId = iter->id,
+                        .back = card.back,
+                        .updated_at = QDateTime::currentDateTime()
+                    });
                 } else {
                     // insert card to db
-                    new_cards.push_back(std::move(card));
+                    cards_to_insert.push_back(std::move(card));
                 }
             }
-
-            // insert new cards
-            if (auto res = repo->insert_cards_batch(deckId, new_cards); !res.has_value()) {
-                ErrorReporter::instance()->report(
-                    QString("Failed to import card to deck with ID = %1").arg(deckId),
-                    res.error(),
-                    "DeckService::import_deck_async()"
-                );
-                m_import_in_progress = false;
-                emit importInProgressChanged();
-                return;
-            }
-
-            imported += new_cards.size();
-
-            // update old cards
-            for (const auto& card : import_res->cards) {
-                if (auto res = repo->update_card(card); !res.has_value()) {
-                    ErrorReporter::instance()->report(
-                        QString("Failed to update card with front = %1").arg(card.front),
-                        res.error(),
-                        "DeckService::import_deck_async()"
-                    );
-                    m_import_in_progress = false;
-                    emit importInProgressChanged();
-                    return;
-                }
-            }
-
         } else {
             // Insert cards if deck not exists
-            if (auto res = repo->insert_cards_batch(deckId, import_res->cards); !res.has_value()) {
-                ErrorReporter::instance()->report(
-                    QString("Failed to import card to deck with ID = %1").arg(deckId),
-                    res.error(),
-                    "DeckService::import_deck_async()"
-                );
-                m_import_in_progress = false;
-                emit importInProgressChanged();
-                return;
-            }
+            cards_to_insert = std::move(import_res->cards);
+        }
 
-            imported += import_res->cards.size();
+        // Update old
+        if (auto res = repo->update_card_backs_batch(cards_to_update); !res.has_value()) {
+            ErrorReporter::instance()->report(
+                "Failed to update card backs batch",
+                res.error(),
+                "DeckService::import_deck_async()"
+            );
+            m_import_in_progress = false;
+            emit importInProgressChanged();
+            return;
+        }
+
+        // Insert new
+        if (auto res = repo->insert_cards_batch(deckId, cards_to_insert); !res.has_value()) {
+            ErrorReporter::instance()->report(
+                "Failed to insert cards batch",
+                res.error(),
+                "DeckService::import_deck_async()"
+                );
+            m_import_in_progress = false;
+            emit importInProgressChanged();
+            return;
         }
 
         // Finish
         m_import_in_progress = false;
         QMetaObject::invokeMethod(this, &DeckService::importInProgressChanged, Qt::QueuedConnection);
         QMetaObject::invokeMethod(this, &DeckService::decksUpdated, Qt::QueuedConnection);
-        QMetaObject::invokeMethod(this, [this, card_count = imported]() {
+        QMetaObject::invokeMethod(this, [this, card_count = cards_to_insert.size()]() {
             emit deckImported(card_count);
         }, Qt::QueuedConnection);
     });

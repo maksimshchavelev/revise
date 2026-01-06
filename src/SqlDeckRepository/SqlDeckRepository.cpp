@@ -326,6 +326,45 @@ std::expected<void, QString> SqlDeckRepository::insert_cards_batch(int deckId, c
 }
 
 // Public method
+std::expected<void, QString> SqlDeckRepository::update_card_backs_batch(const QVector<CardBackUpdate>& cards)
+{
+    // do batch insert inside one transaction
+    auto start = m_db.begin_transaction();
+
+    if (!start.has_value()) {
+        return std::unexpected(start.error());
+    }
+
+    QSqlQuery q(m_db.raw_db());
+
+    q.prepare(R"(
+        UPDATE cards
+        SET back = :back, updated_at = :updated_at
+        WHERE id = :id
+    )");
+
+    for (const auto& c : cards) {
+        q.bindValue(":id", c.cardId);
+        q.bindValue(":back", c.back);
+        q.bindValue(":updated_at", c.updated_at);
+
+        if (!q.exec()) {
+            m_db.rollback_transaction();
+            return std::unexpected(q.lastError().text());
+        }
+    }
+
+    auto commit = m_db.commit_transaction();
+    if (!commit.has_value()) {
+        m_db.rollback_transaction();
+        return std::unexpected(commit.error());
+    }
+
+    emit data_changed();
+    return {};
+}
+
+// Public method
 std::expected<void, QString> SqlDeckRepository::insert_card(int deckId, const Card &card)
 {
     QSqlQuery q(m_db.raw_db());

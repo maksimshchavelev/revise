@@ -12,6 +12,12 @@
 
 namespace revise {
 
+struct CardBackUpdate {
+    int       cardId;
+    QString   back;
+    QDateTime updated_at;
+};
+
 /**
  * @brief Repository interface for deck/card persistence.
  *
@@ -33,6 +39,7 @@ class IDeckRepository {
 
     virtual std::expected<void, QString> update_card(const Card& card) = 0;
     virtual std::expected<void, QString> insert_cards_batch(int deckId, const QVector<Card>& cards) = 0;
+    virtual std::expected<void, QString> update_card_backs_batch(const QVector<CardBackUpdate>& cards) = 0;
     virtual std::expected<void, QString> insert_card(int deckId, const Card& card) = 0;
     virtual std::expected<bool, QString> is_card_exists(int deckId, const QString& card_front) = 0;
     virtual std::expected<Card, QString> get_card(int cardId) = 0;
