@@ -79,13 +79,16 @@ void StudyService::start_training(int deck_id) {
     const QDateTime now = QDateTime::currentDateTime();
 
     for (const Card& card : cards) {
+        if (card.next_review >= now) {
+            continue; // skip
+        }
+
         switch (card.state) {
         case 2:
             failed.push_back(card);
             break;
         case 1:
-            if (card.next_review <= now)
-                review.push_back(card);
+            review.push_back(card);
             break;
         case 0:
             fresh.push_back(card);
