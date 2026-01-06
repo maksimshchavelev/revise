@@ -129,6 +129,27 @@ class DeckService : public QObject {
     Q_INVOKABLE void create_card(int deckId, const QString& front, const QString& back);
 
     /**
+     * @brief Returns information about the card
+     * @param cardId Card ID
+     * @return `Card`
+     */
+    Q_INVOKABLE Card get_card(int cardId);
+
+    /**
+     * @brief Remove card
+     * @param cardId ID of the card
+     */
+    Q_INVOKABLE void remove_card(int cardId);
+
+    /**
+     * @brief Update card
+     * @param cardId ID of the card
+     * @param front Front of the card
+     * @param back Back of the card
+     */
+    Q_INVOKABLE void update_card(int cardId, const QString& front, const QString& back);
+
+    /**
      * @brief Is the deck being imported now?
      * @return `true` if true
      */
@@ -140,6 +161,8 @@ class DeckService : public QObject {
     void deckImported(int cardsImported);
     void decksUpdated();
     void deckUpdated();
+    void cardRemoved();
+    void cardUpdated();
     void importInProgressChanged();
     void errorOccured(const QString& what);
 

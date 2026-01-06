@@ -11,231 +11,104 @@ import "../theme"
 Item {
     id: root
 
-    anchors.fill: parent
-    anchors.margins: 5
-
     property int deckId: 0
-    property var deck: ({
-                            "name": "",
-                            "description": "",
-                            "timeLimit": 0,
-                            "newLimit": 0,
-                            "consolidateLimit": 0,
-                            "incorrectLimit": 0,
-                            "id": 0
-                        })
+    signal backClicked()
 
-    signal back
-    signal updateClicked(int deckId, string name, string description, int timeLimit, int newLimit, int consolidateLimit, int incorrectLimit)
-    signal addCardClicked(int deckId)
-
-    onDeckIdChanged: {
-        if (deckId > 0) {
-            root.deck = deckService.deck_info(deckId)
-            cardsModel.load(deckId)
+    function exitClicked() {
+        if (pages.children[pages.currentIndex] && typeof pages.children[pages.currentIndex].exitClicked === 'function') {
+            pages.children[pages.currentIndex].exitClicked()
+        } else {
+            console.warn("Failed to check pages.children[pages.currentIndex] && typeof pages.children[pages.currentIndex].exitClicked === 'function'")
         }
     }
 
-    Flickable {
+    StackLayout {
+        id: pages
         anchors.fill: parent
-        contentWidth: width
-        contentHeight: layout.implicitHeight
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
 
-        ColumnLayout {
-            id: layout
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 3
-            anchors.rightMargin: 3
-            spacing: 8
+        DeckOptions {
+            deckId: root.deckId
+            onAddCardClicked: {
+                deckId = root.deckId
+                pages.currentIndex = 1
+            }
+            onUpdateClicked: function (deckId, name, description, timeLimit, newLimit, consolidateLimit, incorrectLimit) {
+                deckService.update_deck(deckId, name, description, timeLimit, newLimit, consolidateLimit, incorrectLimit)
+            }
+            onCardClicked: function(cardId) {
+                cardEventPopup.open(cardId)
+            }
+            onBackClicked: root.backClicked()
+        }
 
-            AppText {
-                text: qsTr("Название")
+        CreateCard {
+            deckId: root.deckId
+            onBackClicked: pages.currentIndex = 0
+            onCreateClicked: {
+                deckService.create_card(deckId, front, back)
+                Qt.inputMethod.hide()
+            }
+            onPreviewClicked: function(front, back) {
+                Qt.inputMethod.hide()
+                previewCard.front = front
+                previewCard.back = back
+                previewCard.previousPageIndex = 1
+                pages.currentIndex = 2
+            }
+        }
+
+        PreviewCard {
+            id: previewCard
+            onBackClicked: function(previousPageIndex) {
+                Qt.inputMethod.hide()
+                pages.currentIndex = previousPageIndex
+            }
+        }
+
+        EditCard {
+            id: editCard
+
+            onPreviewClicked: {
+                Qt.inputMethod.hide()
+                previewCard.front = front
+                previewCard.back = back
+                previewCard.previousPageIndex = 3
+                pages.currentIndex = 2
             }
 
-            ValidatedTextField {
-                id: deckName
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
-                placeholderText: qsTr("Имя колоды")
-                text: root.deck.name
+            onUpdateClicked: function(id, front, back) {
+                Qt.inputMethod.hide()
+                deckService.update_card(id, front, back)
             }
 
-            AppText {
-                text: qsTr("Описание")
+            onBackClicked: function() {
+                Qt.inputMethod.hide()
+                pages.currentIndex = 0
             }
+        }
+    }
 
-            ValidatedTextField {
-                id: deckDescription
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
-                placeholderText: qsTr("Описание (необязательно)")
-                text: root.deck.description
-            }
+    CardEventPopup {
+        id: cardEventPopup
 
-            CheckupableOption {
-                id: limitTime
-                text: qsTr("Ограничить время ответа")
-                Layout.fillWidth: true
-                checked: root.deck ? root.deck.timeLimit > 0 : false
-            }
+        onPreviewClicked: function(cardId) {
+            Qt.inputMethod.hide()
+            var card = deckService.get_card(cardId)
+            previewCard.front = card.front
+            previewCard.back = card.back
+            previewCard.previousPageIndex = 0
+            pages.currentIndex = 2
+        }
 
-            AppText {
-                text: qsTr("Ограничение времени")
-            }
+        onRemoveClicked: function(cardId) {
+            Qt.inputMethod.hide()
+            deckService.remove_card(cardId)
+        }
 
-            ValidatedTextField {
-                id: deckTimeLimit
-                editable: limitTime.checked
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
-                placeholderText: qsTr("Ограничение времени (сек)")
-                inputMethodHints: Qt.ImhDigitsOnly
-                validator: IntValidator {
-                    bottom: 1
-                    top: 3600
-                }
-                text: root.deck.timeLimit
-            }
-
-            AppText {
-                text: qsTr("Ограничение новых карточек")
-            }
-
-            ValidatedTextField {
-                id: deckNewLimit
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
-                placeholderText: qsTr("Максимум новых карточек")
-                inputMethodHints: Qt.ImhDigitsOnly
-                validator: IntValidator {
-                    bottom: 1
-                    top: 500
-                }
-                text: root.deck.newLimit
-            }
-
-            AppText {
-                text: qsTr("Ограничение повторяемых")
-            }
-
-            ValidatedTextField {
-                id: deckConsolidateLimit
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
-                placeholderText: qsTr("Максимум повторяемых")
-                inputMethodHints: Qt.ImhDigitsOnly
-                validator: IntValidator {
-                    bottom: 1
-                    top: 500
-                }
-                text: root.deck.consolidateLimit
-            }
-
-            AppText {
-                text: qsTr("Ограничение ошибочных")
-            }
-
-            ValidatedTextField {
-                id: deckIncorrectLimit
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
-                placeholderText: qsTr("Максимум ошибочных")
-                inputMethodHints: Qt.ImhDigitsOnly
-                validator: IntValidator {
-                    bottom: 1
-                    top: 500
-                }
-                text: root.deck.incorrectLimit
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-
-                AppText {
-                    Layout.fillWidth: true
-                    text: qsTr("Список карточек (всего " + cardsModel.cards_count() + "):")
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                // Create button
-                Button {
-                    text: qsTr("Добавить")
-                    onClicked: root.addCardClicked(root.deckId)
-                }
-            }
-
-            // List of the cards
-            ListView {
-                model: cardsModel
-                spacing: 10
-                boundsBehavior: Flickable.StopAtBounds
-                clip: true
-
-                Layout.fillWidth: true
-                Layout.preferredHeight: Math.min(contentHeight,
-                                                 root.height * 0.55)
-
-                onContentHeightChanged: console.log(contentHeight)
-
-                delegate: Item {
-                    width: ListView.view.width
-                    height: card.implicitHeight
-
-                    CardView {
-                        id: card
-                        width: parent.width
-                        anchors.horizontalCenter: parent.horizontalCenter
-
-                        cardId: model.id
-                        front: model.front
-                        back: model.back
-
-                        onClicked: {
-                            console.log("Clicked on the card with id = " + cardId)
-                        }
-                    }
-                }
-            }
-
-            Button {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.fillWidth: true
-                Layout.topMargin: 4
-                text: qsTr("Обновить")
-                clickable: deckName.valid && deckName.text.trim() !== ""
-                           && (deckDescription.valid || deckDescription.text.trim()
-                               === "") && (!limitTime.checked
-                                           || (deckTimeLimit.valid && deckTimeLimit.text.trim()
-                                               !== "")) && deckNewLimit.valid
-                           && deckNewLimit.text.trim() !== ""
-                           && deckConsolidateLimit.valid && deckConsolidateLimit.text.trim()
-                           !== "" && deckIncorrectLimit.valid
-                           && deckIncorrectLimit.text.trim() !== ""
-                onClicked: {
-                    updateClicked(
-                                root.deckId, deckName.text,
-                                deckDescription.text,
-                                limitTime.checked ? parseInt(
-                                                        deckTimeLimit.text) : 0,
-                                parseInt(deckNewLimit.text),
-                                parseInt(deckConsolidateLimit.text),
-                                parseInt(deckIncorrectLimit.text))
-                }
-            }
-
-            Button {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.fillWidth: true
-                Layout.topMargin: 4
-                text: qsTr("Закрыть")
-                onClicked: root.back()
-            }
+        onEditClicked: function(cardId) {
+            Qt.inputMethod.hide()
+            editCard.card = deckService.get_card(cardId)
+            pages.currentIndex = 3
         }
     }
 }

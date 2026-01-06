@@ -13,6 +13,8 @@ class CardsModel : public QAbstractListModel {
     Q_OBJECT
 
 public:
+    Q_PROPERTY(int cardsCount READ cards_count NOTIFY dataChanged);
+
     CardsModel(DeckService& service);
 
     enum CardRoles {
@@ -37,6 +39,9 @@ public:
     int                    rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant               data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
+
+signals:
+    void dataChanged();
 
 private:
     DeckService&  m_deck_service;

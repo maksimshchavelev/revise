@@ -397,6 +397,87 @@ void DeckService::create_card(int deckId, const QString &front, const QString &b
 }
 
 // Public method
+Card DeckService::get_card(int cardId)
+{
+    auto res = m_repo->get_card(cardId);
+
+    if (!res.has_value()) {
+        ErrorReporter::instance()->report(
+            QString("Unable to fetch card with id = %1")
+                .arg(cardId),
+            res.error(),
+            "DeckService::get_card()"
+        );
+        return Card{};
+    }
+
+    return res.value();
+}
+
+// Public method
+void DeckService::remove_card(int cardId)
+{
+    auto res = m_repo->remove_card(cardId);
+
+    if (!res.has_value()) {
+        ErrorReporter::instance()->report(
+            QString("Failed to remove card with id = %1")
+            .arg(cardId),
+            res.error(),
+            "DeckService::remove_card()"
+        );
+        return;
+    }
+
+    emit deckUpdated();
+    emit cardRemoved();
+}
+
+// Public method
+void DeckService::update_card(int cardId, const QString &front, const QString &back)
+{
+    auto fetching_res = m_repo->get_card(cardId);
+
+    if (!fetching_res.has_value()) {
+        ErrorReporter::instance()->report(
+            QString("Failed to fetch info about card with id = %1")
+                .arg(cardId),
+            fetching_res.error(),
+            "DeckService::update_card()"
+            );
+        return;
+    }
+
+    auto res = m_repo->update_card({
+                        .id = cardId,
+                         .deck_id = fetching_res->deck_id,
+                         .state = fetching_res->state,
+                         .incorrect_streak = fetching_res->incorrect_streak,
+                         .interval = fetching_res->interval,
+                         .time_limit = fetching_res->time_limit,
+                         .difficulty = fetching_res->difficulty,
+                         .next_review = fetching_res->next_review,
+                         .created_at = fetching_res->created_at,
+                         .updated_at = QDateTime::currentDateTime(),
+                        .front = front,
+                        .back = back
+    });
+
+    if (!res.has_value()) {
+        ErrorReporter::instance()->report(
+            QString("Failed to update card with id = %1")
+                .arg(cardId),
+            res.error(),
+            "DeckService::update_card()"
+        );
+        return;
+    }
+
+    emit deckUpdated();
+    emit cardUpdated();
+}
+
+// Public method
 bool DeckService::import_in_progress() const noexcept
 {
     return m_import_in_progress;

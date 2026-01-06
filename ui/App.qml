@@ -22,7 +22,6 @@ ApplicationWindow {
         "main": "qrc:/ui/MainLayout.qml",
         "training": "qrc:/ui/pages/Training.qml",
         "editDeck": "qrc:/ui/pages/EditDeck.qml",
-        "createCard": "qrc:/ui/pages/CreateCard.qml"
     }
 
     Loader {
@@ -45,35 +44,10 @@ ApplicationWindow {
                     infoPopup.open(qsTr("Тренировка завершена!"))
                 })
             }
-            if (item.back) {
-                item.back.connect(function() {
-                    pageLoader.source = pages.main
-                })
-            }
-            if (item.addCardClicked) {
-                item.addCardClicked.connect(function(deckId) {
-                    pageLoader.setSource(pages.createCard, {
-                                             "deckId": deckId
-                                         })
-                })
-            }
-            if (item.createClicked) {
-                item.createClicked.connect(function(deckId, front, back) {
-                    deckService.create_card(deckId, front, back)
-                    infoPopup.open(qsTr("Карточка создана"))
-                })
-            }
             if (item.backClicked) {
                 item.backClicked.connect(function() {
-                    // This is a bit of a hack, we should use a router
-                    // to go back to the previous page.
-                    pageLoader.setSource(pages.editDeck, {
-                                             "deckId": item.deckId
-                                         })
+                    pageLoader.source = pages.main
                 })
-            }
-            if (item.updateClicked) {
-                item.updateClicked.connect(deckService.update_deck)
             }
         }
     }
@@ -165,6 +139,10 @@ ApplicationWindow {
 
         function onDeckUpdated() {
             infoPopup.open(qsTr("Колода обновлена"))
+        }
+
+        function onCardRemoved() {
+            infoPopup.open(qsTr("Карточка удалена"))
         }
     }
 

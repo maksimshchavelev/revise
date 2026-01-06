@@ -1,4 +1,4 @@
-// A pop-up notification that displays plain text
+// A pop-up notification that displays what to do with the card
 
 import QtQuick
 import QtQuick.Effects
@@ -11,11 +11,15 @@ Item {
 
     anchors.fill: parent
     visible: false
-    z: 1000
     opacity: root.visible ? 1 : 0
+    z: 1000
 
-    property string text
+    signal removeClicked(int cardId)
+    signal editClicked(int cardId)
+    signal previewClicked(int cardId)
+
     property Item sourceItem
+    property int cardId: 0
 
     ShaderEffectSource {
         id: snapshot
@@ -39,12 +43,21 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "black"
-        opacity: 0.25
+        opacity: 0.4
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            root.close()
+            root.rejected()
+        }
     }
 
     Item {
-        width: parent.width * 0.85
-        implicitHeight: text.implicitHeight + 110
+        id: widget
+        width: parent.width * 0.75
+        implicitHeight: layout.implicitHeight
         anchors.centerIn: parent
         clip: true
         scale: root.visible ? 1 : 0.85
@@ -60,27 +73,40 @@ Item {
         }
 
         ColumnLayout {
+            id: layout
             anchors.fill: parent
             spacing: 15
 
-            Item {
-                Layout.fillHeight: true
-            }
-
-            AppText {
-                id: text
-                text: root.text
-                color: Theme.textColor
-                Layout.alignment: Qt.AlignCenter
-                Layout.maximumWidth: parent.width * 0.85
+            Button {
+                text: qsTr("Превью")
+                Layout.preferredWidth: parent.width * 0.85
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: 20
+                onClicked: {
+                    root.close()
+                    root.previewClicked(root.cardId)
+                }
             }
 
             Button {
-                text: qsTr("Закрыть")
+                text: qsTr("Редактировать")
                 Layout.preferredWidth: parent.width * 0.85
-                Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
-                Layout.margins: 10
-                onClicked: root.close()
+                Layout.alignment: Qt.AlignHCenter
+                onClicked: {
+                    root.close()
+                    root.editClicked(root.cardId)
+                }
+            }
+
+            Button {
+                text: qsTr("Удалить")
+                Layout.preferredWidth: parent.width * 0.85
+                Layout.alignment: Qt.AlignHCenter
+                Layout.bottomMargin: 20
+                onClicked: {
+                    root.close()
+                    root.removeClicked(root.cardId)
+                }
             }
         }
 
@@ -106,8 +132,9 @@ Item {
         }
     }
 
-    function open(text) {
-        root.text = text
+    function open(cardId) {
+        Qt.inputMethod.hide()
+        root.cardId = cardId
         root.visible = true
     }
 

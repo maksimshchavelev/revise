@@ -66,8 +66,10 @@ Item {
         Rectangle {
             anchors.fill: parent
             color: "black"
-            opacity: 0.4
+            opacity: 0.6
             radius: 20
+            border.color: Theme.popupBorder
+            border.width: 2
         }
 
         ColumnLayout {

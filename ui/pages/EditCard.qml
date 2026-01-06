@@ -8,8 +8,9 @@ Item {
     id: root
 
     property int deckId: 0
+    property var card: null
 
-    signal createClicked(int deckId, string front, string back)
+    signal updateClicked(int deckId, string front, string back)
     signal previewClicked(string front, string back)
     signal backClicked()
 
@@ -31,6 +32,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 35
             placeholderText: qsTr("Текст спереди")
+            text: card.front
             onTextChanged: {
                 valid = !deckService.is_card_exists(root.deckId, cardFront.text)
             }
@@ -45,6 +47,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             placeholderText: qsTr("Текст сзади")
+            text: card.back
         }
 
         RowLayout {
@@ -58,16 +61,12 @@ Item {
                 Button {
                     id: btnAdd
                     anchors.fill: parent
-                    text: qsTr("Добавить")
+                    text: qsTr("Обновить")
                     clickable: cardFront.valid && cardFront.text.trim() !== ""
                                && cardBack.valid && cardBack.text.trim() !== ""
                     onClicked: {
                         Qt.inputMethod.hide()
-                        createClicked(root.deckId, cardFront.text,
-                                      cardBack.text)
-                        // Clear fields after adding
-                        cardFront.text = ""
-                        cardBack.text = ""
+                        updateClicked(root.card.id, cardFront.text, cardBack.text)
                     }
                 }
             }

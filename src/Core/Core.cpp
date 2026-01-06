@@ -96,6 +96,9 @@ int Core::run() {
     qmlRegisterUncreatableType<Deck>("Revise", 1, 0, "Deck",
                                              "Deck is a value type; use DeckService to create/edit decks");
 
+    qmlRegisterUncreatableType<Card>("Revise", 1, 0, "Card",
+                                     "Card is a value type; use DeckService to create/edit cards");
+
     engine.addImageProvider("math", &m_mathjax_renderer);
 
     QObject::connect(

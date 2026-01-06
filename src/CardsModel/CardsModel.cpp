@@ -58,6 +58,8 @@ void CardsModel::load(int deckId) {
     }
 
     endResetModel();
+
+    emit dataChanged();
 }
 
 // Public method

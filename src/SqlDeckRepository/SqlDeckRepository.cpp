@@ -371,4 +371,53 @@ std::expected<bool, QString> SqlDeckRepository::is_card_exists(int deckId, const
     return count > 0;
 }
 
+// Public method
+std::expected<Card, QString> SqlDeckRepository::get_card(int cardId)
+{
+    QSqlQuery q(m_db.raw_db());
+
+    q.prepare(R"(
+        SELECT * FROM cards WHERE id = :cardId
+    )");
+
+    q.bindValue(":cardId", cardId);
+
+    if (!q.exec()) {
+        return std::unexpected(q.lastError().text());
+    }
+
+    if (!q.next()) {
+        return std::unexpected(QString("No card with id = %1 fetched").arg(cardId));
+    }
+
+    return Card{.id = q.value("id").toInt(),
+                           .deck_id = q.value("deck_id").toInt(),
+                           .state = q.value("state").toInt(),
+                           .incorrect_streak = q.value("incorrect_streak").toInt(),
+                           .interval = q.value("interval").toInt(),
+                           .difficulty = q.value("difficulty").toFloat(),
+                           .next_review = q.value("next_review").toDateTime(),
+                           .created_at = q.value("created_at").toDateTime(),
+                           .updated_at = q.value("updated_at").toDateTime(),
+                           .front = q.value("front").toString(),
+                           .back = q.value("back").toString()};
+}
+
+// Public method
+std::expected<void, QString> SqlDeckRepository::remove_card(int cardId)
+{
+    QSqlQuery q(m_db.raw_db());
+
+    q.prepare(R"(
+        DELETE FROM cards WHERE id = :cardId
+    )");
+    q.bindValue(":cardId", cardId);
+
+    if (!q.exec()) {
+        return std::unexpected(q.lastError().text());
+    }
+
+    return {};
+}
+
 } // namespace revise
