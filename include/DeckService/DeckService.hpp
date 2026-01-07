@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include <IDeckRepository/IDeckRepository.hpp>   // for IDeckRepository
-#include <IDeckImporter/IDeckImporter.hpp>       // for IDeckImporter
-#include <IDeckExporter/IDeckExporter.hpp>       // for IDeckExporter
-#include <QObject>                               // for QObject
-#include <memory>                                // for std::unique_ptr
-#include <functional>                            // for std::function
 #include <DeckMediaStorage/DeckMediaStorage.hpp> // for DeckMediaStorage
 #include <HtmlHelper/HtmlHelper.hpp>             // for HtmlHelper
+#include <IDeckExporter/IDeckExporter.hpp>       // for IDeckExporter
+#include <IDeckImporter/IDeckImporter.hpp>       // for IDeckImporter
+#include <IDeckRepository/IDeckRepository.hpp>   // for IDeckRepository
+#include <QObject>                               // for QObject
+#include <functional>                            // for std::function
+#include <memory>                                // for std::unique_ptr
 
 namespace revise {
 
@@ -24,11 +24,12 @@ class DeckService : public QObject {
     Q_PROPERTY(bool exportInProgress READ export_in_progress NOTIFY exportInProgressChanged)
 
     DeckService(std::function<std::unique_ptr<IDeckRepository>()> repo_factory,
-                IDeckImporter&    importer,
-                IDeckExporter&    exporter,
-                DeckMediaStorage& media_storage,
-                HtmlHelper&       html_helper,
-                QObject*          parent = nullptr);
+                IDeckImporter&                                    anki_importer,
+                IDeckImporter&                                    revise_importer,
+                IDeckExporter&                                    exporter,
+                DeckMediaStorage&                                 media_storage,
+                HtmlHelper&                                       html_helper,
+                QObject*                                          parent = nullptr);
 
     /**
      * @brief Get a list of decks
@@ -72,7 +73,7 @@ class DeckService : public QObject {
     Q_INVOKABLE void remove_deck(int deckId);
 
     /**
-     * @brief Import deck async
+     * @brief Import `anki` or `revise` deck async. The selection of the desired importer occurs **automatically**.
      * @param path Path to the deck
      * @note If successful, the `deckImported` signal will be emitted. If an error occurs,
      * it will be logged in `ErrorReporter`.
@@ -186,7 +187,8 @@ class DeckService : public QObject {
 
   private:
     std::function<std::unique_ptr<IDeckRepository>()> m_repo_factory;
-    IDeckImporter&                                    m_importer;
+    IDeckImporter&                                    m_anki_importer;
+    IDeckImporter&                                    m_revise_importer;
     IDeckExporter&                                    m_exporter;
     DeckMediaStorage&                                 m_media_storage;
     HtmlHelper&                                       m_html_helper;

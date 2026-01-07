@@ -3,21 +3,22 @@
 
 #pragma once
 
-#include <Database/Database.hpp>                   // for Database
-#include <DecksModel/DecksModel.hpp>               // for DecksModel
 #include <CardsModel/CardsModel.hpp>               // for CardsModel
-#include <StreakService/StreakService.hpp>         // for StreakService
+#include <Database/Database.hpp>                   // for Database
+#include <DeckExporter/ReviseDeckExporter.hpp>     // for ReviseDeckExporter
 #include <DeckImporter/AnkiDeckImporter.hpp>       // for DeckImporter
-#include <SM2Algorithm/SM2Algorithm.hpp>           // for SM2
-#include <SqlDeckRepository/SqlDeckRepository.hpp> // for SqlDeckRepository
-#include <StudyService/StudyService.hpp>           // for StudyService
-#include <DeckService/DeckService.hpp>             // for DeckService
-#include <QGuiApplication>                         // for QGuiApplication
-#include <QObject>                                 // for QObject
+#include <DeckImporter/ReviseDeckImporter.hpp>     // for ReviseDeckImporter
 #include <DeckMediaStorage/DeckMediaStorage.hpp>   // for DeckMediaStorage
+#include <DeckService/DeckService.hpp>             // for DeckService
+#include <DecksModel/DecksModel.hpp>               // for DecksModel
 #include <HtmlHelper/HtmlHelper.hpp>               // for HtmlHelper
 #include <MathJaxRenderer/MathJaxRenderer.hpp>     // for MathJaxRenderer
-#include <DeckExporter/ReviseDeckExporter.hpp>     // for ReviseDeckExporter
+#include <QGuiApplication>                         // for QGuiApplication
+#include <QObject>                                 // for QObject
+#include <SM2Algorithm/SM2Algorithm.hpp>           // for SM2
+#include <SqlDeckRepository/SqlDeckRepository.hpp> // for SqlDeckRepository
+#include <StreakService/StreakService.hpp>         // for StreakService
+#include <StudyService/StudyService.hpp>           // for StudyService
 
 namespace revise {
 
@@ -39,6 +40,7 @@ class Core : public QObject {
     StreakService      m_streak_service;
     StudyService       m_study_service;
     AnkiDeckImporter   m_anki_importer;
+    ReviseDeckImporter m_revise_importer;
     ReviseDeckExporter m_revise_exporter;
     DeckService        m_deck_service;
     DecksModel         m_decks_model;
