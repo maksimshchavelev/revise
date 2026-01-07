@@ -2,7 +2,10 @@
 // Error reporter
 
 #include <ErrorReporter/ErrorReporter.hpp>
-#include <boost/stacktrace.hpp>
+
+#ifdef QT_DEBUG
+    #include <boost/stacktrace.hpp>
+#endif
 
 // Public method
 AppError::AppError(const QString&   message,

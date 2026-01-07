@@ -95,12 +95,14 @@ set(BOOST_ENABLE_CMAKE ON)
 set(BOOST_INCLUDE_LIBRARIES stacktrace headers config)
 set(BOOST_EXCLUDE_LIBRARIES fiber serialization graph wave stacktrace_test)
 
-FetchContent_Declare(
-    Boost
-    GIT_REPOSITORY https://github.com/boostorg/boost.git
-    GIT_TAG boost-1.84.0
-)
-FetchContent_MakeAvailable(Boost)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  FetchContent_Declare(
+      Boost
+      GIT_REPOSITORY https://github.com/boostorg/boost.git
+      GIT_TAG boost-1.84.0
+  )
+  FetchContent_MakeAvailable(Boost)
+endif()
 
 # add_subdirectory(${CMAKE_BINARY_DIR}/_deps/zstd-src/build/cmake)
 # target_include_directories(zstd PUBLIC ${CMAKE_BINARY_DIR}/_deps/zstd-src/)
@@ -122,22 +124,39 @@ set_property(TARGET apprevise APPEND PROPERTY
     QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android
 )
 
-target_link_libraries(apprevise PRIVATE
-    Qt6::Quick
-    Qt6::Sql
-    Qt6::Concurrent
-    Qt6::Svg
-    QuaZip::QuaZip
-    Boost::stacktrace_basic
-    libzstd_static
-    PRIVATE ${JSONCPP_ANDROID_DIR}/lib
-)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_link_libraries(apprevise PRIVATE
+      Qt6::Quick
+      Qt6::Sql
+      Qt6::Concurrent
+      Qt6::Svg
+      QuaZip::QuaZip
+      Boost::stacktrace_basic
+      libzstd_static
+      PRIVATE ${JSONCPP_ANDROID_DIR}/lib
+  )
 
-target_include_directories(apprevise PRIVATE
-    include
-    ${zstd_SOURCE_DIR}/lib
-    Boost::stacktrace_basic
-)
+  target_include_directories(apprevise PRIVATE
+      include
+      ${zstd_SOURCE_DIR}/lib
+      Boost::stacktrace_basic
+  )
+else() # Release
+  target_link_libraries(apprevise PRIVATE
+      Qt6::Quick
+      Qt6::Sql
+      Qt6::Concurrent
+      Qt6::Svg
+      QuaZip::QuaZip
+      libzstd_static
+      PRIVATE ${JSONCPP_ANDROID_DIR}/lib
+  )
+
+  target_include_directories(apprevise PRIVATE
+      include
+      ${zstd_SOURCE_DIR}/lib
+  )
+endif()
 
 target_compile_definitions(apprevise PRIVATE BOOST_STACKTRACE_USE_BACKTRACE)
 
