@@ -116,8 +116,8 @@ ApplicationWindow {
         }
 
         onRemoveClicked: function(deckId) {
-            deckService.remove_deck(deckId)
-            infoPopup.open(qsTr("Удалено"))
+            deckRemoveQuestionPopup.deckId = deckId
+            deckRemoveQuestionPopup.open(qsTr("Удалить колоду?"))
         }
 
         onEditClicked: function(deckId) {
@@ -127,6 +127,17 @@ ApplicationWindow {
         onExportClicked: function(deckId) {
             exportAnkiFolderDialog.deckId = deckId
             exportAnkiFolderDialog.open()
+        }
+    }
+
+    QuestionPopup {
+        id: deckRemoveQuestionPopup
+
+        property int deckId: 0
+
+        onAcceptClicked: {
+            deckService.remove_deck(deckId)
+            infoPopup.open(qsTr("Удалено"))
         }
     }
 

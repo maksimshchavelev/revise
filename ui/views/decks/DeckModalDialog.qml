@@ -100,7 +100,7 @@ Item {
             }
 
             Button {
-                text: qsTr("Экспортировать в Revise")
+                text: qsTr("Экспортировать в .rpkg")
                 Layout.preferredWidth: parent.width * 0.85
                 Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
                 onClicked: {

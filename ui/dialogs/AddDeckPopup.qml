@@ -77,7 +77,7 @@ Item {
             spacing: 15
 
             Button {
-                text: qsTr("Импортировать из Anki")
+                text: qsTr("Импортировать")
                 Layout.preferredWidth: parent.width * 0.85
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 20
