@@ -89,9 +89,7 @@ void DeckService::import_deck_async(const QString& path) {
 
         auto extract_extension = [](const QString& filename) -> QString {
             // Matches ".apkg", ".zip", ".anki" etc. before optional " (n)"
-            static const QRegularExpression re(
-                R"(\.([A-Za-z0-9]+)(?:\s*\(\d+\))?$)"
-                );
+            static const QRegularExpression re(R"(\.([A-Za-z0-9]+)(?:\s*\(\d+\))?$)");
 
             auto match = re.match(filename);
             if (!match.hasMatch()) {
@@ -177,6 +175,19 @@ void DeckService::import_deck_async(const QString& path) {
             } else {
                 deckId = res.value();
             }
+        }
+
+        // Update deck parameters
+        if (auto res = repo->update_deck(Deck{.name = import_res->deck_name,
+                                              .description = import_res->deck_description,
+                                              .time_limit = import_res->time_limit,
+                                              .new_limit = import_res->new_limit,
+                                              .consolidate_limit = import_res->consolidate_limit,
+                                              .incorrect_limit = import_res->incorrect_limit,
+                                              .id = deckId});
+            !res.has_value()) {
+            ErrorReporter::instance()->report("Failed to update deck", res.error(), "DeckService::import_deck_async()");
+            return;
         }
 
         // Save all images
