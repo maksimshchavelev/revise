@@ -3,6 +3,7 @@
 
 #include <StudyService/StudyService.hpp>   // for StudyService
 #include <ErrorReporter/ErrorReporter.hpp> // for ErrorReporter
+#include <QRandomGenerator>                // for QRandomGenerator
 
 namespace revise {
 
@@ -138,6 +139,24 @@ void StudyService::start_training(int deck_id) {
     enqueue_all(failed);
     enqueue_all(review);
     enqueue_all(fresh);
+
+    // shuffle queue
+    auto shuffle = [](QQueue<Card>& source) {
+        QList<Card> list;
+
+        while(!source.isEmpty()) {
+            list.append(source.dequeue());
+        }
+
+        std::shuffle(list.begin(), list.end(),
+                     std::default_random_engine(QRandomGenerator::global()->generate()));
+
+        for (const auto& item : list) {
+            source.enqueue(item);
+        }
+    };
+
+    shuffle(m_cards);
 
     // timer setup
     m_time_limit = deck_time_limit;
