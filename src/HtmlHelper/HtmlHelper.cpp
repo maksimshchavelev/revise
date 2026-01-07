@@ -303,7 +303,7 @@ QString HtmlHelper::replace_mathjax_to_images(const QString& html,
         QString color = text_color;
         color.remove("#");
 
-        const QString postfix = QString("&color=%1").arg(color);
+        const QString postfix = QString("&color=%1&scale=1").arg(color);
 
         // Compose final image URL for codecogs
         QString img_src = QStringLiteral("https://mathpad.ai/api/v1/latex2image?latex=%1")
