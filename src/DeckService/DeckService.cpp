@@ -3,6 +3,7 @@
 #include <DeckService/DeckService.hpp>     // for DeckService
 #include <ErrorReporter/ErrorReporter.hpp> // for ErrorReporter
 #include <QtConcurrent/QtConcurrent>       // for QtConcurrent
+#include <Utils/ScopeGuard.hpp>            // for ScopeGuard
 #include <algorithm>                       // for std::find_if
 
 namespace revise {
@@ -10,12 +11,14 @@ namespace revise {
 // Public method
 DeckService::DeckService(std::function<std::unique_ptr<IDeckRepository>()> repo_factory,
                          IDeckImporter&    importer,
+                         IDeckExporter&    exporter,
                          DeckMediaStorage& media_storage,
                          HtmlHelper&        html_helper,
                          QObject* parent) :
     QObject(parent),
     m_repo_factory(std::move(repo_factory)),
     m_importer(importer),
+    m_exporter(exporter),
     m_media_storage(media_storage),
     m_html_helper(html_helper) {
     m_repo = m_repo_factory();
@@ -255,7 +258,7 @@ void DeckService::import_deck_async(const QString& path)
                 "Failed to insert cards batch",
                 res.error(),
                 "DeckService::import_deck_async()"
-                );
+            );
             m_import_in_progress = false;
             emit importInProgressChanged();
             return;
@@ -268,6 +271,85 @@ void DeckService::import_deck_async(const QString& path)
         QMetaObject::invokeMethod(this, [this, card_count = cards_to_insert.size()]() {
             emit deckImported(card_count);
         }, Qt::QueuedConnection);
+    });
+}
+
+// Public method
+void DeckService::export_deck_async(int deckId, const QString& path)
+{
+    if (m_export_in_progress) {
+        return;
+    }
+
+    [[maybe_unused]] QFuture res = QtConcurrent::run([this, &path, &deckId]() {
+        ScopeGuard guard(
+            [this](){ // on enter
+                m_export_in_progress = true;
+                emit exportInProgressChanged();
+            },
+            [this](){ // on exit
+                m_export_in_progress = false;
+                emit exportInProgressChanged();
+        });
+
+        // Create local repo
+        auto repo = m_repo_factory();
+
+        if (repo == nullptr) {
+            ErrorReporter::instance()->report(
+                "Failed to create local deck repository",
+                "m_repo_factory() == nullptr",
+                "DeckService::export_deck_async()"
+            );
+            return;
+        }
+
+        // Variables
+        Deck          deck;
+        QVector<Card> cards;
+        const QString media_dir = m_media_storage.get_deck_media_folder(deckId);
+
+        // Fetch deck
+        if (auto res = repo->get_deck(deckId); res.has_value()) {
+            deck = std::move(*res);
+        } else {
+            ErrorReporter::instance()->report(
+                "Failed to fetch deck from repository",
+                res.error(),
+                "DeckService::export_deck_async()"
+                );
+            return;
+        }
+
+        // Fetch card
+        if (auto res = repo->get_cards(deckId); res.has_value()) {
+            cards = std::move(*res);
+        } else {
+            ErrorReporter::instance()->report(
+                "Failed to fetch cards from repository",
+                res.error(),
+                "DeckService::export_deck_async()"
+                );
+            return;
+        }
+
+        // Build summary and request export
+        auto export_res = m_exporter.export_to_file(ExportData{
+            .deck = std::move(deck),
+            .media_directory = std::move(media_dir),
+            .cards = std::move(cards)
+        }, path);
+
+        if (!export_res.has_value()) {
+            ErrorReporter::instance()->report(
+                "Failed to export",
+                export_res.error(),
+                "DeckService::export_deck_async()"
+                );
+            return;
+        }
+
+        QMetaObject::invokeMethod(this, &DeckService::deckExported, Qt::QueuedConnection);
     });
 }
 
@@ -470,6 +552,12 @@ void DeckService::update_card(int cardId, const QString &front, const QString &b
 bool DeckService::import_in_progress() const noexcept
 {
     return m_import_in_progress;
+}
+
+// Public method
+bool DeckService::export_in_progress() const noexcept
+{
+    return m_export_in_progress;
 }
 
 } // namespace revise

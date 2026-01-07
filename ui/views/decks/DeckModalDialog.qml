@@ -24,6 +24,7 @@ Item {
     signal trainClicked(int deckId, bool repeatableToday)
     signal editClicked(int deckId)
     signal removeClicked(int deckId)
+    signal exportClicked(int deckId)
 
     ShaderEffectSource {
         id: snapshot
@@ -56,7 +57,7 @@ Item {
     }
 
     Item {
-        width: parent.width * 0.75
+        width: parent.width * 0.85
         implicitHeight: layout.implicitHeight
         anchors.centerIn: parent
         clip: true
@@ -94,6 +95,16 @@ Item {
                 Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
                 onClicked: {
                     root.editClicked(root.deckId)
+                    root.close()
+                }
+            }
+
+            Button {
+                text: qsTr("Экспортировать в Revise")
+                Layout.preferredWidth: parent.width * 0.85
+                Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
+                onClicked: {
+                    root.exportClicked(root.deckId)
                     root.close()
                 }
             }

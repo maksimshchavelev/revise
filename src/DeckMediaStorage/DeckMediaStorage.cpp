@@ -36,8 +36,7 @@ std::expected<QString, QString> DeckMediaStorage::save_image(int               d
 }
 
 // Public method
-std::expected<void, QString> DeckMediaStorage::remove_media(int deckId) const
-{
+std::expected<void, QString> DeckMediaStorage::remove_media(int deckId) const {
     QDir dir(QString("%1/%2").arg(m_dir).arg(deckId));
 
     if (dir.exists()) {
@@ -47,6 +46,17 @@ std::expected<void, QString> DeckMediaStorage::remove_media(int deckId) const
     }
 
     return {};
+}
+
+// Public method
+QString DeckMediaStorage::get_deck_media_folder(int deckId) const {
+    const QDir dir = QString("%1/%2").arg(m_dir).arg(deckId);
+
+    if (dir.exists()) {
+        return dir.path();
+    }
+
+    return QString();
 }
 
 } // namespace revise

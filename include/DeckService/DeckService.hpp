@@ -4,6 +4,7 @@
 
 #include <IDeckRepository/IDeckRepository.hpp>   // for IDeckRepository
 #include <IDeckImporter/IDeckImporter.hpp>       // for IDeckImporter
+#include <IDeckExporter/IDeckExporter.hpp>       // for IDeckExporter
 #include <QObject>                               // for QObject
 #include <memory>                                // for std::unique_ptr
 #include <functional>                            // for std::function
@@ -20,9 +21,11 @@ class DeckService : public QObject {
 
   public:
     Q_PROPERTY(bool importInProgress READ import_in_progress NOTIFY importInProgressChanged)
+    Q_PROPERTY(bool exportInProgress READ export_in_progress NOTIFY exportInProgressChanged)
 
     DeckService(std::function<std::unique_ptr<IDeckRepository>()> repo_factory,
                 IDeckImporter&    importer,
+                IDeckExporter&    exporter,
                 DeckMediaStorage& media_storage,
                 HtmlHelper&       html_helper,
                 QObject*          parent = nullptr);
@@ -77,6 +80,13 @@ class DeckService : public QObject {
      * current card statistics (training) will remain.
      */
     Q_INVOKABLE void import_deck_async(const QString& path);
+
+    /**
+     * @brief Exports the deck in `Revise` format (`rpkg`)
+     * @param deckId ID of the deck to be exported
+     * @param path Where to save the result
+     */
+    Q_INVOKABLE void export_deck_async(int deckId, const QString& path);
 
     /**
      * @brief Get deck info by deck id
@@ -155,25 +165,35 @@ class DeckService : public QObject {
      */
     bool import_in_progress() const noexcept;
 
+    /**
+     * @brief Is the deck being exported now?
+     * @return `true` if true
+     */
+    bool export_in_progress() const noexcept;
+
   signals:
     void deckCreated();
     void deckRemoved();
     void deckImported(int cardsImported);
+    void deckExported();
     void decksUpdated();
     void deckUpdated();
     void cardRemoved();
     void cardUpdated();
     void importInProgressChanged();
+    void exportInProgressChanged();
     void errorOccured(const QString& what);
 
   private:
     std::function<std::unique_ptr<IDeckRepository>()> m_repo_factory;
     IDeckImporter&                                    m_importer;
+    IDeckExporter&                                    m_exporter;
     DeckMediaStorage&                                 m_media_storage;
     HtmlHelper&                                       m_html_helper;
     std::unique_ptr<IDeckRepository>                  m_repo; ///< Create in ctor
 
     bool m_import_in_progress{false};
+    bool m_export_in_progress{false};
 };
 
 } // namespace revise

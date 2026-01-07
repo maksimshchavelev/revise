@@ -27,7 +27,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     m_deck_service([this]() -> std::unique_ptr<IDeckRepository> {
         const QString connName = QStringLiteral("repo_conn_%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
         return make_thread_local_sql_repo(connName);
-    }, m_anki_importer, m_deck_media_storage, m_html_helper, this),
+    }, m_anki_importer, m_revise_exporter, m_deck_media_storage, m_html_helper, this),
     m_decks_model(m_deck_service),
     m_cards_model(m_deck_service) {
 
@@ -39,14 +39,10 @@ Core::Core(QGuiApplication& app, QObject* parent) :
         m_decks_model.update();
     });
 
-    auto permission_check_future = QtAndroidPrivate::checkPermission("android.permission.POST_NOTIFICATIONS");
-    auto permission_check_result = permission_check_future.result(); // wait for result
-
-    if (permission_check_result != QtAndroidPrivate::PermissionResult::Authorized) {
-        // if not authorized, request permission
-        [[maybe_unused]] auto permission_request_result =
-            QtAndroidPrivate::requestPermission("android.permission.POST_NOTIFICATIONS").result();
-    }
+    request_permission_if_not_granted("POST_NOTIFICATIONS");
+    request_permission_if_not_granted("WRITE_EXTERNAL_STORAGE");
+    request_permission_if_not_granted("READ_EXTERNAL_STORAGE");
+    request_permission_if_not_granted("MANAGE_EXTERNAL_STORAGE");
 
     QVector<QString> notifications = {
         "Пора что нибудь повторить!",
@@ -136,5 +132,18 @@ std::unique_ptr<IDeckRepository> Core::make_thread_local_sql_repo(const QString 
     return std::make_unique<OwnedRepo>(std::move(db));
 }
 
+// Private method
+void Core::request_permission_if_not_granted(const QString& permission)
+{
+    auto permission_check_future = QtAndroidPrivate::checkPermission(
+        QString("android.permission.%1").arg(permission));
+    auto permission_check_result = permission_check_future.result(); // wait for result
+
+    if (permission_check_result != QtAndroidPrivate::PermissionResult::Authorized) {
+        // if not authorized, request permission
+        [[maybe_unused]] auto permission_request_result =
+            QtAndroidPrivate::requestPermission(QString("android.permission.%1").arg(permission)).result();
+    }
+}
 
 } // namespace revise

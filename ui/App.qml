@@ -83,6 +83,16 @@ ApplicationWindow {
         onAccepted: deckService.import_deck_async(selectedFile)
     }
 
+    FolderDialog {
+        property int deckId: 0
+
+        id: exportAnkiFolderDialog
+        title: qsTr("Сохранить .rpkg")
+        onAccepted: {
+            deckService.export_deck_async(deckId, selectedFolder)
+        }
+    }
+
     AddDeckPopup {
         id: addDeckPopup
         sourceItem: pageLoader
@@ -113,13 +123,18 @@ ApplicationWindow {
         onEditClicked: function(deckId) {
             pageLoader.setSource(pages.editDeck, { "deckId": deckId })
         }
+
+        onExportClicked: function(deckId) {
+            exportAnkiFolderDialog.deckId = deckId
+            exportAnkiFolderDialog.open()
+        }
     }
 
     BusyIndicator {
         anchors.centerIn: parent
         width: 128
         height: 128
-        running: deckService.importInProgress
+        running: deckService.importInProgress || deckService.exportInProgress
     }
 
     Connections {
@@ -143,6 +158,10 @@ ApplicationWindow {
 
         function onCardRemoved() {
             infoPopup.open(qsTr("Карточка удалена"))
+        }
+
+        function onDeckExported() {
+            infoPopup.open(qsTr("Колода экспортирована"))
         }
     }
 

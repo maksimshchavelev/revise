@@ -34,6 +34,13 @@ public:
      */
     std::expected<void, QString> remove_media(int deckId) const;
 
+    /**
+     * @brief Get deck media folder
+     * @param deckId ID of the deck
+     * @return Path to media folder
+     */
+    QString get_deck_media_folder(int deckId) const;
+
 private:
     const QString m_dir; ///< Directory with media
 };
