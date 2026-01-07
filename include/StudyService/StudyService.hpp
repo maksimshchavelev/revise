@@ -72,6 +72,22 @@ class StudyService : public QObject {
     Q_INVOKABLE void flip() noexcept;
 
     /**
+     * @brief Abort training
+     * @note Observe signal `aborted()`
+     */
+    Q_INVOKABLE void abort();
+
+    /**
+     * @brief Pause timer
+     */
+    Q_INVOKABLE void pause();
+
+    /**
+     * @brief Resume timer
+     */
+    Q_INVOKABLE void resume();
+
+    /**
      * @brief Get study info for a deck (counts of new/consolidate/incorrect and time limit).
      * @param deck_id Deck id
      * @return StudyInfo (always returns a value; on repo error returns empty stats and logs warning).
@@ -91,6 +107,7 @@ class StudyService : public QObject {
     void time_remaining_changed();
     void training_finished();
     void flipped_changed();
+    void aborted();
 
     /**
      * @brief Emitted when a non-fatal error occurs (e.g. DB update failure).
@@ -109,6 +126,7 @@ class StudyService : public QObject {
     int              m_time_limit{0};
     float            m_time_remaining{0.0f};
     bool             m_flipped{false};
+    bool             m_timer_paused{false};
     int              m_current_deck_id{0};
 
     // helpers

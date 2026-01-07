@@ -1,16 +1,16 @@
 // Copyright 2025 Maksim Shchavelev
 // StudyService implementation (refactored StudyController)
 
-#include <StudyService/StudyService.hpp>   // for StudyService
 #include <ErrorReporter/ErrorReporter.hpp> // for ErrorReporter
 #include <QRandomGenerator>                // for QRandomGenerator
+#include <StudyService/StudyService.hpp>   // for StudyService
 
 namespace revise {
 
 // Constants
-static constexpr float FAILURE_THRESHOLD = 5.0f;       // user reports failure when >= 5.0
-static constexpr float TIMER_INTERVAL_MS = 100.0f;     // tick every 100 ms
-static constexpr float TIMER_DECREMENT_S = 0.1f;       // seconds per tick
+static constexpr float FAILURE_THRESHOLD = 5.0f;   // user reports failure when >= 5.0
+static constexpr float TIMER_INTERVAL_MS = 100.0f; // tick every 100 ms
+static constexpr float TIMER_DECREMENT_S = 0.1f;   // seconds per tick
 
 StudyService::StudyService(IDeckRepository& repo, IAlgorithm& algo, QObject* parent) :
     QObject(parent), m_repo(repo), m_algo(algo), m_timer(this) {
@@ -20,11 +20,13 @@ StudyService::StudyService(IDeckRepository& repo, IAlgorithm& algo, QObject* par
 }
 
 void StudyService::enqueue_all(const QList<Card>& list) {
-    for (const Card& c : list) m_cards.enqueue(c);
+    for (const Card& c : list)
+        m_cards.enqueue(c);
 }
 
 QString StudyService::card_text() const noexcept {
-    if (m_cards.isEmpty()) return QString();
+    if (m_cards.isEmpty())
+        return QString();
     const Card& head = m_cards.head();
     return m_flipped ? head.back : head.front;
 }
@@ -42,18 +44,21 @@ float StudyService::time_remaining() const noexcept {
 }
 
 void StudyService::on_timer_timeout() {
+    if (m_timer_paused) {
+        return;
+    }
+
     // Reduce time only if the card is not flipped
     if (!m_flipped) {
         m_time_remaining -= TIMER_DECREMENT_S;
-        if (m_time_remaining < 0.0f) m_time_remaining = 0.0f;
+        if (m_time_remaining < 0.0f)
+            m_time_remaining = 0.0f;
         emit time_remaining_changed();
     }
 
     if (m_time_limit > 0 && m_time_remaining <= 0.0f) {
         // schedule forced failure on next event loop to avoid reentrancy
-        QMetaObject::invokeMethod(this, [this]() {
-            this->next_card(FAILURE_THRESHOLD);
-        }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, [this]() { this->next_card(FAILURE_THRESHOLD); }, Qt::QueuedConnection);
     }
 }
 
@@ -65,10 +70,7 @@ void StudyService::start_training(int deck_id) {
 
     auto cards_res = m_repo.get_cards(deck_id);
     if (!cards_res.has_value()) {
-        ErrorReporter::instance()->report(
-            "Failed to fetch cards",
-            cards_res.error(),
-            "StudyService::start_training()");
+        ErrorReporter::instance()->report("Failed to fetch cards", cards_res.error(), "StudyService::start_training()");
         return;
     }
 
@@ -77,7 +79,7 @@ void StudyService::start_training(int deck_id) {
     QList<Card> fresh;
 
     const QList<Card> cards = cards_res.value();
-    const QDateTime now = QDateTime::currentDateTime();
+    const QDateTime   now = QDateTime::currentDateTime();
 
     for (const Card& card : cards) {
         if (card.next_review >= now) {
@@ -101,10 +103,10 @@ void StudyService::start_training(int deck_id) {
 
     // get deck info (limits/time)
     auto deck_res = m_repo.get_deck(deck_id);
-    int new_limit = 0;
-    int consolidate_limit = 0;
-    int incorrect_limit = 0;
-    int deck_time_limit = 0;
+    int  new_limit = 0;
+    int  consolidate_limit = 0;
+    int  incorrect_limit = 0;
+    int  deck_time_limit = 0;
 
     if (deck_res.has_value()) {
         const Deck& d = deck_res.value();
@@ -113,17 +115,12 @@ void StudyService::start_training(int deck_id) {
         incorrect_limit = d.incorrect_limit;
         deck_time_limit = d.time_limit;
     } else {
-        ErrorReporter::instance()->report(
-            "Failed to get deck info",
-            deck_res.error(),
-            "StudyService::start_training");
+        ErrorReporter::instance()->report("Failed to get deck info", deck_res.error(), "StudyService::start_training");
         return;
     }
 
     // sort review by oldest next_review first
-    std::sort(review.begin(), review.end(), [](const Card& a, const Card& b) {
-        return a.next_review < b.next_review;
-    });
+    std::sort(review.begin(), review.end(), [](const Card& a, const Card& b) { return a.next_review < b.next_review; });
 
     // apply limits (same logic as legacy)
     if (incorrect_limit > 0 && failed.size() > incorrect_limit)
@@ -144,12 +141,11 @@ void StudyService::start_training(int deck_id) {
     auto shuffle = [](QQueue<Card>& source) {
         QList<Card> list;
 
-        while(!source.isEmpty()) {
+        while (!source.isEmpty()) {
             list.append(source.dequeue());
         }
 
-        std::shuffle(list.begin(), list.end(),
-                     std::default_random_engine(QRandomGenerator::global()->generate()));
+        std::shuffle(list.begin(), list.end(), std::default_random_engine(QRandomGenerator::global()->generate()));
 
         for (const auto& item : list) {
             source.enqueue(item);
@@ -163,9 +159,11 @@ void StudyService::start_training(int deck_id) {
     m_time_remaining = static_cast<float>(m_time_limit);
 
     if (m_time_limit > 0) {
-        if (!m_timer.isActive()) m_timer.start();
+        if (!m_timer.isActive())
+            m_timer.start();
     } else {
-        if (m_timer.isActive()) m_timer.stop();
+        if (m_timer.isActive())
+            m_timer.stop();
     }
 
     m_current_deck_id = deck_id;
@@ -201,8 +199,7 @@ void StudyService::next_card(float current_difficulty) {
             auto res = m_repo.update_card(c);
             if (!res.has_value()) {
                 ErrorReporter::instance()->report("Failed to update card",
-                                                  QString("Card IS: %1, cause: %2")
-                                                      .arg(c.id).arg(res.error()),
+                                                  QString("Card IS: %1, cause: %2").arg(c.id).arg(res.error()),
                                                   "StudyService::next_card");
                 return;
             }
@@ -231,6 +228,23 @@ void StudyService::flip() noexcept {
     emit time_remaining_changed();
 }
 
+void StudyService::abort() {
+    if (m_timer.isActive())
+        m_timer.stop();
+    m_flipped = false;
+    m_timer_paused = false;
+    m_time_remaining = static_cast<float>(m_time_limit);
+    emit aborted();
+}
+
+void StudyService::pause() {
+    m_timer_paused = true;
+}
+
+void StudyService::resume() {
+    m_timer_paused = false;
+}
+
 StudyService::StudyInfo StudyService::get_deck_study_info(int deck_id) {
     StudyInfo info;
 
@@ -247,10 +261,11 @@ StudyService::StudyInfo StudyService::get_deck_study_info(int deck_id) {
     }
 
     const QList<Card> cards = cards_res.value();
-    const QDateTime now = QDateTime::currentDateTime();
+    const QDateTime   now = QDateTime::currentDateTime();
 
     for (const Card& card : cards) {
-        if (now < card.next_review) continue;
+        if (now < card.next_review)
+            continue;
 
         switch (card.state) {
         case 0:
@@ -267,7 +282,8 @@ StudyService::StudyInfo StudyService::get_deck_study_info(int deck_id) {
         }
     }
 
-    if (!cards.isEmpty()) info.time_limit = cards.first().time_limit;
+    if (!cards.isEmpty())
+        info.time_limit = cards.first().time_limit;
 
     const Deck& deck = deck_res.value();
     info.new_cards = qMin(info.new_cards, deck.new_limit);

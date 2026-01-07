@@ -44,6 +44,12 @@ ApplicationWindow {
                     infoPopup.open(qsTr("Тренировка завершена!"))
                 })
             }
+            if (item.aborted) {
+                item.aborted.connect(function() {
+                    pageLoader.source = pages.main
+                    infoPopup.open(qsTr("Тренировка прервана :("))
+                })
+            }
             if (item.backClicked) {
                 item.backClicked.connect(function() {
                     pageLoader.source = pages.main

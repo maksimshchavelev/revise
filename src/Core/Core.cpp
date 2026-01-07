@@ -43,6 +43,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     request_permission_if_not_granted("POST_NOTIFICATIONS");
     request_permission_if_not_granted("WRITE_EXTERNAL_STORAGE");
     request_permission_if_not_granted("READ_EXTERNAL_STORAGE");
+    request_permission_if_not_granted("MANAGE_EXTERNAL_STORAGE");
 
     QVector<QString> notifications = {"Пора что нибудь повторить!",
                                       "Ты целых два дня ничего не повторял",

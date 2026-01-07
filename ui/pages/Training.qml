@@ -5,12 +5,19 @@ import QtQuick.Layouts
 import "../components"
 import "../controls"
 import "../views/training"
+import "../dialogs"
 import "qrc:/ui/theme"
 
 Item {
     id: root
 
     signal trainingFinished()
+    signal aborted();
+
+    function exitClicked() {
+        studyService.pause()
+        abortQuestionPopup.open(qsTr("Прервать тренировку? Прогресс не засчитается"))
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -88,6 +95,19 @@ Item {
 
         function onTraining_finished() {
             root.trainingFinished()
+        }
+    }
+
+    QuestionPopup {
+        id: abortQuestionPopup
+
+        onAcceptClicked: {
+            studyService.abort()
+            root.aborted()
+        }
+
+        onDeclineClicked: {
+            studyService.resume()
         }
     }
 }
