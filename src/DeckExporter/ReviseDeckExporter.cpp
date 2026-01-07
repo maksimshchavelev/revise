@@ -1,30 +1,27 @@
 // Copyright 2025 Maksim Shchavelev
 
 #include <DeckExporter/ReviseDeckExporter.hpp> // for ReviseDeckExporter
-#include <QStandardPaths>                      // for QStandardPaths
-#include <QUuid>                               // for QUuid
 #include <QDir>                                // for QDir
-#include <quazip.h>                            // for QuaZip
-#include <quazipfile.h>                        // for QuaZipFile
+#include <QRegularExpressionMatchIterator>     // for QRegularExpressionMatchIterator
 #include <QSqlDatabase>                        // for QSqlDatabase
 #include <QSqlError>                           // for QSqlError
 #include <QSqlQuery>                           // for QSqlQuery
+#include <QStandardPaths>                      // for QStandardPaths
+#include <QUuid>                               // for QUuid
+#include <quazip.h>                            // for QuaZip
+#include <quazipfile.h>                        // for QuaZipFile
 
 namespace revise {
 
 // Public method
-std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData& data, const QString& path)
-{
+std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData& data, const QString& path) {
     // Make temporary directory
-    QDir export_dir(
-        QString("%1/revise_export_%2")
-            .arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation))
-            .arg(QUuid::createUuid().toString(QUuid::WithoutBraces))
-    );
+    QDir export_dir(QString("%1/revise_export_%2")
+                        .arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation))
+                        .arg(QUuid::createUuid().toString(QUuid::WithoutBraces)));
 
     if (!export_dir.mkdir(export_dir.path())) {
-        return std::unexpected(
-            QString("Failed to make temporary export directory: %1").arg(export_dir.path()));
+        return std::unexpected(QString("Failed to make temporary export directory: %1").arg(export_dir.path()));
     }
 
     // Make sql database
@@ -33,8 +30,7 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData
 
     // Open sql database
     if (!export_db.open()) {
-        return std::unexpected(
-            QString("Failed to open export database: %1").arg(export_db.lastError().text()));
+        return std::unexpected(QString("Failed to open export database: %1").arg(export_db.lastError().text()));
     }
 
     // Make tables
@@ -52,10 +48,9 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData
         incorrect_limit INTEGER DEFAULT 30)
     )");
     if (!q.exec()) {
-        return std::unexpected(
-            QString("Failed to create table 'decks' in export db. Query is: %1, cause is: %2")
-                .arg(q.lastQuery())
-                .arg(q.lastError().text()));
+        return std::unexpected(QString("Failed to create table 'decks' in export db. Query is: %1, cause is: %2")
+                                   .arg(q.lastQuery())
+                                   .arg(q.lastError().text()));
     }
 
     // Make cards table
@@ -66,16 +61,14 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData
         back TEXT)
     )");
     if (!q.exec()) {
-        return std::unexpected(
-            QString("Failed to create table 'cards' in export db. Query is: %1, cause is: %2")
-                .arg(q.lastQuery())
-                .arg(q.lastError().text()));
+        return std::unexpected(QString("Failed to create table 'cards' in export db. Query is: %1, cause is: %2")
+                                   .arg(q.lastQuery())
+                                   .arg(q.lastError().text()));
     }
 
     // Begin transaction
     if (!export_db.transaction()) {
-        return std::unexpected(
-            QString("Failed to begin export db transaction: %1").arg(export_db.lastError().text()));
+        return std::unexpected(QString("Failed to begin export db transaction: %1").arg(export_db.lastError().text()));
     }
 
     // Export deck
@@ -91,8 +84,7 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData
     q.bindValue(":incorrect_limit", data.deck.incorrect_limit);
 
     if (!q.exec()) {
-        return std::unexpected(
-            QString("Failed to insert deck into export db: %1").arg(q.lastError().text()));
+        return std::unexpected(QString("Failed to insert deck into export db: %1").arg(q.lastError().text()));
     }
 
     // Export cards
@@ -101,19 +93,17 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData
             INSERT INTO cards (front, back)
             VALUES (:front, :back)
         )");
-        q.bindValue(":front", card.front);
-        q.bindValue(":back", card.back);
+        q.bindValue(":front", strip_img_src_paths(card.front)); // strip html img
+        q.bindValue(":back", strip_img_src_paths(card.back));   // strip html img
 
         if (!q.exec()) {
-            return std::unexpected(
-                QString("Failed to insert card into export db: %1").arg(q.lastError().text()));
+            return std::unexpected(QString("Failed to insert card into export db: %1").arg(q.lastError().text()));
         }
     }
 
     // Commit transaction
     if (!export_db.commit()) {
-        return std::unexpected(
-            QString("Failed to commit export db transaction: %1").arg(export_db.lastError().text()));
+        return std::unexpected(QString("Failed to commit export db transaction: %1").arg(export_db.lastError().text()));
     }
 
     export_db.close();
@@ -133,15 +123,10 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData
         QStringList files = media_dir.entryList(QDir::Files);
         for (const QString& file : files) {
             QString src_name = media_dir.path() + QDir::separator() + file;
-            QString dest_name = QString("%1/media/%2")
-                .arg(export_dir.path())
-                .arg(file);
+            QString dest_name = QString("%1/media/%2").arg(export_dir.path()).arg(file);
 
             if (!QFile::copy(src_name, dest_name)) {
-                return std::unexpected(
-                    QString("Failed to copy media file %1 to %2")
-                        .arg(src_name)
-                        .arg(dest_name));
+                return std::unexpected(QString("Failed to copy media file %1 to %2").arg(src_name).arg(dest_name));
             }
         }
     }
@@ -167,14 +152,12 @@ std::expected<void, QString> ReviseDeckExporter::compress_directory_to_zip(const
                                                                            const QString& zip_file_path) {
     QDir source_dir(source_dir_path);
     if (!source_dir.exists()) {
-        return std::unexpected(QString("Source directory does not exist: %1")
-                                   .arg(source_dir_path));
+        return std::unexpected(QString("Source directory does not exist: %1").arg(source_dir_path));
     }
 
     QuaZip zip(zip_file_path);
     if (!zip.open(QuaZip::mdCreate)) {
-        return std::unexpected(QString("Failed to create ZIP archive: %1")
-                                   .arg(zip_file_path));
+        return std::unexpected(QString("Failed to create ZIP archive: %1").arg(zip_file_path));
     }
 
     const QString base_path = source_dir.absolutePath();
@@ -183,12 +166,9 @@ std::expected<void, QString> ReviseDeckExporter::compress_directory_to_zip(const
      * @brief Recursively adds directory contents to the ZIP archive.
      */
     std::function<std::expected<void, QString>(const QDir&)> add_directory =
-        [&](const QDir& current_dir) -> std::expected<void, QString>
-    {
-        const QFileInfoList entries = current_dir.entryInfoList(
-            QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot,
-            QDir::DirsFirst
-            );
+        [&](const QDir& current_dir) -> std::expected<void, QString> {
+        const QFileInfoList entries =
+            current_dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot, QDir::DirsFirst);
 
         for (const QFileInfo& entry : entries) {
             if (entry.isDir()) {
@@ -199,37 +179,32 @@ std::expected<void, QString> ReviseDeckExporter::compress_directory_to_zip(const
             } else if (entry.isFile()) {
                 QFile input_file(entry.absoluteFilePath());
                 if (!input_file.open(QIODevice::ReadOnly)) {
-                    return std::unexpected(QString("Failed to open file: %1")
-                                               .arg(entry.absoluteFilePath()));
+                    return std::unexpected(QString("Failed to open file: %1").arg(entry.absoluteFilePath()));
                 }
 
-                const QString relative_path =
-                    source_dir.relativeFilePath(entry.absoluteFilePath());
+                const QString relative_path = source_dir.relativeFilePath(entry.absoluteFilePath());
 
-                QuaZipFile zip_file(&zip);
+                QuaZipFile    zip_file(&zip);
                 QuaZipNewInfo zip_info(relative_path, entry.absoluteFilePath());
 
                 if (!zip_file.open(QIODevice::WriteOnly, zip_info)) {
-                    return std::unexpected(QString("Failed to add file to ZIP: %1")
-                                               .arg(relative_path));
+                    return std::unexpected(QString("Failed to add file to ZIP: %1").arg(relative_path));
                 }
 
                 static constexpr qint64 buffer_size = 64 * 4096; // 256 KB
-                QByteArray buffer;
+                QByteArray              buffer;
                 buffer.resize(buffer_size);
 
                 while (!input_file.atEnd()) {
                     const qint64 bytes_read = input_file.read(buffer.data(), buffer.size());
                     if (bytes_read < 0) {
                         zip_file.close();
-                        return std::unexpected(QString("Failed to read file: %1")
-                                                   .arg(entry.absoluteFilePath()));
+                        return std::unexpected(QString("Failed to read file: %1").arg(entry.absoluteFilePath()));
                     }
 
                     if (zip_file.write(buffer.constData(), bytes_read) != bytes_read) {
                         zip_file.close();
-                        return std::unexpected(QString("Failed to write file to ZIP: %1")
-                                                   .arg(relative_path));
+                        return std::unexpected(QString("Failed to write file to ZIP: %1").arg(relative_path));
                     }
                 }
 
@@ -237,8 +212,7 @@ std::expected<void, QString> ReviseDeckExporter::compress_directory_to_zip(const
                 input_file.close();
 
                 if (zip_file.getZipError() != UNZ_OK) {
-                    return std::unexpected(QString("ZIP error while writing file: %1")
-                                               .arg(relative_path));
+                    return std::unexpected(QString("ZIP error while writing file: %1").arg(relative_path));
                 }
             }
         }
@@ -258,6 +232,37 @@ std::expected<void, QString> ReviseDeckExporter::compress_directory_to_zip(const
     }
 
     return {};
+}
+
+// Private method
+QString ReviseDeckExporter::strip_img_src_paths(const QString& html) {
+    QString result = html;
+
+    QRegularExpression img_src_regex(R"((<img[^>]*\bsrc\s*=\s*["'])([^"'>]+)(["']))",
+                                     QRegularExpression::CaseInsensitiveOption);
+
+    QRegularExpressionMatchIterator it = img_src_regex.globalMatch(result);
+
+    while (it.hasNext()) {
+        QRegularExpressionMatch match = it.next();
+
+        const QString full_match = match.captured(0);
+        const QString prefix = match.captured(1);
+        const QString src_value = match.captured(2);
+        const QString suffix = match.captured(3);
+
+        const int last_slash_index = src_value.lastIndexOf('/');
+        if (last_slash_index == -1) {
+            continue;
+        }
+
+        const QString file_name = src_value.mid(last_slash_index + 1);
+        const QString replacement = prefix + file_name + suffix;
+
+        result.replace(full_match, replacement);
+    }
+
+    return result;
 }
 
 } // namespace revise
