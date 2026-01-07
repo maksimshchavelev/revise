@@ -7,12 +7,12 @@ namespace revise::internals {
 
 // Public method
 KatexEngine::KatexEngine() {
-    QFile f(":/res/math/katex.js");
-    if (!f.open(QIODevice::ReadOnly)) {
-        throw std::runtime_error(QString("Failed to open %1").arg(f.fileName()).toStdString());
-    }
+    // QFile f(":/res/math/katex.js");
+    // if (!f.open(QIODevice::ReadOnly)) {
+    //     throw std::runtime_error(QString("Failed to open %1").arg(f.fileName()).toStdString());
+    // }
 
-    m_engine.evaluate(QString::fromUtf8(f.readAll()));
+    // m_engine.evaluate(QString::fromUtf8(f.readAll()));
 }
 
 // Public method

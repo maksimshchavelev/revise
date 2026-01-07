@@ -61,9 +61,9 @@ qt_add_resources(apprevise
         res/fonts/anonymous_pro/AnonymousPro-Regular.ttf
 
         # math
-        res/math/katex.min.js
-        res/math/katex.js
-        res/math/katex.css
+        # res/math/katex.min.js
+        # res/math/katex.js
+        # res/math/katex.css
 )
 
 include(${ANDROID_SDK_ROOT}/android_openssl/CMakeLists.txt)
