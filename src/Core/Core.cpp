@@ -58,7 +58,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     for (int i = 0; i < 7; ++i) {
         int       base_id = qAbs(qHash(QDateTime::currentDateTime().toMSecsSinceEpoch())) % 1000000;
         QDateTime time = QDateTime::currentDateTime().addDays(i);
-        time.setTime(QTime(12, 00, 0)); // 12::00::00 by the local time
+        time.setTime(QTime(10, 00, 0)); // 12::00::00 by the local time
 
         // If the current time is after 12:00, then skip the notification
         if (QDateTime::currentDateTime() >= time)
