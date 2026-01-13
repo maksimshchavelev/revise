@@ -73,8 +73,36 @@ class Database : public QObject {
     QString      m_connection_name;
     QSqlDatabase m_db;
 
+    const int m_app_schema_version{2}; ///< Required for migrations
+
     std::expected<void, QString> open_connection(const QString& db_name);
     void                         close_connection();
+
+    /**
+     * @brief Get a version of the database schema
+     * @return Version (`0` by default) or error description
+     */
+    std::expected<int, QString> get_db_schema_version() const;
+
+    /**
+     * @brief Set the database schema version
+     * @param version Schema version
+     * @return `std::expected<void, QString>`
+     */
+    std::expected<void, QString> set_db_schema_version(int version);
+
+    /**
+     * @brief Migrates the database from the latest version to the current one
+     * @return std::expected<void, QString>
+     */
+    std::expected<void, QString> migrate();
+
+    /**
+     * @brief Migrates database from version 1 to 2
+     * @return std::expected<void, QString>
+     * @note Updates `m_app_schema_version` if success
+     */
+    std::expected<void, QString> migrage_1_to_2();
 };
 
 } // namespace revise

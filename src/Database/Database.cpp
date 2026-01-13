@@ -1,13 +1,13 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 // Class controlling the streak
 
-#include <Database/Database.hpp>
-#include <QDateTime> // for QDateTime
-#include <QDebug>    // for QDebug, QWarning
-#include <QDir>      // for QDir
-#include <QFileInfo> // for QFileInfo
-#include <QSqlError> // for QSqlError
-#include <QSqlQuery> // for QSqlQuery
+#include <Database/Database.hpp> // for Database header
+#include <QDateTime>             // for QDateTime
+#include <QDebug>                // for QDebug, QWarning
+#include <QDir>                  // for QDir
+#include <QFileInfo>             // for QFileInfo
+#include <QSqlError>             // for QSqlError
+#include <QSqlQuery>             // for QSqlQuery
 
 namespace revise {
 
@@ -18,11 +18,6 @@ Database::Database(const QString& connection_name, const QString& db_name, QObje
     auto res = open_connection(db_name);
     if (!res.has_value()) {
         emit error_occurred(res.error());
-    } else {
-        auto init_res = init_db();
-        if (!init_res.has_value()) {
-            emit error_occurred(init_res.error());
-        }
     }
 }
 
@@ -104,6 +99,12 @@ std::expected<void, QString> Database::init_db() {
         return std::unexpected(cards_query.lastError().text());
     }
 
+    if (auto migration_res = migrate(); !migration_res.has_value()) {
+        return std::unexpected(QString("Failed to migrate schema: %1").arg(migration_res.error()));
+    }
+
+    qDebug() << "Migrations applied";
+
     return {};
 }
 
@@ -139,8 +140,7 @@ std::expected<void, QString> Database::rollback_transaction() {
 
 
 // Public method
-QSqlDatabase &Database::raw_db() noexcept
-{
+QSqlDatabase& Database::raw_db() noexcept {
     return m_db;
 }
 
@@ -180,6 +180,134 @@ void Database::close_connection() {
 }
 
 
+// Private method
+std::expected<int, QString> Database::get_db_schema_version() const {
+    if (!m_db.isOpen()) {
+        return std::unexpected("DB is not opened");
+    }
 
+    QSqlQuery q(m_db);
+    if (!q.exec("PRAGMA user_version")) {
+        return std::unexpected(QString("Failed to get schema version: %1").arg(q.lastError().text()));
+    }
+
+    if (q.next()) {
+        return q.value(0).toInt();
+    }
+
+    return 0; // default
+}
+
+
+// Private method
+std::expected<void, QString> Database::set_db_schema_version(int version) {
+    if (!m_db.isOpen()) {
+        return std::unexpected("DB is not opened");
+    }
+
+    QSqlQuery q(m_db);
+
+    if (!q.exec(QString("PRAGMA user_version = %1").arg(version))) {
+        return std::unexpected(QString("Failed to set schema version: %1").arg(q.lastError().text()));
+    }
+
+    return {};
+}
+
+
+// Private method
+std::expected<void, QString> Database::migrate() {
+    // Migrate to 2
+    if (auto version = get_db_schema_version(); version.has_value() && version.value() <= 1) {
+        if (auto res = migrage_1_to_2(); !res.has_value()) {
+            return std::unexpected(QString("Failed to migrate from schema 1 to 2: %1").arg(res.error()));
+        }
+    } else if (!version.has_value()) {
+        return std::unexpected(QString("Failed to get schema version: %1").arg(version.error()));
+    }
+
+    return {};
+}
+
+
+// Private method
+std::expected<void, QString> Database::migrage_1_to_2() {
+    if (!m_db.isOpen()) {
+        return std::unexpected("DB is not opened");
+    }
+
+    if (!m_db.transaction()) {
+        return std::unexpected("Failed to begin transaction");
+    }
+
+    QSqlQuery q(m_db);
+
+    // Create events table
+    q.prepare(R"(
+        CREATE TABLE IF NOT EXISTS events (
+            id INTEGER PRIMARY KEY,
+            type TEXT NOT NULL,            -- type of event (for example, card_review)
+            created_at DATETIME NOT NULL,
+            payload TEXT NOT NULL,         -- payload (for example, JSON description)
+            synced INTEGER DEFAULT 0       -- synced with server?
+        )
+    )");
+
+    if (!q.exec()) {
+        m_db.rollback();
+        return std::unexpected(QString("Failed to create table 'events'. Query: %1, cause: %2")
+                                   .arg(q.lastQuery())
+                                   .arg(q.lastError().text()));
+    }
+
+    // Update decks table
+    if (!q.exec("ALTER TABLE decks ADD COLUMN global_id INTEGER DEFAULT 0")) {
+        m_db.rollback();
+        return std::unexpected(QString("Failed to update table 'decks'. Query: %1, cause: %2")
+                                   .arg(q.lastQuery())
+                                   .arg(q.lastError().text()));
+    }
+
+    if (!q.exec("ALTER TABLE decks ADD COLUMN source TEXT DEFAULT 'local'")) /* local or remote */ {
+        m_db.rollback();
+        return std::unexpected(QString("Failed to update table 'decks'. Query: %1, cause: %2")
+                                   .arg(q.lastQuery())
+                                   .arg(q.lastError().text()));
+    }
+
+    if (!q.exec("ALTER TABLE decks ADD COLUMN version INTEGER DEFAULT 0") /* version of the deck */) {
+        m_db.rollback();
+        return std::unexpected(QString("Failed to update table 'decks'. Query: %1, cause: %2")
+                                   .arg(q.lastQuery())
+                                   .arg(q.lastError().text()));
+    }
+
+    // Update cards table
+    if (!q.exec("ALTER TABLE cards ADD COLUMN global_id INTEGER DEFAULT 0")) {
+        m_db.rollback();
+        return std::unexpected(QString("Failed to update table 'cards'. Query: %1, cause: %2")
+                                   .arg(q.lastQuery())
+                                   .arg(q.lastError().text()));
+    }
+
+    if (!q.exec("ALTER TABLE cards ADD COLUMN deck_global_id INTEGER DEFAULT 0")) {
+        m_db.rollback();
+        return std::unexpected(QString("Failed to update table 'cards'. Query: %1, cause: %2")
+                                   .arg(q.lastQuery())
+                                   .arg(q.lastError().text()));
+    }
+
+    if (auto res = set_db_schema_version(m_app_schema_version); !res.has_value()) {
+        m_db.rollback();
+        return std::unexpected(QString("Failed to set schema version, cause: %1").arg(res.error()));
+    }
+
+    if (!m_db.commit()) {
+        m_db.rollback();
+        return std::unexpected("Failed to commit transaction");
+    }
+
+    return {}; // success
+}
 
 } // namespace revise

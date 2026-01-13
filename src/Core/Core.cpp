@@ -40,6 +40,14 @@ Core::Core(QGuiApplication& app, QObject* parent) :
         m_decks_model.update();
     });
 
+    // Run after running application
+    QTimer::singleShot(0, [this](){
+        // Init database manually
+        if (auto init_db_res = m_db.init_db(); !init_db_res.has_value()) {
+            ErrorReporter::instance()->report("Failed to init DB", init_db_res.error(), "Core::Core");
+        }
+    });
+
     request_permission_if_not_granted("POST_NOTIFICATIONS");
     request_permission_if_not_granted("WRITE_EXTERNAL_STORAGE");
     request_permission_if_not_granted("READ_EXTERNAL_STORAGE");
