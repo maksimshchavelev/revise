@@ -17,7 +17,12 @@ namespace revise {
 Core::Core(QGuiApplication& app, QObject* parent) :
     QObject(parent), m_app(app), m_db("revise_main", "revise.db", this), m_html_helper(this),
     m_sql_deck_repo(m_db, this), m_sm2_algo(), m_streak_service(m_db, this),
-    m_study_service(m_sql_deck_repo, m_sm2_algo), m_anki_importer(),
+    m_sql_event_recorder(m_db),
+    m_study_service(StudyServiceDeps{.deck_repository = m_sql_deck_repo,
+                                     .algorithm = m_sm2_algo,
+                                     .event_recorder = m_sql_event_recorder,
+                                     .streak = m_streak_service.streak()}),
+    m_anki_importer(),
     m_deck_service(
         [this]() -> std::unique_ptr<IDeckRepository> {
             const QString connName =
@@ -41,7 +46,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     });
 
     // Run after running application
-    QTimer::singleShot(0, [this](){
+    QTimer::singleShot(0, [this]() {
         // Init database manually
         if (auto init_db_res = m_db.init_db(); !init_db_res.has_value()) {
             ErrorReporter::instance()->report("Failed to init DB", init_db_res.error(), "Core::Core");

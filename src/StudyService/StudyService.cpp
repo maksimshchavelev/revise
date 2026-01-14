@@ -12,8 +12,9 @@ static constexpr float FAILURE_THRESHOLD = 5.0f;   // user reports failure when 
 static constexpr float TIMER_INTERVAL_MS = 100.0f; // tick every 100 ms
 static constexpr float TIMER_DECREMENT_S = 0.1f;   // seconds per tick
 
-StudyService::StudyService(IDeckRepository& repo, IAlgorithm& algo, QObject* parent) :
-    QObject(parent), m_repo(repo), m_algo(algo), m_timer(this) {
+StudyService::StudyService(StudyServiceDeps deps, QObject* parent) :
+    QObject(parent), m_repo(deps.deck_repository), m_algo(deps.algorithm), m_event_recorder(deps.event_recorder),
+    m_streak(deps.streak), m_timer(this) {
     m_timer.setSingleShot(false);
     m_timer.setInterval(static_cast<int>(TIMER_INTERVAL_MS));
     connect(&m_timer, &QTimer::timeout, this, &StudyService::on_timer_timeout);
@@ -174,6 +175,19 @@ void StudyService::start_training(int deck_id) {
 }
 
 void StudyService::next_card(float current_difficulty) {
+    // Record last answer
+    if (auto res = m_event_recorder.record(CardReviewEvent{
+            .card_id = m_cards.head().id,
+            .global_card_id = 0, // TODO: INSERT REAL VALUE
+            .deck_id = m_current_deck_id,
+            .global_deck_id = 0, // TODO: INSERT REAL VALUE
+            .current_streak = m_streak,
+            .review_duration = std::chrono::milliseconds(0) // TODO: INSERT REAL VALUE
+        });
+        !res.has_value()) {
+        ErrorReporter::instance()->report("Failed to save review card event", res.error(), "StudyService::next_card");
+    }
+
     // Dequeue current card
     Card card = m_cards.dequeue();
 

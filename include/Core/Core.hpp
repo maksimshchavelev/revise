@@ -17,6 +17,7 @@
 #include <QObject>                                 // for QObject
 #include <SM2Algorithm/SM2Algorithm.hpp>           // for SM2
 #include <SqlDeckRepository/SqlDeckRepository.hpp> // for SqlDeckRepository
+#include <SqlEventRecorder/SqlEventRecorder.hpp>   // for SqlEventRecorder
 #include <StreakService/StreakService.hpp>         // for StreakService
 #include <StudyService/StudyService.hpp>           // for StudyService
 
@@ -33,6 +34,7 @@ class Core : public QObject {
   private:
     QGuiApplication&   m_app;
     Database           m_db;
+    SqlEventRecorder   m_sql_event_recorder;
     DeckMediaStorage   m_deck_media_storage;
     HtmlHelper         m_html_helper;
     SqlDeckRepository  m_sql_deck_repo;

@@ -7,12 +7,23 @@
 #include <Database/Database.hpp>               // for Database
 #include <IAlgorithm/IAlgorithm.hpp>           // for IAlgorithm
 #include <IDeckRepository/IDeckRepository.hpp> // for IDeckRepository
+#include <IEventRecorder/IEventRecorder.hpp>   // for IEventRecorder
 #include <QGuiApplication>                     // for QGuiApplication
 #include <QObject>                             // for QObject
 #include <QQueue>                              // for QQueue
 #include <QTimer>                              // for QTimer
 
 namespace revise {
+
+/**
+ * @brief Dependencies of the `StudyService` class
+ */
+struct StudyServiceDeps {
+    IDeckRepository& deck_repository; ///< Deck repository
+    IAlgorithm&      algorithm;       ///< Study algorigtm
+    IEventRecorder&  event_recorder;  ///< Event recorder
+    int              streak;          ///< Current streak
+};
 
 /**
  * @brief Service that manages study sessions for a deck.
@@ -38,11 +49,9 @@ class StudyService : public QObject {
 
     /**
      * @brief Construct StudyService.
-     * @param repo Reference to repository used for loading and persisting cards.
-     * @param algo Reference to scheduling algorithm (must outlive this service).
      * @param parent QObject parent.
      */
-    explicit StudyService(IDeckRepository& repo, IAlgorithm& algo, QObject* parent = nullptr);
+    explicit StudyService(StudyServiceDeps deps, QObject* parent = nullptr);
 
     ~StudyService() override = default;
 
@@ -118,16 +127,18 @@ class StudyService : public QObject {
     void on_timer_timeout();
 
   private:
-    IDeckRepository& m_repo;    ///< repository for DB access
-    IAlgorithm&      m_algo;    ///< algorithm used to compute next review
-    QQueue<Card>     m_cards;   ///< active queue of cards
-    QList<Card>      m_trained; ///< trained cards to persist at end
-    QTimer           m_timer;   ///< timer for smooth time decrease
+    IDeckRepository& m_repo;           ///< repository for DB access
+    IAlgorithm&      m_algo;           ///< algorithm used to compute next review
+    IEventRecorder&  m_event_recorder; ///< Event recorder
+    QQueue<Card>     m_cards;          ///< active queue of cards
+    QList<Card>      m_trained;        ///< trained cards to persist at end
+    QTimer           m_timer;          ///< timer for smooth time decrease
     int              m_time_limit{0};
     float            m_time_remaining{0.0f};
     bool             m_flipped{false};
     bool             m_timer_paused{false};
     int              m_current_deck_id{0};
+    int              m_streak;
 
     // helpers
     void enqueue_all(const QList<Card>& list);
