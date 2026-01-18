@@ -1,8 +1,10 @@
 // Card preview page
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls as QQC
 import "../theme"
 import "../controls"
+import "../components"
 
 Item {
     id: root
@@ -26,47 +28,28 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "black"
-        opacity: 0.2
+    }
+
+    QQC.BusyIndicator {
+        anchors.centerIn: parent
+        width: parent.width * 0.35
+        height: width
+        running: htmlCard.loading
     }
 
     ColumnLayout {
+        id: layout
         anchors.fill: parent
         anchors.margins: 4
         spacing: 8
+        visible: !htmlCard.loading
 
-        Flickable {
-            id: flickable
+        HtmlView {
+            id: htmlCard
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.margins: 8
-            contentWidth: width
-            contentHeight: Math.max(text.implicitHeight, height)
-            clip: true
-            boundsBehavior: Flickable.StopAtBounds
-            flickableDirection: htmlHelper.has_mathjax(
-                                    text) ? Flickable.HorizontalFlick : Flickable.VerticalFlick
-
-            AppText {
-                id: text
-                width: parent.width
-                anchors.centerIn: parent
-                font.pixelSize: Theme.textSizeMedium
-                wrapMode: htmlHelper.has_mathjax(
-                              text) ? Text.NoWrap : Text.WordWrap
-                text: {
-                    var prepared_text = htmlHelper.scale_images_to_width(
-                                root.flipped ? root.back : root.front, parent.width)
-                    prepared_text = htmlHelper.replace_mathjax_to_images(
-                                prepared_text, Theme.textColor,
-                                Theme.textSizeMedium)
-                    return prepared_text
-                }
-
-                textFormat: Text.RichText
-                horizontalAlignment: htmlHelper.has_mathjax(
-                                         text) ? Text.AlignLeft : Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
+            html: root.flipped ? (countLines(root.back) > 2 ? verticalCenterText(root.back) : centerHtml(root.back))
+                               : centerHtml(root.front)
         }
 
         Button {

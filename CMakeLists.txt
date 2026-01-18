@@ -7,7 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(JSONCPP_ANDROID_DIR "/usr/local/jsoncpp-android")
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql Concurrent Svg)
+find_package(Qt6 REQUIRED COMPONENTS
+  Quick
+  Sql
+  Concurrent
+  Svg
+  WebView)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
@@ -60,10 +65,13 @@ qt_add_resources(apprevise
         res/fonts/anonymous_pro/AnonymousPro-Italic.ttf
         res/fonts/anonymous_pro/AnonymousPro-Regular.ttf
 
-        # math
-        # res/math/katex.min.js
-        # res/math/katex.js
-        # res/math/katex.css
+        # html
+        res/html/card.html
+        res/html/tex-svg.js
+        res/html/fonts/anonymous_pro/AnonymousPro-Bold.ttf
+        res/html/fonts/anonymous_pro/AnonymousPro-BoldItalic.ttf
+        res/html/fonts/anonymous_pro/AnonymousPro-Italic.ttf
+        res/html/fonts/anonymous_pro/AnonymousPro-Regular.ttf
 )
 
 include(${ANDROID_SDK_ROOT}/android_openssl/CMakeLists.txt)
@@ -130,6 +138,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       Qt6::Sql
       Qt6::Concurrent
       Qt6::Svg
+      Qt6::WebView
       QuaZip::QuaZip
       Boost::stacktrace_basic
       libzstd_static
@@ -147,6 +156,7 @@ else() # Release
       Qt6::Sql
       Qt6::Concurrent
       Qt6::Svg
+      Qt6::WebView
       QuaZip::QuaZip
       libzstd_static
       PRIVATE ${JSONCPP_ANDROID_DIR}/lib

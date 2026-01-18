@@ -1,0 +1,92 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+    <meta charset="utf-8"> 
+    <!-- MathJax config --> 
+    <script> 
+        window.MathJax = { 
+            tex: { 
+                inlineMath: [
+                    ['$', '$'], 
+                    ['\\\\(', '\\\\)'],
+                    ['\\(', '\\)']
+                ] 
+            } 
+        }; 
+    </script> 
+
+    <!-- MathJax library --> 
+    <script src="./tex-svg.js"></script> 
+
+    <style> 
+        @font-face {
+            font-family: 'AnonymousPro';
+            src: url('./fonts/anonymous_pro/AnonymousPro-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'AnonymousPro';
+            src: url('./fonts/anonymous_pro/AnonymousPro-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }   
+
+        @font-face {
+            font-family: 'AnonymousPro';
+            src: url('./fonts/anonymous_pro/AnonymousPro-Italic.ttf') format('truetype');
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: 'AnonymousPro';
+            src: url('./fonts/anonymous_pro/AnonymousPro-BoldItalic.ttf') format('truetype');
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        body { 
+            margin: 0; padding: 8px; 
+            background: black; 
+            color: white; 
+            font-size: 17px; 
+            line-height: 1.35; 
+            font-family: 'AnonymousPro', system-ui, sans-serif; 
+        } 
+
+        img { 
+            max-width: 100%; 
+            height: auto; 
+        } 
+    </style> 
+
+    </head> 
+
+    <body> 
+        <div id="card"></div> 
+        <script> 
+            function renderCard(html) { 
+                const el = document.getElementById("card"); 
+                el.innerHTML = html; 
+                MathJax.typesetPromise(); 
+            } 
+
+            function setFontSize(px) {
+                const body = document.body;
+                body.style.fontSize = px + "px";
+
+                if (window.MathJax && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([document.getElementById("card")]).catch(err => console.error(err));
+                }
+            }
+
+            function setTextColor(color) {
+                document.body.style.color = color;
+                const mathElements = document.querySelectorAll("mjx-container, mjx-math, svg");
+                mathElements.forEach(el => el.style.color = color);
+            }
+        </script> 
+    </body> 
+</html>

@@ -1,6 +1,7 @@
 // Training page
 
 import QtQuick
+import QtQuick.Controls as QQC
 import QtQuick.Layouts
 import "../components"
 import "../controls"
@@ -22,10 +23,17 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "black"
-        opacity: 0.2
+    }
+
+    QQC.BusyIndicator {
+        anchors.centerIn: parent
+        width: parent.width * 0.35
+        height: width
+        running: htmlCard.loading
     }
 
     ColumnLayout {
+        visible: !htmlCard.loading
         anchors.fill: parent
         spacing: 0  // Remove spacing between items
 
@@ -46,35 +54,29 @@ Item {
             }
         }
 
-        Flickable {
-            id: flickable
-            Layout.fillHeight: true
+        Item {
             Layout.fillWidth: true
-            Layout.margins: 8
-            contentWidth: width
-            contentHeight: Math.max(text.implicitHeight, height)
-            clip: true
-            boundsBehavior: Flickable.StopAtBounds
-            flickableDirection: htmlHelper.has_mathjax(text) ?
-                                    Flickable.HorizontalFlick :
-                                    Flickable.VerticalFlick
+            Layout.fillHeight: true
+            visible: !htmlCard.visible
+        }
 
-            AppText {
-                id: text
-                width: parent.width
-                anchors.centerIn: parent
-                font.pixelSize: Theme.textSizeMedium
-                wrapMode: htmlHelper.has_mathjax(text) ? Text.NoWrap : Text.WordWrap
-                text: {
-                    var prepared_text = htmlHelper.scale_images_to_width(studyService.cardText, parent.width)
-                    prepared_text = htmlHelper.replace_mathjax_to_images(prepared_text,
-                                                                         Theme.textColor,
-                                                                         Theme.textSizeMedium)
+        HtmlView {
+            id: htmlCard
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            html: loading ? "" : get_html()
+            visible: !abortQuestionPopup.visible
+            onLoadingChanged: {
+                if (loading) {
+                    studyService.pause()
+                } else {
+                    studyService.resume()
                 }
+            }
 
-                textFormat: Text.RichText
-                horizontalAlignment: htmlHelper.has_mathjax(text) ? Text.AlignLeft : Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+            function get_html() {
+                return root.flipped ? (countLines(studyService.cardText) > 2 ? verticalCenterText(studyService.cardText) : centerHtml(studyService.cardText))
+                                    : centerHtml(studyService.cardText)
             }
         }
 

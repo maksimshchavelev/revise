@@ -10,14 +10,14 @@
 #include <QSqlError>                                   // for QSqlError
 #include <QUuid>                                       // for QUuid
 #include <QtCore/private/qandroidextras_p.h>           // for QtAndroidPrivate
+#include <QtWebView>                                   // for QtWebView
 
 namespace revise {
 
 // Public method
 Core::Core(QGuiApplication& app, QObject* parent) :
     QObject(parent), m_app(app), m_db("revise_main", "revise.db", this), m_html_helper(this),
-    m_sql_deck_repo(m_db, this), m_sm2_algo(), m_streak_service(m_db, this),
-    m_sql_event_recorder(m_db),
+    m_sql_deck_repo(m_db, this), m_sm2_algo(), m_streak_service(m_db, this), m_sql_event_recorder(m_db),
     m_study_service(StudyServiceDeps{.deck_repository = m_sql_deck_repo,
                                      .algorithm = m_sm2_algo,
                                      .event_recorder = m_sql_event_recorder,
@@ -84,6 +84,11 @@ Core::Core(QGuiApplication& app, QObject* parent) :
 
 // Public method
 int Core::run() {
+    // Copy WebView assets (html and mathjax script)
+    extract_web_bundle();
+
+    QtWebView::initialize();
+
     // Reset streak if overdue
     m_streak_service.reset_if_overdue();
 
@@ -152,6 +157,77 @@ void Core::request_permission_if_not_granted(const QString& permission) {
         [[maybe_unused]] auto permission_request_result =
             QtAndroidPrivate::requestPermission(QString("android.permission.%1").arg(permission)).result();
     }
+}
+
+// Private method
+void Core::extract_web_bundle() const {
+    auto copy_directory_recursive = [](const QString& source_dir, const QString& destination_dir) -> bool {
+        // Create a helper recursive lambda using std::function for self-reference
+        std::function<bool(const QString&, const QString&)> recursive_copy;
+
+        recursive_copy = [&recursive_copy](const QString& src, const QString& dst) -> bool {
+            QDir source_dir(src);
+            QDir dest_dir(dst);
+
+            // Check if source directory exists
+            if (!source_dir.exists()) {
+                qWarning() << "Source directory does not exist:" << src;
+                return false;
+            }
+
+            // Create destination directory if it doesn't exist
+            if (!dest_dir.exists()) {
+                if (!dest_dir.mkpath(".")) {
+                    qWarning() << "Failed to create destination directory:" << dst;
+                    return false;
+                }
+            }
+
+            // Get all entries in the source directory
+            QFileInfoList entries = source_dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+
+            for (const QFileInfo& entry : entries) {
+                QString src_path = entry.absoluteFilePath();
+                QString dst_path = dest_dir.absoluteFilePath(entry.fileName());
+
+                if (entry.isDir()) {
+                    // Recursively copy subdirectory
+                    if (!recursive_copy(src_path, dst_path)) {
+                        return false;
+                    }
+                } else if (entry.isFile()) {
+                    // Copy file
+                    if (QFile::exists(dst_path)) {
+                        // Remove existing file if it exists
+                        if (!QFile::remove(dst_path)) {
+                            qWarning() << "Failed to remove existing file:" << dst_path;
+                            return false;
+                        }
+                    }
+
+                    // Copy the file
+                    if (!QFile::copy(src_path, dst_path)) {
+                        qWarning() << "Failed to copy file:" << src_path << "to" << dst_path;
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        };
+
+        // Start the recursive copying process
+        return recursive_copy(source_dir, destination_dir);
+    };
+
+    const auto base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/web";
+
+    // Remove and create base dir again
+    QDir(base).removeRecursively();
+    QDir().mkpath(base);
+
+    // Copy files
+    copy_directory_recursive(":res/html", base);
 }
 
 } // namespace revise

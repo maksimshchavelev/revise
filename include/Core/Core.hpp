@@ -54,6 +54,11 @@ class Core : public QObject {
 
     // Helper
     void request_permission_if_not_granted(const QString& permission);
+
+    /**
+     * @brief Copies HTML assets from resources to AppData
+     */
+    void extract_web_bundle() const;
 };
 
 } // namespace revise
