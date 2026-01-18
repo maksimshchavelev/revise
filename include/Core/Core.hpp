@@ -57,6 +57,16 @@ class Core : public QObject {
      * @brief Copies HTML assets from resources to AppData
      */
     void extract_web_bundle() const;
+
+    /**
+     * @brief Schedules notifications (weekly)
+     * @param today_enabled If `true`, the notification will be scheduled for today.
+     * @param at When to show notifications
+     * @note If the user has completed the training, notifications should be scheduled without taking today into
+     * account, so set `today_enabled` = `false`.
+     * @note The method clears notifications that have already been scheduled.
+     */
+    void schedule_notifications(bool today_enabled = true, const QTime& at = QTime(10, 0, 0)) const;
 };
 
 } // namespace revise

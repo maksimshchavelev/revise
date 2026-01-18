@@ -28,6 +28,7 @@ ApplicationWindow {
         id: pageLoader
         anchors.fill: parent
         source: pages.main
+        asynchronous: true
 
         onLoaded: {
             if (item.addDeckClicked) {
@@ -47,7 +48,6 @@ ApplicationWindow {
             if (item.aborted) {
                 item.aborted.connect(function() {
                     pageLoader.source = pages.main
-                    infoPopup.open(qsTr("Тренировка прервана :("))
                 })
             }
             if (item.backClicked) {
@@ -147,18 +147,26 @@ ApplicationWindow {
         }
     }
 
+    Rectangle {
+        id: loaderScreen
+        color: "black"
+        visible: pageLoader.status === Loader.Loading
+        anchors.fill: parent
+    }
+
     BusyIndicator {
         anchors.centerIn: parent
         width: 128
         height: 128
-        running: deckService.importInProgress || deckService.exportInProgress
+        running: deckService.importInProgress || deckService.exportInProgress || pageLoader.status === Loader.Loading
     }
 
     Connections {
         target: errorReporter
 
         function onError_occured(error) {
-            scrollableInfoPopup.open(error.message + "\n\nDetails: " + error.details + "\n\nStacktrace:\n\n" + error.stacktrace)
+            var stacktrace = error.stacktrace.length > 0 ? "\n\nStacktrace:\n\n" + error.stacktrace : ""
+            scrollableInfoPopup.open(error.message + "\n\nDetails: " + error.details + stacktrace)
         }
     }
 

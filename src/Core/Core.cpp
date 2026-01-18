@@ -43,6 +43,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
         }
 
         m_decks_model.update();
+        schedule_notifications(false); // ignore today
     });
 
     // Run after running application
@@ -57,28 +58,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     request_permission_if_not_granted("WRITE_EXTERNAL_STORAGE");
     request_permission_if_not_granted("READ_EXTERNAL_STORAGE");
 
-    QVector<QString> notifications = {"Пора что нибудь повторить!",
-                                      "Ты целых два дня ничего не повторял",
-                                      "Ты так долго ничего не повторял...",
-                                      "Найдешь 5 минут для повторения?",
-                                      "Давай повторим карточки!",
-                                      "Нужно повторить карточки",
-                                      "Не хочешь кое что повторить?"};
-
-    NotificationManager::clear_all_scheduled_notifications();
-
-    // weekly shedule
-    for (int i = 0; i < 7; ++i) {
-        int       base_id = qAbs(qHash(QDateTime::currentDateTime().toMSecsSinceEpoch())) % 1000000;
-        QDateTime time = QDateTime::currentDateTime().addDays(i);
-        time.setTime(QTime(10, 00, 0)); // 12::00::00 by the local time
-
-        // If the current time is after 12:00, then skip the notification
-        if (QDateTime::currentDateTime() >= time)
-            continue;
-
-        NotificationManager::schedule_notification(notifications[i], time, base_id);
-    }
+    schedule_notifications();
 }
 
 
@@ -226,6 +206,36 @@ void Core::extract_web_bundle() const {
 
     // Copy files
     copy_directory_recursive(":res/html", base);
+}
+
+// Private method
+void Core::schedule_notifications(bool today_enabled, const QTime& at) const
+{
+    NotificationManager::clear_all_scheduled_notifications();
+
+    QVector<QString> notifications = {"Пора что нибудь повторить!",
+                                      "Ты целых два дня ничего не повторял",
+                                      "Ты так долго ничего не повторял...",
+                                      "Найдешь 5 минут для повторения?",
+                                      "Давай повторим карточки!",
+                                      "Нужно повторить карточки",
+                                      "Не хочешь кое что повторить?"};
+
+    for (int i = 0; i < 7; ++i) {
+        if (!today_enabled && i == 0) {
+            continue; // skip today
+        }
+
+        int       base_id = qAbs(qHash(QDateTime::currentDateTime().toMSecsSinceEpoch())) % 1000000;
+        QDateTime time = QDateTime::currentDateTime().addDays(i);
+        time.setTime(at);
+
+        // If the current time is after 10:00, then skip the notification
+        if (QDateTime::currentDateTime() >= time)
+            continue;
+
+        NotificationManager::schedule_notification(notifications[today_enabled ? i : i - 1], time, base_id);
+    }
 }
 
 } // namespace revise

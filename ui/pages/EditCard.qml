@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../theme"
 import "../controls"
+import "../dialogs"
 
 Item {
     id: root
@@ -39,8 +40,85 @@ Item {
             }
         }
 
-        AppText {
-            text: qsTr("Текст сзади")
+        RowLayout {
+            Layout.fillWidth: true
+
+            AppText {
+                text: qsTr("Текст сзади")
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Tool buttons
+            Item {
+                Layout.preferredWidth: 48
+                Layout.preferredHeight: 32
+
+                Button {
+                    id: addMathButton
+                    text: "f(x)"
+                    anchors.fill: parent
+                    onClicked: {
+                        addFormulaPopup.open()
+                    }
+                }
+            }
+
+            Item {
+                Layout.preferredWidth: 48
+                Layout.preferredHeight: 32
+
+                Button {
+                    id: addBoldButton
+                    text: "<b>B</b>"
+                    anchors.fill: parent
+                    onClicked: {
+                        wrapPopup.buttonText = qsTr("Сделать <b>жирным</b>")
+                        wrapPopup.wrapLeft = "<b>"
+                        wrapPopup.wrapRight = "</b>"
+                        wrapPopup.textPlaceholder = qsTr("Введите текст")
+                        wrapPopup.open()
+                    }
+                }
+            }
+
+            Item {
+                Layout.preferredWidth: 48
+                Layout.preferredHeight: 32
+
+                Button {
+                    id: addItalicButton
+                    text: "<i>I</i>"
+                    anchors.fill: parent
+                    onClicked: {
+                        wrapPopup.buttonText = qsTr("Выделить <b>курсивом</b>")
+                        wrapPopup.wrapLeft = "<i>"
+                        wrapPopup.wrapRight = "</i>"
+                        wrapPopup.textPlaceholder = qsTr("Введите текст")
+                        wrapPopup.open()
+                    }
+                }
+            }
+
+            Item {
+                Layout.preferredWidth: 48
+                Layout.preferredHeight: 32
+
+                Button {
+                    id: addUnderlinedButton
+                    text: "<u>U</u>"
+                    anchors.fill: parent
+                    onClicked: {
+                        wrapPopup.buttonText = qsTr("<b>Подчеркнуть</b>")
+                        wrapPopup.wrapLeft = "<i>"
+                        wrapPopup.wrapRight = "</i>"
+                        wrapPopup.textPlaceholder = qsTr("Введите текст")
+                        wrapPopup.open()
+                    }
+                }
+            }
         }
 
         ValidatedMultilineTextField {
@@ -99,6 +177,35 @@ Item {
                 Qt.inputMethod.hide()
                 root.backClicked()
             }
+        }
+    }
+
+    WrapTextPopup {
+        id: wrapPopup
+
+        onWrapClicked: function(wrapped) {
+            cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition, wrapped)
+            wrapPopup.close()
+        }
+    }
+
+    AddFormulaPopup {
+        id: addFormulaPopup
+
+        onAddInline: {
+            wrapPopup.buttonText = qsTr("Добавить формулу")
+            wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
+            wrapPopup.wrapLeft = "\\("
+            wrapPopup.wrapRight = "\\)"
+            wrapPopup.open()
+        }
+
+        onAddDisplay: {
+            wrapPopup.buttonText = qsTr("Добавить формулу")
+            wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
+            wrapPopup.wrapLeft = "\\["
+            wrapPopup.wrapRight = "\\]"
+            wrapPopup.open()
         }
     }
 }

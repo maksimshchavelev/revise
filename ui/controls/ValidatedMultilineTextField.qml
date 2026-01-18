@@ -13,6 +13,7 @@ Item {
     property bool valid: true
     property bool editable: true
     property Item outerFlickable: null
+    property TextEdit rawTextEdit: textInput
 
     // Signals
     signal editingFinished
