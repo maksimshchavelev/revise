@@ -226,15 +226,20 @@ void Core::schedule_notifications(bool today_enabled, const QTime& at) const
             continue; // skip today
         }
 
+        int notification_index = i;
+        if (!today_enabled && i > 0) {
+            notification_index = i - 1;
+        }
+
         int       base_id = qAbs(qHash(QDateTime::currentDateTime().toMSecsSinceEpoch())) % 1000000;
         QDateTime time = QDateTime::currentDateTime().addDays(i);
         time.setTime(at);
 
-        // If the current time is after 10:00, then skip the notification
+        // If the current time is after `at`, then skip the notification
         if (QDateTime::currentDateTime() >= time)
             continue;
 
-        NotificationManager::schedule_notification(notifications[today_enabled ? i : i - 1], time, base_id);
+        NotificationManager::schedule_notification(notifications[notification_index], time, base_id);
     }
 }
 

@@ -30,6 +30,8 @@ ApplicationWindow {
         source: pages.main
         asynchronous: true
 
+        property bool loading: status === Loader.Loading
+
         onLoaded: {
             if (item.addDeckClicked) {
                 item.addDeckClicked.connect(addDeckPopup.open)
@@ -39,23 +41,34 @@ ApplicationWindow {
                     deckModalDialog.open(deckId, repeatableToday)
                 })
             }
-            if (item.trainingFinished) {
-                item.trainingFinished.connect(function() {
-                    pageLoader.source = pages.main
-                    infoPopup.open(qsTr("Тренировка завершена!"))
-                })
-            }
-            if (item.aborted) {
-                item.aborted.connect(function() {
-                    pageLoader.source = pages.main
-                })
-            }
-            if (item.backClicked) {
-                item.backClicked.connect(function() {
-                    pageLoader.source = pages.main
-                })
-            }
         }
+    }
+
+    Connections {
+        target: pageLoader.item
+        ignoreUnknownSignals: true
+
+        function onTrainingFinished() {
+            goToMain()
+        }
+
+        function onAborted() {
+            goToMain()
+        }
+
+        function onBackClicked() {
+            goToMain()
+        }
+    }
+
+    function goToMain() {
+        // !!!
+        pageLoader.active = false
+
+        Qt.callLater(() => {
+            pageLoader.source = pages.main
+            pageLoader.active = true
+        })
     }
 
     CreateDeckPopup {
@@ -158,7 +171,7 @@ ApplicationWindow {
         anchors.centerIn: parent
         width: 128
         height: 128
-        running: deckService.importInProgress || deckService.exportInProgress || pageLoader.status === Loader.Loading
+        running: deckService.importInProgress || deckService.exportInProgress || pageLoader.loading
     }
 
     Connections {
