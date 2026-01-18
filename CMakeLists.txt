@@ -11,7 +11,6 @@ find_package(Qt6 REQUIRED COMPONENTS
   Quick
   Sql
   Concurrent
-  Svg
   WebView)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
@@ -137,7 +136,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       Qt6::Quick
       Qt6::Sql
       Qt6::Concurrent
-      Qt6::Svg
       Qt6::WebView
       QuaZip::QuaZip
       Boost::stacktrace_basic
@@ -155,7 +153,6 @@ else() # Release
       Qt6::Quick
       Qt6::Sql
       Qt6::Concurrent
-      Qt6::Svg
       Qt6::WebView
       QuaZip::QuaZip
       libzstd_static
