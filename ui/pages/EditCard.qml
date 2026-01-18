@@ -145,7 +145,6 @@ Item {
                     clickable: cardFront.valid && cardFront.text.trim() !== ""
                                && cardBack.valid && cardBack.text.trim() !== ""
                     onClicked: {
-                        Qt.inputMethod.hide()
                         updateClicked(root.card.id, cardFront.text, cardBack.text)
                     }
                 }
@@ -162,6 +161,7 @@ Item {
                     clickable: cardFront.valid && cardFront.text.trim() !== ""
                                && cardBack.valid && cardBack.text.trim() !== ""
                     onClicked: {
+                        Qt.inputMethod.hide()
                         previewClicked(cardFront.text, cardBack.text)
                     }
                 }
@@ -184,7 +184,10 @@ Item {
         id: wrapPopup
 
         onWrapClicked: function(wrapped) {
-            cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition, wrapped)
+            cardBack.rawTextEdit.focus = true
+            cardBack.rawTextEdit.forceActiveFocus()
+            cardBack.rawTextEdit.cursorVisible = true
+            cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition, wrapped + ' ')
             wrapPopup.close()
         }
     }

@@ -46,7 +46,6 @@ Item {
             onBackClicked: pages.currentIndex = 0
             onCreateClicked: {
                 deckService.create_card(deckId, front, back)
-                Qt.inputMethod.hide()
             }
             onPreviewClicked: function(front, back) {
                 Qt.inputMethod.hide()
@@ -77,7 +76,6 @@ Item {
             }
 
             onUpdateClicked: function(id, front, back) {
-                Qt.inputMethod.hide()
                 deckService.update_card(id, front, back)
             }
 
@@ -101,7 +99,6 @@ Item {
         }
 
         onRemoveClicked: function(cardId) {
-            Qt.inputMethod.hide()
             deckService.remove_card(cardId)
         }
 

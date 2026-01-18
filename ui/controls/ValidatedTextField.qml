@@ -16,6 +16,7 @@ Item {
     property alias inputMethodHints: textInput.inputMethodHints
     property bool valid: validator ? textInput.acceptableInput : true
     property bool editable: true
+    property TextInput rawTextInput: textInput
 
     // Signals
     signal editingFinished()

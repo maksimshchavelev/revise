@@ -203,15 +203,6 @@ Item {
         } // end ScrollView
     } // end contentContainer
 
-    // Covering MouseArea to focus on click, but disabled while TextEdit has focus to avoid stealing gestures.
-    MouseArea {
-        id: outerMouse
-        anchors.fill: parent
-        enabled: !textInput.activeFocus
-        onClicked: textInput.forceActiveFocus()
-        visible: !textInput.focus
-    }
-
     // Read-only overlay when editable == false
     Rectangle {
         anchors.fill: parent

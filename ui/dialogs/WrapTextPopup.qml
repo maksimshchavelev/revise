@@ -28,6 +28,7 @@ Item {
 
     signal wrapClicked(string wrapped)
     signal changed(string text)
+    signal closed()
 
     // Background blur effect
     ShaderEffectSource {
@@ -178,11 +179,15 @@ Item {
     // Public API
     function open() {
         root.visible = true
+        textInput.rawTextInput.focus = true
+        textInput.rawTextInput.cursorVisible = true
     }
 
     function close() {
         root.visible = false
         textInput.text = ""
-        Qt.inputMethod.hide()
+        textInput.rawTextInput.focus = false
+        textInput.rawTextInput.cursorVisible = false
+        closed()
     }
 }
