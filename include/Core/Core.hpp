@@ -12,7 +12,6 @@
 #include <DeckService/DeckService.hpp>             // for DeckService
 #include <DecksModel/DecksModel.hpp>               // for DecksModel
 #include <HtmlHelper/HtmlHelper.hpp>               // for HtmlHelper
-#include <MathJaxRenderer/MathJaxRenderer.hpp>     // for MathJaxRenderer
 #include <QGuiApplication>                         // for QGuiApplication
 #include <QObject>                                 // for QObject
 #include <SM2Algorithm/SM2Algorithm.hpp>           // for SM2
@@ -47,7 +46,6 @@ class Core : public QObject {
     DeckService        m_deck_service;
     DecksModel         m_decks_model;
     CardsModel         m_cards_model;
-    MathJaxRenderer    m_mathjax_renderer;
 
     // Helper
     std::unique_ptr<IDeckRepository> make_thread_local_sql_repo(const QString& conn_name);
