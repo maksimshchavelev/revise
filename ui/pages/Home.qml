@@ -16,6 +16,7 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
         anchors.fill: parent
         anchors.margins: 5
+        clip: true
         
         delegate: Item {
             width: ListView.view.width
