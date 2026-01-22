@@ -18,6 +18,17 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp*
     ${CMAKE_CURRENT_LIST_DIR}/include/*.tpp*)
 
+file(GLOB_RECURSE ABS_RESOURCES CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_LIST_DIR}/res/*)
+
+set(RESOURCES)
+foreach(abs_file ${ABS_RESOURCES})
+    file(RELATIVE_PATH rel_file
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${abs_file})
+    list(APPEND RESOURCES ${rel_file})
+endforeach()
+
 qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(apprevise ${SOURCES})
@@ -59,18 +70,7 @@ qt_add_resources(apprevise
         res/img/checkbox_checked.png
 
         # fonts
-        res/fonts/anonymous_pro/AnonymousPro-Bold.ttf
-        res/fonts/anonymous_pro/AnonymousPro-BoldItalic.ttf
-        res/fonts/anonymous_pro/AnonymousPro-Italic.ttf
-        res/fonts/anonymous_pro/AnonymousPro-Regular.ttf
-
-        # html
-        res/html/card.html
-        res/html/tex-svg.js
-        res/html/fonts/anonymous_pro/AnonymousPro-Bold.ttf
-        res/html/fonts/anonymous_pro/AnonymousPro-BoldItalic.ttf
-        res/html/fonts/anonymous_pro/AnonymousPro-Italic.ttf
-        res/html/fonts/anonymous_pro/AnonymousPro-Regular.ttf
+        ${RESOURCES}
 )
 
 include(${ANDROID_SDK_ROOT}/android_openssl/CMakeLists.txt)

@@ -12,7 +12,7 @@ Item {
 
     signal createClicked(int deckId, string front, string back)
     signal previewClicked(string front, string back)
-    signal backClicked()
+    signal backClicked
 
     function exitClicked() {
         root.backClicked()
@@ -49,29 +49,25 @@ Item {
                 Layout.fillWidth: true
             }
 
-            // Tool buttons
-            Item {
-                Layout.preferredWidth: 48
-                Layout.preferredHeight: 32
+            Flow {
+                Layout.fillWidth: true
+                spacing: 5
+                layoutDirection: Qt.RightToLeft
 
+                // Tool buttons
                 Button {
                     id: addMathButton
                     text: "f(x)"
-                    anchors.fill: parent
                     onClicked: {
                         addFormulaPopup.open()
                     }
+                    implicitWidth: 48
+                    implicitHeight: 32
                 }
-            }
-
-            Item {
-                Layout.preferredWidth: 48
-                Layout.preferredHeight: 32
 
                 Button {
                     id: addBoldButton
                     text: "<b>B</b>"
-                    anchors.fill: parent
                     onClicked: {
                         wrapPopup.buttonText = qsTr("Сделать <b>жирным</b>")
                         wrapPopup.wrapLeft = "<b>"
@@ -79,17 +75,14 @@ Item {
                         wrapPopup.textPlaceholder = qsTr("Введите текст")
                         wrapPopup.open()
                     }
-                }
-            }
 
-            Item {
-                Layout.preferredWidth: 48
-                Layout.preferredHeight: 32
+                    implicitWidth: 48
+                    implicitHeight: 32
+                }
 
                 Button {
                     id: addItalicButton
                     text: "<i>I</i>"
-                    anchors.fill: parent
                     onClicked: {
                         wrapPopup.buttonText = qsTr("Выделить <b>курсивом</b>")
                         wrapPopup.wrapLeft = "<i>"
@@ -97,17 +90,14 @@ Item {
                         wrapPopup.textPlaceholder = qsTr("Введите текст")
                         wrapPopup.open()
                     }
-                }
-            }
 
-            Item {
-                Layout.preferredWidth: 48
-                Layout.preferredHeight: 32
+                    implicitWidth: 48
+                    implicitHeight: 32
+                }
 
                 Button {
                     id: addUnderlinedButton
                     text: "<u>U</u>"
-                    anchors.fill: parent
                     onClicked: {
                         wrapPopup.buttonText = qsTr("<b>Подчеркнуть</b>")
                         wrapPopup.wrapLeft = "<i>"
@@ -115,6 +105,18 @@ Item {
                         wrapPopup.textPlaceholder = qsTr("Введите текст")
                         wrapPopup.open()
                     }
+                    implicitWidth: 48
+                    implicitHeight: 32
+                }
+
+                Button {
+                    id: addCodeButton
+                    text: "code"
+                    onClicked: {
+                        addCodePopup.open()
+                    }
+                    implicitWidth: 48
+                    implicitHeight: 32
                 }
             }
         }
@@ -184,11 +186,12 @@ Item {
     WrapTextPopup {
         id: wrapPopup
 
-        onWrapClicked: function(wrapped) {
+        onWrapClicked: function (wrapped) {
             cardBack.rawTextEdit.focus = true
             cardBack.rawTextEdit.forceActiveFocus()
             cardBack.rawTextEdit.cursorVisible = true
-            cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition, wrapped + ' ')
+            cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
+                                        wrapped)
             wrapPopup.close()
         }
     }
@@ -200,7 +203,7 @@ Item {
             wrapPopup.buttonText = qsTr("Добавить формулу")
             wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
             wrapPopup.wrapLeft = "\\("
-            wrapPopup.wrapRight = "\\)"
+            wrapPopup.wrapRight = "\\) "
             wrapPopup.open()
         }
 
@@ -208,8 +211,18 @@ Item {
             wrapPopup.buttonText = qsTr("Добавить формулу")
             wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
             wrapPopup.wrapLeft = "\\["
-            wrapPopup.wrapRight = "\\]"
+            wrapPopup.wrapRight = "\\] "
             wrapPopup.open()
+        }
+    }
+
+    AddCodePopup {
+        id: addCodePopup
+
+        onAddClicked: function(code, language) {
+            cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
+                                        `<pre><code class="${language.trim()}">${code.trim()}</code></pre>`)
+            addCodePopup.close()
         }
     }
 }

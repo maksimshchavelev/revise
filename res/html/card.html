@@ -2,7 +2,8 @@
 <html> 
     <head> 
     <meta charset="utf-8"> 
-    <!-- MathJax config --> 
+    
+    <!-- MathJax configuration --> 
     <script> 
         window.MathJax = { 
             tex: { 
@@ -17,7 +18,12 @@
 
     <!-- MathJax library --> 
     <script src="./tex-svg.js"></script> 
-
+    
+    <!-- Highlight.js styles (local) -->
+    <link rel="stylesheet" href="./highlight/styles/vs2015.min.css">
+    <!-- Line numbers plugin (local) -->
+    <link rel="stylesheet" href="./highlight/highlightjs-line-numbers.css">
+    
     <style> 
         @font-face {
             font-family: 'AnonymousPro';
@@ -59,18 +65,226 @@
         img { 
             max-width: 100%; 
             height: auto; 
-        } 
-    </style> 
+        }
+        
+        /* Line numbers styling */
+        .hljs-ln-numbers {
+            text-align: center;
+            color: #666;
+            border-right: 1px solid #666;
+            vertical-align: top;
+            padding-right: 10px !important;
+            user-select: none;
+        }
 
+        .hljs-ln-code {
+            padding-left: 15px !important;
+            white-space: pre !important;
+            word-break: normal !important;
+            word-wrap: normal !important;
+            overflow-wrap: normal !important;
+        }
+
+        /* Ensure highlight.js styles have priority */
+        #card pre {
+            width: 100%;
+            max-width: 100vw; 
+            margin-left: 0; 
+            margin-right: 0; 
+            overflow-x: auto; 
+            box-sizing: border-box; 
+    
+            padding: 1em;
+            border-radius: 8px;
+            margin: 3px 0;
+            background: #0d1117 !important;
+            position: relative;
+        }
+
+        #card pre code {
+            display: block;
+            white-space: pre !important;
+            word-break: keep-all !important;
+            overflow-x: visible;
+            min-width: min-content; 
+        }
+
+        .hljs-ln {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: min-content;
+        }
+
+        .hljs-ln td {
+            padding: 0;
+            border: none;
+        }
+
+        .hljs-ln-code .hljs-ln-line {
+            white-space: pre !important;
+            word-break: keep-all !important;
+            overflow-x: visible;
+        }
+
+        #card pre::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        #card pre::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        #card pre::-webkit-scrollbar-thumb {
+            background: #666;
+            border-radius: 4px;
+        }
+
+        #card pre::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+
+        /* Fallback styles for code blocks without highlighting */
+        #card pre code:not(.hljs) {
+            display: block;
+            overflow-x: auto;
+            padding: 1em;
+            border-radius: 8px;
+            margin: 15px 0;
+            background: #1a1a1a;
+            color: #f8f8f2;
+            white-space: pre !important;
+        }
+
+        /* Remove margins from nested elements in code blocks */
+        .hljs-ln-line {
+            margin: 0;
+            padding: 0;
+            white-space: pre !important;
+        }
+
+        #card pre {
+            font-size: 0.72em; 
+            line-height: 1.25;
+        }
+
+        #card pre code,
+        .hljs-ln {
+            font-size: 1em;
+        }
+
+        #card pre {
+            padding: 0.8em !important; 
+        }
+
+        .hljs-ln-numbers {
+            padding-right: 8px !important;
+        }
+
+        .hljs-ln-code {
+            padding-left: 5px !important; 
+        }
+    </style> 
     </head> 
 
     <body> 
         <div id="card"></div> 
+        
+        <!-- Load highlight.js and line numbers plugin locally -->
+        <script src="./highlight/highlight.min.js"></script>
+        <script src="./highlight/highlightjs-line-numbers.min.js"></script>
+        
+        <!-- Load additional languages locally -->
+        <script src="./highlight/languages/c.min.js"></script>
+        <script src="./highlight/languages/cpp.min.js"></script>
+        <script src="./highlight/languages/python.min.js"></script>
+        <script src="./highlight/languages/qml.min.js"></script>
+        <script src="./highlight/languages/rust.min.js"></script>
+        <script src="./highlight/languages/sql.min.js"></script>
+        
         <script> 
+            // Initialize highlight.js
+            document.addEventListener('DOMContentLoaded', function() {
+                // Configure highlight.js for automatic language detection
+                hljs.configure({
+                    languages: ['cpp', 'c', 'python', 'qml', 'rust', 'sql']
+                });
+            });
+            
+            // Function to highlight all code blocks
+            function highlightAllCodeBlocks() {
+                try {
+                    // Find all <pre><code> blocks inside the card container
+                    const codeBlocks = document.querySelectorAll('#card pre code');
+                    
+                    codeBlocks.forEach((block) => {
+                        // Save original content
+                        const originalContent = block.textContent;
+                        
+                        // If block has no language class, try to detect automatically
+                        if (!block.className || !block.className.match(/\blanguage-\w+\b/)) {
+                            // Use highlightAuto for language detection
+                            const result = hljs.highlightAuto(originalContent);
+                            block.className = result.language ? `hljs language-${result.language}` : 'hljs';
+                            block.innerHTML = result.value;
+                        } else {
+                            // If language is specified, use regular highlighting
+                            hljs.highlightElement(block);
+                        }
+                        
+                        // Add line numbers if it's a block element
+                        if (block.parentElement && block.parentElement.tagName === 'PRE') {
+                            // Remove old line numbering if exists
+                            if (block.classList.contains('hljs-ln-code')) {
+                                const pre = block.parentElement;
+                                const newCode = document.createElement('code');
+                                newCode.className = block.className;
+                                newCode.textContent = originalContent;
+                                pre.innerHTML = '';
+                                pre.appendChild(newCode);
+                                hljs.highlightElement(newCode);
+                                block = newCode;
+                            }
+                            
+                            // Apply line numbers
+                            hljs.lineNumbersBlock(block, {
+                                singleLine: false
+                            });
+                        }
+                    });
+                    
+                    // Also process <code> blocks without <pre> (inline code)
+                    const inlineCodeBlocks = document.querySelectorAll('#card code:not(pre code)');
+                    inlineCodeBlocks.forEach((block) => {
+                        if (!block.className || !block.className.match(/\blanguage-\w+\b/)) {
+                            const result = hljs.highlightAuto(block.textContent);
+                            block.className = result.language ? `hljs language-${result.language}` : 'hljs';
+                            block.innerHTML = result.value;
+                        } else {
+                            hljs.highlightElement(block);
+                        }
+                    });
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Error highlighting code blocks:', error);
+                    return false;
+                }
+            }
+            
             function renderCard(html) { 
                 const el = document.getElementById("card"); 
                 el.innerHTML = html; 
-                MathJax.typesetPromise(); 
+                
+                // Highlight code after HTML insertion
+                setTimeout(() => {
+                    highlightAllCodeBlocks();
+                    
+                    // Update MathJax after highlighting
+                    if (window.MathJax && MathJax.typesetPromise) {
+                        MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
+                    }
+                }, 0);
             } 
 
             function setFontSize(px) {
@@ -80,12 +294,20 @@
                 if (window.MathJax && MathJax.typesetPromise) {
                     MathJax.typesetPromise([document.getElementById("card")]).catch(err => console.error(err));
                 }
+                
+                // Update line numbering when font size changes
+                setTimeout(highlightAllCodeBlocks, 0);
             }
 
             function setTextColor(color) {
                 document.body.style.color = color;
                 const mathElements = document.querySelectorAll("mjx-container, mjx-math, svg");
                 mathElements.forEach(el => el.style.color = color);
+            }
+            
+            // Additional function for forced highlighting refresh
+            function refreshHighlighting() {
+                return highlightAllCodeBlocks();
             }
         </script> 
     </body> 
