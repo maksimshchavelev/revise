@@ -15,6 +15,11 @@ Item {
     signal trainingFinished()
     signal aborted();
 
+    Shortcut {
+        sequence: "Escape"
+        onActivated: exitClicked()
+    }
+
     function exitClicked() {
         studyService.pause()
         abortQuestionPopup.open(qsTr("Прервать тренировку? Прогресс не засчитается"))

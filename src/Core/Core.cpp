@@ -9,8 +9,15 @@
 #include <QQmlContext>                                 // for QQmlContext
 #include <QSqlError>                                   // for QSqlError
 #include <QUuid>                                       // for QUuid
-#include <QtCore/private/qandroidextras_p.h>           // for QtAndroidPrivate
 #include <QtWebView>                                   // for QtWebView
+
+#ifdef Q_OS_ANDROID
+#include <QtCore/private/qandroidextras_p.h>           // for QtAndroidPrivate
+#endif
+
+#ifndef Q_OS_ANDROID
+#include <QtWebEngineQuick/QtWebEngineQuick>
+#endif
 
 namespace revise {
 
@@ -64,6 +71,14 @@ Core::Core(QGuiApplication& app, QObject* parent) :
 
 // Public method
 int Core::run() {
+    #ifndef Q_OS_ANDROID
+        qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
+        qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
+
+        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+        QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    #endif
+
     // Copy WebView assets (html and mathjax script)
     extract_web_bundle();
 
@@ -127,6 +142,7 @@ std::unique_ptr<IDeckRepository> Core::make_thread_local_sql_repo(const QString&
 
 // Private method
 void Core::request_permission_if_not_granted(const QString& permission) {
+    #ifdef Q_OS_ANDROID
     auto permission_check_future = QtAndroidPrivate::checkPermission(QString("android.permission.%1").arg(permission));
     auto permission_check_result = permission_check_future.result(); // wait for result
 
@@ -135,6 +151,7 @@ void Core::request_permission_if_not_granted(const QString& permission) {
         [[maybe_unused]] auto permission_request_result =
             QtAndroidPrivate::requestPermission(QString("android.permission.%1").arg(permission)).result();
     }
+    #endif
 }
 
 // Private method

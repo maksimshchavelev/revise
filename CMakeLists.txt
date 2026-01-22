@@ -5,8 +5,6 @@ project(revise VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(JSONCPP_ANDROID_DIR "/usr/local/jsoncpp-android")
-
 find_package(Qt6 REQUIRED COMPONENTS
   Quick
   Sql
@@ -73,7 +71,6 @@ qt_add_resources(apprevise
         ${RESOURCES}
 )
 
-include(${ANDROID_SDK_ROOT}/android_openssl/CMakeLists.txt)
 include(FetchContent)
 
 set(QUAZIP_QT_MAJOR_VERSION 6 CACHE STRING "" FORCE)
@@ -127,9 +124,15 @@ set_target_properties(apprevise PROPERTIES
         "${ANDROID_SDK_ROOT}/android_openssl/ssl_3/${CMAKE_ANDROID_ARCH_ABI}/libcrypto_3.so;${ANDROID_SDK_ROOT}/android_openssl/ssl_3/${CMAKE_ANDROID_ARCH_ABI}/libssl_3.so"
 )
 
-set_property(TARGET apprevise APPEND PROPERTY
-    QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android
-)
+if(ANDROID)
+  message(INFO "Building for android")
+
+  include(${ANDROID_SDK_ROOT}/android_openssl/CMakeLists.txt)
+
+  set_property(TARGET apprevise APPEND PROPERTY
+      QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android
+  )
+endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_link_libraries(apprevise PRIVATE
@@ -140,7 +143,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       QuaZip::QuaZip
       Boost::stacktrace_basic
       libzstd_static
-      PRIVATE ${JSONCPP_ANDROID_DIR}/lib
   )
 
   target_include_directories(apprevise PRIVATE
@@ -156,7 +158,6 @@ else() # Release
       Qt6::WebView
       QuaZip::QuaZip
       libzstd_static
-      PRIVATE ${JSONCPP_ANDROID_DIR}/lib
   )
 
   target_include_directories(apprevise PRIVATE

@@ -14,6 +14,14 @@ Item {
     property int deckId: 0
     signal backClicked()
 
+    Shortcut {
+        sequence: "Esc"
+        onActivated: {
+            console.log("ESCAPE!")
+            exitClicked()
+        }
+    }
+
     function exitClicked() {
         if (pages.children[pages.currentIndex] && typeof pages.children[pages.currentIndex].exitClicked === 'function') {
             pages.children[pages.currentIndex].exitClicked()

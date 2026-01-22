@@ -15,6 +15,11 @@ Item {
     signal previewClicked(string front, string back)
     signal backClicked()
 
+    Shortcut {
+        sequence: "Escape"
+        onActivated: exitClicked()
+    }
+
     function exitClicked() {
         root.backClicked()
     }

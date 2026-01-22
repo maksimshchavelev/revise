@@ -62,7 +62,7 @@ Item {
     // Main popup container
     Item {
         id: popupContainer
-        width: parent.width * 0.85
+        width: Math.min(parent.width * 0.85, 480)
         anchors.centerIn: parent
         clip: true
         scale: root.visible ? 1 : 0.85

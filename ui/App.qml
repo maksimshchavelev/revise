@@ -13,8 +13,17 @@ import "pages"
 ApplicationWindow {
     id: appWindow
     visible: true
+
+    minimumWidth: 480
+    minimumHeight: 320
+
+    width: 720
+    height: 560
+
+    title: "Revise"
+
     background: Image {
-        fillMode: Image.PreserveAspectCrop
+        fillMode: Image.Tile
         source: "qrc:/res/img/background_blurred.png"
     }
 
@@ -97,7 +106,8 @@ ApplicationWindow {
         id: importAnkiFileDialog
         title: qsTr("Выберите файл")
         nameFilters: [
-            qsTr("Колода Anki (*.apkg)")
+            qsTr("Колода Revise (*.rpkg)"),
+            qsTr("Колода Anki (*.apkg")
         ]
         onAccepted: deckService.import_deck_async(selectedFile)
     }

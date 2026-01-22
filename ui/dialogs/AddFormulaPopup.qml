@@ -55,7 +55,7 @@ Item {
 
     Item {
         id: widget
-        width: parent.width * 0.75
+        width: Math.min(parent.width * 0.85, 480)
         implicitHeight: layout.implicitHeight
         anchors.centerIn: parent
         clip: true

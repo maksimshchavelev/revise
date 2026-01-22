@@ -46,7 +46,7 @@ Item {
     }
 
     Item {
-        width: parent.width * 0.85
+        width: Math.min(parent.width * 0.85, 480)
         implicitHeight: layout.implicitHeight + 25
         anchors.centerIn: parent
         clip: true

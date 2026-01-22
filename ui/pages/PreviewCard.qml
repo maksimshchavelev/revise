@@ -20,6 +20,11 @@ Item {
 
     signal backClicked(int previousPageIndex)
 
+    Shortcut {
+        sequence: "Escape"
+        onActivated: exitClicked()
+    }
+
     function exitClicked() {
         root.flipped = false
         root.backClicked(root.previousPageIndex)

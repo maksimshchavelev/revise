@@ -43,7 +43,7 @@ Item {
     }
 
     Item {
-        width: parent.width * 0.85
+        width: Math.min(parent.width * 0.85, 480)
         implicitHeight: text.implicitHeight + 110
         anchors.centerIn: parent
         clip: true

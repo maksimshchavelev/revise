@@ -34,6 +34,11 @@ Item {
         }
     }
 
+    Shortcut {
+        sequence: "Escape"
+        onActivated: exitClicked()
+    }
+
     function exitClicked() {
         root.backClicked()
     }

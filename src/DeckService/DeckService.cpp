@@ -87,6 +87,8 @@ void DeckService::import_deck_async(const QString& path) {
                 emit importInProgressChanged();
             });
 
+        const QString localPath = QUrl(path).toLocalFile();
+
         auto extract_extension = [](const QString& filename) -> QString {
             // Matches ".apkg", ".zip", ".anki" etc. before optional " (n)"
             static const QRegularExpression re(R"(\.([A-Za-z0-9]+)(?:\s*\(\d+\))?$)");
@@ -102,10 +104,10 @@ void DeckService::import_deck_async(const QString& path) {
         std::expected<ImportResult, QString> import_res;
 
         // Select importer automatically
-        if (auto suffix = extract_extension(QFileInfo(path).fileName()); suffix == "apkg") {
-            import_res = m_anki_importer.import_from_file(path);
+        if (auto suffix = extract_extension(QFileInfo(localPath).fileName()); suffix == "apkg") {
+            import_res = m_anki_importer.import_from_file(localPath);
         } else if (suffix == "rpkg") {
-            import_res = m_revise_importer.import_from_file(path);
+            import_res = m_revise_importer.import_from_file(localPath);
         } else {
             ErrorReporter::instance()->report(
                 "Unknown file extension: " + suffix, "Can't select importer", "DeckService::import_deck_async()");
@@ -283,6 +285,9 @@ void DeckService::export_deck_async(int deckId, const QString& path) {
                 emit exportInProgressChanged();
             });
 
+        QUrl url(path);
+        const QString localPath = url.toLocalFile();
+
         // Create local repo
         auto repo = m_repo_factory();
 
@@ -319,7 +324,7 @@ void DeckService::export_deck_async(int deckId, const QString& path) {
         // Build summary and request export
         auto export_res = m_exporter.export_to_file(
             ExportData{.deck = std::move(deck), .media_directory = std::move(media_dir), .cards = std::move(cards)},
-            path);
+            localPath);
 
         if (!export_res.has_value()) {
             ErrorReporter::instance()->report(

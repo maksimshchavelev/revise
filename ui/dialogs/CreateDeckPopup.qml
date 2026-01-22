@@ -66,7 +66,7 @@ Item {
     // Main popup container
     Item {
         id: popupContainer
-        width: parent.width * 0.85
+        width: Math.min(parent.width * 0.85, 480)
         height: parent.height * 0.65
         anchors.centerIn: parent
         clip: true

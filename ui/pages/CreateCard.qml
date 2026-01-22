@@ -14,6 +14,11 @@ Item {
     signal previewClicked(string front, string back)
     signal backClicked
 
+    Shortcut {
+        sequence: "Escape"
+        onActivated: exitClicked()
+    }
+
     function exitClicked() {
         root.backClicked()
     }
@@ -35,6 +40,15 @@ Item {
             inputMethodHints: Qt.ImhNoAutoUppercase
             onTextChanged: {
                 valid = !deckService.is_card_exists(root.deckId, cardFront.text)
+            }
+
+            Shortcut {
+                sequence: "Ctrl+Return" // Return = Enter
+                onActivated: {
+                    cardFront.rawTextInput.focus = false
+                    cardBack.rawTextEdit.focus = true
+                    cardBack.rawTextEdit.forceActiveFocus()
+                }
             }
         }
 
@@ -127,6 +141,45 @@ Item {
             Layout.fillHeight: true
             inputMethodHints: Qt.ImhNoAutoUppercase
             placeholderText: qsTr("Текст сзади")
+
+            Shortcut {
+                sequence: "Ctrl+B"
+                onActivated: cardBack.wrapSelection("<b>", "</b>")
+            }
+
+            Shortcut {
+                sequence: "Ctrl+I"
+                onActivated: cardBack.wrapSelection("<i>", "</i>")
+            }
+
+            Shortcut {
+                sequence: "Ctrl+U"
+                onActivated: cardBack.wrapSelection("<u>", "</u>")
+            }
+
+            Shortcut {
+                sequence: "Ctrl+F"
+                onActivated: addFormulaPopup.open()
+            }
+
+            function wrapSelection(left, right) {
+                var start = rawTextEdit.selectionStart
+                var end = rawTextEdit.selectionEnd
+                var selected = rawTextEdit.selectedText
+
+                if (selected.length === 0)
+                    return
+
+                // build new text using rawTextEdit.text, not parent's text
+                var newText = rawTextEdit.text.substring(
+                            0,
+                            start) + left + selected + right + rawTextEdit.text.substring(
+                            end)
+
+                rawTextEdit.text = newText
+                rawTextEdit.cursorPosition = start + (left + selected + right).length
+                rawTextEdit.deselect()
+            }
         }
 
         RowLayout {
@@ -219,9 +272,10 @@ Item {
     AddCodePopup {
         id: addCodePopup
 
-        onAddClicked: function(code, language) {
+        onAddClicked: function (code, language) {
             cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
-                                        `<pre><code class="${language.trim()}">${code.trim()}</code></pre>`)
+                                        `<pre><code class="${language.trim(
+                                            )}">${code.trim()}</code></pre>`)
             addCodePopup.close()
         }
     }

@@ -101,18 +101,22 @@ Item {
                     verticalAlignment: TextEdit.AlignTop
                     horizontalAlignment: TextEdit.AlignLeft
                     readOnly: !root.editable
+                    selectByMouse: true
+                    persistentSelection: true
+
+                    Shortcut {
+                        sequence: StandardKey.Undo
+                        onActivated: textInput.undo()
+                    }
+
+                    Shortcut {
+                        sequence: StandardKey.Redo
+                        onActivated: textInput.redo()
+                    }
 
                     // Visuals
                     color: textColor
                     font.pixelSize: fontSize
-
-                    Keys.onPressed: {
-                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            event.accepted = true
-                            focus = false
-                            root.accepted()
-                        }
-                    }
 
                     onEditingFinished: {
                         root.editingFinished()
@@ -191,14 +195,14 @@ Item {
                 }
 
                 // Small MouseArea to focus TextEdit on tap inside Flickable area.
-                MouseArea {
-                    anchors.fill: parent
-                    onPressed: {
-                        textInput.forceActiveFocus()
-                    }
-                    // prevent it from stealing wheel events etc. let TextEdit receive them when focused.
-                    hoverEnabled: false
-                }
+                // MouseArea {
+                //     anchors.fill: parent
+                //     onPressed: {
+                //         textInput.forceActiveFocus()
+                //     }
+                //     // prevent it from stealing wheel events etc. let TextEdit receive them when focused.
+                //     hoverEnabled: false
+                // }
             } // end contentItem Flickable
         } // end ScrollView
     } // end contentContainer

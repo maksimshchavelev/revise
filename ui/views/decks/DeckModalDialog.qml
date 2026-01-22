@@ -26,6 +26,11 @@ Item {
     signal removeClicked(int deckId)
     signal exportClicked(int deckId)
 
+    Shortcut {
+        sequence: "Esc"
+        onActivated: close()
+    }
+
     ShaderEffectSource {
         id: snapshot
         anchors.fill: parent
@@ -57,7 +62,7 @@ Item {
     }
 
     Item {
-        width: parent.width * 0.85
+        width: Math.min(parent.width * 0.85, 480)
         implicitHeight: layout.implicitHeight
         anchors.centerIn: parent
         clip: true
