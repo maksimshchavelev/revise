@@ -121,7 +121,13 @@ WebView {
     }
 
     function show(htmlText) {
-        const escaped = encodeURIComponent(htmlText);
+        var escaped = htmlText.replace(/'/g, "&#39;")
+        escaped = encodeURIComponent(escaped)
+        escaped = escaped.replace(/"/g, "&quot;")
+        escaped = escaped.replace(/</g, "&lt;")
+        escaped = escaped.replace(/>/g, "&gt;")
+        escaped = escaped.replace(/&/g, "&amp;")
+
         web.runJavaScript(`renderCard(decodeURIComponent('${escaped}'))`);
     }
 
