@@ -19,7 +19,6 @@
 #include <SqlEventRecorder/SqlEventRecorder.hpp>   // for SqlEventRecorder
 #include <StreakService/StreakService.hpp>         // for StreakService
 #include <StudyService/StudyService.hpp>           // for StudyService
-#include <plaftorm/PermissionServiceFactory.hpp>   // for PermissionServiceFactory
 #include <core/IPermissionService.hpp>             // for IPermissionService
 
 namespace revise {

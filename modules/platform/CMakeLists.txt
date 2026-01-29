@@ -1,6 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
-
-find_package(Qt6 REQUIRED COMPONENTS Core)
+# modules/platform/CMakeLists.txt
 
 file(GLOB_RECURSE PLATFORM_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
@@ -8,24 +6,20 @@ file(GLOB_RECURSE PLATFORM_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/private_include/*.hpp
 )
 
-# OBJECT library
-add_library(platform_objects OBJECT ${PLATFORM_SOURCES})
+add_library(platform STATIC
+    ${PLATFORM_SOURCES}
+)
 
-target_include_directories(platform_objects
+target_include_directories(platform
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/private_include
+        ${CMAKE_CURRENT_LIST_DIR}/private_include
 )
 
-target_link_libraries(platform_objects
-    PUBLIC core
-    PRIVATE Qt6::Core
-)
-
-add_library(platform_headers INTERFACE)
-
-target_include_directories(platform_headers
-    INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+# core — header-only, но как target, чтобы протащить include/
+target_link_libraries(platform
+    PUBLIC
+        core
+        Qt6::Core
 )

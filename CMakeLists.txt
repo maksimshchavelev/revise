@@ -83,7 +83,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       Boost::stacktrace_basic
       libzstd_static
       core
-      platform_headers
+      platform
   )
 
   target_include_directories(apprevise PRIVATE
@@ -100,7 +100,7 @@ else() # Release
       QuaZip::QuaZip
       libzstd_static
       core
-      platform_headers
+      platform
   )
 
   target_include_directories(apprevise PRIVATE
@@ -108,11 +108,6 @@ else() # Release
       ${zstd_SOURCE_DIR}/lib
   )
 endif()
-
-target_sources(apprevise
-    PRIVATE
-        $<TARGET_OBJECTS:platform_objects>
-)
 
 set_source_files_properties(
     ui/theme/Theme.qml
