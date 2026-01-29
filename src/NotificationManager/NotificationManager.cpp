@@ -6,7 +6,7 @@
 
 #ifdef Q_OS_ANDROID
 #include <QCoreApplication>
-#include <QtCore/private/qandroidextras_p.h>
+// #include <QtCore/private/qandroidextras_p.h>
 
 static QJniObject get_android_context()
 {

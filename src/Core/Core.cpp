@@ -11,8 +11,11 @@
 #include <QUuid>                                       // for QUuid
 #include <QtWebView>                                   // for QtWebView
 
+#include <platform/PermissionServiceFactory.hpp>
+#include <core/IPermissionService.hpp>
+
 #ifdef Q_OS_ANDROID
-#include <QtCore/private/qandroidextras_p.h>           // for QtAndroidPrivate
+// #include <QtCore/private/qandroidextras_p.h>           // for QtAndroidPrivate
 #endif
 
 #ifndef Q_OS_ANDROID
@@ -20,6 +23,17 @@
 #endif
 
 namespace revise {
+
+static QString javaClassName(const QJniObject &obj)
+{
+    if (!obj.isValid()) return {};
+    QJniEnvironment env;
+    QJniObject cls = obj.callObjectMethod("getClass", "()Ljava/lang/Class;");
+    if (!cls.isValid()) return {};
+    QJniObject name = cls.callObjectMethod("getName", "()Ljava/lang/String;");
+    if (!name.isValid()) return {};
+    return name.toString();
+}
 
 // Public method
 Core::Core(QGuiApplication& app, QObject* parent) :
@@ -42,7 +56,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
         m_deck_media_storage,
         m_html_helper,
         this),
-    m_decks_model(m_deck_service), m_cards_model(m_deck_service) {
+    m_decks_model(m_deck_service), m_cards_model(m_deck_service), m_permission_service(platform::create_permission_service()) {
 
     connect(&m_study_service, &StudyService::training_finished, this, [this]() {
         if (!m_streak_service.updated_today()) {
@@ -55,17 +69,26 @@ Core::Core(QGuiApplication& app, QObject* parent) :
 
     // Run after running application
     QTimer::singleShot(0, [this]() {
+        // request permission
+        qDebug() << "check result:" << m_permission_service->check(core::Permission::POST_NOTIFICATIONS);
+        m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
+
         // Init database manually
         if (auto init_db_res = m_db.init_db(); !init_db_res.has_value()) {
             ErrorReporter::instance()->report("Failed to init DB", init_db_res.error(), "Core::Core");
         }
     });
 
-    request_permission_if_not_granted("POST_NOTIFICATIONS");
-    request_permission_if_not_granted("WRITE_EXTERNAL_STORAGE");
-    request_permission_if_not_granted("READ_EXTERNAL_STORAGE");
+    // request_permission_if_not_granted("POST_NOTIFICATIONS");
+    // request_permission_if_not_granted("WRITE_EXTERNAL_STORAGE");
+    // request_permission_if_not_granted("READ_EXTERNAL_STORAGE");
 
-    schedule_notifications();
+    // schedule_notifications();
+
+    // m_permission_service = platform::create_permission_service();
+    // qDebug() << "m_permission_service ptr:" << (void*)m_permission_service.get();
+    // qDebug() << "check result:" << m_permission_service->check("android.permission.POST_NOTIFICATIONS");
+    // qDebug() << "impl_name:" << m_permission_service->impl_name();
 }
 
 
@@ -143,14 +166,14 @@ std::unique_ptr<IDeckRepository> Core::make_thread_local_sql_repo(const QString&
 // Private method
 void Core::request_permission_if_not_granted(const QString& permission) {
     #ifdef Q_OS_ANDROID
-    auto permission_check_future = QtAndroidPrivate::checkPermission(QString("android.permission.%1").arg(permission));
-    auto permission_check_result = permission_check_future.result(); // wait for result
+    //auto permission_check_future = QtAndroidPrivate::checkPermission(QString("android.permission.%1").arg(permission));
+    //auto permission_check_result = permission_check_future.result(); // wait for result
 
-    if (permission_check_result != QtAndroidPrivate::PermissionResult::Authorized) {
+    //if (permission_check_result != QtAndroidPrivate::PermissionResult::Authorized) {
         // if not authorized, request permission
-        [[maybe_unused]] auto permission_request_result =
-            QtAndroidPrivate::requestPermission(QString("android.permission.%1").arg(permission)).result();
-    }
+        //[[maybe_unused]] auto permission_request_result =
+            //QtAndroidPrivate::requestPermission(QString("android.permission.%1").arg(permission)).result();
+    //}
     #endif
 }
 

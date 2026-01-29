@@ -12,6 +12,10 @@ find_package(Qt6 REQUIRED COMPONENTS
   Concurrent
   WebView)
 
+# include modules
+add_subdirectory(modules/core)     # Core module
+add_subdirectory(modules/platform) # Platform module
+
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
     ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp*
@@ -30,7 +34,85 @@ endforeach()
 
 qt_standard_project_setup(REQUIRES 6.8)
 
+include(FetchContent)
+
+set(QUAZIP_QT_MAJOR_VERSION 6 CACHE STRING "" FORCE)
+set(QUAZIP_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
+set(QUAZIP_ENABLE_TOOLS OFF CACHE BOOL "" FORCE)
+
+# quazip
+FetchContent_Declare(quazip
+    GIT_REPOSITORY https://github.com/stachenov/quazip.git
+    GIT_TAG v1.5
+)
+FetchContent_MakeAvailable(quazip)
+
+# zstd
+FetchContent_Declare(
+  zstd
+  GIT_REPOSITORY https://github.com/facebook/zstd.git
+  GIT_TAG v1.5.5
+  SOURCE_SUBDIR build/cmake
+)
+FetchContent_MakeAvailable(zstd)
+get_target_property(ZSTD_SOURCE_DIR libzstd_static SOURCE_DIR)
+
+# Boost stacktrace
+set(BOOST_ENABLE_CMAKE ON)
+set(BOOST_INCLUDE_LIBRARIES stacktrace headers config)
+set(BOOST_EXCLUDE_LIBRARIES fiber serialization graph wave stacktrace_test)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  FetchContent_Declare(
+      Boost
+      GIT_REPOSITORY https://github.com/boostorg/boost.git
+      GIT_TAG boost-1.84.0
+  )
+  FetchContent_MakeAvailable(Boost)
+endif()
+
 qt_add_executable(apprevise ${SOURCES})
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_link_libraries(apprevise PRIVATE
+      Qt6::Quick
+      Qt6::Sql
+      Qt6::Concurrent
+      Qt6::WebView
+      QuaZip::QuaZip
+      Boost::stacktrace_basic
+      libzstd_static
+      core
+      platform_headers
+  )
+
+  target_include_directories(apprevise PRIVATE
+      include
+      ${zstd_SOURCE_DIR}/lib
+      Boost::stacktrace_basic
+  )
+else() # Release
+  target_link_libraries(apprevise PRIVATE
+      Qt6::Quick
+      Qt6::Sql
+      Qt6::Concurrent
+      Qt6::WebView
+      QuaZip::QuaZip
+      libzstd_static
+      core
+      platform_headers
+  )
+
+  target_include_directories(apprevise PRIVATE
+      include
+      ${zstd_SOURCE_DIR}/lib
+  )
+endif()
+
+target_sources(apprevise
+    PRIVATE
+        $<TARGET_OBJECTS:platform_objects>
+)
 
 set_source_files_properties(
     ui/theme/Theme.qml
@@ -72,46 +154,6 @@ qt_add_resources(apprevise
         ${RESOURCES}
 )
 
-include(FetchContent)
-
-set(QUAZIP_QT_MAJOR_VERSION 6 CACHE STRING "" FORCE)
-set(QUAZIP_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
-set(QUAZIP_ENABLE_TOOLS OFF CACHE BOOL "" FORCE)
-
-# quazip
-FetchContent_Declare(quazip
-    GIT_REPOSITORY https://github.com/stachenov/quazip.git
-    GIT_TAG v1.5
-)
-FetchContent_MakeAvailable(quazip)
-
-# zstd
-FetchContent_Declare(
-  zstd
-  GIT_REPOSITORY https://github.com/facebook/zstd.git
-  GIT_TAG v1.5.5
-  SOURCE_SUBDIR build/cmake
-)
-FetchContent_MakeAvailable(zstd)
-get_target_property(ZSTD_SOURCE_DIR libzstd_static SOURCE_DIR)
-
-# Boost stacktrace
-set(BOOST_ENABLE_CMAKE ON)
-set(BOOST_INCLUDE_LIBRARIES stacktrace headers config)
-set(BOOST_EXCLUDE_LIBRARIES fiber serialization graph wave stacktrace_test)
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  FetchContent_Declare(
-      Boost
-      GIT_REPOSITORY https://github.com/boostorg/boost.git
-      GIT_TAG boost-1.84.0
-  )
-  FetchContent_MakeAvailable(Boost)
-endif()
-
-# add_subdirectory(${CMAKE_BINARY_DIR}/_deps/zstd-src/build/cmake)
-# target_include_directories(zstd PUBLIC ${CMAKE_BINARY_DIR}/_deps/zstd-src/)
-
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
@@ -135,37 +177,9 @@ if(ANDROID)
   )
 endif()
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  target_link_libraries(apprevise PRIVATE
-      Qt6::Quick
-      Qt6::Sql
-      Qt6::Concurrent
-      Qt6::WebView
-      QuaZip::QuaZip
-      Boost::stacktrace_basic
-      libzstd_static
-  )
-
-  target_include_directories(apprevise PRIVATE
-      include
-      ${zstd_SOURCE_DIR}/lib
-      Boost::stacktrace_basic
-  )
-else() # Release
-  target_link_libraries(apprevise PRIVATE
-      Qt6::Quick
-      Qt6::Sql
-      Qt6::Concurrent
-      Qt6::WebView
-      QuaZip::QuaZip
-      libzstd_static
-  )
-
-  target_include_directories(apprevise PRIVATE
-      include
-      ${zstd_SOURCE_DIR}/lib
-  )
-endif()
+add_custom_command(TARGET apprevise POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "RELINK apprevise"
+)
 
 target_compile_definitions(apprevise PRIVATE BOOST_STACKTRACE_USE_BACKTRACE)
 
