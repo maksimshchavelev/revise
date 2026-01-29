@@ -1,9 +1,9 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "AndroidPermissionService.hpp" // private include for AndroidPermissionService header
-#include <QCoreApplication>
-#include <QJniObject> // for QJniObject
-#include <QString>
+#include <QCoreApplication>             // for QCoreApplication
+#include <QJniObject>                   // for QJniObject
+#include <QString>                      // for QString
 
 namespace platform::internals {
 
