@@ -4,12 +4,12 @@
 #include <Core/Core.hpp>                               // for Core
 #include <Entities/Deck.hpp>                           // for Deck
 #include <ErrorReporter/ErrorReporter.hpp>             // for ErrorReporter
-#include <NotificationManager/NotificationManager.hpp> // for NotificationManager
 #include <QQmlApplicationEngine>                       // for QQmlApplicationEngine
 #include <QQmlContext>                                 // for QQmlContext
 #include <QSqlError>                                   // for QSqlError
 #include <QUuid>                                       // for QUuid
 #include <QtWebView>                                   // for QtWebView
+#include <QtConcurrent>
 
 #include <platform/PermissionServiceFactory.hpp>
 #include <platform/NotificationServiceFactory.hpp>
@@ -71,31 +71,24 @@ Core::Core(QGuiApplication& app, QObject* parent) :
 
     // Run after running application
     QTimer::singleShot(0, [this]() {
-        // request permission
-        //qDebug() << "check result:" << m_permission_service->check(core::Permission::POST_NOTIFICATIONS);
-        //m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
-        //m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
+        QtConcurrent::run([this](){
+            if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
+                qDebug() << "request post notifications";
+                m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
+            }
 
-        // m_notification_service->show_notification("hello!");
-        m_notification_service->schedule_notification("Hello world!", QDateTime::currentDateTime().addSecs(10));
-        m_notification_service->clear_all_scheduled_notifications();
+            if (!m_permission_service->check(core::Permission::SCHEDULE_EXACT_ALARM)) {
+                m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
+            }
+
+            schedule_notifications();
+        });
 
         // Init database manually
         if (auto init_db_res = m_db.init_db(); !init_db_res.has_value()) {
             ErrorReporter::instance()->report("Failed to init DB", init_db_res.error(), "Core::Core");
         }
     });
-
-    // request_permission_if_not_granted("POST_NOTIFICATIONS");
-    // request_permission_if_not_granted("WRITE_EXTERNAL_STORAGE");
-    // request_permission_if_not_granted("READ_EXTERNAL_STORAGE");
-
-    // schedule_notifications();
-
-    // m_permission_service = platform::create_permission_service();
-    // qDebug() << "m_permission_service ptr:" << (void*)m_permission_service.get();
-    // qDebug() << "check result:" << m_permission_service->check("android.permission.POST_NOTIFICATIONS");
-    // qDebug() << "impl_name:" << m_permission_service->impl_name();
 }
 
 
@@ -168,20 +161,6 @@ std::unique_ptr<IDeckRepository> Core::make_thread_local_sql_repo(const QString&
     };
 
     return std::make_unique<OwnedRepo>(std::move(db));
-}
-
-// Private method
-void Core::request_permission_if_not_granted(const QString& permission) {
-    #ifdef Q_OS_ANDROID
-    //auto permission_check_future = QtAndroidPrivate::checkPermission(QString("android.permission.%1").arg(permission));
-    //auto permission_check_result = permission_check_future.result(); // wait for result
-
-    //if (permission_check_result != QtAndroidPrivate::PermissionResult::Authorized) {
-        // if not authorized, request permission
-        //[[maybe_unused]] auto permission_request_result =
-            //QtAndroidPrivate::requestPermission(QString("android.permission.%1").arg(permission)).result();
-    //}
-    #endif
 }
 
 // Private method
@@ -258,15 +237,7 @@ void Core::extract_web_bundle() const {
 // Private method
 void Core::schedule_notifications(bool today_enabled, const QTime& at) const
 {
-    NotificationManager::clear_all_scheduled_notifications();
-
-    QVector<QString> notifications = {"Пора что нибудь повторить!",
-                                      "Ты целых два дня ничего не повторял",
-                                      "Ты так долго ничего не повторял...",
-                                      "Найдешь 5 минут для повторения?",
-                                      "Давай повторим карточки!",
-                                      "Нужно повторить карточки",
-                                      "Не хочешь кое что повторить?"};
+    m_notification_service->clear_all_scheduled_notifications();
 
     for (int i = 0; i < 7; ++i) {
         if (!today_enabled && i == 0) {
@@ -286,7 +257,7 @@ void Core::schedule_notifications(bool today_enabled, const QTime& at) const
         if (QDateTime::currentDateTime() >= time)
             continue;
 
-        NotificationManager::schedule_notification(notifications[notification_index], time, base_id);
+        m_notification_service->schedule_notification("Пора что нибудь повторить!", time);
     }
 }
 

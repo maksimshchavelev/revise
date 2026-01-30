@@ -52,11 +52,9 @@ class Core : public QObject {
     std::unique_ptr<core::IPermissionService>   m_permission_service;
     std::unique_ptr<core::INotificationService> m_notification_service;
 
-    // Helper
-    std::unique_ptr<IDeckRepository> make_thread_local_sql_repo(const QString& conn_name);
 
     // Helper
-    void request_permission_if_not_granted(const QString& permission);
+    std::unique_ptr<IDeckRepository> make_thread_local_sql_repo(const QString& conn_name);
 
     /**
      * @brief Copies HTML assets from resources to AppData
