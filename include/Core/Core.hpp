@@ -19,6 +19,7 @@
 #include <SqlEventRecorder/SqlEventRecorder.hpp>   // for SqlEventRecorder
 #include <StreakService/StreakService.hpp>         // for StreakService
 #include <StudyService/StudyService.hpp>           // for StudyService
+#include <core/INotificationService.hpp>           // for INotificationService
 #include <core/IPermissionService.hpp>             // for IPermissionService
 
 namespace revise {
@@ -48,7 +49,8 @@ class Core : public QObject {
     DecksModel         m_decks_model;
     CardsModel         m_cards_model;
 
-    std::unique_ptr<core::IPermissionService> m_permission_service;
+    std::unique_ptr<core::IPermissionService>   m_permission_service;
+    std::unique_ptr<core::INotificationService> m_notification_service;
 
     // Helper
     std::unique_ptr<IDeckRepository> make_thread_local_sql_repo(const QString& conn_name);

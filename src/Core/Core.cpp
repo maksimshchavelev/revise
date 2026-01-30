@@ -12,6 +12,7 @@
 #include <QtWebView>                                   // for QtWebView
 
 #include <platform/PermissionServiceFactory.hpp>
+#include <platform/NotificationServiceFactory.hpp>
 #include <core/IPermissionService.hpp>
 
 #ifdef Q_OS_ANDROID
@@ -56,7 +57,8 @@ Core::Core(QGuiApplication& app, QObject* parent) :
         m_deck_media_storage,
         m_html_helper,
         this),
-    m_decks_model(m_deck_service), m_cards_model(m_deck_service), m_permission_service(platform::create_permission_service()) {
+    m_decks_model(m_deck_service), m_cards_model(m_deck_service), m_permission_service(platform::create_permission_service()),
+    m_notification_service(platform::create_notification_service()){
 
     connect(&m_study_service, &StudyService::training_finished, this, [this]() {
         if (!m_streak_service.updated_today()) {
@@ -70,8 +72,13 @@ Core::Core(QGuiApplication& app, QObject* parent) :
     // Run after running application
     QTimer::singleShot(0, [this]() {
         // request permission
-        qDebug() << "check result:" << m_permission_service->check(core::Permission::POST_NOTIFICATIONS);
-        m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
+        //qDebug() << "check result:" << m_permission_service->check(core::Permission::POST_NOTIFICATIONS);
+        //m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
+        //m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
+
+        // m_notification_service->show_notification("hello!");
+        m_notification_service->schedule_notification("Hello world!", QDateTime::currentDateTime().addSecs(10));
+        m_notification_service->clear_all_scheduled_notifications();
 
         // Init database manually
         if (auto init_db_res = m_db.init_db(); !init_db_res.has_value()) {
