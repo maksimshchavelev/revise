@@ -39,4 +39,6 @@ PopupBase {
         root.text = ""
         root._closeBase()
     }
+
+    DebugBounds {}
 }

@@ -64,5 +64,7 @@ Item {
             duration: 100
         }
     }
+
+    DebugBounds {}
 }
 

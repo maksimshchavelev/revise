@@ -136,5 +136,7 @@ WebView {
         web.runJavaScript(`setTextColor('${web.textColor}')`)
         show(html)
     }
+
+    DebugBounds {}
 }
 

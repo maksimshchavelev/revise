@@ -85,5 +85,7 @@ Item {
             textBold: true
         }
     }
+
+    DebugBounds {}
 }
 

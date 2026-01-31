@@ -39,6 +39,8 @@ Item {
     }
 
     default property alias contentData: content.data
+
+    DebugBounds {}
 }
 
 

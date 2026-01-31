@@ -2,6 +2,7 @@
 // When it's active, one image is shown; otherwise, the other.
 
 import QtQuick
+import Revise
 
 Item {
     id: root
@@ -31,4 +32,6 @@ Item {
         anchors.margins: root.contentMargins
         anchors.centerIn: parent
     }
+
+    DebugBounds {}
 }

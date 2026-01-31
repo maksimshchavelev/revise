@@ -43,4 +43,6 @@ Item {
         currentIndex = i
         pageChanged(i)
     }
+
+    DebugBounds {}
 }

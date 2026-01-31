@@ -30,4 +30,6 @@ StatefulIndicator {
             duration: 100
         }
     }
+
+    DebugBounds {}
 }

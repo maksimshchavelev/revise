@@ -31,4 +31,6 @@ Item {
             color: root.updatedToday ? Theme.streakUpdatedTextColor : Theme.streakTextColor
         }
     }
+
+    DebugBounds {}
 }

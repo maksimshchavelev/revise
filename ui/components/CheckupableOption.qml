@@ -39,4 +39,6 @@ RowLayout {
             checkbox.checked = value
         }
     }
+
+    DebugBounds {}
 }
