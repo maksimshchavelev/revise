@@ -219,4 +219,6 @@ Item {
             anchors.fill: parent
         }
     }
+
+    DebugBounds {}
 }

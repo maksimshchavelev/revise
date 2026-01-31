@@ -135,4 +135,6 @@ Item {
             onReleased: {}
         }
     }
+
+    DebugBounds {}
 }

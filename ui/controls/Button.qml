@@ -72,4 +72,6 @@ Item {
             onReleased: {}
         }
     }
+
+    DebugBounds {}
 }

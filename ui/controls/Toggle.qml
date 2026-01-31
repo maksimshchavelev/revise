@@ -55,4 +55,6 @@ Item {
     }
 
     onClicked: root.checked = !root.checked
+
+    DebugBounds {}
 }
