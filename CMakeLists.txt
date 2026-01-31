@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(revise VERSION 0.1 LANGUAGES CXX)
+project(revise VERSION 1.3.0 LANGUAGES CXX)
+
+# set QTP0004 behavior to NEW so extra qmldir files are generated for subdirs
+if (QT_KNOWN_POLICY_QTP0004)
+  qt_policy(SET QTP0004 NEW)
+endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(QML_IMPORT_PATH "${CMAKE_BINARY_DIR}/qml/modules/Revise" CACHE STRING "QML import path for Qt Creator" FORCE)
-set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml/modules/Revise" CACHE PATH "Extra QML import paths for IDE" FORCE)
 
 find_package(Qt6 REQUIRED COMPONENTS
   Quick
@@ -87,11 +89,11 @@ set_source_files_properties(
     ui/debug/Debug.qml
     PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
-qt_add_qml_module(apprevise_qml
+qt_add_qml_module(apprevise
     URI Revise
     VERSION 1.0
     QML_FILES ${QML_FILES}
-    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml/modules/Revise
+    NO_PLUGIN
 )
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -106,7 +108,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       libzstd_static
       core
       platform
-      apprevise_qml
   )
 
   target_include_directories(apprevise PRIVATE
@@ -125,7 +126,6 @@ else() # Release
       libzstd_static
       core
       platform
-      apprevise_qml
   )
 
   target_include_directories(apprevise PRIVATE
