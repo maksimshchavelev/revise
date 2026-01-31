@@ -7,6 +7,6 @@ Rectangle {
     visible: Debug.showBounds
     color: "transparent"
     anchors.fill: parent
-    border.width: 2
+    border.width: 1
     border.color: Theme.debugBounds
 }
