@@ -4,7 +4,9 @@ project(revise VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(QML_IMPORT_PATH "${CMAKE_BINARY_DIR}/qml/modules" CACHE PATH "QML import path for Qt Creator")
+
+set(QML_IMPORT_PATH "${CMAKE_BINARY_DIR}/qml/modules/Revise" CACHE STRING "QML import path for Qt Creator" FORCE)
+set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml/modules/Revise" CACHE PATH "Extra QML import paths for IDE" FORCE)
 
 find_package(Qt6 REQUIRED COMPONENTS
   Quick
