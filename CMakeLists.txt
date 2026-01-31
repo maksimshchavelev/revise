@@ -84,6 +84,7 @@ set_source_files_properties(
     ui/theme/Theme.qml
     ui/theme/Fonts.qml
     ui/navigation/Router.qml
+    ui/debug/Debug.qml
     PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
 qt_add_qml_module(apprevise_qml

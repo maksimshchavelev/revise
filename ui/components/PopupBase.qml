@@ -128,5 +128,7 @@ Item {
     function _closeBase() {
         root.visible = false
     }
+
+    DebugBounds {}
 }
 

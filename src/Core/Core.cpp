@@ -114,6 +114,8 @@ int Core::run() {
 
     engine.addImportPath("qrc:/");
 
+    auto uiShowBounds = qEnvironmentVariableIntegerValue("uiShowBounds");
+
     engine.rootContext()->setContextProperty("streakService", &m_streak_service);
     engine.rootContext()->setContextProperty("decksModel", &m_decks_model);
     engine.rootContext()->setContextProperty("cardsModel", &m_cards_model);
@@ -121,6 +123,7 @@ int Core::run() {
     engine.rootContext()->setContextProperty("deckService", &m_deck_service);
     engine.rootContext()->setContextProperty("htmlHelper", &m_html_helper);
     engine.rootContext()->setContextProperty("errorReporter", ErrorReporter::instance());
+    engine.rootContext()->setContextProperty("uiShowBounds", static_cast<bool>(uiShowBounds.has_value() ? uiShowBounds.value() : 0));
 
     qmlRegisterUncreatableType<AppError>(
         "Revise", 1, 0, "AppError", "AppError is only available via the ErrorReporter");
