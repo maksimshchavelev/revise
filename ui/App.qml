@@ -4,11 +4,6 @@ import QtQuick.Effects
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import Revise
-import "navigation"
-import "dialogs"
-import "views/decks"
-import "theme"
-import "pages"
 
 ApplicationWindow {
     id: appWindow
@@ -28,9 +23,9 @@ ApplicationWindow {
     }
 
     readonly property var pages: {
-        "main": "qrc:/ui/MainLayout.qml",
-        "training": "qrc:/ui/pages/Training.qml",
-        "editDeck": "qrc:/ui/pages/EditDeck.qml",
+        "main": "qrc:/qt/qml/Revise/ui/MainLayout.qml",
+        "training": "qrc:/qt/qml/Revise/ui/pages/Training.qml",
+        "editDeck": "qrc:/qt/qml/Revise/ui/pages/EditDeck.qml",
     }
 
     Loader {
@@ -215,6 +210,9 @@ ApplicationWindow {
 
     onClosing: function(close) {
         close.accepted = false
+
+        // infoPopup.open("Hello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщение")
+        infoPopup.open("Проверка связи")
 
         if (pageLoader.item && typeof pageLoader.item.exitClicked === 'function') {
             pageLoader.item.exitClicked()

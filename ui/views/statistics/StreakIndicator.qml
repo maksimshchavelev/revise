@@ -1,8 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import "../../theme"
-import "../../components"
-import "../../controls"
+import Revise
 
 Item {
     id: root

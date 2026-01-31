@@ -1,9 +1,7 @@
 // Home page
 import QtQuick
 import QtQuick.Layouts
-import "../views/decks"
-import "../controls"
-import "../theme"
+import Revise
 
 Item {
     id: root

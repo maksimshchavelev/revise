@@ -3,9 +3,7 @@ import QtQuick
 import QtQuick.Controls as QC
 import QtQuick.Layouts
 import QtQuick.Effects
-import "../theme"
-import "../controls"
-import "../components"
+import Revise
 
 Item {
     id: root

@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import "../components"
+import Revise
 
 StatefulIndicator {
     id: root

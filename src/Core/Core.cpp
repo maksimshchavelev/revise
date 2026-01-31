@@ -112,6 +112,8 @@ int Core::run() {
 
     QQmlApplicationEngine engine;
 
+    engine.addImportPath("qrc:/");
+
     engine.rootContext()->setContextProperty("streakService", &m_streak_service);
     engine.rootContext()->setContextProperty("decksModel", &m_decks_model);
     engine.rootContext()->setContextProperty("cardsModel", &m_cards_model);
@@ -135,7 +137,8 @@ int Core::run() {
         &m_app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.loadFromModule("revise", "App");
+
+    engine.loadFromModule("Revise", "App");
 
     return m_app.exec();
 }

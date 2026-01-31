@@ -2,7 +2,7 @@
 
 import QtQuick
 import QtQuick.Layouts
-import "../controls"
+import Revise
 
 RowLayout {
     id: root

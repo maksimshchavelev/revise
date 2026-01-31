@@ -2,9 +2,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC
-import "../theme"
-import "../controls"
-import "../components"
+import Revise
 
 Item {
     id: root

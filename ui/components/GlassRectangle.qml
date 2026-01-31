@@ -4,7 +4,7 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Controls
-import "../theme"
+import Revise
 
 Item {
     id: root

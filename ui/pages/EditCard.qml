@@ -1,9 +1,7 @@
 // Card creation page
 import QtQuick
 import QtQuick.Layouts
-import "../theme"
-import "../controls"
-import "../dialogs"
+import Revise
 
 Item {
     id: root

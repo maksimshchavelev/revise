@@ -2,12 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Revise
-import "pages"
-import "views/statistics"
-import "navigation"
-import "dialogs"
-import "views/decks"
-import "qrc:/ui/theme"
 
 Item {
     id: root

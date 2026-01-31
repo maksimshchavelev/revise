@@ -3,11 +3,7 @@
 import QtQuick
 import QtQuick.Controls as QQC
 import QtQuick.Layouts
-import "../components"
-import "../controls"
-import "../views/training"
-import "../dialogs"
-import "qrc:/ui/theme"
+import Revise
 
 Item {
     id: root

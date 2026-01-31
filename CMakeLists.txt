@@ -4,13 +4,14 @@ project(revise VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#set(BUILD_SHARED_LIBS OFF)
+set(QML_IMPORT_PATH "${CMAKE_BINARY_DIR}/qml/modules" CACHE PATH "QML import path for Qt Creator")
 
 find_package(Qt6 REQUIRED COMPONENTS
   Quick
   Sql
   Concurrent
-  WebView)
+  WebView
+  Qml)
 
 # include modules
 add_subdirectory(modules/core)     # Core module
@@ -71,7 +72,24 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   FetchContent_MakeAvailable(Boost)
 endif()
 
+file(GLOB_RECURSE QML_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.qml"
+)
+
 qt_add_executable(apprevise ${SOURCES})
+
+set_source_files_properties(
+    ui/theme/Theme.qml
+    ui/theme/Fonts.qml
+    ui/navigation/Router.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
+qt_add_qml_module(apprevise_qml
+    URI Revise
+    VERSION 1.0
+    QML_FILES ${QML_FILES}
+    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml/modules/Revise
+)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_link_libraries(apprevise PRIVATE
@@ -79,11 +97,13 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       Qt6::Sql
       Qt6::Concurrent
       Qt6::WebView
+      Qt6::Qml
       QuaZip::QuaZip
       Boost::stacktrace_basic
       libzstd_static
       core
       platform
+      apprevise_qml
   )
 
   target_include_directories(apprevise PRIVATE
@@ -97,10 +117,12 @@ else() # Release
       Qt6::Sql
       Qt6::Concurrent
       Qt6::WebView
+      Qt6::Qml
       QuaZip::QuaZip
       libzstd_static
       core
       platform
+      apprevise_qml
   )
 
   target_include_directories(apprevise PRIVATE
@@ -109,31 +131,9 @@ else() # Release
   )
 endif()
 
-set_source_files_properties(
-    ui/theme/Theme.qml
-    ui/navigation/Router.qml
-    ui/theme/Fonts.qml
-    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
-
-set_source_files_properties(
-    ui/theme/Theme.qml
-    ui/theme/Fonts.qml
-    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
-
-file(GLOB_RECURSE QML_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.qml"
-)
-
-qt_add_qml_module(apprevise
-    URI revise
-    VERSION 1.0
-    QML_FILES ${QML_FILES}
-)
-
 qt_add_resources(apprevise
     PREFIX "/"
     FILES
-        ${QML_FILES}
         res/img/background_blurred.png
         res/img/add_deck.png
         res/img/clocks.png

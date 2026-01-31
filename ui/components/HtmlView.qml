@@ -1,7 +1,7 @@
 import QtQuick
 import QtWebView
 import QtCore
-import "../theme"
+import Revise
 
 WebView {
     id: web

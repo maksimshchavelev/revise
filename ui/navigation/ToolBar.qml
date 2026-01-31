@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import "qrc:/ui/theme"
+import Revise
 
 Item {
     id: root

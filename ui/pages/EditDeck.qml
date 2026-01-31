@@ -2,11 +2,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Revise
-import "../controls"
-import "../components"
-import "../dialogs"
-import "../views/training"
-import "../theme"
 
 Item {
     id: root

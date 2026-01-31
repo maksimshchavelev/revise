@@ -1,9 +1,7 @@
 // Statistics page
 import QtQuick
 import QtQuick.Layouts
-import "../views/training"
-import "../controls"
-import "../theme"
+import Revise
 
 Item {
     AppText {

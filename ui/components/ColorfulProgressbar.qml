@@ -1,7 +1,7 @@
 // Colorful progressbar
 
 import QtQuick
-import "../theme"
+import Revise
 
 Item {
     id: root
