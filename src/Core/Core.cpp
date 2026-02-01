@@ -81,6 +81,14 @@ Core::Core(QGuiApplication& app, QObject* parent) :
                 m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
             }
 
+            if (!m_permission_service->check(core::Permission::READ_EXTERNAL_STORAGE)) {
+                m_permission_service->request(core::Permission::READ_EXTERNAL_STORAGE);
+            }
+
+            if (!m_permission_service->check(core::Permission::WRITE_EXTERNAL_STORAGE)) {
+                m_permission_service->request(core::Permission::WRITE_EXTERNAL_STORAGE);
+            }
+
             schedule_notifications();
         });
 

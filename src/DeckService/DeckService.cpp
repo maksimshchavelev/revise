@@ -110,7 +110,7 @@ void DeckService::import_deck_async(const QString& path) {
             import_res = m_revise_importer.import_from_file(localPath);
         } else {
             ErrorReporter::instance()->report(
-                "Unknown file extension: " + suffix, "Can't select importer", "DeckService::import_deck_async()");
+                "Unknown file extension: " + suffix, "Can't select importer for file: " + localPath, "DeckService::import_deck_async()");
             return;
         }
 
