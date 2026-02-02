@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 18.0.82, 2026-01-31T12:32:14. -->
+<!-- Written by QtCreator 18.0.82, 2026-02-01T13:59:56. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -280,6 +280,9 @@
      <value type="int" key="PE.EnvironmentAspect.Base">0</value>
      <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes">
       <value type="QString">uiShowBounds=1</value>
+      <value type="QString">QT_QPA_PLATFORM=android</value>
+      <value type="QString">QT_OPENGL=software</value>
+      <value type="QString">ANDROID_EMULATOR_USE_SYSTEM_LIBS=1</value>
      </valuelist>
      <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
      <value type="QString" key="PerfRecordArgsId">-e cpu-cycles --call-graph dwarf,4096 -F 250</value>
@@ -2068,6 +2071,9 @@
     <value type="int" key="PE.EnvironmentAspect.Base">0</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes">
      <value type="QString">uiShowBounds=1</value>
+     <value type="QString">QT_QPA_PLATFORM=android</value>
+     <value type="QString">QT_OPENGL=software</value>
+     <value type="QString">ANDROID_EMULATOR_USE_SYSTEM_LIBS=1</value>
     </valuelist>
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
     <value type="QString" key="PerfRecordArgsId">-e cpu-cycles --call-graph dwarf,4096 -F 250</value>

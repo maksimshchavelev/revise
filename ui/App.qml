@@ -121,9 +121,8 @@ ApplicationWindow {
         id: addDeckPopup
         sourceItem: pageLoader
 
-        onRejected: console.log("Rejected")
-        onImportAnkiSelected: importAnkiFileDialog.open()
-        onCreateSelected: createDeckPopup.open()
+        onImportClicked: importAnkiFileDialog.open()
+        onCreateClicked: createDeckPopup.open()
     }
 
     DeckModalDialog {
