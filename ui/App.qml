@@ -207,6 +207,18 @@ ApplicationWindow {
         }
     }
 
+    Connections {
+        id: popupConnection
+        target: popupService
+
+        function onRequested(req) {
+            console.log("REQUEST! Data is " + req.type + " msg is: " + req.message)
+
+            infoPopup.open(req.message)
+            popupService.response()
+        }
+    }
+
     onClosing: function(close) {
         close.accepted = false
 

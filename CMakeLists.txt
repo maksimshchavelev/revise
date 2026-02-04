@@ -20,6 +20,7 @@ find_package(Qt6 REQUIRED COMPONENTS
 # include modules
 add_subdirectory(modules/core)     # Core module
 add_subdirectory(modules/platform) # Platform module
+add_subdirectory(modules/ui)       # UI module
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
@@ -108,6 +109,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       libzstd_static
       core
       platform
+      ui
   )
 
   target_include_directories(apprevise PRIVATE
@@ -126,6 +128,7 @@ else() # Release
       libzstd_static
       core
       platform
+      ui
   )
 
   target_include_directories(apprevise PRIVATE

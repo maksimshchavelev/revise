@@ -1,40 +1,27 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 // Core of the application
 
-#include <Core/Core.hpp>                               // for Core
-#include <Entities/Deck.hpp>                           // for Deck
-#include <ErrorReporter/ErrorReporter.hpp>             // for ErrorReporter
-#include <QQmlApplicationEngine>                       // for QQmlApplicationEngine
-#include <QQmlContext>                                 // for QQmlContext
-#include <QSqlError>                                   // for QSqlError
-#include <QUuid>                                       // for QUuid
-#include <QtWebView>                                   // for QtWebView
+#include <Core/Core.hpp>                   // for Core
+#include <Entities/Deck.hpp>               // for Deck
+#include <ErrorReporter/ErrorReporter.hpp> // for ErrorReporter
+#include <QQmlApplicationEngine>           // for QQmlApplicationEngine
+#include <QQmlContext>                     // for QQmlContext
+#include <QSqlError>                       // for QSqlError
+#include <QUuid>                           // for QUuid
 #include <QtConcurrent>
+#include <QtWebView> // for QtWebView
 
-#include <platform/PermissionServiceFactory.hpp>
-#include <platform/NotificationServiceFactory.hpp>
 #include <core/IPermissionService.hpp>
+#include <platform/NotificationServiceFactory.hpp>
+#include <platform/PermissionServiceFactory.hpp>
 
-#ifdef Q_OS_ANDROID
-// #include <QtCore/private/qandroidextras_p.h>           // for QtAndroidPrivate
-#endif
+#include <ui/PopupServiceFactory.hpp>
 
 #ifndef Q_OS_ANDROID
 #include <QtWebEngineQuick/QtWebEngineQuick>
 #endif
 
 namespace revise {
-
-static QString javaClassName(const QJniObject &obj)
-{
-    if (!obj.isValid()) return {};
-    QJniEnvironment env;
-    QJniObject cls = obj.callObjectMethod("getClass", "()Ljava/lang/Class;");
-    if (!cls.isValid()) return {};
-    QJniObject name = cls.callObjectMethod("getName", "()Ljava/lang/String;");
-    if (!name.isValid()) return {};
-    return name.toString();
-}
 
 // Public method
 Core::Core(QGuiApplication& app, QObject* parent) :
@@ -57,8 +44,11 @@ Core::Core(QGuiApplication& app, QObject* parent) :
         m_deck_media_storage,
         m_html_helper,
         this),
-    m_decks_model(m_deck_service), m_cards_model(m_deck_service), m_permission_service(platform::create_permission_service()),
-    m_notification_service(platform::create_notification_service()){
+    m_decks_model(m_deck_service), m_cards_model(m_deck_service),
+    m_permission_service(platform::create_permission_service()),
+    m_notification_service(platform::create_notification_service()) {
+
+    m_popup_service = ui::create_popup_service();
 
     connect(&m_study_service, &StudyService::training_finished, this, [this]() {
         if (!m_streak_service.updated_today()) {
@@ -71,7 +61,7 @@ Core::Core(QGuiApplication& app, QObject* parent) :
 
     // Run after running application
     QTimer::singleShot(0, [this]() {
-        QtConcurrent::run([this](){
+        QtConcurrent::run([this]() {
             if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
                 qDebug() << "request post notifications";
                 m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
@@ -102,13 +92,13 @@ Core::Core(QGuiApplication& app, QObject* parent) :
 
 // Public method
 int Core::run() {
-    #ifndef Q_OS_ANDROID
-        qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
-        qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
+#ifndef Q_OS_ANDROID
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
+    qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
 
-        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-        QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-    #endif
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
 
     // Copy WebView assets (html and mathjax script)
     extract_web_bundle();
@@ -131,7 +121,10 @@ int Core::run() {
     engine.rootContext()->setContextProperty("deckService", &m_deck_service);
     engine.rootContext()->setContextProperty("htmlHelper", &m_html_helper);
     engine.rootContext()->setContextProperty("errorReporter", ErrorReporter::instance());
-    engine.rootContext()->setContextProperty("uiShowBounds", static_cast<bool>(uiShowBounds.has_value() ? uiShowBounds.value() : 0));
+    engine.rootContext()->setContextProperty("uiShowBounds",
+                                             static_cast<bool>(uiShowBounds.has_value() ? uiShowBounds.value() : 0));
+
+    m_ui.init_engine(m_app);
 
     qmlRegisterUncreatableType<AppError>(
         "Revise", 1, 0, "AppError", "AppError is only available via the ErrorReporter");
@@ -249,8 +242,7 @@ void Core::extract_web_bundle() const {
 }
 
 // Private method
-void Core::schedule_notifications(bool today_enabled, const QTime& at) const
-{
+void Core::schedule_notifications(bool today_enabled, const QTime& at) const {
     m_notification_service->clear_all_scheduled_notifications();
 
     for (int i = 0; i < 7; ++i) {

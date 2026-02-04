@@ -22,6 +22,9 @@
 #include <core/INotificationService.hpp>           // for INotificationService
 #include <core/IPermissionService.hpp>             // for IPermissionService
 
+#include <ui/PopupServiceFactory.hpp>
+#include <ui/UI.hpp>
+
 namespace revise {
 
 class Core : public QObject {
@@ -52,6 +55,8 @@ class Core : public QObject {
     std::unique_ptr<core::IPermissionService>   m_permission_service;
     std::unique_ptr<core::INotificationService> m_notification_service;
 
+    std::unique_ptr<core::IPopupService> m_popup_service;
+    ui::UI m_ui;
 
     // Helper
     std::unique_ptr<IDeckRepository> make_thread_local_sql_repo(const QString& conn_name);
