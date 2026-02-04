@@ -1,22 +1,21 @@
 // Copyright 2025 Maksim Shchavelev
-// Interface for deck exporters (Anki, custom formats, etc.)
 
 #pragma once
 
-#include <Entities/Deck.hpp>                   // for Deck
-#include <Entities/Card.hpp>                   // for Card
-#include <QString>                             // for QString
-#include <QVector>                             // for QVector
-#include <expected>                            // for std::expected
+#include "Card.hpp" // for Card
+#include "Deck.hpp" // for Deck
+#include <QString>  // for QString
+#include <QVector>  // for QVector
+#include <expected> // for std::expected
 
-namespace revise {
+namespace core {
 
 /**
  * @brief Data for export operation
  */
 struct ExportData {
     Deck          deck;            ///< Deck
-    QString       media_directory; ///< Media directory. Empty by default
+    QString       media_directory; ///< Media directory path. Empty by default
     QVector<Card> cards;           ///< Cards
 };
 
@@ -31,7 +30,7 @@ struct ExportData {
  * Do NOT make this interface a QObject — keep it plain and easy to mock in unit tests.
  */
 class IDeckExporter {
-public:
+  public:
     IDeckExporter() = default;
     virtual ~IDeckExporter() = default;
 
@@ -56,4 +55,4 @@ public:
     virtual QString format_name() const noexcept = 0;
 };
 
-} // namespace revise
+} // namespace core

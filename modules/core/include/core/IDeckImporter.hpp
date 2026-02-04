@@ -1,14 +1,13 @@
 // Copyright 2025 Maksim Shchavelev
-// Interface for deck importers (Anki, custom formats, etc.)
 
 #pragma once
 
-#include <IDeckRepository/IDeckRepository.hpp> // for IDeckRepository
-#include <QString>                             // for QString
-#include <QVector>                             // for QVector
-#include <expected>                            // for std::expected
+#include "Card.hpp" // for Card
+#include <QString>  // for QString
+#include <QVector>  // for QVector
+#include <expected> // for std::expected
 
-namespace revise {
+namespace core {
 
 /**
  * @brief Result of an import operation.
@@ -61,4 +60,4 @@ class IDeckImporter {
     virtual QString format_name() const noexcept = 0;
 };
 
-} // namespace revise
+} // namespace core
