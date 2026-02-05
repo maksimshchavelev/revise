@@ -1,20 +1,20 @@
 // Copyright 2025 Maksim Shchavelev
 
-#include <DeckExporter/ReviseDeckExporter.hpp> // for ReviseDeckExporter
-#include <QDir>                                // for QDir
-#include <QRegularExpressionMatchIterator>     // for QRegularExpressionMatchIterator
-#include <QSqlDatabase>                        // for QSqlDatabase
-#include <QSqlError>                           // for QSqlError
-#include <QSqlQuery>                           // for QSqlQuery
-#include <QStandardPaths>                      // for QStandardPaths
-#include <QUuid>                               // for QUuid
-#include <quazip.h>                            // for QuaZip
-#include <quazipfile.h>                        // for QuaZipFile
+#include "ReviseDeckExporter.hpp"          // for ReviseDeckExporter header
+#include <QDir>                            // for QDir
+#include <QRegularExpressionMatchIterator> // for QRegularExpressionMatchIterator
+#include <QSqlDatabase>                    // for QSqlDatabase
+#include <QSqlError>                       // for QSqlError
+#include <QSqlQuery>                       // for QSqlQuery
+#include <QStandardPaths>                  // for QStandardPaths
+#include <QUuid>                           // for QUuid
+#include <quazip.h>                        // for QuaZip
+#include <quazipfile.h>                    // for QuaZipFile
 
-namespace revise {
+namespace io {
 
 // Public method
-std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData& data, const QString& path) {
+std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::ExportData& data, const QString& path) {
     // Make temporary directory
     QDir export_dir(QString("%1/revise_export_%2")
                         .arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation))
@@ -143,7 +143,7 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const ExportData
 }
 
 // Public method
-QString revise::ReviseDeckExporter::format_name() const noexcept {
+QString ReviseDeckExporter::format_name() const noexcept {
     return "rpkg";
 }
 
@@ -265,4 +265,4 @@ QString ReviseDeckExporter::strip_img_src_paths(const QString& html) {
     return result;
 }
 
-} // namespace revise
+} // namespace io

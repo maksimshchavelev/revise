@@ -1,27 +1,27 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include <DeckImporter/ReviseDeckImporter.hpp> // for ReviseDeckImporter
-#include <QDir>                                // for QDir
-#include <QSqlDatabase>                        // for QSqlDatabase
-#include <QSqlError>                           // for QSqlError
-#include <QSqlQuery>                           // for QSqlQuery
-#include <QStandardPaths>                      // for QStandardPaths
-#include <QUuid>                               // for QUuid
-#include <Utils/ScopeGuard.hpp>                // for ScopeGuard
-#include <quazip.h>                            // for QuaZip
-#include <quazipfile.h>                        // for QuaZipFile
+#include "ReviseDeckImporter.hpp" // for ReviseDeckImporter
+#include <QDir>                   // for QDir
+#include <QSqlDatabase>           // for QSqlDatabase
+#include <QSqlError>              // for QSqlError
+#include <QSqlQuery>              // for QSqlQuery
+#include <QStandardPaths>         // for QStandardPaths
+#include <QUuid>                  // for QUuid
+#include <utils/ScopeGuard.hpp>   // for utils::ScopeGuard
+#include <quazip.h>               // for QuaZip
+#include <quazipfile.h>           // for QuaZipFile
 
-namespace revise {
+namespace io {
 
 // Public method
-std::expected<ImportResult, QString> ReviseDeckImporter::import_from_file(const QString& path) {
-    ImportResult  res;
-    const QString import_dir =
-        QString("%1/revise_import_%2")
+std::expected<core::ImportResult, QString> ReviseDeckImporter::import_from_file(const QString& path) {
+    core::ImportResult  res;
+    const QString import_dir = QString("%1/revise_import_%2")
                                    .arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation))
                                    .arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
 
-    ScopeGuard dir_guard([]() {},
+
+    utils::ScopeGuard dir_guard([]() {},
                          [&import_dir]() {
                              QDir(import_dir).removeRecursively(); // for autoremove import directory
                          });
@@ -33,7 +33,7 @@ std::expected<ImportResult, QString> ReviseDeckImporter::import_from_file(const 
 
     // Open database
     QSqlDatabase import_db;
-    ScopeGuard   db_guard(
+    utils::ScopeGuard   db_guard(
         [&import_dir, &import_db]() {
             // on enter
             import_db = QSqlDatabase::addDatabase("QSQLITE", "revise_export");
@@ -59,10 +59,9 @@ std::expected<ImportResult, QString> ReviseDeckImporter::import_from_file(const 
 
         for (const auto& file : files) {
             const QString& file_path = QString("%1/%2").arg(media_dir.path()).arg(file);
-            QFile img(file_path);
+            QFile          img(file_path);
             if (!img.open(QIODevice::ReadOnly)) {
-                return std::unexpected(
-                    QString("Failed to open image file: %1").arg(file_path));
+                return std::unexpected(QString("Failed to open image file: %1").arg(file_path));
             }
 
             mapped_images[file] = img.readAll();
@@ -110,7 +109,7 @@ std::expected<ImportResult, QString> ReviseDeckImporter::import_from_file(const 
     }
 
     while (q.next()) {
-        Card card;
+        core::Card card;
 
         card.front = q.value("front").toString();
         card.back = q.value("back").toString();
@@ -163,4 +162,4 @@ std::expected<void, QString> ReviseDeckImporter::unzip(const QString& zip_path, 
     return {};
 }
 
-} // namespace revise
+} // namespace io

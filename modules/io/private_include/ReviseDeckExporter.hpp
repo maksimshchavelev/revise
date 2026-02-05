@@ -1,17 +1,17 @@
-
+// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <IDeckExporter/IDeckExporter.hpp> // for IDeckExporter
+#include <core/IDeckExporter.hpp> // for core::IDeckExporter
 
-namespace revise {
+namespace io {
 
 /**
  * @brief Class to export to revise (*rpkg) format
  */
-class ReviseDeckExporter : public IDeckExporter {
+class ReviseDeckExporter : public core::IDeckExporter {
   public:
-    std::expected<void, QString> export_to_file(const ExportData& data, const QString& path) override;
+    std::expected<void, QString> export_to_file(const core::ExportData& data, const QString& path) override;
     QString                      format_name() const noexcept override;
 
   private:
@@ -50,5 +50,4 @@ class ReviseDeckExporter : public IDeckExporter {
     QString strip_img_src_paths(const QString& html);
 };
 
-
-} // namespace revise
+} // namespace io

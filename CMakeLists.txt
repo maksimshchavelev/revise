@@ -21,6 +21,8 @@ find_package(Qt6 REQUIRED COMPONENTS
 add_subdirectory(modules/core)     # Core module
 add_subdirectory(modules/platform) # Platform module
 add_subdirectory(modules/ui)       # UI module
+add_subdirectory(modules/io)       # IO module
+add_subdirectory(modules/utils)    # utils module
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
@@ -39,29 +41,6 @@ foreach(abs_file ${ABS_RESOURCES})
 endforeach()
 
 qt_standard_project_setup(REQUIRES 6.8)
-
-include(FetchContent)
-
-set(QUAZIP_QT_MAJOR_VERSION 6 CACHE STRING "" FORCE)
-set(QUAZIP_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
-set(QUAZIP_ENABLE_TOOLS OFF CACHE BOOL "" FORCE)
-
-# quazip
-FetchContent_Declare(quazip
-    GIT_REPOSITORY https://github.com/stachenov/quazip.git
-    GIT_TAG v1.5
-)
-FetchContent_MakeAvailable(quazip)
-
-# zstd
-FetchContent_Declare(
-  zstd
-  GIT_REPOSITORY https://github.com/facebook/zstd.git
-  GIT_TAG v1.5.5
-  SOURCE_SUBDIR build/cmake
-)
-FetchContent_MakeAvailable(zstd)
-get_target_property(ZSTD_SOURCE_DIR libzstd_static SOURCE_DIR)
 
 # Boost stacktrace
 set(BOOST_ENABLE_CMAKE ON)
@@ -104,9 +83,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       Qt6::Concurrent
       Qt6::WebView
       Qt6::Qml
-      QuaZip::QuaZip
       Boost::stacktrace_basic
-      libzstd_static
       core
       platform
       ui
@@ -124,8 +101,6 @@ else() # Release
       Qt6::Concurrent
       Qt6::WebView
       Qt6::Qml
-      QuaZip::QuaZip
-      libzstd_static
       core
       platform
       ui
@@ -133,7 +108,6 @@ else() # Release
 
   target_include_directories(apprevise PRIVATE
       include
-      ${zstd_SOURCE_DIR}/lib
   )
 endif()
 

@@ -2,11 +2,15 @@
 
 #pragma once
 
-#include <IDeckImporter/IDeckImporter.hpp> // for IDeckImporter
+#include <core/IDeckImporter.hpp> // for core::IDeckImporter
 
-namespace revise {
+namespace io {
 
-class ReviseDeckImporter : public IDeckImporter {
+/**
+ * @brief Imports the Revise deck. Only reads it and returns the result. The calling code must place the decks and cards
+ * in the database itself.
+ */
+class ReviseDeckImporter : public core::IDeckImporter {
   public:
     /**
      * @brief Import revise deck
@@ -15,7 +19,7 @@ class ReviseDeckImporter : public IDeckImporter {
      * @note `ImportResult` contains `QMap<QString, QByteArray>`, where QString is image name,
      * QByteArray - binary data of the image
      */
-    std::expected<ImportResult, QString> import_from_file(const QString& path) override;
+    std::expected<core::ImportResult, QString> import_from_file(const QString& path) override;
 
     /**
      * @brief Format of deck
@@ -33,4 +37,4 @@ class ReviseDeckImporter : public IDeckImporter {
     std::expected<void, QString> unzip(const QString& zip_path, const QString& target_dir);
 };
 
-} // namespace revise
+} // namespace io

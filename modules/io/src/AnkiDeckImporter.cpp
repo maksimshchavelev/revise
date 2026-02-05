@@ -1,23 +1,21 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
-// A class that regulates the learning process. It determines which cards will be included in today's selection and
-// manages the training process for the selected deck.
 
-#include <DeckImporter/AnkiDeckImporter.hpp> // for AnkiDeckImporter
-#include <QRegularExpressionMatchIterator>   // for QRegularExpressionMatchIterator
-#include <QDir>                              // for QDir
-#include <QStandardPaths>                    // for QStandardPaths
-#include <QSqlError>                         // for QSqlError
-#include <QSqlQuery>                         // for QSqlQuery
-#include <QUuid>                             // for QUuid
-#include <quazip.h>                          // for QuaZip
-#include <quazipfile.h>                      // for QuaZipFile
-#include <zstd.h>                            // for ZSTD
+#include "AnkiDeckImporter.hpp"            // for AnkiDeckImporter
+#include <QDir>                            // for QDir
+#include <QRegularExpressionMatchIterator> // for QRegularExpressionMatchIterator
+#include <QSqlError>                       // for QSqlError
+#include <QSqlQuery>                       // for QSqlQuery
+#include <QStandardPaths>                  // for QStandardPaths
+#include <QUuid>                           // for QUuid
+#include <quazip.h>                        // for QuaZip
+#include <quazipfile.h>                    // for QuaZipFile
+#include <zstd.h>                          // for ZSTD
 
-namespace revise {
+namespace io {
 
 // Public method
-std::expected<ImportResult, QString> AnkiDeckImporter::import_from_file(const QString& path) {
-    ImportResult res;
+std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(const QString& path) {
+    core::ImportResult res;
 
     const QString base_temp_dir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
     const QString import_dir = base_temp_dir + "/anki_import_" + QUuid::createUuid().toString(QUuid::WithoutBraces);
@@ -51,7 +49,7 @@ std::expected<ImportResult, QString> AnkiDeckImporter::import_from_file(const QS
     }
 
     // Map media
-    for(const auto& [image_name, archive_name] : map_images(unpacked_media_path).toStdMap()) {
+    for (const auto& [image_name, archive_name] : map_images(unpacked_media_path).toStdMap()) {
         // We need to unpack the archive using zstd, read it, and write it to QByteArray.
 
         // Decompress zstd
@@ -92,13 +90,12 @@ std::expected<ImportResult, QString> AnkiDeckImporter::import_from_file(const QS
     deck_name_query.prepare("SELECT name FROM decks");
 
     if (!cards_query.exec()) {
-        return std::unexpected(QString("Failed to fetch cards from Anki DB: %1")
-                                    .arg(cards_query.lastError().text()));
+        return std::unexpected(QString("Failed to fetch cards from Anki DB: %1").arg(cards_query.lastError().text()));
     }
 
     if (!deck_name_query.exec()) {
-        return std::unexpected(QString("Failed to fetch name from Anki DB: %1")
-                                   .arg(deck_name_query.lastError().text()));
+        return std::unexpected(
+            QString("Failed to fetch name from Anki DB: %1").arg(deck_name_query.lastError().text()));
     }
 
     deck_name_query.next(); // skip `Default`
@@ -116,26 +113,24 @@ std::expected<ImportResult, QString> AnkiDeckImporter::import_from_file(const QS
         const QStringList fields = flds.split(FIELD_SEP);
 
         if (fields.size() < 2) {
-                continue; // broken note
+            continue; // broken note
         }
 
         QString front = fields.at(0).trimmed();
         QString back = fields.at(1).trimmed();
 
-        res.cards.push_back(Card {
-            .id = 0, // not taken into account
-            .deck_id = 0, // not taken into account
-            .state = 0, // new
-            .incorrect_streak = 0,
-            .interval = 0,
-            .time_limit = 0, // not taken into account
-            .difficulty = 2.5f,
-            .next_review = QDateTime::currentDateTime(),
-            .created_at = QDateTime::currentDateTime(),
-            .updated_at = QDateTime::currentDateTime(),
-            .front = std::move(front),
-            .back = std::move(back)
-        });
+        res.cards.push_back(core::Card{.id = 0,      // not taken into account
+                                       .deck_id = 0, // not taken into account
+                                       .state = 0,   // new
+                                       .incorrect_streak = 0,
+                                       .interval = 0,
+                                       .time_limit = 0, // not taken into account
+                                       .difficulty = 2.5f,
+                                       .next_review = QDateTime::currentDateTime(),
+                                       .created_at = QDateTime::currentDateTime(),
+                                       .updated_at = QDateTime::currentDateTime(),
+                                       .front = std::move(front),
+                                       .back = std::move(back)});
     }
 
     // Clear resources
@@ -265,8 +260,7 @@ std::expected<void, QString> AnkiDeckImporter::decompress_zstd_file(const QStrin
 }
 
 // Private method
-QMap<QString, QString> AnkiDeckImporter::map_images(const QString &media_path)
-{
+QMap<QString, QString> AnkiDeckImporter::map_images(const QString& media_path) {
     QMap<QString, QString> result;
 
     QFile file(media_path);
@@ -320,5 +314,4 @@ QMap<QString, QString> AnkiDeckImporter::map_images(const QString &media_path)
     return result;
 }
 
-
-} // namespace revise
+} // namespace io

@@ -4,26 +4,25 @@
 
 #include <functional> // for std::functional
 
-namespace revise {
+namespace utils {
 
 /**
  * @brief A helper class based on the RAII principle for performing certain
  * actions when creating/destroying an object.
  */
 class ScopeGuard {
-public:
-    explicit ScopeGuard(std::function<void()> on_enter,
-                        std::function<void()> on_exit);
+  public:
+    explicit ScopeGuard(std::function<void()> on_enter, std::function<void()> on_exit);
 
     ~ScopeGuard();
 
     ScopeGuard(const ScopeGuard&) = delete;
     ScopeGuard(ScopeGuard&&) = delete;
-    ScopeGuard& operator = (const ScopeGuard&) = delete;
-    ScopeGuard& operator = (ScopeGuard&&) = delete;
+    ScopeGuard& operator=(const ScopeGuard&) = delete;
+    ScopeGuard& operator=(ScopeGuard&&) = delete;
 
-private:
+  private:
     std::function<void()> m_on_exit;
 };
 
-}
+} // namespace utils
