@@ -6,7 +6,7 @@
 #include <chrono>   // for std::chrono
 #include <expected> // for std::expected
 
-namespace revise {
+namespace core {
 
 /**
  * @brief Card view event. Used with some implementation of the `IEventRecorder` event recorder.
@@ -39,4 +39,4 @@ class IEventRecorder {
     virtual std::expected<void, QString> record(const CardReviewEvent& event) = 0;
 };
 
-} // namespace revise
+} // namespace core
