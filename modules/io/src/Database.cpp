@@ -1,7 +1,6 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
-// Class controlling the streak
 
-#include <Database/Database.hpp> // for Database header
+#include "io/Database.hpp"       // for Database header
 #include <QDateTime>             // for QDateTime
 #include <QDebug>                // for QDebug, QWarning
 #include <QDir>                  // for QDir
