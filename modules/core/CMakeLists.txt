@@ -8,3 +8,8 @@ target_include_directories(core
     INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/include/core/Version.hpp.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Version.hpp
+)

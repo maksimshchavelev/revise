@@ -2,23 +2,9 @@
 
 #pragma once
 
-#include <QString>  // for QString
-#include <chrono>   // for std::chrono
-#include <expected> // for std::expected
+#include "IEventStorage.hpp" // for IEventStorage
 
 namespace core {
-
-/**
- * @brief Card view event. Used with some implementation of the `IEventRecorder` event recorder.
- */
-struct CardReviewEvent {
-    int                       card_id;           ///< Local Card ID
-    int                       global_card_id{0}; ///< Global card ID
-    int                       deck_id;           ///< Local deck ID
-    int                       global_deck_id{0}; ///< Global deck ID
-    int                       current_streak;    ///< Current user streak
-    std::chrono::milliseconds review_duration;   ///< How much time did the user spend on the answer?
-};
 
 /**
  * @brief Abstract event recorder class
@@ -28,7 +14,12 @@ struct CardReviewEvent {
  */
 class IEventRecorder {
   public:
-    explicit IEventRecorder() = default;
+    /**
+     * @brief IEventRecorder constructor
+     * @param event_storage Event storage interface
+     */
+    explicit IEventRecorder(std::shared_ptr<IEventStorage> event_storage);
+
     virtual ~IEventRecorder() = default;
 
     /**
@@ -37,6 +28,9 @@ class IEventRecorder {
      * @return `std::expected<void, QString>` with `void` if success, otherwise `QString` with error description
      */
     virtual std::expected<void, QString> record(const CardReviewEvent& event) = 0;
+
+  protected:
+    std::shared_ptr<IEventStorage> m_event_storage; ///< Event storage
 };
 
 } // namespace core
