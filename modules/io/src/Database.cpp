@@ -8,7 +8,7 @@
 #include <QSqlError>             // for QSqlError
 #include <QSqlQuery>             // for QSqlQuery
 
-namespace revise {
+namespace io {
 
 
 // Public method

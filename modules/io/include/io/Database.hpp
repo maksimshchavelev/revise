@@ -7,7 +7,7 @@
 #include <QSqlDatabase> // for QSqlDatabase
 #include <expected>     // for std::expected
 
-namespace revise {
+namespace io {
 
 /**
  * @brief Lightweight SQL driver / helper.
