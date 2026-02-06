@@ -10,6 +10,9 @@ endif()
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Versions
+set(REVISE_DB_SCHEMA_VERSION 2)
+
 find_package(Qt6 REQUIRED COMPONENTS
   Quick
   Sql
