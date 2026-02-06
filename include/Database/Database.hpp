@@ -1,5 +1,4 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
-// Class controlling the database
 
 #pragma once
 
@@ -63,6 +62,19 @@ class Database : public QObject {
      */
     QString last_error_text() const;
 
+    /**
+     * @brief Get a version of the database schema
+     * @return Version (`0` by default) or error description
+     */
+    std::expected<int, QString> get_db_schema_version() const;
+
+    /**
+     * @brief Set the database schema version
+     * @param version Schema version
+     * @return `std::expected<void, QString>`
+     */
+    std::expected<void, QString> set_db_schema_version(int version);
+
   signals:
     /**
      * @brief Emitted when a non-fatal internal error occurs (for logging/debug).
@@ -77,19 +89,6 @@ class Database : public QObject {
 
     std::expected<void, QString> open_connection(const QString& db_name);
     void                         close_connection();
-
-    /**
-     * @brief Get a version of the database schema
-     * @return Version (`0` by default) or error description
-     */
-    std::expected<int, QString> get_db_schema_version() const;
-
-    /**
-     * @brief Set the database schema version
-     * @param version Schema version
-     * @return `std::expected<void, QString>`
-     */
-    std::expected<void, QString> set_db_schema_version(int version);
 
     /**
      * @brief Migrates the database from the latest version to the current one
