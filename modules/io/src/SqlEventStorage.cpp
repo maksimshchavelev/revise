@@ -211,19 +211,45 @@ std::expected<void, QString> SqlEventStorage::migrate_v1_to_v2() {
     return m_context.exec([this]() -> std::expected<void, QString> {
         QSqlQuery q(m_db.raw_db());
 
-        // Drop table
-        if (!q.exec("DROP TABLE IF EXISTS events")) {
-            return std::unexpected(QString("Failed to drop table 'events'. Query: %1, cause: %2")
-                                       .arg(q.lastQuery())
-                                       .arg(q.lastError().text()));
+        // 1. Create new table with correct schema
+        if (!q.exec(R"(
+            CREATE TABLE events_new (
+                id INTEGER PRIMARY KEY,
+                type INTEGER NOT NULL,
+                created_at DATETIME NOT NULL,
+                payload TEXT NOT NULL,
+                sync_state INTEGER NOT NULL
+            )
+        )")) {
+            return std::unexpected(q.lastError().text());
         }
 
-        // Create new table
-        if (auto res = create_events_table(); !res.has_value()) {
-            return std::unexpected(res.error());
+        if (!q.exec(R"(
+            INSERT INTO events_new (id, type, created_at, payload, sync_state)
+            SELECT
+                id,
+                CASE type
+                    WHEN 'card_review' THEN 1
+                    ELSE 0
+                END AS type,
+                created_at,
+                payload,
+                0 AS sync_state
+            FROM events
+        )")) {
+            return std::unexpected(q.lastError().text());
         }
 
-        // Create indexes
+        // 3. Replace old table
+        if (!q.exec("DROP TABLE events")) {
+            return std::unexpected(q.lastError().text());
+        }
+
+        if (!q.exec("ALTER TABLE events_new RENAME TO events")) {
+            return std::unexpected(q.lastError().text());
+        }
+
+        // 4. Create indexes
         if (!q.exec("CREATE INDEX idx_events_created_at ON events(created_at)")) {
             return std::unexpected(
                 QString("Failed to create indexes for field 'created_at' for table 'events'. Query: %1, cause: %2")
