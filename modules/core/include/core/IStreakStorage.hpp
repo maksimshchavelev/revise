@@ -24,10 +24,10 @@ class IStreakStorage {
 
     /**
      * @brief Reads the current streak
-     * @return `std::expected <void, QString>` with `core::Streak` structure describing a streak if success, otherwise
+     * @return `std::expected <Streak, QString>` with `core::Streak` structure describing a streak if success, otherwise
      * with error description
      */
-    virtual std::expected<void, Streak> read() = 0;
+    virtual std::expected<Streak, QString> read() = 0;
 };
 
 } // namespace core
