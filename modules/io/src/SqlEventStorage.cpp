@@ -229,7 +229,7 @@ std::expected<void, QString> SqlEventStorage::migrate_v1_to_v2() {
             SELECT
                 id,
                 CASE type
-                    WHEN 'card_review' THEN 1
+                    WHEN 'card_review' THEN 0
                     ELSE 0
                 END AS type,
                 created_at,
