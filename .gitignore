@@ -2,3 +2,4 @@ build
 ./build
 build/*
 CMakeLists.txt.user
+revise.db
