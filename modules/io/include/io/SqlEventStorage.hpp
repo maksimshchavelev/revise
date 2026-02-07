@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "Database.hpp"           // for Database
-#include <core/IEventStorage.hpp> // for IEventStorage
+#include "Database.hpp"                 // for Database
+#include "DatabaseExecutionContext.hpp" // for DatabaseExecutionContext
+#include <core/IEventStorage.hpp>       // for IEventStorage
 
 namespace io {
 
@@ -15,9 +16,10 @@ class SqlEventStorage final : core::IEventStorage {
     /**
      * @brief SqlEventStorage constructor
      * @param db `Database`
+     * @param context The context in which all database queries will be executed
      * @note May throw an exception if a table creation or migration error occurred
      */
-    SqlEventStorage(Database& db);
+    SqlEventStorage(Database& db, DatabaseExecutionContext& context);
 
     /**
      * @see `core::IEventStorage` for details
@@ -43,7 +45,8 @@ class SqlEventStorage final : core::IEventStorage {
     std::expected<void, QString> migrate();
 
   private:
-    Database& m_db; ///< Database reference
+    Database&                 m_db;      ///< Database reference
+    DatabaseExecutionContext& m_context; ///< Execution context reference
 
     /**
      * @brief Creates events table if not exists
