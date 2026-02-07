@@ -63,7 +63,7 @@ class DatabaseExecutionContext final : public QObject {
      * @note The function is executed via the Qt event queue using
      *       Qt::QueuedConnection semantics.
      */
-    template <typename Result> void dispatch_async(std::function<Result()> fn, std::function<void(Result)> callback) {
+    template <typename Result> void exec_async(std::function<Result()> fn, std::function<void(Result)> callback) {
         QMetaObject::invokeMethod(
             this, [fn = std::move(fn), callback = std::move(callback)]() { callback(fn()); }, Qt::QueuedConnection);
     }
@@ -71,7 +71,7 @@ class DatabaseExecutionContext final : public QObject {
     /**
      * @brief Specialization `DatabaseExecutionContext::dispatch_async` for type `void`
      */
-    inline void dispatch_async(std::function<void()> fn, std::function<void()> callback) {
+    inline void exec_async(std::function<void()> fn, std::function<void()> callback) {
         QMetaObject::invokeMethod(
             this,
             [fn = std::move(fn), callback = std::move(callback)]() {
@@ -92,7 +92,7 @@ class DatabaseExecutionContext final : public QObject {
      *       Use with care to avoid deadlocks.
      */
     template <typename Fn>
-    auto dispatch(Fn&& fn) -> decltype(fn())
+    auto exec(Fn&& fn) -> decltype(fn())
         requires std::invocable<Fn>
     {
         using Result = decltype(fn());
