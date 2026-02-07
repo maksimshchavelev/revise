@@ -39,14 +39,6 @@ std::expected<void, QString> Database::init_db() {
         return std::unexpected(fk_query.lastError().text());
     }
 
-    // Create STREAK table
-    streak_query.prepare(R"(
-        CREATE TABLE IF NOT EXISTS streak (
-            id INTEGER PRIMARY KEY CHECK (id = 1),
-            value INTEGER DEFAULT 0,
-            last_updated DATETIME DEFAULT (DATETIME('now', 'localtime', '-1 day')))
-    )");
-
     if (!streak_query.exec()) {
         return std::unexpected(streak_query.lastError().text());
     }
