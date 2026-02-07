@@ -19,19 +19,4 @@ DatabaseExecutionContext::~DatabaseExecutionContext() {
     m_thread.wait();
 }
 
-void DatabaseExecutionContext::post(std::function<void()> fn) {
-    QMetaObject::invokeMethod(this, [fn = std::move(fn)]() { fn(); }, Qt::QueuedConnection);
-}
-
-void DatabaseExecutionContext::dispatch(std::function<void()> fn) {
-    // If we are already in the DB thread, we call the function directly. Without this check,
-    // Qt::BlockingQueuedConnection will lead to a deadlock, as this flag blocks the calling thread.
-    if (QThread::currentThread() == m_thread.currentThread()) {
-        fn();
-        return;
-    }
-
-    QMetaObject::invokeMethod(this, [fn = std::move(fn)]() { fn(); }, Qt::BlockingQueuedConnection);
-}
-
 } // namespace io

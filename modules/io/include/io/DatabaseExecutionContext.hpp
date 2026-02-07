@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include <QObject> // for QObject
-#include <QThread> // for QThread
+#include <QObject>  // for QObject
+#include <QThread>  // for QThread
+#include <concepts> // for std::invocable
 
 namespace io {
 
@@ -54,24 +55,75 @@ class DatabaseExecutionContext final : public QObject {
     ~DatabaseExecutionContext() override;
 
     /**
-     * @brief Execute a function in the database thread asynchronously.
+     * @brief Execute a function in the database thread **asynchronously**.
      *
      * @param fn Function to execute. It will be called in the database thread.
+     * @param callback callback that will be called to pass the result of the request execution
      *
      * @note The function is executed via the Qt event queue using
      *       Qt::QueuedConnection semantics.
      */
-    void post(std::function<void()> fn);
+    template <typename Result> void dispatch_async(std::function<Result()> fn, std::function<void(Result)> callback) {
+        QMetaObject::invokeMethod(
+            this, [fn = std::move(fn), callback = std::move(callback)]() { callback(fn()); }, Qt::QueuedConnection);
+    }
 
     /**
-     * @brief Execute a function in the database thread synchronously.
+     * @brief Specialization `DatabaseExecutionContext::dispatch_async` for type `void`
+     */
+    inline void dispatch_async(std::function<void()> fn, std::function<void()> callback) {
+        QMetaObject::invokeMethod(
+            this,
+            [fn = std::move(fn), callback = std::move(callback)]() {
+                fn();
+                callback();
+            },
+            Qt::QueuedConnection);
+    }
+
+    /**
+     * @brief Execute a function in the database thread **synchronously**.
      *
      * @param fn Function to execute.
+     *
+     * @return The method returns the same as the function passed to it.
      *
      * @note This call blocks the calling thread until execution completes.
      *       Use with care to avoid deadlocks.
      */
-    void dispatch(std::function<void()> fn);
+    template <typename Fn>
+    auto dispatch(Fn&& fn) -> decltype(fn())
+        requires std::invocable<Fn>
+    {
+        using Result = decltype(fn());
+
+        // If we are already in the DB thread, we call the function directly. Without this check,
+        // Qt::BlockingQueuedConnection will lead to a deadlock, as this flag blocks the calling thread.
+        if (QThread::currentThread() == m_thread.currentThread()) {
+            // void return type case
+            if constexpr (std::is_void_v<Result>) {
+                fn();
+                return;
+            } else {
+                // non-void return type case
+                return fn();
+            }
+        }
+
+        // void return type case
+        if constexpr (std::is_void_v<Result>) {
+            QMetaObject::invokeMethod(this, [fn = std::forward<Fn>(fn)]() { fn(); }, Qt::BlockingQueuedConnection);
+            return;
+        } else {
+            // non-void return type case
+            Result result;
+
+            QMetaObject::invokeMethod(
+                this, [fn = std::forward<Fn>(fn), &result]() { result = fn(); }, Qt::BlockingQueuedConnection);
+
+            return result;
+        }
+    }
 
   private:
     QThread m_thread; ///< For context
