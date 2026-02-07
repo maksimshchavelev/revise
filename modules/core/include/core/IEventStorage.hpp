@@ -26,17 +26,17 @@ struct CardReviewEvent {
  * @brief A enumeration used to determine the type of event in the event system
  */
 enum class EventType {
-    CARD_REVIEW ///< Card viewing event
+    CARD_REVIEW = 0 ///< Card viewing event
 };
 
 /**
  * @brief This list describes the synchronization status of an event in the event system.
  */
 enum class EventSyncState {
-    NOT_SYNCED, ///< Not synchronized with anything
-    LOCAL,      ///< Synchronized only locally
-    REMOTE,     ///< Synchronized with remote server
-    FULLY       ///< Synchronized both locally and with a remote server
+    NOT_SYNCED = 0, ///< Not synchronized with anything
+    LOCAL = 1,      ///< Synchronized only locally
+    REMOTE = 2,     ///< Synchronized with remote server
+    FULLY = 3       ///< Synchronized both locally and with a remote server
 };
 
 /**
