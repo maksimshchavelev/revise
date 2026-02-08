@@ -37,7 +37,7 @@ class IStreakService {
      */
     virtual std::expected<void, QString> reset_if_overdue() = 0;
 
-  private:
+  protected:
     std::shared_ptr<IStreakStorage> m_storage;
 };
 
