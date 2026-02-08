@@ -26,6 +26,7 @@ add_subdirectory(modules/platform) # Platform module
 add_subdirectory(modules/ui)       # UI module
 add_subdirectory(modules/io)       # IO module
 add_subdirectory(modules/utils)    # utils module
+add_subdirectory(modules/engine)   # engine module
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
