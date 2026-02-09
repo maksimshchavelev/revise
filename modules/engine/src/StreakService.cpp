@@ -15,7 +15,15 @@ std::expected<core::Streak, QString> StreakService::get() {
 
 
 std::expected<void, QString> StreakService::set(const core::Streak& streak) {
-    return m_storage->save(streak);
+    auto res = m_storage->save(streak);
+
+    if (!res.has_value()) {
+        return res;
+    }
+
+    // success
+    dispatch(updated{streak.value});
+    return {};
 }
 
 
@@ -50,6 +58,8 @@ std::expected<void, QString> StreakService::reset_if_overdue() {
     if (auto res = set(streak.value()); !res.has_value()) {
         return std::unexpected(QString("Failed to reset streak value, storage error: %1").arg(res.error()));
     }
+
+    dispatch(reset{});
 
     return {};
 }
