@@ -3,6 +3,7 @@
 #pragma once
 
 #include "IStreakStorage.hpp" // for IStreakStorage
+#include "Notifiable.hpp"     // for Notifiable
 #include <expected>           // for std::expected
 
 namespace core {
@@ -11,8 +12,11 @@ namespace core {
  * @brief An interface that abstracts working with streak storage. Through this class, you can get the current streak
  * and save it.
  */
-class IStreakService {
+class IStreakService : public Notifiable {
   public:
+    SIGNAL(updated, int value /* new value */) /// streak updated
+    SIGNAL(reset)                              /// streak reset
+
     IStreakService(std::shared_ptr<IStreakStorage> storage);
 
     virtual ~IStreakService() = default;
