@@ -2,8 +2,11 @@
 
 #include "AndroidPermissionService.hpp" // private include for AndroidPermissionService header
 #include <QCoreApplication>             // for QCoreApplication
-#include <QJniObject>                   // for QJniObject
 #include <QString>                      // for QString
+
+#ifdef Q_OS_ANDROID
+#include <QJniObject>                   // for QJniObject
+#endif
 
 namespace platform::internals {
 
@@ -31,6 +34,7 @@ static QString get_permission(core::Permission permission) {
 }
 
 bool AndroidPermissionService::check(core::Permission permission) const noexcept {
+    #ifdef Q_OS_ANDROID
     const QString perm = get_permission(permission);
 
     if (perm.isEmpty()) {
@@ -75,9 +79,13 @@ bool AndroidPermissionService::check(core::Permission permission) const noexcept
     }
 
     return granted == JNI_TRUE;
+    #endif
+
+    return true;
 }
 
 void AndroidPermissionService::request(core::Permission permission) const noexcept {
+    #ifdef Q_OS_ANDROID
     const QString perm = get_permission(permission);
 
     if (perm.isEmpty()) {
@@ -115,6 +123,7 @@ void AndroidPermissionService::request(core::Permission permission) const noexce
         env->ExceptionDescribe();
         env->ExceptionClear();
     }
+    #endif
 }
 
 } // namespace platform::internals

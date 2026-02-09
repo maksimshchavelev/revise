@@ -1,14 +1,18 @@
 // modules/platform/src/AndroidNotificationService.cpp
 
 #include "AndroidNotificationService.hpp"
-#include <QJniObject>
-#include <QJniEnvironment>
 #include <QDebug>
 #include <QString>
 #include <QDateTime>
 
+#ifdef Q_OS_ANDROID
+#include <QJniObject>
+#include <QJniEnvironment>
+#endif
+
 namespace platform::internals {
 
+#ifdef Q_OS_ANDROID
 static QJniObject get_activity()
 {
     QJniObject activity = QJniObject::callStaticObjectMethod(
@@ -17,9 +21,11 @@ static QJniObject get_activity()
         "()Landroid/app/Activity;");
     return activity;
 }
+#endif
 
 void AndroidNotificationService::show_notification(const QString &text) const
 {
+    #ifdef Q_OS_ANDROID
     const QJniObject jtext = QJniObject::fromString(text);
     QJniObject activity = get_activity();
     if (!activity.isValid()) {
@@ -37,10 +43,12 @@ void AndroidNotificationService::show_notification(const QString &text) const
 
     service.callMethod<void>("showNotification", "(Ljava/lang/String;)V", jtext.object<jstring>());
     if (env->ExceptionCheck()) { env->ExceptionDescribe(); env->ExceptionClear(); }
+    #endif
 }
 
 void AndroidNotificationService::schedule_notification(const QString &text, const QDateTime &when) const
 {
+    #ifdef Q_OS_ANDROID
     const qint64 msecs = when.toMSecsSinceEpoch();
     const jlong epochMillis = static_cast<jlong>(msecs);
     const QJniObject jtext = QJniObject::fromString(text);
@@ -59,10 +67,12 @@ void AndroidNotificationService::schedule_notification(const QString &text, cons
 
     service.callMethod<void>("scheduleNotification", "(Ljava/lang/String;J)V", jtext.object<jstring>(), epochMillis);
     if (env->ExceptionCheck()) { env->ExceptionDescribe(); env->ExceptionClear(); }
+    #endif
 }
 
 void AndroidNotificationService::clear_all_scheduled_notifications() const
 {
+    #ifdef Q_OS_ANDROID
     QJniObject activity = get_activity();
     if (!activity.isValid()) { qWarning() << "clear_all_scheduled_notifications: no Activity"; return; }
 
@@ -76,6 +86,7 @@ void AndroidNotificationService::clear_all_scheduled_notifications() const
 
     service.callMethod<void>("clearAllScheduledNotifications", "()V");
     if (env->ExceptionCheck()) { env->ExceptionDescribe(); env->ExceptionClear(); }
+    #endif
 }
 
 } // namespace platform::internals
