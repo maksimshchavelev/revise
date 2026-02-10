@@ -18,7 +18,7 @@ namespace core {
  */
 class IDeckRepository {
   public:
-    IDeckRepository(std::shared_ptr<IDeckStorage> deck_storage);
+    IDeckRepository(std::shared_ptr<IDeckStorage> deck_storage) : m_deck_storage(deck_storage) {}
 
     virtual ~IDeckRepository() = default;
 
