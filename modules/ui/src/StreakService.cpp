@@ -6,6 +6,17 @@ namespace ui {
 
 StreakService::StreakService(core::IStreakService& streak_service, QObject* parent) :
     QObject(parent), m_streak_service(streak_service) {
+
+    m_streak_service.connect<core::IStreakService::reset>([this](const core::IStreakService::reset& e) {
+        emit updatedTodayChanged();
+        emit streakChanged();
+    });
+
+    m_streak_service.connect<core::IStreakService::updated>([this](const core::IStreakService::updated& e) {
+        emit updatedTodayChanged();
+        emit streakChanged();
+    });
+
     emit streakChanged();
     emit updatedTodayChanged();
 }
