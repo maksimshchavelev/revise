@@ -17,7 +17,7 @@ class IStreakService : public Notifiable {
     SIGNAL(updated, int value /* new value */) /// streak updated
     SIGNAL(reset)                              /// streak reset
 
-    IStreakService(std::shared_ptr<IStreakStorage> storage);
+    IStreakService(std::shared_ptr<IStreakStorage> storage) : m_storage(storage) {}
 
     virtual ~IStreakService() = default;
 
