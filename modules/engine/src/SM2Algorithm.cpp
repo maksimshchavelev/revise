@@ -1,11 +1,11 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include <SM2Algorithm/SM2Algorithm.hpp> // for SM2Algorithm
+#include "SM2Algorithm.hpp" // for header
 
-namespace revise {
+namespace engine {
 
-AlgorithmResult SM2Algorithm::process_answer(const Card& old_card, float user_difficulty) noexcept {
-    AlgorithmResult r;
+core::AlgorithmResult SM2Algorithm::process_answer(const core::Card& old_card, float user_difficulty) noexcept {
+    core::AlgorithmResult r;
     r.updated_card = old_card; // copy
 
     // Clamp helper to keep difficulty within [0; 5]
@@ -49,11 +49,11 @@ AlgorithmResult SM2Algorithm::process_answer(const Card& old_card, float user_di
         r.updated_card.next_review.setTime(QTime(0, 0, 0));
 
         // Smoothly adapt difficulty towards the user's assessment
-        r.updated_card.difficulty = clamp_difficulty(r.updated_card.difficulty + ALPHA_SUCCESS *
-                                                                 (user_difficulty - r.updated_card.difficulty));
+        r.updated_card.difficulty =
+            clamp_difficulty(r.updated_card.difficulty + ALPHA_SUCCESS * (user_difficulty - r.updated_card.difficulty));
     }
 
     return r;
 }
 
-} // namespace revise
+} // namespace engine

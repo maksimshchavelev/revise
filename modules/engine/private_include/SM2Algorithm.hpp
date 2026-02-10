@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include <IAlgorithm/IAlgorithm.hpp> // for IAlgorithm
+#include <core/IAlgorithm.hpp> // for core::IAlgorithm
 
-namespace revise {
+namespace engine {
 
 /**
  * @brief SM-2 algorithm implementation adapted for our Card DTO.
@@ -15,12 +15,12 @@ namespace revise {
  * - Repetition count is NOT stored in DB here; StudyService maintains an in-memory repetitions map.
  * - user_difficulty is converted to "quality" as SM-2 expects (0..5).
  */
-class SM2Algorithm : public IAlgorithm {
-public:
+class SM2Algorithm final : public core::IAlgorithm {
+  public:
     SM2Algorithm() = default;
     ~SM2Algorithm() override = default;
 
-    AlgorithmResult process_answer(const Card& old_card, float user_difficulty) noexcept override;
+    core::AlgorithmResult process_answer(const core::Card& old_card, float user_difficulty) noexcept override;
 };
 
-} // namespace revise
+} // namespace engine
