@@ -2,25 +2,22 @@
 
 #pragma once
 
-#include "Card.hpp"         // for Card
-#include "Deck.hpp"         // for Deck
-#include "IDeckStorage.hpp" // for IDeckStorage
-#include <QString>          // for QString
-#include <QVector>          // for QVector
-#include <expected>         // for std::expected
+#include "Card.hpp"  // for Card
+#include "Deck.hpp"  // for Deck
+#include <QString>   // for QString
+#include <QVector>   // for QVector
+#include <expected>  // for std::expected
 
 namespace core {
 
 /**
- * @brief Repository interface for deck/card persistence.
+ * @brief .
  *
- * Implementations (e.g. SqlDeckRepository) provide concrete storage logic.
+ * Implementations provide concrete storage logic.
  */
-class IDeckRepository {
-  public:
-    IDeckRepository(std::shared_ptr<IDeckStorage> deck_storage);
-
-    virtual ~IDeckRepository() = default;
+class IDeckStorage {
+public:
+    virtual ~IDeckStorage() = default;
 
     /**
      * @brief Get summary statistics on decks
@@ -102,9 +99,6 @@ class IDeckRepository {
      * @return `std::expected<void, QString>` empty on success, or with error description on failure
      */
     virtual std::expected<void, QString> remove_cards(const QVector<int>& ids) = 0;
-
-  protected:
-    std::shared_ptr<IDeckStorage> m_deck_storage; ///< Most operations are performed through the deck storage.
 };
 
 } // namespace core
