@@ -37,6 +37,9 @@ class StudyService final : public core::IStudyService {
     /// @copydoc core::IStudyService::time_remaining
     float time_remaining() const override;
 
+    /// @copydoc core::IStudyService::flipped
+    bool flipped() const override;
+
   private:
     core::IStudyEngine& m_study_engine;
     QTimer              m_timer;

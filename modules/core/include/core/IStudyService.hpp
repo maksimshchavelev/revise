@@ -79,6 +79,12 @@ class IStudyService : public Notifiable {
      * @return Remaining time
      */
     virtual float time_remaining() const = 0;
+
+    /**
+     * @brief Is card flipped
+     * @return `true` if card flipped
+     */
+    virtual bool flipped() const = 0;
 };
 
 } // namespace core

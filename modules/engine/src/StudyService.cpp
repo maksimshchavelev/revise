@@ -113,4 +113,9 @@ float StudyService::time_remaining() const {
     return m_study_engine.state().time_remaining;
 }
 
+
+bool StudyService::flipped() const {
+    return m_study_engine.state().flipped;
+}
+
 } // namespace engine
