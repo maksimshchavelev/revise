@@ -27,6 +27,9 @@ class DeckMediaStorage final : public core::IDeckMediaStorage {
     /// @copydoc core::IDeckMediaStorage::to_export_path
     QString to_export_path(const QString& absolute_path) const override;
 
+    /// @copydoc core::IDeckMediaStorage::deck_media_storage
+    QString deck_media_folder(int deck_id) const override;
+
   private:
     const QString m_dir; ///< Directory with media
 };

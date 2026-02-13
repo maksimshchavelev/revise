@@ -68,4 +68,9 @@ QString DeckMediaStorage::to_export_path(const QString& absolute_path) const {
     return QFile(absolute_path).fileName();
 }
 
+
+QString DeckMediaStorage::deck_media_folder(int deck_id) const {
+    return QString("%1/%2").arg(m_dir).arg(deck_id);
+}
+
 } // namespace io

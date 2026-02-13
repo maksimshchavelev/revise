@@ -51,6 +51,13 @@ class IDeckMediaStorage {
      * @return The path that is ready for deck export (for example, just image name)
      */
     virtual QString to_export_path(const QString& absolute_path) const = 0;
+
+    /**
+     * @brief Get the **absolute** path to the directory where the deck's media files are stored
+     * @param deck_id Deck ID
+     * @return The path
+     */
+    virtual QString deck_media_folder(int deck_id) const = 0;
 };
 
 } // namespace core
