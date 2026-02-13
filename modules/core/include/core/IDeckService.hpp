@@ -112,6 +112,21 @@ class IDeckService : public Notifiable {
      * @note If successful, emits the `cards_updated` signal.
      */
     virtual std::expected<void, QString> update_card(const Card& card) = 0;
+
+    /**
+     * @brief deck_summaries Get information about each deck
+     * @return `std::expected` with `QVector<DeckSummary>` in case of success or with an error description in case of
+     * failure
+     */
+    virtual std::expected<QVector<DeckSummary>, QString> deck_summaries() = 0;
+
+    /**
+     * @brief Get a list of all cards
+     * @param deck_id Deck ID
+     * @return `std::expected` with `QVector<Card>` in case of success or with an error description in case of
+     * failure
+     */
+    virtual std::expected<QVector<Card>, QString> cards(int deck_id) = 0;
 };
 
 } // namespace core

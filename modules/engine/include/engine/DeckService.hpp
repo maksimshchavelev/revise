@@ -56,6 +56,12 @@ class DeckService final : public core::IDeckService {
     /// @copydoc core::IDeckService::update_card
     std::expected<void, QString> update_card(const core::Card& card) override;
 
+    /// @copydoc core::IDeckService::deck_summaries
+    std::expected<QVector<core::DeckSummary>, QString> deck_summaries() override;
+
+    /// @copydoc core::IDeckService::cards
+    std::expected<QVector<core::Card>, QString> cards(int deck_id) override;
+
   private:
     DeckServiceDeps m_deps;
 

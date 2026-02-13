@@ -310,4 +310,14 @@ std::expected<void, QString> DeckService::update_card(const core::Card& card) {
     return m_deps.deck_storage.update_cards({card});
 }
 
+
+std::expected<QVector<core::DeckSummary>, QString> DeckService::deck_summaries() {
+    return m_deps.deck_storage.get_deck_summaries();
+}
+
+
+std::expected<QVector<core::Card>, QString> DeckService::cards(int deck_id) {
+    return m_deps.deck_storage.fetch_cards(deck_id);
+}
+
 } // namespace engine
