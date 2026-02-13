@@ -82,6 +82,10 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
 
     shuffle(m_cards);
 
+    m_session_state.current_card = m_cards.head();
+    m_session_state.time_limit = deck_info->first().time_limit;
+    m_session_state.time_remaining = m_session_state.time_limit;
+
     return {};
 }
 
