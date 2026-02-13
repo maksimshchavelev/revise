@@ -16,4 +16,9 @@ target_include_directories(utils
         ${CMAKE_CURRENT_LIST_DIR}/private_include
 )
 
+target_link_libraries(utils
+    PRIVATE
+    Qt6::Core
+)
+
 
