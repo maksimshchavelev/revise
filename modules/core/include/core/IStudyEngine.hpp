@@ -68,9 +68,9 @@ class IStudyEngine {
 
     /**
      * @brief Get the current state of the training session
-     * @return `SessionState`
+     * @return `const SessionState&`
      */
-    virtual SessionState state() const = 0;
+    virtual const SessionState& state() const = 0;
 
     /**
      * @brief Abort current session

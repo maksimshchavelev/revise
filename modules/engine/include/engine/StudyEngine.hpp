@@ -34,7 +34,7 @@ class StudyEngine final : public core::IStudyEngine {
     std::expected<void, QString> flip() override;
 
     /// @copydoc core::IStudyEngine::state
-    SessionState state() const override;
+    const SessionState& state() const override;
 
     /// @copydoc core::IStudyEngine::abort
     std::expected<void, QString> abort() override;
