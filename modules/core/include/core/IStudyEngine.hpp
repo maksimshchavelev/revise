@@ -70,7 +70,7 @@ class IStudyEngine {
      * @brief Get the current state of the training session
      * @return `SessionState`
      */
-    virtual SessionState state() = 0;
+    virtual SessionState state() const = 0;
 
     /**
      * @brief Abort current session
