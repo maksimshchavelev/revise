@@ -149,7 +149,7 @@ std::expected<core::IStudyEngine::StudyInfo, QString> StudyEngine::get_study_inf
 }
 
 
-const StudyEngine::SessionState& StudyEngine::state() const {
+StudyEngine::SessionState& StudyEngine::state() {
     return m_session_state;
 }
 
