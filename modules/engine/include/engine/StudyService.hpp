@@ -29,7 +29,7 @@ class StudyService final : public core::IStudyService {
     void abort() override;
 
     /// @copydoc core::IStudyService::current_card
-    const std::optional<core::Card&> current_card() const override;
+    const std::optional<core::Card>& current_card() const override;
 
     /// @copydoc core::IStudyService::time_limit
     int time_limit() const override;
