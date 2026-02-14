@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 class MyNotifiable final : public core::Notifiable {
-    SIGNAL(updated)
-    SIGNAL(updated_value, int value)
+    EVENT(updated)
+    EVENT(updated_value, int value)
 
 public:
     int value() const noexcept {
