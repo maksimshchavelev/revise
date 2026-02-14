@@ -29,7 +29,7 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
             QString("Failed to fetch cards to start training, cause: %1").arg(fetched_cards.error()));
     }
 
-    auto deck_info = m_deps.deck_storage.fetch_decks({deck_id});
+    auto deck_info = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id});
 
     if (!deck_info) {
         return std::unexpected(QString("Failed to fetch deck info, cause: %1").arg(deck_info.error()));
@@ -125,7 +125,7 @@ std::expected<core::IStudyEngine::StudyInfo, QString> StudyEngine::get_study_inf
         fetched_cards.value() //
         | std::views::filter([](const auto& card) { return card.next_review <= QDateTime::currentDateTime(); });
 
-    auto deck_info = m_deps.deck_storage.fetch_decks({deck_id});
+    auto deck_info = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id});
 
     if (!deck_info) {
         return std::unexpected(QString("Failed to fetch deck info, cause: %1").arg(deck_info.error()));

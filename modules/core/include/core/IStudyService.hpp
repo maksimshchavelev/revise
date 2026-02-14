@@ -14,20 +14,20 @@ namespace core {
  */
 class IStudyService : public Notifiable {
   public:
-    SIGNAL(training_started)                          ///< Training started
-    SIGNAL(training_finished)                         ///< Training finished
-    SIGNAL(training_aborted)                          ///< Training aborted
-    SIGNAL(card_changed, QString front; QString back) ///< Card changed (for example, next card)
-    SIGNAL(remaining_time_changed, float remaining)   ///< Remaining time changed
-    SIGNAL(flipped_changed, bool flipped)             ///< Card flip changed
-    SIGNAL(error, QString message)                    ///< Error occurred
+    EVENT(training_started)                          ///< Training started
+    EVENT(training_finished)                         ///< Training finished
+    EVENT(training_aborted)                          ///< Training aborted
+    EVENT(card_changed, QString front; QString back) ///< Card changed (for example, next card)
+    EVENT(remaining_time_changed, float remaining)   ///< Remaining time changed
+    EVENT(flipped_changed, bool flipped)             ///< Card flip changed
+    EVENT(error, QString message)                    ///< Error occurred
 
     virtual ~IStudyService() = default;
 
     /**
      * @brief Start learning the deck
      * @param deck_id ID of the deck to be learned
-     * @note Emits the following signals:
+     * @note Emits the following events:
      * - `training_started` upon a **successful** start to training
      * - `error` in case of error (with error description)
      * - `remaining_time_changed` when the time remaining for the answer changes (a separate timer starts counting down)
@@ -37,10 +37,10 @@ class IStudyService : public Notifiable {
     /**
      * @brief Reply to card
      * @param difficulty How the user rates the complexity of the card
-     * @note Emits the following signals:
+     * @note Emits the following events:
      * - `card_changed` if there are still cards to study and the next card has been successfully loaded
      * - `flipped_changed` when there are still cards left to study and the next card has been successfully loaded (this
-     * signal should be interpreted as turning the card over from the back to the front)
+     * event should be interpreted as turning the card over from the back to the front)
      * - `training_finished` when there are no more cards left to study and the training is complete
      * - `error` in case of error (with error description)
      */
@@ -48,7 +48,7 @@ class IStudyService : public Notifiable {
 
     /**
      * @brief Flip current card
-     * @note Emits the following signals:
+     * @note Emits the following events:
      * - `error` in case of error (with error description)
      * - `flipped_changed` in the event that the card is successfully turned over
      */
@@ -56,7 +56,7 @@ class IStudyService : public Notifiable {
 
     /**
      * @brief Abort current session
-     * @note Emits the following signals:
+     * @note Emits the following events:
      * - `training_aborted` when training is interrupted **successfully**
      * - `error` in case of error (with error description)
      */

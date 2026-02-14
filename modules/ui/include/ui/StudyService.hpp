@@ -7,7 +7,7 @@
 
 namespace ui {
 
-class StudyService {
+class StudyService : public QObject {
     Q_OBJECT
 
   public:

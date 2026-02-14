@@ -236,7 +236,7 @@ void DeckService::export_deck_async(int deck_id, const QString& path) {
         const QString       media_dir = m_deps.deck_media_storage.deck_media_folder(deck_id);
 
         // Fetch deck
-        if (auto res = m_deps.deck_storage.fetch_decks({deck_id}); res) {
+        if (auto res = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id}); res) {
             deck = std::move(res->first());
         } else {
             dispatch(export_failed{
@@ -270,7 +270,7 @@ void DeckService::export_deck_async(int deck_id, const QString& path) {
 
 
 std::expected<core::Deck, QString> DeckService::deck(int deck_id) {
-    auto res = m_deps.deck_storage.fetch_decks({deck_id});
+    auto res = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id});
 
     if (!res) {
         return std::unexpected(res.error());

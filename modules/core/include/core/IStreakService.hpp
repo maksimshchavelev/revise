@@ -14,8 +14,8 @@ namespace core {
  */
 class IStreakService : public Notifiable {
   public:
-    SIGNAL(updated, int value /* new value */) /// streak updated
-    SIGNAL(reset)                              /// streak reset
+    EVENT(updated, int value /* new value */) /// streak updated
+    EVENT(reset)                              /// streak reset
 
     IStreakService(std::shared_ptr<IStreakStorage> storage) : m_storage(storage) {}
 

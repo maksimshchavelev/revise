@@ -1,9 +1,10 @@
-#include <Core/Core.hpp> // for Core
+// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-int main(int argc, char *argv[])
-{
+#include "Launcher/Launcher.hpp" // for Launcher
+
+int main(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
 
-    revise::Core core(app);
-    return core.run();
+    revise::Launcher launcher(app);
+    return launcher.run();
 }
