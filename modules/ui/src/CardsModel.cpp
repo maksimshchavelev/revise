@@ -1,6 +1,6 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "ui/CardsModel.hpp" // for header
+#include "CardsModel.hpp" // for header
 
 namespace io {
 

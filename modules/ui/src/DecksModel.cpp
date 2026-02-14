@@ -1,6 +1,6 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "ui/DecksModel.hpp" // for header
+#include "DecksModel.hpp" // for header
 
 namespace ui {
 

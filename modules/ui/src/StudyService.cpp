@@ -1,6 +1,6 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "ui/StudyService.hpp" // for header
+#include "StudyService.hpp" // for header
 
 namespace ui {
 
