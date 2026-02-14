@@ -82,6 +82,17 @@ std::expected<void, QString> SqlStreakStorage::create_streak_table() {
                                        .arg(q.lastError().text()));
         }
 
+        q.prepare(R"(
+            INSERT OR IGNORE INTO streak (id, value, last_updated)
+            VALUES (1, 0, DATETIME('now', 'localtime', '-1 day'));
+        )");
+
+        if (!q.exec()) {
+            return std::unexpected(QString("Failed to insert streak into 'streak' table. Query: %1, cause: %2")
+                                       .arg(q.lastQuery())
+                                       .arg(q.lastError().text()));
+        }
+
         return {};
     });
 }
