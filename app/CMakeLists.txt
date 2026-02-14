@@ -62,6 +62,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       core
       platform
       ui
+      io
+      utils
+      engine
   )
 
   target_include_directories(apprevise PRIVATE
@@ -79,6 +82,9 @@ else() # Release
       core
       platform
       ui
+      io
+      utils
+      engine
   )
 
   target_include_directories(apprevise PRIVATE

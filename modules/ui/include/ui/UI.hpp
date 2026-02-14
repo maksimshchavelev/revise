@@ -5,6 +5,8 @@
 #include <QGuiApplication>       // for QGuiApplication
 #include <QQmlApplicationEngine> // for QQmlApplicationEngine
 
+#include <core/IStreakService.hpp> // for core::IStreakService
+
 namespace ui {
 
 /**
@@ -27,6 +29,9 @@ class UI {
      * @brief Inits the QML engine
      */
     void init_engine(QGuiApplication& app);
+
+    /// Make StreakService accessible from qml
+    void bind_streak_service(core::IStreakService& streak_service);
 
   private:
     QQmlApplicationEngine m_engine;

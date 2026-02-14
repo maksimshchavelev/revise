@@ -1,8 +1,9 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "ui/UI.hpp"   // for UI header
+#include "ui/UI.hpp" // for UI header
 #include "PopupService.hpp"
-#include <QQmlContext> // for QQmlContext
+#include "StreakService.hpp" // for StreakService
+#include <QQmlContext>       // for QQmlContext
 
 namespace ui {
 
@@ -15,6 +16,7 @@ void UI::init_qml() {
     qRegisterMetaType<PopupButton>("PopupButton");
 }
 
+
 void UI::init_engine(QGuiApplication& app) {
     m_engine.addImportPath("qrc:/");
 
@@ -26,6 +28,13 @@ void UI::init_engine(QGuiApplication& app) {
         Qt::QueuedConnection);
 
     m_engine.loadFromModule("Revise", "App");
+}
+
+
+void UI::bind_streak_service(core::IStreakService& streak_service) {
+    auto* service = new StreakService(streak_service, &m_engine);
+
+    m_engine.rootContext()->setContextProperty("streakService", service);
 }
 
 } // namespace ui
