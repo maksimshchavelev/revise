@@ -4,8 +4,10 @@
 
 #include <QGuiApplication> // for QGuiApplication
 
-#include <core/IStreakStorage.hpp> // for core::IStreakStorage
 #include <core/IStreakService.hpp> // for core::IStreakService
+#include <core/IStreakStorage.hpp> // for core::IStreakStorage
+
+#include "ui/UI.hpp" // for ui
 
 namespace revise {
 
@@ -20,6 +22,8 @@ class Launcher {
 
     std::unique_ptr<core::IStreakStorage> m_streak_storage;
     std::unique_ptr<core::IStreakService> m_streak_service;
+
+    ui::UI m_ui;
 };
 
 } // namespace revise

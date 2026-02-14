@@ -19,6 +19,8 @@ int Launcher::run() {
 
     QtWebView::initialize();
 
+    m_ui.init_engine(m_app);
+
     return m_app.exec();
 }
 
