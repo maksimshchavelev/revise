@@ -4,6 +4,7 @@
 #include <QtWebView>             // for QtWebView::initialize()
 
 #include <engine/AlgorithmFactory.hpp>     // for engine::create_study_algorithm
+#include <engine/DeckService.hpp>          // for engine::DeckService
 #include <engine/StreakServiceFactory.hpp> // for engine::create_streak_service
 #include <io/DeckExporterFactory.hpp>      // for io::create_deck_exporter
 #include <io/DeckImporterFactory.hpp>      // for io::create_deck_importer
@@ -69,6 +70,16 @@ void Launcher::init() {
 
     if (m_deck_storage = std::make_unique<io::SqlDeckStorage>(m_db, m_db_context); m_deck_storage) {
         qDebug() << "Deck storage created";
+    }
+
+    engine::DeckServiceDeps deck_service_deps{.deck_storage = *m_deck_storage,
+                                              .deck_media_storage = *m_deck_media_storage,
+                                              .anki_deck_importer = *m_anki_importer,
+                                              .revise_deck_importer = *m_revise_importer,
+                                              .deck_exporter = *m_revise_exporter};
+
+    if (m_deck_service = std::make_unique<engine::DeckService>(deck_service_deps); m_deck_service) {
+        qDebug() << "Deck service created";
     }
 }
 

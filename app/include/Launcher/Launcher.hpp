@@ -23,6 +23,9 @@
 #include <core/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
 #include <io/SqlDeckStorage.hpp>      // for io::SqlDeckStorage
 
+// Deck service
+#include <core/IDeckService.hpp> // for core::IDeckService
+
 // UI
 #include "ui/UI.hpp" // for ui
 
@@ -51,6 +54,8 @@ class Launcher {
 
     std::unique_ptr<core::IDeckMediaStorage> m_deck_media_storage; ///< Deck media storage
     std::unique_ptr<io::SqlDeckStorage>      m_deck_storage;       ///< Deck storage
+
+    std::unique_ptr<core::IDeckService> m_deck_service; ///< Deck service
 
     ui::UI m_ui;
 
