@@ -19,6 +19,10 @@
 #include <core/IDeckExporter.hpp> // for core::IDeckExporter
 #include <core/IDeckImporter.hpp> // for core::IDeckImporter
 
+// Deck storages
+#include <core/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
+#include <io/SqlDeckStorage.hpp>      // for io::SqlDeckStorage
+
 // UI
 #include "ui/UI.hpp" // for ui
 
@@ -44,6 +48,9 @@ class Launcher {
     std::unique_ptr<core::IDeckImporter> m_anki_importer;   ///< Anki deck importer
     std::unique_ptr<core::IDeckImporter> m_revise_importer; ///< Revise deck importer
     std::unique_ptr<core::IDeckExporter> m_revise_exporter; ///< Revise deck exporter
+
+    std::unique_ptr<core::IDeckMediaStorage> m_deck_media_storage; ///< Deck media storage
+    std::unique_ptr<io::SqlDeckStorage>      m_deck_storage;       ///< Deck storage
 
     ui::UI m_ui;
 

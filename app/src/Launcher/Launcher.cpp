@@ -7,6 +7,7 @@
 #include <engine/StreakServiceFactory.hpp> // for engine::create_streak_service
 #include <io/DeckExporterFactory.hpp>      // for io::create_deck_exporter
 #include <io/DeckImporterFactory.hpp>      // for io::create_deck_importer
+#include <io/DeckMediaStorageFactory.hpp>  // for io::create_deck_media_storage
 
 namespace revise {
 
@@ -60,6 +61,14 @@ void Launcher::init() {
 
     if (m_revise_exporter = io::create_deck_exporter(io::ExporterFormat::REVISE); m_revise_exporter) {
         qDebug() << "Revise deck exporter created";
+    }
+
+    if (m_deck_media_storage = io::create_deck_media_storage(); m_deck_media_storage) {
+        qDebug() << "Deck media storage created";
+    }
+
+    if (m_deck_storage = std::make_unique<io::SqlDeckStorage>(m_db, m_db_context); m_deck_storage) {
+        qDebug() << "Deck storage created";
     }
 }
 
