@@ -11,7 +11,7 @@ namespace io {
 /**
  * @brief SQL database-based deck storage
  */
-class SqlDeckStorage final : core::IDeckStorage {
+class SqlDeckStorage final : public core::IDeckStorage {
   public:
     SqlDeckStorage(Database& db, DatabaseExecutionContext& context);
 

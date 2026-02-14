@@ -8,7 +8,7 @@
 
 namespace io {
 
-class SqlStreakStorage final : core::IStreakStorage {
+class SqlStreakStorage final : public core::IStreakStorage {
   public:
     /**
      * @brief SqlStreakStorage constructor

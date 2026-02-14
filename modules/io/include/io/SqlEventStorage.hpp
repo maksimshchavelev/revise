@@ -11,7 +11,7 @@ namespace io {
 /**
  * @brief SQL database-based event storage
  */
-class SqlEventStorage final : core::IEventStorage {
+class SqlEventStorage final : public core::IEventStorage {
   public:
     /**
      * @brief SqlEventStorage constructor
