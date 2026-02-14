@@ -5,7 +5,7 @@
 #include <QAbstractListModel>    // for QAbstractListModel
 #include <core/IDeckService.hpp> // for core::IDeckService
 
-namespace io {
+namespace ui {
 
 class CardsModel final : public QAbstractListModel {
     Q_OBJECT
@@ -43,4 +43,4 @@ class CardsModel final : public QAbstractListModel {
     int cards_count() const noexcept;
 };
 
-} // namespace io
+} // namespace ui
