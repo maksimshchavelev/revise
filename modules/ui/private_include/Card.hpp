@@ -27,6 +27,20 @@ struct Card final : core::Card {
     Q_PROPERTY(QDateTime updated_at MEMBER updated_at FINAL)
     Q_PROPERTY(QString front MEMBER front FINAL)
     Q_PROPERTY(QString back MEMBER back FINAL)
+
+  public:
+    template <typename OtherCard>
+        requires std::is_base_of_v<core::Card, std::remove_reference_t<OtherCard>>
+    Card& operator=(OtherCard&& other) {
+        core::Card::operator=(std::forward<OtherCard>(other));
+        return *this;
+    }
+
+    template <typename OtherCard>
+        requires std::is_base_of_v<core::Card, std::remove_reference_t<OtherCard>>
+    bool operator==(const OtherCard& other) const noexcept {
+        return core::Card::operator==(other);
+    }
 };
 
 } // namespace ui
