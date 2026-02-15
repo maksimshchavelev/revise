@@ -24,6 +24,8 @@ struct Card {
     QDateTime updated_at;          ///< Card update date
     QString   front;               ///< Front of the card
     QString   back;                ///< Back of the card
+
+    bool operator==(const Card& other) const noexcept = default;
 };
 
 } // namespace core

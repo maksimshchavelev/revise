@@ -18,6 +18,8 @@ struct Deck {
     int     incorrect_limit{0};   ///< Limit on the number of incorrect cards during training
     int     id{0};                ///< Deck ID
     int     global_id{0};         ///< Global ID
+
+    bool operator==(const Deck& other) const noexcept = default;
 };
 
 /**
@@ -28,6 +30,8 @@ struct DeckSummary {
     int  new_cards{0};         ///< Number of new cards included in today's selection
     int  consolidate_cards{0}; ///< Number of reviewed cards included in today's selection
     int  incorrect_cards{0};   ///< Number of incorrect cards included in today's sample
+
+    bool operator==(const DeckSummary& other) const noexcept = default;
 };
 
 } // namespace core
