@@ -9,6 +9,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(REVISE_BUILD_TESTS "Need to build tests?" ON)
 option(REVISE_BUILD_APP "Need to build revise application?" ON)
@@ -40,4 +41,21 @@ if (${REVISE_BUILD_APP})
     message(INFO "Building app")
     add_subdirectory(app) # app
 endif()
+
+# run clang-tidy
+add_custom_target(clang-check
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run-clang-checks.sh
+            -s app,modules
+            -b ${CMAKE_BINARY_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Running clang-tidy checks on source files"
+)
+
+# run cppcheck
+add_custom_target(cppcheck
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run-cppcheck.sh
+            -s app,modules
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Running cppcheck on source files"
+)
 
