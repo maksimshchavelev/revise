@@ -37,6 +37,12 @@ class UI {
     /// Make DeckService accessible from qml
     void bind_deck_service(core::IDeckService& deck_service);
 
+    /// Make DecksModel accessible from qml
+    void bind_decks_model(core::IDeckService& deck_service);
+
+    /// Make CardsModel accessible from qml
+    void bind_cards_model(core::IDeckService& deck_service);
+
   private:
     QQmlApplicationEngine m_engine;
 };
