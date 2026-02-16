@@ -84,6 +84,16 @@ void Launcher::init() {
     if (m_deck_service = std::make_unique<engine::DeckService>(deck_service_deps); m_deck_service) {
         qDebug() << "Deck service created";
     }
+
+    engine::StudyEngineDeps study_engine_deps{.algorithm = *m_algorithm, .deck_storage = *m_deck_storage};
+
+    if (m_study_engine = std::make_unique<engine::StudyEngine>(study_engine_deps); m_study_engine) {
+        qDebug() << "Study engine created";
+    }
+
+    if (m_study_service = std::make_unique<engine::StudyService>(*m_study_engine); m_study_service) {
+        qDebug() << "Study service created";
+    }
 }
 
 

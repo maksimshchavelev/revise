@@ -26,6 +26,10 @@
 // Deck service
 #include <core/IDeckService.hpp> // for core::IDeckService
 
+// Study service and engine
+#include <engine/StudyEngine.hpp>  // for engine::StudyEngine
+#include <engine/StudyService.hpp> // for engine::StudyService
+
 // UI
 #include "ui/UI.hpp" // for ui
 
@@ -56,6 +60,9 @@ class Launcher {
     std::unique_ptr<io::SqlDeckStorage>      m_deck_storage;       ///< Deck storage
 
     std::unique_ptr<core::IDeckService> m_deck_service; ///< Deck service
+
+    std::unique_ptr<engine::StudyEngine>  m_study_engine;  ///< Study engine
+    std::unique_ptr<engine::StudyService> m_study_service; ///< Study service
 
     ui::UI m_ui;
 
