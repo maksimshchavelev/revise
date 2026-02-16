@@ -6,6 +6,7 @@
 #include "DecksModel.hpp"    // for DecksModel wrapper
 #include "PopupService.hpp"  // for PopupService wrapper
 #include "StreakService.hpp" // for StreakService wrapper
+#include "StudyService.hpp"  // for StudyService
 #include <QQmlContext>       // for QQmlContext
 
 namespace ui {
@@ -55,6 +56,12 @@ void UI::bind_decks_model(core::IDeckService& deck_service) {
 void UI::bind_cards_model(core::IDeckService& deck_service) {
     auto* model = new CardsModel(deck_service, &m_engine);
     m_engine.rootContext()->setContextProperty("cardsModel", model);
+}
+
+
+void UI::bind_study_service(core::IStudyService& study_service) {
+    auto* service = new StudyService(study_service, &m_engine);
+    m_engine.rootContext()->setContextProperty("studyService", service);
 }
 
 } // namespace ui

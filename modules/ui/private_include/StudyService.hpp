@@ -17,7 +17,7 @@ class StudyService : public QObject {
     Q_PROPERTY(QString back READ back NOTIFY back_changed FINAL)
     Q_PROPERTY(bool flipped READ flipped NOTIFY flipped_changed FINAL)
 
-    StudyService(core::IStudyService& study_service);
+    StudyService(core::IStudyService& study_service, QObject* parent = nullptr);
 
     /**
      * @brief Start training

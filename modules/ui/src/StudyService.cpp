@@ -4,7 +4,8 @@
 
 namespace ui {
 
-StudyService::StudyService(core::IStudyService& study_service) : m_study_service(study_service) {
+StudyService::StudyService(core::IStudyService& study_service, QObject* parent) :
+    QObject(parent), m_study_service(study_service) {
     m_study_service.connect<core::IStudyService::training_started>([this](const auto& e) {
         emit time_limit_changed();
         emit time_remaining_changed();

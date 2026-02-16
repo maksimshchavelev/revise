@@ -7,6 +7,7 @@
 
 #include <core/IDeckService.hpp>   // for core::IDeckService
 #include <core/IStreakService.hpp> // for core::IStreakService
+#include <core/IStudyService.hpp>  // for core::IStudyService
 
 namespace ui {
 
@@ -42,6 +43,9 @@ class UI {
 
     /// Make CardsModel accessible from qml
     void bind_cards_model(core::IDeckService& deck_service);
+
+    /// Make StudyService accessible from qml
+    void bind_study_service(core::IStudyService& study_service);
 
   private:
     QQmlApplicationEngine m_engine;
