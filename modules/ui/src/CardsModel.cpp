@@ -2,7 +2,7 @@
 
 #include "CardsModel.hpp" // for header
 
-namespace io {
+namespace ui {
 
 CardsModel::CardsModel(core::IDeckService& service) : m_deck_service(service) {
     m_deck_service.connect<core::IDeckService::cards_updated>([this](const core::IDeckService::cards_updated& e) {
@@ -62,4 +62,4 @@ int CardsModel::cards_count() const noexcept {
     return m_cards.size();
 }
 
-} // namespace io
+} // namespace ui
