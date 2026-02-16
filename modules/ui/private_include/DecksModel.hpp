@@ -9,7 +9,7 @@ namespace ui {
 
 class DecksModel final : public QAbstractListModel {
   public:
-    DecksModel(core::IDeckService& deck_service);
+    DecksModel(core::IDeckService& deck_service, QObject* parent = nullptr);
 
     enum DeckRoles {
         NameRole = Qt::UserRole + 1,
