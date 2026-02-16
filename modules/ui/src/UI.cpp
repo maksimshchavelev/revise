@@ -11,14 +11,7 @@
 
 namespace ui {
 
-void UI::init_qml() {
-    // engine.rootContext()->setContextProperty("popupService", dynamic_cast<PopupService*>(&popup_service));
-
-    qRegisterMetaType<PopupRequest>("PopupRequest");
-    qRegisterMetaType<PopupResponse>("PopupResponse");
-    qRegisterMetaType<PopupAction>("PopupAction");
-    qRegisterMetaType<PopupButton>("PopupButton");
-}
+void UI::init_qml() {}
 
 
 void UI::init_engine(QGuiApplication& app) {
