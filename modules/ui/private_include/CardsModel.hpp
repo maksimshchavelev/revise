@@ -13,7 +13,7 @@ class CardsModel final : public QAbstractListModel {
   public:
     Q_PROPERTY(int cardsCount READ cards_count NOTIFY updated FINAL);
 
-    CardsModel(core::IDeckService& service);
+    CardsModel(core::IDeckService& service, QObject* parent = nullptr);
 
     enum CardRoles { FrontRole = Qt::UserRole + 1, BackRole, IdRole };
 
