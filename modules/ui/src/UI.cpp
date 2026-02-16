@@ -1,8 +1,9 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "ui/UI.hpp" // for UI header
-#include "PopupService.hpp"
-#include "StreakService.hpp" // for StreakService
+#include "ui/UI.hpp"         // for UI header
+#include "DeckService.hpp"   // for DeckService wrapper
+#include "PopupService.hpp"  // for PopupService wrapper
+#include "StreakService.hpp" // for StreakService wrapper
 #include <QQmlContext>       // for QQmlContext
 
 namespace ui {
@@ -33,8 +34,13 @@ void UI::init_engine(QGuiApplication& app) {
 
 void UI::bind_streak_service(core::IStreakService& streak_service) {
     auto* service = new StreakService(streak_service, &m_engine);
-
     m_engine.rootContext()->setContextProperty("streakService", service);
+}
+
+
+void UI::bind_deck_service(core::IDeckService& deck_service) {
+    auto* service = new DeckService(deck_service, &m_engine);
+    m_engine.rootContext()->setContextProperty("deckService", service);
 }
 
 } // namespace ui

@@ -5,6 +5,7 @@
 #include <QGuiApplication>       // for QGuiApplication
 #include <QQmlApplicationEngine> // for QQmlApplicationEngine
 
+#include <core/IDeckService.hpp>   // for core::IDeckService
 #include <core/IStreakService.hpp> // for core::IStreakService
 
 namespace ui {
@@ -32,6 +33,9 @@ class UI {
 
     /// Make StreakService accessible from qml
     void bind_streak_service(core::IStreakService& streak_service);
+
+    /// Make DeckService accessible from qml
+    void bind_deck_service(core::IDeckService& deck_service);
 
   private:
     QQmlApplicationEngine m_engine;
