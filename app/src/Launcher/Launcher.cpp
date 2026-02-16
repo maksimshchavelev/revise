@@ -37,6 +37,7 @@ int Launcher::run() {
     m_ui.bind_deck_service(*m_deck_service);
     m_ui.bind_decks_model(*m_deck_service);
     m_ui.bind_cards_model(*m_deck_service);
+    m_ui.bind_study_service(*m_study_service);
 
     return m_app.exec();
 }
