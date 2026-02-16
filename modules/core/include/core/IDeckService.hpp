@@ -31,6 +31,8 @@ class IDeckService : public Notifiable {
     EVENT(import_failed, QString error) ///< Import failed
     EVENT(export_failed, QString error) ///< Export failed
 
+    virtual ~IDeckService() = default;
+
     /**
      * @brief create_deck Create deck
      * @param deck Deck
