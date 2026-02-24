@@ -31,6 +31,7 @@ Item {
         anchors.fill: parent
         anchors.margins: root.contentMargins
         anchors.centerIn: parent
+        smooth: true
     }
 
     DebugBounds {}
