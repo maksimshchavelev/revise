@@ -1,4 +1,6 @@
-# modules/platform/CMakeLists.txt
+# modules/ui/CMakeLists.txt
+
+# ====== Find sources, resources and qmls
 
 file(GLOB_RECURSE UI_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
@@ -6,8 +8,55 @@ file(GLOB_RECURSE UI_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/private_include/*.hpp
 )
 
-add_library(ui STATIC
+file(GLOB_RECURSE QML_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    "${CMAKE_CURRENT_SOURCE_DIR}/qml/*.qml"
+)
+
+file(GLOB_RECURSE ABS_RESOURCES CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_LIST_DIR}/res/*)
+
+set(RESOURCES)
+foreach(abs_file ${ABS_RESOURCES})
+    file(RELATIVE_PATH rel_file
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${abs_file})
+    list(APPEND RESOURCES ${rel_file})
+endforeach()
+
+# ==========
+
+set_source_files_properties(
+    qml/theme/Theme.qml
+    qml/theme/Fonts.qml
+    qml/navigation/Router.qml
+    qml/debug/Debug.qml
+
+    PROPERTIES
+        QT_QML_SINGLETON_TYPE TRUE)
+
+add_library(ui SHARED
     ${UI_SOURCES}
+)
+
+set_target_properties(ui PROPERTIES
+    AUTOMOC ON
+    AUTORCC ON
+    AUTOUIC ON
+)
+
+qt_add_qml_module(ui
+    URI Revise
+    VERSION 1.0
+    SOURCES
+        ${UI_SOURCES}
+    QML_FILES
+        ${QML_FILES}
+)
+
+qt_add_resources(ui
+    PREFIX "/"
+    FILES
+        ${RESOURCES}
 )
 
 target_include_directories(ui
@@ -23,11 +72,5 @@ target_link_libraries(ui
         Qt6::Core
         Qt6::Qml
         Qt6::Gui
-)
-
-set_target_properties(ui PROPERTIES
-    AUTOMOC ON
-    AUTORCC ON
-    AUTOUIC ON
 )
 

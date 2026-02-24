@@ -4,6 +4,7 @@ import QtQuick.Effects
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import Revise
+// import ReviseUI 1.0
 
 ApplicationWindow {
     id: appWindow
@@ -208,28 +209,41 @@ ApplicationWindow {
     }
 
     Connections {
-        id: popupConnection
+        id: popupServiceConnection
         target: popupService
 
         function onRequested(req) {
-            console.log("REQUEST! Data is " + req.type + " msg is: " + req.message)
-
-            infoPopup.open(req.message)
-            popupService.response()
+            if (req.type === PopupType.INFO) {
+                infoPopup.open(req.message)
+            } else {
+                console.warn("Unknown popup type")
+            }
         }
     }
 
-    onClosing: function(close) {
-        close.accepted = false
+    Connections {
+        id: popupConnection
+        target: infoPopup
 
-        // infoPopup.open("Hello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщение")
-        infoPopup.open("Проверка связи")
+        function onClosed() {
+            let action = new PopupAction("closed")
+            let response = new PopupResponse(action)
 
-        if (pageLoader.item && typeof pageLoader.item.exitClicked === 'function') {
-            pageLoader.item.exitClicked()
-        } else {
-            console.warn("Failed to check pageLoader.item && typeof pageLoader.item.exitClicked === 'function'")
+            popupService.response(response)
         }
     }
+
+    // onClosing: function(close) {
+    //     close.accepted = false
+
+    //     // infoPopup.open("Hello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщение")
+    //     infoPopup.open("Проверка связи")
+
+    //     if (pageLoader.item && typeof pageLoader.item.exitClicked === 'function') {
+    //         pageLoader.item.exitClicked()
+    //     } else {
+    //         console.warn("Failed to check pageLoader.item && typeof pageLoader.item.exitClicked === 'function'")
+    //     }
+    // }
 }
 

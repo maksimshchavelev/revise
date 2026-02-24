@@ -11,8 +11,6 @@
 
 namespace ui {
 
-void UI::init_qml() {}
-
 
 void UI::init_engine(QGuiApplication& app) {
     m_engine.addImportPath("qrc:/");
@@ -55,6 +53,12 @@ void UI::bind_cards_model(core::IDeckService& deck_service) {
 void UI::bind_study_service(core::IStudyService& study_service) {
     auto* service = new StudyService(study_service, &m_engine);
     m_engine.rootContext()->setContextProperty("studyService", service);
+}
+
+
+void UI::bind_popup_service(core::IPopupService& popup_service) {
+    auto* service = new PopupService(popup_service, &m_engine);
+    m_engine.rootContext()->setContextProperty("popupService", service);
 }
 
 } // namespace ui

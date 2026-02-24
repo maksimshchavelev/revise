@@ -1,4 +1,3 @@
-
 // Base of popup
 import QtQuick
 import QtQuick.Effects
@@ -70,8 +69,7 @@ Item {
         // Calculate if scrolling is needed
         property bool scrollingNeeded: contentWrapper.height > (root.height * maxHeightRatio)
         property real targetHeight: scrollingNeeded ? (root.height * maxHeightRatio) : Math.min(
-                                                          contentWrapper.height
-                                                          + root.padding * 2
+                                                          contentWrapper.height + root.padding * 2
                                                           + flickable.anchors.margins * 2,
                                                           root.height * maxHeightRatio)
 
@@ -108,17 +106,17 @@ Item {
                 height: contentItem.implicitHeight
 
                 anchors.centerIn: parent
+
                 //anchors.margins: root.padding
                 // width: parent.width
                 // height: contentItem.implicitHeight + root.padding * 2
-
                 ColumnLayout {
                     id: contentItem
                     spacing: 12
 
                     anchors.fill: parent
-                    // anchors.margins: root.padding
 
+                    // anchors.margins: root.padding
                     onChildrenChanged: {
                         for (var i = 0; i < children.length; ++i) {
                             children[i].Layout.fillWidth = true
@@ -142,10 +140,14 @@ Item {
                     console.log(`item width = ${contentWrapper.width}, height = ${contentWrapper.height}`)
                 }
 
-                DebugBounds { border.color: "green" }
+                DebugBounds {
+                    border.color: "green"
+                }
             }
 
-            DebugBounds { border.color: "yellow"}
+            DebugBounds {
+                border.color: "yellow"
+            }
         }
 
         // Dynamic height binding - updates when content changes

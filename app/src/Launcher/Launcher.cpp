@@ -5,6 +5,7 @@
 
 #include <engine/AlgorithmFactory.hpp>     // for engine::create_study_algorithm
 #include <engine/DeckService.hpp>          // for engine::DeckService
+#include <engine/PopupServiceFactory.hpp>  // fpr engine::create_popup_service
 #include <engine/StreakServiceFactory.hpp> // for engine::create_streak_service
 #include <io/DeckExporterFactory.hpp>      // for io::create_deck_exporter
 #include <io/DeckImporterFactory.hpp>      // for io::create_deck_importer
@@ -19,9 +20,6 @@ int Launcher::run() {
 #ifndef Q_OS_ANDROID
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
     qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
-
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
     QtWebView::initialize();
@@ -38,6 +36,7 @@ int Launcher::run() {
     m_ui.bind_decks_model(*m_deck_service);
     m_ui.bind_cards_model(*m_deck_service);
     m_ui.bind_study_service(*m_study_service);
+    m_ui.bind_popup_service(*m_popup_service);
 
     return m_app.exec();
 }
@@ -94,6 +93,10 @@ void Launcher::init() {
 
     if (m_study_service = std::make_unique<engine::StudyService>(*m_study_engine); m_study_service) {
         qDebug() << "Study service created";
+    }
+
+    if (m_popup_service = engine::create_popup_service(); m_popup_service) {
+        qDebug() << "Popup service created";
     }
 }
 

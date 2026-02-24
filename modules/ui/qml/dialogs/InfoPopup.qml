@@ -23,7 +23,7 @@ PopupBase {
     }
 
     Button {
-        text: qsTr("Закрыть")
+        text: qsTr("Понятно")
         Layout.preferredWidth: parent.width
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: 16

@@ -3,7 +3,7 @@
 
 #include <ErrorReporter/ErrorReporter.hpp>
 
-#ifdef QT_DEBUG
+#ifdef USE_BOOST_FOR_STACKTRACE
     #include <boost/stacktrace.hpp>
 #endif
 
@@ -64,7 +64,7 @@ ErrorReporter* ErrorReporter::instance() {
 
 // Public method
 QString ErrorReporter::stacktrace() {
-#ifdef QT_DEBUG
+#ifdef USE_BOOST_FOR_STACKTRACE
     auto extractLibraryName = [](const std::string& fullPath) {
         std::string result = fullPath;
 

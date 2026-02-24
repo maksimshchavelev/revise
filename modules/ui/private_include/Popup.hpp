@@ -5,6 +5,18 @@
 #include <QtQml>          // for QML_VALUE_TYPE, Q_GADGET
 #include <core/Popup.hpp> // for core popups
 
+///@ Popup type wrapper for QML
+struct PopupType {
+    Q_GADGET
+    QML_ELEMENT
+
+  public:
+    ///@see core::PopupType
+    enum class PopupTypeEnum { INFO, CHOICE, OTHER };
+
+    Q_ENUM(PopupTypeEnum)
+};
+
 namespace ui {
 
 /**
@@ -16,12 +28,13 @@ namespace ui {
  */
 struct PopupButton final : core::PopupButton {
     Q_GADGET
-    QML_VALUE_TYPE(PopupButton)
+    QML_ELEMENT
+    QML_CONSTRUCTIBLE_VALUE
 
   public:
-    Q_PROPERTY(QString id MEMBER id)
-    Q_PROPERTY(QString text MEMBER text)
-    Q_PROPERTY(bool clickable MEMBER clickable)
+    Q_PROPERTY(QString id MEMBER id FINAL)
+    Q_PROPERTY(QString text MEMBER text FINAL)
+    Q_PROPERTY(bool clickable MEMBER clickable FINAL)
 };
 
 /**
@@ -31,15 +44,26 @@ struct PopupButton final : core::PopupButton {
  */
 struct PopupRequest final : core::PopupRequest {
     Q_GADGET
-    QML_VALUE_TYPE(PopupRequest)
+    QML_ELEMENT
+    QML_CONSTRUCTIBLE_VALUE
 
-  public:
-    Q_PROPERTY(QString type MEMBER type)
+    Q_PROPERTY(PopupType::PopupTypeEnum type MEMBER type)
     Q_PROPERTY(QString message MEMBER message)
     Q_PROPERTY(QVariantList buttons MEMBER buttons)
-    Q_PROPERTY(QVariant context MEMBER context)
 
-    QVariantList buttons; ///< buttons
+  public:
+    PopupRequest(const core::PopupRequest& other) :
+        type(static_cast<PopupType::PopupTypeEnum>(other.type)), message(other.message) {
+        buttons.reserve(other.buttons.size());
+
+        for (const auto& button : buttons) {
+            buttons.emplace_back(QVariant::fromValue(std::move(button)));
+        }
+    }
+
+    PopupType::PopupTypeEnum type;    ///< Popup type
+    QString                  message; ///< Message
+    QVariantList             buttons; ///< buttons
 };
 
 /**
@@ -53,6 +77,9 @@ struct PopupAction final : core::PopupAction {
     QML_VALUE_TYPE(PopupAction)
 
   public:
+    Q_INVOKABLE PopupAction(const QString& id = QString(), const QVariant& payload = QVariant()) :
+        core::PopupAction{id, payload} {}
+
     Q_PROPERTY(QString id MEMBER id)
     Q_PROPERTY(QVariant payload MEMBER payload)
 
@@ -68,9 +95,12 @@ struct PopupAction final : core::PopupAction {
  */
 struct PopupResponse final : core::PopupResponse {
     Q_GADGET
-    QML_VALUE_TYPE(PopupResponse)
+    QML_ELEMENT
 
   public:
+    Q_INVOKABLE PopupResponse(const PopupAction& action = PopupAction(), const QVariant& context = QVariant()) :
+        core::PopupResponse{action, context} {}
+
     Q_PROPERTY(PopupAction action MEMBER action)
     Q_PROPERTY(QVariant context MEMBER context)
 
@@ -78,8 +108,3 @@ struct PopupResponse final : core::PopupResponse {
 };
 
 } // namespace ui
-
-Q_DECLARE_METATYPE(ui::PopupButton)
-Q_DECLARE_METATYPE(ui::PopupRequest)
-Q_DECLARE_METATYPE(ui::PopupResponse)
-Q_DECLARE_METATYPE(ui::PopupAction)

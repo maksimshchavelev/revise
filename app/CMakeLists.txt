@@ -4,52 +4,9 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp*
     ${CMAKE_CURRENT_LIST_DIR}/include/*.tpp*)
 
-file(GLOB_RECURSE ABS_RESOURCES CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_LIST_DIR}/res/*)
-
-set(RESOURCES)
-foreach(abs_file ${ABS_RESOURCES})
-    file(RELATIVE_PATH rel_file
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${abs_file})
-    list(APPEND RESOURCES ${rel_file})
-endforeach()
-
 qt_standard_project_setup(REQUIRES 6.8)
 
-# Boost stacktrace
-set(BOOST_ENABLE_CMAKE ON)
-set(BOOST_INCLUDE_LIBRARIES stacktrace headers config)
-set(BOOST_EXCLUDE_LIBRARIES fiber serialization graph wave stacktrace_test)
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  FetchContent_Declare(
-      Boost
-      GIT_REPOSITORY https://github.com/boostorg/boost.git
-      GIT_TAG boost-1.84.0
-  )
-  FetchContent_MakeAvailable(Boost)
-endif()
-
-file(GLOB_RECURSE QML_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.qml"
-)
-
 qt_add_executable(apprevise ${SOURCES})
-
-set_source_files_properties(
-    ui/theme/Theme.qml
-    ui/theme/Fonts.qml
-    ui/navigation/Router.qml
-    ui/debug/Debug.qml
-    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
-
-qt_add_qml_module(apprevise
-    URI Revise
-    VERSION 1.0
-    QML_FILES ${QML_FILES}
-    NO_PLUGIN
-)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_link_libraries(apprevise PRIVATE
@@ -58,7 +15,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       Qt6::Concurrent
       Qt6::WebView
       Qt6::Qml
-      Boost::stacktrace_basic
       core
       platform
       ui
@@ -70,7 +26,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_include_directories(apprevise PRIVATE
       include
       ${zstd_SOURCE_DIR}/lib
-      Boost::stacktrace_basic
   )
 else() # Release
   target_link_libraries(apprevise PRIVATE
@@ -91,24 +46,6 @@ else() # Release
       include
   )
 endif()
-
-qt_add_resources(apprevise
-    PREFIX "/"
-    FILES
-        res/img/background_blurred.png
-        res/img/add_deck.png
-        res/img/clocks.png
-        res/img/decks.png
-        res/img/decks_selected.png
-        res/img/statistics.png
-        res/img/statistics_selected.png
-        res/img/streak.png
-        res/img/streak_updated.png
-        res/img/checkbox_checked.png
-
-        # fonts
-        ${RESOURCES}
-)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

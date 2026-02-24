@@ -2,10 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(revise VERSION 1.3.0 LANGUAGES CXX)
 
-# set QTP0004 behavior to NEW so extra qmldir files are generated for subdirs
-if (QT_KNOWN_POLICY_QTP0004)
-  qt_policy(SET QTP0004 NEW)
-endif()
+set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml" CACHE PATH "Install path for QML" FORCE)
+set(QML_IMPORT_PATH ${CMAKE_BINARY_DIR}/qml CACHE STRING "Extra QML Import Paths" FORCE)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
