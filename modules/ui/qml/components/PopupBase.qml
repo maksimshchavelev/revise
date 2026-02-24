@@ -19,6 +19,7 @@ Item {
     property real maxHeightRatio: 0.8 // When content exceeds this ratio, enable scrolling
     property real padding: 16 // Content indents from popup borders
     property bool modal: true // If true, the popup will close when you click outside the popup area with emitting `closed` signal
+    property real widthLimit: Math.min(parent.width * 0.85, 250)
 
     default property alias content: contentItem.data
 
@@ -46,7 +47,7 @@ Item {
     // Main popup container
     Item {
         id: popupContainer
-        width: Math.min(parent.width * 0.85, 420)
+        width: root.widthLimit
         anchors.centerIn: parent
         clip: true
         scale: root.visible ? 1 : 0.85
