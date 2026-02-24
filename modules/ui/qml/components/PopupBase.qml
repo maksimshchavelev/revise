@@ -94,10 +94,6 @@ Item {
             anchors.fill: parent
             anchors.margins: panel.border.width + 1
 
-            Component.onCompleted: {
-                console.log(`flickable width height = ${flickable.width}, ${flickable.height}`)
-            }
-
             // Wrapper for padding
             Item {
                 id: contentWrapper
@@ -129,15 +125,6 @@ Item {
                             }
                         }
                     }
-
-                    Component.onCompleted: {
-                        console.log(`layout width = ${contentItem.width}, height = ${contentItem.height}, implitict widht/height =
-                                    ${contentItem.implicitWidth}, ${contentItem.implicitHeight}`)
-                    }
-                }
-
-                Component.onCompleted: {
-                    console.log(`item width = ${contentWrapper.width}, height = ${contentWrapper.height}`)
                 }
 
                 DebugBounds {
@@ -176,10 +163,6 @@ Item {
         }
 
         DebugBounds {}
-
-        Component.onCompleted: {
-            console.log(`target height = ${targetHeight}`)
-        }
     }
 
     Behavior on opacity {
