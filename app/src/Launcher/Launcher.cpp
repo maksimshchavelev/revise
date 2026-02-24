@@ -30,13 +30,14 @@ int Launcher::run() {
         qWarning() << "Failed to apply streak storage migrations:" << res.error();
     }
 
-    m_ui.init_engine(m_app);
     m_ui.bind_streak_service(*m_streak_service);
     m_ui.bind_deck_service(*m_deck_service);
     m_ui.bind_decks_model(*m_deck_service);
     m_ui.bind_cards_model(*m_deck_service);
     m_ui.bind_study_service(*m_study_service);
     m_ui.bind_popup_service(*m_popup_service);
+
+    m_ui.init_engine(m_app);
 
     return m_app.exec();
 }
