@@ -77,6 +77,8 @@ ApplicationWindow {
 
     CreateDeckPopup {
         id: createDeckPopup
+        backgroundItem: pageLoader
+
         onCreateClicked: function(name,
                                   description,
                                   timeLimit,
