@@ -4,7 +4,6 @@ import QtQuick.Effects
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import Revise
-// import ReviseUI 1.0
 
 ApplicationWindow {
     id: appWindow
@@ -232,18 +231,5 @@ ApplicationWindow {
             popupService.response(response)
         }
     }
-
-    // onClosing: function(close) {
-    //     close.accepted = false
-
-    //     // infoPopup.open("Hello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщение Hello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщениеHello это сообщение очень большое и длинное сообщение")
-    //     infoPopup.open("Проверка связи")
-
-    //     if (pageLoader.item && typeof pageLoader.item.exitClicked === 'function') {
-    //         pageLoader.item.exitClicked()
-    //     } else {
-    //         console.warn("Failed to check pageLoader.item && typeof pageLoader.item.exitClicked === 'function'")
-    //     }
-    // }
 }
 
