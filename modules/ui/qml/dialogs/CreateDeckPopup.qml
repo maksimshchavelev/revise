@@ -10,7 +10,7 @@ PopupBase {
 
     widthLimit: Math.min(parent.width * 0.85, 420)
 
-    signal createClicked(string name, string description, int timeLimit, int newLimit, int consolidateLimit, int incorrectLimit)
+    signal createClicked(Deck deck)
 
     // Deck name input
     ValidatedTextField {
@@ -104,11 +104,13 @@ PopupBase {
                    && deckIncorrectLimit.text !== ""
 
         onClicked: {
-            root.createClicked(deckName.text, deckDescription.text,
-                               parseInt(deckTimeLimit.text),
-                               parseInt(deckNewLimit.text),
-                               parseInt(deckConsolidateLimit.text),
-                               parseInt(deckIncorrectLimit.text))
+            let deck = new Deck(deckName.text, deckDescription.text,
+                                parseInt(deckTimeLimit.text),
+                                parseInt(deckNewLimit.text),
+                                parseInt(deckConsolidateLimit.text),
+                                parseInt(deckIncorrectLimit.text))
+
+            root.createClicked(deck)
             root.close()
         }
     }

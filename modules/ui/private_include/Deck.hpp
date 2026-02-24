@@ -18,14 +18,24 @@ struct Deck final : core::Deck {
 
     Q_PROPERTY(QString name MEMBER name FINAL)
     Q_PROPERTY(QString description MEMBER description FINAL)
-    Q_PROPERTY(int time_limit MEMBER time_limit FINAL)
-    Q_PROPERTY(int new_limit MEMBER new_limit FINAL)
-    Q_PROPERTY(int consolidate_limit MEMBER consolidate_limit FINAL)
-    Q_PROPERTY(int incorrect_limit MEMBER incorrect_limit FINAL)
+    Q_PROPERTY(int timeLimit MEMBER time_limit FINAL)
+    Q_PROPERTY(int newLimit MEMBER new_limit FINAL)
+    Q_PROPERTY(int consolidateLimit MEMBER consolidate_limit FINAL)
+    Q_PROPERTY(int incorrectLimit MEMBER incorrect_limit FINAL)
     Q_PROPERTY(int id MEMBER id FINAL)
-    Q_PROPERTY(int global_id MEMBER global_id FINAL)
+    Q_PROPERTY(int globalId MEMBER global_id FINAL)
 
   public:
+    Q_INVOKABLE Deck() = default;
+
+    Q_INVOKABLE Deck(const QString& name,
+                     const QString& description,
+                     int            timeLimit,
+                     int            newLimit,
+                     int            consolidateLimit,
+                     int            incorrectLimit) :
+        core::Deck{name, description, timeLimit, newLimit, consolidateLimit, incorrectLimit, 0, 0} {}
+
     template <typename OtherDeck>
         requires std::is_base_of_v<core::Deck, std::remove_reference_t<OtherDeck>>
     Deck& operator=(OtherDeck&& other) {

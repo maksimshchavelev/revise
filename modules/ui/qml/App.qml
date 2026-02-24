@@ -79,13 +79,8 @@ ApplicationWindow {
         id: createDeckPopup
         backgroundItem: pageLoader
 
-        onCreateClicked: function(name,
-                                  description,
-                                  timeLimit,
-                                  newLimit,
-                                  consolidateLimit,
-                                  incorrectLimit) {
-            deckService.create_deck(name, description, timeLimit, newLimit, consolidateLimit, incorrectLimit)
+        onCreateClicked: function(deck) {
+            deckService.create_deck(deck)
         }
     }
 
