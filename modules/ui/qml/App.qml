@@ -179,15 +179,6 @@ ApplicationWindow {
     }
 
     Connections {
-        target: errorReporter
-
-        function onError_occured(error) {
-            var stacktrace = error.stacktrace.length > 0 ? "\n\nStacktrace:\n\n" + error.stacktrace : ""
-            scrollableInfoPopup.open(error.message + "\n\nDetails: " + error.details + stacktrace)
-        }
-    }
-
-    Connections {
         target: deckService
 
         function onDeckImported(cardsImported) {
