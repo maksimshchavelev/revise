@@ -57,6 +57,7 @@ qt_add_resources(ui
     PREFIX "/"
     FILES
         ${RESOURCES}
+        ${QML_FILES}
 )
 
 target_include_directories(ui

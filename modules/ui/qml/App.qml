@@ -24,9 +24,9 @@ ApplicationWindow {
     }
 
     readonly property var pages: {
-        "main": "qrc:/qt/qml/Revise/ui/MainLayout.qml",
-        "training": "qrc:/qt/qml/Revise/ui/pages/Training.qml",
-        "editDeck": "qrc:/qt/qml/Revise/ui/pages/EditDeck.qml",
+        "main": "qrc:/qml/MainLayout.qml",
+        "training": "qrc:/qml/pages/Training.qml",
+        "editDeck": "qrc:/qml/pages/EditDeck.qml",
     }
 
     Loader {
