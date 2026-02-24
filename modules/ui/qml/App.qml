@@ -89,7 +89,7 @@ ApplicationWindow {
 
     InfoPopup {
         id: infoPopup
-        sourceItem: pageLoader
+        backgroundItem: pageLoader
     }
 
     ScrollableInfoPopup {
@@ -119,7 +119,7 @@ ApplicationWindow {
 
     AddDeckPopup {
         id: addDeckPopup
-        sourceItem: pageLoader
+        backgroundItem: pageLoader
 
         onImportClicked: importAnkiFileDialog.open()
         onCreateClicked: createDeckPopup.open()

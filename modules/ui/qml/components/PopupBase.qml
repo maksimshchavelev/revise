@@ -13,9 +13,9 @@ Item {
     z: 1000
     opacity: root.visible ? 1 : 0
 
-    property Item sourceItem
+    // for blurring (backgroundItem will be blurred)
+    property Item backgroundItem
 
-    // for blurring
     property real maxHeightRatio: 0.8 // When content exceeds this ratio, enable scrolling
     property real padding: 16 // Content indents from popup borders
     property bool modal: true // If true, the popup will close when you click outside the popup area with emitting `closed` signal
@@ -23,27 +23,13 @@ Item {
     default property alias content: contentItem.data
 
     signal opened
-    // on opened
     signal closed
-
-    // on closed
-    ShaderEffectSource {
-        id: snapshot
-        anchors.fill: parent
-        sourceItem: root.sourceItem
-        live: true
-        recursive: true
-        hideSource: false
-        smooth: true
-    }
 
     MultiEffect {
         anchors.fill: parent
-        source: snapshot
+        source: root.backgroundItem
         blurEnabled: true
         blur: 1
-        blurMax: 32
-        autoPaddingEnabled: false
     }
 
     Rectangle {
@@ -174,6 +160,7 @@ Item {
 
     function _openBase() {
         root.visible = true
+        backgroundItem.visible = false
         popupContainer.height = Qt.binding(function () {
             return popupContainer.targetHeight
         })
@@ -182,6 +169,7 @@ Item {
 
     function _closeBase() {
         root.visible = false
+        backgroundItem.visible = true
         root.closed()
     }
 
