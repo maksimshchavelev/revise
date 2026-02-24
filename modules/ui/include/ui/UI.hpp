@@ -28,6 +28,9 @@ class UI {
      */
     void init_engine(QGuiApplication& app);
 
+    /// Enables debug bounds
+    void enable_debug_bounds(bool enable);
+
     /// Make StreakService accessible from qml
     void bind_streak_service(core::IStreakService& streak_service);
 

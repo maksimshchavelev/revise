@@ -26,6 +26,11 @@ void UI::init_engine(QGuiApplication& app) {
 }
 
 
+void UI::enable_debug_bounds(bool enable) {
+    m_engine.rootContext()->setContextProperty("uiShowBounds", enable);
+}
+
+
 void UI::bind_streak_service(core::IStreakService& streak_service) {
     auto* service = new StreakService(streak_service, &m_engine);
     m_engine.rootContext()->setContextProperty("streakService", service);

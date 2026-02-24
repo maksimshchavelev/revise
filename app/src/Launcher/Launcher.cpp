@@ -30,12 +30,15 @@ int Launcher::run() {
         qWarning() << "Failed to apply streak storage migrations:" << res.error();
     }
 
+    auto debug_bounds = qEnvironmentVariableIntegerValue("QML_DEBUG_BOUNDS");
+
     m_ui.bind_streak_service(*m_streak_service);
     m_ui.bind_deck_service(*m_deck_service);
     m_ui.bind_decks_model(*m_deck_service);
     m_ui.bind_cards_model(*m_deck_service);
     m_ui.bind_study_service(*m_study_service);
     m_ui.bind_popup_service(*m_popup_service);
+    m_ui.enable_debug_bounds(debug_bounds ? debug_bounds.value() : false);
 
     m_ui.init_engine(m_app);
 
