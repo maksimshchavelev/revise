@@ -48,7 +48,7 @@ PopupBase {
         inputMethodHints: Qt.ImhDigitsOnly
         validator: IntValidator {
             bottom: 1
-            top: 3600 // 1 hour
+            top: 3600
         }
     }
 
@@ -61,7 +61,7 @@ PopupBase {
         inputMethodHints: Qt.ImhDigitsOnly
         validator: IntValidator {
             bottom: 1
-            top: 500 // 1 hour
+            top: 500
         }
     }
 
@@ -74,7 +74,7 @@ PopupBase {
         inputMethodHints: Qt.ImhDigitsOnly
         validator: IntValidator {
             bottom: 1
-            top: 500 // 1 hour
+            top: 500
         }
     }
 
@@ -87,7 +87,7 @@ PopupBase {
         inputMethodHints: Qt.ImhDigitsOnly
         validator: IntValidator {
             bottom: 1
-            top: 500 // 1 hour
+            top: 500
         }
     }
 
