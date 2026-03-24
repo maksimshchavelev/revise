@@ -176,26 +176,6 @@ ApplicationWindow {
     }
 
     Connections {
-        target: deckService
-
-        function onDeckImported(cardsImported) {
-            infoPopup.open(qsTr("Импортировано карточек: " + cardsImported))
-        }
-
-        function onDeckUpdated() {
-            infoPopup.open(qsTr("Колода обновлена"))
-        }
-
-        function onCardRemoved() {
-            infoPopup.open(qsTr("Карточка удалена"))
-        }
-
-        function onDeckExported() {
-            infoPopup.open(qsTr("Колода экспортирована"))
-        }
-    }
-
-    Connections {
         id: popupServiceConnection
         target: popupService
 
