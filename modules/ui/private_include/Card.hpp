@@ -29,6 +29,12 @@ struct Card final : core::Card {
     Q_PROPERTY(QString back MEMBER back FINAL)
 
   public:
+    Card() {}
+
+    Card(const core::Card& other) {
+        *this = other;
+    }
+
     template <typename OtherCard>
         requires std::is_base_of_v<core::Card, std::remove_reference_t<OtherCard>>
     Card& operator=(OtherCard&& other) {

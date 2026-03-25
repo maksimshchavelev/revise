@@ -68,4 +68,15 @@ Deck DeckService::deck(int deckId)
     return *res;
 }
 
+Card DeckService::card(int cardId)
+{
+    auto res = m_deck_service.card(cardId);
+    if (!res) {
+        qWarning() << "ui::DeckService::card() failed to fetch card with id" << cardId << "cause:" << res.error();
+        return {};
+    }
+
+    return *res;
+}
+
 } // namespace ui

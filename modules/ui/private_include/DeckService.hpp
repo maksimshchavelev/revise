@@ -50,6 +50,9 @@ class DeckService final : public QObject {
     /// @copydoc core::IDeckService::deck
     Q_INVOKABLE Deck deck(int deckId);
 
+    /// @copydoc core::IDeckService::card
+    Q_INVOKABLE Card card(int cardId);
+
   private:
     core::IDeckService& m_deck_service; ///< Deck service
 };

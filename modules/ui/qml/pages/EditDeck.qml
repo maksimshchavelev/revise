@@ -107,7 +107,7 @@ Item {
 
         onEditClicked: function(cardId) {
             Qt.inputMethod.hide()
-            editCard.card = deckService.get_card(cardId)
+            editCard.card = deckService.card(cardId)
             pages.currentIndex = 3
         }
     }
