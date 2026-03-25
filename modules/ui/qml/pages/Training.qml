@@ -86,10 +86,10 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignBottom
             Layout.topMargin: 8
-            onEasyClicked: studyService.next_card(0);
-            onNormalClicked: studyService.next_card(1.35);
-            onHardClicked: studyService.next_card(3);
-            onBadClicked: studyService.next_card(5);
+            onEasyClicked: studyService.answer(0);
+            onNormalClicked: studyService.answer(1.35);
+            onHardClicked: studyService.answer(3);
+            onBadClicked: studyService.answer(5);
         }
     }
 

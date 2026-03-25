@@ -6,10 +6,10 @@ namespace engine {
 
 StudyService::StudyService(core::IStudyEngine& study_engine) : m_study_engine(study_engine) {
     QObject::connect(&m_timer, &QTimer::timeout, [this]() {
-        if (m_timer.isActive()) {
-            if (!m_timer.isActive()) {
-                return;
-            }
+        if (m_timer.isActive() && m_running) {
+            // if (!m_timer.isActive() || !m_running) {
+            //     return;
+            // }
 
             // Reduce time only if the card is not flipped
             if (!m_study_engine.state().flipped) {
@@ -116,6 +116,18 @@ float StudyService::time_remaining() const {
 
 bool StudyService::flipped() const {
     return m_study_engine.state().flipped;
+}
+
+
+void StudyService::pause()
+{
+    m_running = false;
+}
+
+
+void StudyService::resume()
+{
+    m_running = true;
 }
 
 } // namespace engine

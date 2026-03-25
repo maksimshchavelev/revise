@@ -31,10 +31,17 @@ class StudyService : public QObject {
      */
     Q_INVOKABLE void answer(float difficulty);
 
-    /**
-     * @brief Abort training
-     */
+    /// @brief Abort training
     Q_INVOKABLE void abort();
+
+    /// @brief Flip the card
+    Q_INVOKABLE void flip();
+
+    /// @brief Pause training
+    Q_INVOKABLE void pause();
+
+    /// @brief Resume training
+    Q_INVOKABLE void resume();
 
   signals:
     void time_limit_changed();
@@ -46,7 +53,7 @@ class StudyService : public QObject {
   private:
     core::IStudyService& m_study_service;
 
-    int time_remaining() const;
+    float time_remaining() const;
     int time_limit() const;
 
     QString front() const;

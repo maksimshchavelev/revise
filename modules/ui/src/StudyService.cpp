@@ -41,7 +41,25 @@ void StudyService::abort() {
 }
 
 
-int StudyService::time_remaining() const {
+void StudyService::flip()
+{
+    m_study_service.flip();
+}
+
+
+void StudyService::pause()
+{
+    m_study_service.pause();
+}
+
+
+void StudyService::resume()
+{
+    m_study_service.resume();
+}
+
+
+float StudyService::time_remaining() const {
     return m_study_service.time_remaining();
 }
 

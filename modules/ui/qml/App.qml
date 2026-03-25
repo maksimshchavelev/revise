@@ -128,7 +128,7 @@ ApplicationWindow {
 
         onTrainClicked: function(deckId, repeatableToday) {
             if (repeatableToday) {
-                studyService.start_training(deckId)
+                studyService.start(deckId)
                 pageLoader.source = pages.training
             } else {
                 infoPopup.open(qsTr("Колоду нельзя повторить сегодня"))

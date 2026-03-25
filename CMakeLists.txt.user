@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 18.0.82, 2026-02-24T12:31:38. -->
+<!-- Written by QtCreator 18.0.82, 2026-03-24T20:48:57. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -231,11 +231,12 @@
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">apprevise</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.</value>
      <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">apprevise</value>
-     <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+     <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
      <value type="QString" key="ProjectExplorer.RunConfiguration.UniqueId"></value>
      <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
      <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
      <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+     <value type="QString" key="RunConfiguration.WorkingDirectory">%{buildDir}/app</value>
     </valuemap>
     <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
      <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
@@ -1120,11 +1121,12 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">apprevise</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">apprevise</value>
-    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.UniqueId"></value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory">%{buildDir}/app</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
     <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>

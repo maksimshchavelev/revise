@@ -40,9 +40,16 @@ class StudyService final : public core::IStudyService {
     /// @copydoc core::IStudyService::flipped
     bool flipped() const override;
 
+    /// @copydoc core::IStudyService::pause
+    void pause() override;
+
+    /// @copydoc core::IStudyService::resume
+    void resume() override;
+
   private:
     core::IStudyEngine& m_study_engine;
     QTimer              m_timer;
+    bool                m_running{true};
 };
 
 } // namespace engine

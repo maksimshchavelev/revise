@@ -85,6 +85,12 @@ class IStudyService : public Notifiable {
      * @return `true` if card flipped
      */
     virtual bool flipped() const = 0;
+
+    /// @brief Pause training
+    virtual void pause() = 0;
+
+    /// @brief Resume training after pause
+    virtual void resume() = 0;
 };
 
 } // namespace core
