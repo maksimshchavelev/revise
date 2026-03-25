@@ -57,4 +57,15 @@ void DeckService::update_card(const Card& card) {
     }
 }
 
+Deck DeckService::deck(int deckId)
+{
+    auto res = m_deck_service.deck(deckId);
+    if (!res) {
+        qWarning() << "ui::DeckService::deck() failed to fetch deck info with id" << deckId << "cause:" << res.error();
+        return {};
+    }
+
+    return *res;
+}
+
 } // namespace ui

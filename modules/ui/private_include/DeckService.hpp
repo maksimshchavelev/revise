@@ -47,6 +47,9 @@ class DeckService final : public QObject {
     /// @copydoc core::IDeckService::update_card
     Q_INVOKABLE void update_card(const Card& deck);
 
+    /// @copydoc core::IDeckService::deck
+    Q_INVOKABLE Deck deck(int deckId);
+
   private:
     core::IDeckService& m_deck_service; ///< Deck service
 };

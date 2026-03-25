@@ -36,6 +36,10 @@ struct Deck final : core::Deck {
                      int            incorrectLimit) :
         core::Deck{name, description, timeLimit, newLimit, consolidateLimit, incorrectLimit, 0, 0} {}
 
+    Deck(const core::Deck& other) {
+        *this = other;
+    }
+
     template <typename OtherDeck>
         requires std::is_base_of_v<core::Deck, std::remove_reference_t<OtherDeck>>
     Deck& operator=(OtherDeck&& other) {
