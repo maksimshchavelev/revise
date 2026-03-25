@@ -25,7 +25,7 @@ Item {
     onDeckIdChanged: {
         if (deckId > 0) {
             root.deck = deckService.deck(deckId)
-            cardsModel.load(deckId)
+            cardsModel.setDeck(deckId)
         }
     }
 
