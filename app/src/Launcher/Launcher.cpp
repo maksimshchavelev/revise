@@ -38,9 +38,15 @@ int Launcher::run() {
     m_ui.bind_cards_model(*m_deck_service);
     m_ui.bind_study_service(*m_study_service);
     m_ui.bind_popup_service(*m_popup_service);
+    m_ui.bind_router(m_router);
     m_ui.enable_debug_bounds(debug_bounds ? debug_bounds.value() : false);
 
     m_ui.init_engine(m_app);
+
+    m_router.push_page("main", m_ui.create_page(QUrl("qrc:/qml/MainLayout.qml")));
+    m_router.push_page("editDeck", m_ui.create_page(QUrl("qrc:/qml/pages/EditDeck.qml")));
+
+    m_router.navigate(ui::Page{"main"});
 
     return m_app.exec();
 }

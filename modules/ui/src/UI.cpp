@@ -66,4 +66,22 @@ void UI::bind_popup_service(core::IPopupService& popup_service) {
     m_engine.rootContext()->setContextProperty("popupService", service);
 }
 
+
+void UI::bind_router(Router& router) {
+    m_engine.rootContext()->setContextProperty("router", &router);
+}
+
+
+QQmlComponent* UI::create_page(QUrl source) {
+    auto* component = new QQmlComponent(&m_engine, std::move(source), &m_engine);
+
+    if (component->isError()) {
+        for (const auto& error : component->errors()) {
+            qWarning() << "ui::UI::create_page(): Failed to create component from file" << source << "cause:" << error;
+        }
+    }
+
+    return component;
+}
+
 } // namespace ui

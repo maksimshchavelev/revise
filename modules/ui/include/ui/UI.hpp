@@ -4,11 +4,14 @@
 
 #include <QGuiApplication>       // for QGuiApplication
 #include <QQmlApplicationEngine> // for QQmlApplicationEngine
+#include <QQmlComponent>         // for QQmlComponent
 
 #include <core/IDeckService.hpp>   // for core::IDeckService
 #include <core/IPopupService.hpp>  // for core::IPopupService
 #include <core/IStreakService.hpp> // for core::IStreakService
 #include <core/IStudyService.hpp>  // for core::IStudyService
+
+#include "Router.hpp" // for Router
 
 namespace ui {
 
@@ -48,6 +51,16 @@ class UI {
 
     /// Make PopupService accessible from qml
     void bind_popup_service(core::IPopupService& popup_service);
+
+    /// Make Router accessible from qml
+    void bind_router(Router& router);
+
+    /**
+     * @brief Creates a page component
+     * @param source `.qml` page file
+     * @return Pointer to `QQmlComponent`
+     */
+    QQmlComponent* create_page(QUrl source);
 
   private:
     QQmlApplicationEngine m_engine;

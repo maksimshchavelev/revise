@@ -10,6 +10,8 @@ Item {
     signal deckClicked(int deckId, bool repeatableToday)
     signal addDeckClicked()
 
+    property var pageParams: null
+
     // This function is called when the back button is pressed.
     // Ideally, it should be on every page.
     function exitClicked() {

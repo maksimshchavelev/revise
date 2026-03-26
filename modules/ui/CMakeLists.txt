@@ -65,6 +65,7 @@ target_include_directories(ui
         ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/private_include
+        ${CMAKE_CURRENT_LIST_DIR}/include/ui
 )
 
 target_link_libraries(ui

@@ -6,33 +6,18 @@ import Revise
 Item {
     id: root
 
-    property int deckId: 0
     signal backClicked()
 
-    Shortcut {
-        sequence: "Esc"
-        onActivated: {
-            console.log("ESCAPE!")
-            exitClicked()
-        }
-    }
-
-    function exitClicked() {
-        if (pages.children[pages.currentIndex] && typeof pages.children[pages.currentIndex].exitClicked === 'function') {
-            pages.children[pages.currentIndex].exitClicked()
-        } else {
-            console.warn("Failed to check pages.children[pages.currentIndex] && typeof pages.children[pages.currentIndex].exitClicked === 'function'")
-        }
-    }
+    property var pageParams: null
 
     StackLayout {
         id: pages
         anchors.fill: parent
 
         DeckOptions {
-            deckId: root.deckId
+            deckId: root.pageParams.deckId
             onAddCardClicked: {
-                deckId = root.deckId
+                deckId = root.pageParams.deckId
                 pages.currentIndex = 1
             }
             onUpdateClicked: function (deckId, name, description, timeLimit, newLimit, consolidateLimit, incorrectLimit) {
@@ -41,11 +26,11 @@ Item {
             onCardClicked: function(cardId) {
                 cardEventPopup.open(cardId)
             }
-            onBackClicked: root.backClicked()
+            onBackClicked: router.back()
         }
 
         CreateCard {
-            deckId: root.deckId
+            deckId: root.pageParams.deckId
             onBackClicked: pages.currentIndex = 0
             onCreateClicked: {
                 deckService.create_card(deckId, front, back)

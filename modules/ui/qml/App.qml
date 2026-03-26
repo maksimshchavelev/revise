@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Dialogs
 import QtQuick.Layouts
-import Revise
+import Revise as Revise
 
 ApplicationWindow {
     id: appWindow
@@ -23,20 +23,22 @@ ApplicationWindow {
     }
 
     readonly property var pages: {
-        "main": "qrc:/qml/MainLayout.qml",
-        "training": "qrc:/qml/pages/Training.qml",
-        "editDeck": "qrc:/qml/pages/EditDeck.qml",
+        "training": "qrc:/qml/pages/Training.qml"
     }
 
     Loader {
         id: pageLoader
         anchors.fill: parent
-        source: pages.main
+        sourceComponent: router.currentPageComponent
         asynchronous: true
 
         property bool loading: status === Loader.Loading
 
         onLoaded: {
+            if (item && router.currentPage) {
+                item.pageParams = router.currentPage.params
+            }
+
             if (item.addDeckClicked) {
                 item.addDeckClicked.connect(addDeckPopup.open)
             }
@@ -75,7 +77,7 @@ ApplicationWindow {
         })
     }
 
-    CreateDeckPopup {
+    Revise.CreateDeckPopup {
         id: createDeckPopup
         backgroundItem: pageLoader
 
@@ -84,12 +86,12 @@ ApplicationWindow {
         }
     }
 
-    InfoPopup {
+    Revise.InfoPopup {
         id: infoPopup
         backgroundItem: pageLoader
     }
 
-    ScrollableInfoPopup {
+    Revise.ScrollableInfoPopup {
         id: scrollableInfoPopup
         sourceItem: pageLoader
     }
@@ -114,7 +116,7 @@ ApplicationWindow {
         }
     }
 
-    AddDeckPopup {
+    Revise.AddDeckPopup {
         id: addDeckPopup
         backgroundItem: pageLoader
 
@@ -122,7 +124,7 @@ ApplicationWindow {
         onCreateClicked: createDeckPopup.open()
     }
 
-    DeckModalDialog {
+    Revise.DeckModalDialog {
         id: deckModalDialog
         sourceItem: pageLoader
 
@@ -141,7 +143,7 @@ ApplicationWindow {
         }
 
         onEditClicked: function(deckId) {
-            pageLoader.setSource(pages.editDeck, { "deckId": deckId })
+            router.navigate("editDeck", {"deckId": deckId})
         }
 
         onExportClicked: function(deckId) {
@@ -150,7 +152,7 @@ ApplicationWindow {
         }
     }
 
-    QuestionPopup {
+    Revise.QuestionPopup {
         id: deckRemoveQuestionPopup
 
         property int deckId: 0

@@ -34,7 +34,8 @@
 #include <core/IPopupService.hpp> // for core::IPopupService
 
 // UI
-#include "ui/UI.hpp" // for ui
+#include <ui/Router.hpp> // for Router
+#include <ui/UI.hpp>     // for UI
 
 namespace revise {
 
@@ -69,7 +70,8 @@ class Launcher {
 
     std::unique_ptr<core::IPopupService> m_popup_service; ///< Popup service
 
-    ui::UI m_ui;
+    ui::UI     m_ui;     ///< Main UI class
+    ui::Router m_router; ///< Router for page navigation
 
     void init();
 };
