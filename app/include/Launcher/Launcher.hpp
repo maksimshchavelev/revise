@@ -74,6 +74,8 @@ class Launcher {
     ui::Router m_router; ///< Router for page navigation
 
     void init();
+
+    void connect_signals();
 };
 
 } // namespace revise

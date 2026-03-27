@@ -43,6 +43,8 @@ int Launcher::run() {
 
     m_ui.init_engine(m_app);
 
+    connect_signals();
+
     m_router.push_page("home", m_ui.create_page(QUrl("qrc:/qml/pages/Home.qml")));
     m_router.push_page("deckEditor", m_ui.create_page(QUrl("qrc:/qml/pages/DeckEditor.qml")));
     m_router.push_page("training", m_ui.create_page(QUrl("qrc:/qml/pages/Training.qml")));
@@ -113,5 +115,12 @@ void Launcher::init() {
     }
 }
 
+
+void Launcher::connect_signals()
+{
+    m_study_service->connect<core::IStudyService::training_finished>([this](auto& e) {
+        m_router.navigate("home", {});
+    });
+}
 
 } // namespace revise
