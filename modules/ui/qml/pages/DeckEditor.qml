@@ -156,7 +156,7 @@ Item {
                     text: qsTr("Добавить")
                     onClicked: {
                         let card = new Revise.Card()
-                        card.deckId = deckId
+                        card.deck_id = deckId
                         router.navigate("cardEditor", {
                                             "editMode": false,
                                             "card": card

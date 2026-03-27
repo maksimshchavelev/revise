@@ -6,7 +6,7 @@ import Revise as Revise
 Item {
     id: root
 
-    property var pageParams: null // contains editMode and Revise.Card
+    property var pageParams: null // contains editMode and Revise.Card (named "card")
 
     ColumnLayout {
         anchors.fill: parent
@@ -186,16 +186,22 @@ Item {
 
                     onClicked: {
                         if (root.pageParams.editMode) {
-                            deckService.update_card(root.card)
+                            root.pageParams.card.front = cardFront.text.trim()
+                            root.pageParams.card.back = cardBack.text.trim()
+
+                            deckService.update_card(root.pageParams.card)
                         } else {
                             root.pageParams.card.difficulty = 2.5
                             root.pageParams.card.front = cardFront.text.trim()
                             root.pageParams.card.back = cardBack.text.trim()
+
                             deckService.create_card(root.pageParams.card)
                         }
 
-                        cardFront.text = ""
-                        cardBack.text = ""
+                        if (!pageParams.editMode) {
+                            cardFront.text = ""
+                            cardBack.text = ""
+                        }
                     }
                 }
             }
@@ -213,19 +219,15 @@ Item {
                     onClicked: {
                         Qt.inputMethod.hide()
 
-                        let card = new Revise.Card()
-                        card.front = cardFront.text
-                        card.back = cardBack.text
+                        pageParams.card.front = cardFront.text
+                        pageParams.card.back = cardBack.text
 
                         // Dear readers of this code! Here is a high-quality example of a workaround. We navigate to
                         // our own page by updating `pageParams` with a new card. In this case, when we return from
                         // `cardPreview`, the card text will load normally from the history.
-                        router.navigate("cardEditor", {
-                                            "editMode": false,
-                                            "card": card
-                                        })
+                        router.navigate("cardEditor", pageParams)
                         router.navigate("cardPreview", {
-                                            "card": card
+                                            "card": pageParams.card
                                         })
                     }
                 }
@@ -287,4 +289,6 @@ Item {
                                             )}">${code.trim()}</code></pre>`)
         }
     }
+
+    onPageParamsChanged: console.log(root.pageParams.card, root.pageParams.card.deck_id)
 }
