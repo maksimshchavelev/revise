@@ -7,13 +7,8 @@ namespace engine {
 StudyService::StudyService(core::IStudyEngine& study_engine) : m_study_engine(study_engine) {
     QObject::connect(&m_timer, &QTimer::timeout, [this]() {
         if (m_timer.isActive() && m_running) {
-            // if (!m_timer.isActive() || !m_running) {
-            //     return;
-            // }
-
-            // Reduce time only if the card is not flipped
             if (!m_study_engine.state().flipped) {
-                m_study_engine.state().time_remaining -= 0.1f; // - 0.1 sec
+                m_study_engine.state().time_remaining -= 0.015f; // 0.015 sec
 
                 if (m_study_engine.state().time_remaining <= 0.0f)
                     m_study_engine.state().time_remaining = 0.0f;
@@ -28,7 +23,7 @@ StudyService::StudyService(core::IStudyEngine& study_engine) : m_study_engine(st
         }
     });
 
-    m_timer.setInterval(100 /* msec */);
+    m_timer.setInterval(15 /* msec */);
 }
 
 
@@ -69,6 +64,9 @@ void StudyService::answer(float difficulty) {
 
     if (res->next_card) {
         m_study_engine.state().flipped = false;
+        m_study_engine.state().time_remaining = m_study_engine.state().time_limit;
+        m_study_engine.state().current_card = res->next_card;
+
         dispatch(flipped_changed{});
         dispatch(card_changed{});
     }
