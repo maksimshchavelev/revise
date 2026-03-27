@@ -1,45 +1,43 @@
+// Add formula popup (inline or display)
 
-// This popup is needed to add a deck.
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
-import Revise
+import Revise as Revise
 
-PopupBase {
+Revise.PopupBase {
     id: root
 
-    // padding: 16
+    signal addInline
+    signal addDisplay
 
-    signal importClicked() // Called when the user clicks the deck import button
-    signal createClicked() // Called when the user clicks the deck create button
-
-    Button {
-        text: qsTr("Импортировать")
+    Revise.Button {
+        text: qsTr("Встроенная формула")
         Layout.preferredWidth: parent.width * 0.85
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: 20
         onClicked: {
             root.close()
-            root.importClicked()
+            root.addInline()
         }
     }
 
-    Button {
-        text: qsTr("Создать")
+    Revise.Button {
+        text: qsTr("Блок с формулой")
         Layout.preferredWidth: parent.width * 0.85
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: 20
         onClicked: {
             root.close()
-            root.createClicked()
+            root.addDisplay()
         }
     }
 
     function open() {
-        _openBase()
+        root.visible = true
     }
 
     function close() {
-        _closeBase()
+        root.visible = false
     }
 }

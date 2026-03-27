@@ -29,7 +29,7 @@ struct Card final : core::Card {
     Q_PROPERTY(QString back MEMBER back FINAL)
 
   public:
-    Card() {}
+    Q_INVOKABLE Card() = default;
 
     Card(const core::Card& other) {
         *this = other;

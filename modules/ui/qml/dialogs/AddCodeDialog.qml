@@ -1,16 +1,16 @@
-
 // This popup This popup is needed to enter the code.
 
 import QtQuick
 import QtQuick.Controls as QC
 import QtQuick.Layouts
 import QtQuick.Effects
-import Revise
+import Revise as Revise
 
-PopupBase {
+Revise.PopupBase {
     id: root
 
     padding: 6
+    widthLimit: parent.width * 0.85
 
     property string textPlaceholder: qsTr("print(\"Hello world\")") // The Placeholder will be displayed in the text input field.
     property string text: textInput.text // Entered text
@@ -18,7 +18,7 @@ PopupBase {
     signal addClicked(string code, string language)
     signal changed(string text)
 
-    ValidatedTextField {
+    Revise.ValidatedTextField {
         id: langInput
         placeholderText: qsTr("Язык. Например, sql")
         Layout.fillWidth: true
@@ -31,7 +31,7 @@ PopupBase {
     }
 
     // Text input
-    ValidatedMultilineTextField {
+    Revise.ValidatedMultilineTextField {
         id: textInput
         Layout.fillWidth: true
         Layout.preferredHeight: 180
@@ -63,7 +63,7 @@ PopupBase {
     }
 
     // Footer
-    Button {
+    Revise.Button {
         Layout.alignment: Qt.AlignHCenter
         Layout.fillWidth: true
         Layout.topMargin: 4
@@ -71,6 +71,7 @@ PopupBase {
         clickable: textInput.valid && langInput.valid
         onClicked: {
             addClicked(textInput.text, langInput.text)
+            root.close()
         }
     }
 
@@ -91,5 +92,5 @@ PopupBase {
         _closeBase()
     }
 
-    DebugBounds {}
+    Revise.DebugBounds {}
 }

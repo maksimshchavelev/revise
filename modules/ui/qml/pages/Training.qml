@@ -8,18 +8,7 @@ import Revise
 Item {
     id: root
 
-    signal trainingFinished()
-    signal aborted();
-
-    Shortcut {
-        sequence: "Escape"
-        onActivated: exitClicked()
-    }
-
-    function exitClicked() {
-        studyService.pause()
-        abortQuestionPopup.open(qsTr("Прервать тренировку? Прогресс не засчитается"))
-    }
+    property var pageParams: null // nothing now
 
     Rectangle {
         anchors.fill: parent
@@ -36,13 +25,13 @@ Item {
     ColumnLayout {
         visible: !htmlCard.loading
         anchors.fill: parent
-        spacing: 0  // Remove spacing between items
+        spacing: 0
 
         // Progress bar with consistent layout space
         Item {
             id: progressBarContainer
             Layout.fillWidth: true
-            Layout.preferredHeight: 30  // Fixed height for progress bar area
+            Layout.preferredHeight: 30
             Layout.topMargin: 8
 
             ColorfulProgressbar {
@@ -66,7 +55,6 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             html: loading ? "" : get_html()
-            visible: !abortQuestionPopup.visible
             onLoadingChanged: {
                 if (loading) {
                     studyService.pause()
@@ -76,8 +64,8 @@ Item {
             }
 
             function get_html() {
-                return root.flipped ? (countLines(studyService.cardText) > 2 ? verticalCenterText(studyService.cardText) : centerHtml(studyService.cardText))
-                                    : centerHtml(studyService.cardText)
+                return studyService.flipped ? (countLines(studyService.back) > 2 ? verticalCenterText(studyService.back) : centerHtml(studyService.back))
+                                    : centerHtml(studyService.front)
             }
         }
 
@@ -86,31 +74,10 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignBottom
             Layout.topMargin: 8
-            onEasyClicked: studyService.answer(0);
-            onNormalClicked: studyService.answer(1.35);
-            onHardClicked: studyService.answer(3);
-            onBadClicked: studyService.answer(5);
-        }
-    }
-
-    Connections {
-        target: studyService
-
-        function onTraining_finished() {
-            root.trainingFinished()
-        }
-    }
-
-    QuestionPopup {
-        id: abortQuestionPopup
-
-        onAcceptClicked: {
-            studyService.abort()
-            root.aborted()
-        }
-
-        onDeclineClicked: {
-            studyService.resume()
+            onEasyClicked: studyService.answer(0.0)
+            onNormalClicked: studyService.answer(1.35)
+            onHardClicked: studyService.answer(3.0)
+            onBadClicked: studyService.answer(5.0)
         }
     }
 }

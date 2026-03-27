@@ -1,32 +1,21 @@
 // Card preview page
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC
-import Revise
+import Revise as Revise
 
 Item {
     id: root
 
+    property var pageParams: null // Revise.Card expected
+
     // front of the card
-    property string front
+    property string front : pageParams ? pageParams.card.front : string()
     // back of the card
-    property string back
+    property string back : pageParams ? pageParams.card.back : string()
     // flipped?
     property bool flipped: false
-    // Previous page
-    property int previousPageIndex: 0
-
-    signal backClicked(int previousPageIndex)
-
-    Shortcut {
-        sequence: "Escape"
-        onActivated: exitClicked()
-    }
-
-    function exitClicked() {
-        root.flipped = false
-        root.backClicked(root.previousPageIndex)
-    }
 
     Rectangle {
         anchors.fill: parent
@@ -47,7 +36,7 @@ Item {
         spacing: 8
         visible: !htmlCard.loading
 
-        HtmlView {
+        Revise.HtmlView {
             id: htmlCard
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -55,19 +44,23 @@ Item {
                                : centerHtml(root.front)
         }
 
-        Button {
+        Revise.Button {
             Layout.fillWidth: true
             text: qsTr("Перевернуть")
-            onClicked: root.flipped = !root.flipped
+            onClicked: root.flip()
         }
 
-        Button {
+        Revise.Button {
             Layout.fillWidth: true
             text: qsTr("Назад")
             onClicked: {
                 root.flipped = false
-                root.backClicked(root.previousPageIndex)
+                router.back()
             }
         }
+    }
+
+    function flip() {
+        root.flipped = !root.flipped
     }
 }

@@ -1,19 +1,20 @@
-// Deck creation popup
+// Deck creation dialog
+
 import QtQuick
 import QtQuick.Controls as QC
 import QtQuick.Layouts
 import QtQuick.Effects
-import Revise
+import Revise as Revise
 
-PopupBase {
+Revise.PopupBase {
     id: root
 
     widthLimit: Math.min(parent.width * 0.85, 420)
 
-    signal createClicked(Deck deck)
+    signal createClicked(Revise.Deck deck)
 
     // Deck name input
-    ValidatedTextField {
+    Revise.ValidatedTextField {
         id: deckName
         Layout.fillWidth: true
         Layout.preferredHeight: 35
@@ -24,14 +25,14 @@ PopupBase {
     }
 
     // Deck description
-    ValidatedTextField {
+    Revise.ValidatedTextField {
         id: deckDescription
         Layout.fillWidth: true
         Layout.preferredHeight: 35
         placeholderText: qsTr("Описание (необязательно)")
     }
 
-    CheckupableOption {
+    Revise.CheckupableOption {
         id: limitTime
         text: qsTr("Ограничить время ответа")
         Layout.fillWidth: true
@@ -39,7 +40,7 @@ PopupBase {
     }
 
     // Time limit
-    ValidatedTextField {
+    Revise.ValidatedTextField {
         id: deckTimeLimit
         editable: limitTime.checked
         Layout.fillWidth: true
@@ -53,7 +54,7 @@ PopupBase {
     }
 
     // New limit
-    ValidatedTextField {
+    Revise.ValidatedTextField {
         id: deckNewLimit
         Layout.fillWidth: true
         Layout.preferredHeight: 35
@@ -66,7 +67,7 @@ PopupBase {
     }
 
     // Consolidate limit
-    ValidatedTextField {
+    Revise.ValidatedTextField {
         id: deckConsolidateLimit
         Layout.fillWidth: true
         Layout.preferredHeight: 35
@@ -79,7 +80,7 @@ PopupBase {
     }
 
     // Incorrect limit
-    ValidatedTextField {
+    Revise.ValidatedTextField {
         id: deckIncorrectLimit
         Layout.fillWidth: true
         Layout.preferredHeight: 35
@@ -91,7 +92,7 @@ PopupBase {
         }
     }
 
-    Button {
+    Revise.Button {
         text: qsTr("Создать")
         clickable: deckName.valid && deckName.text !== ""
                    && (deckDescription.valid || deckDescription.text
@@ -104,14 +105,14 @@ PopupBase {
                    && deckIncorrectLimit.text !== ""
 
         onClicked: {
-            let deck = new Deck(deckName.text, deckDescription.text,
+            let deck = new Revise.Deck(deckName.text, deckDescription.text,
                                 parseInt(deckTimeLimit.text),
                                 parseInt(deckNewLimit.text),
                                 parseInt(deckConsolidateLimit.text),
                                 parseInt(deckIncorrectLimit.text))
 
-            root.createClicked(deck)
             root.close()
+            root.createClicked(deck)
         }
     }
 

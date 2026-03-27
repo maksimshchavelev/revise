@@ -9,6 +9,9 @@ WebView {
     property string html
     property int fontSize: Theme.textSizeDefault
     property color textColor: Theme.textColor
+    property bool ready: false
+
+    property string pendingHtml: ""
 
     settings.allowFileAccess: true
     settings.localContentCanAccessFileUrls: true
@@ -16,8 +19,16 @@ WebView {
     Component.onCompleted: {
         const base = Qt.resolvedUrl(StandardPaths.writableLocation(StandardPaths.AppDataLocation) + "/web/card.html")
         web.url = base
-        web.runJavaScript(`setFontSize(${web.fontSize})`)
-        web.runJavaScript(`setTextColor('#00ff00')`)
+    }
+
+    onLoadingChanged: function(loadRequest) {
+        if (loadRequest.status === WebView.LoadSucceededStatus) {
+            web.ready = true
+
+            web.runJavaScript(`setFontSize(${web.fontSize})`)
+            web.runJavaScript(`setTextColor('${web.textColor}')`)
+            show(html)
+        }
     }
 
     function centerHtml(htmlText) {
@@ -128,13 +139,17 @@ WebView {
         escaped = escaped.replace(/>/g, "&gt;")
         escaped = escaped.replace(/&/g, "&amp;")
 
+        web.runJavaScript(`setFontSize(${web.fontSize})`)
+        web.runJavaScript(`setTextColor('${web.textColor}')`)
         web.runJavaScript(`renderCard(decodeURIComponent('${escaped}'))`);
     }
 
     onHtmlChanged: {
-        web.runJavaScript(`setFontSize(${web.fontSize})`)
-        web.runJavaScript(`setTextColor('${web.textColor}')`)
-        show(html)
+        if (web.ready) {
+            show(html)
+        } else {
+            pendingHtml = html
+        }
     }
 
     DebugBounds {}

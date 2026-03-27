@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(CMAKE_CXX_FLAGS_DEBUG   "-g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+
 option(REVISE_BUILD_TESTS "Need to build tests?" ON)
 option(REVISE_BUILD_APP "Need to build revise application?" ON)
 

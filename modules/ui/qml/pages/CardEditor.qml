@@ -1,47 +1,33 @@
-// Card creation page
+// Page for editing or creating a new card.
 import QtQuick
 import QtQuick.Layouts
-import Revise
+import Revise as Revise
 
 Item {
     id: root
 
-    property int deckId: 0
-
-    signal createClicked(int deckId, string front, string back)
-    signal previewClicked(string front, string back)
-    signal backClicked
-
-    Shortcut {
-        sequence: "Escape"
-        onActivated: exitClicked()
-    }
-
-    function exitClicked() {
-        root.backClicked()
-    }
+    property var pageParams: null // contains editMode and Revise.Card
 
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 4
         spacing: 8
 
-        AppText {
+        Revise.AppText {
             text: qsTr("Текст спереди")
         }
 
-        ValidatedTextField {
+        Revise.ValidatedTextField {
             id: cardFront
             Layout.fillWidth: true
             Layout.preferredHeight: 35
             placeholderText: qsTr("Текст спереди")
             inputMethodHints: Qt.ImhNoAutoUppercase
-            onTextChanged: {
-                valid = !deckService.is_card_exists(root.deckId, cardFront.text)
-            }
+            text: pageParams.card.front
 
+            // onTextChanged: valid = !deckService.is_card_exists(root.deckId, cardFront.text)
             Shortcut {
-                sequence: "Ctrl+Return" // Return = Enter
+                sequence: "Ctrl+Return"
                 onActivated: {
                     cardFront.rawTextInput.focus = false
                     cardBack.rawTextEdit.focus = true
@@ -53,7 +39,7 @@ Item {
         RowLayout {
             Layout.fillWidth: true
 
-            AppText {
+            Revise.AppText {
                 text: qsTr("Текст сзади")
             }
 
@@ -67,7 +53,7 @@ Item {
                 layoutDirection: Qt.RightToLeft
 
                 // Tool buttons
-                Button {
+                Revise.Button {
                     id: addMathButton
                     text: "f(x)"
                     onClicked: {
@@ -77,7 +63,7 @@ Item {
                     implicitHeight: 32
                 }
 
-                Button {
+                Revise.Button {
                     id: addBoldButton
                     text: "<b>B</b>"
                     onClicked: {
@@ -92,7 +78,7 @@ Item {
                     implicitHeight: 32
                 }
 
-                Button {
+                Revise.Button {
                     id: addItalicButton
                     text: "<i>I</i>"
                     onClicked: {
@@ -107,7 +93,7 @@ Item {
                     implicitHeight: 32
                 }
 
-                Button {
+                Revise.Button {
                     id: addUnderlinedButton
                     text: "<u>U</u>"
                     onClicked: {
@@ -121,7 +107,7 @@ Item {
                     implicitHeight: 32
                 }
 
-                Button {
+                Revise.Button {
                     id: addCodeButton
                     text: "code"
                     onClicked: {
@@ -133,12 +119,13 @@ Item {
             }
         }
 
-        ValidatedMultilineTextField {
+        Revise.ValidatedMultilineTextField {
             id: cardBack
             Layout.fillWidth: true
             Layout.fillHeight: true
             inputMethodHints: Qt.ImhNoAutoUppercase
             placeholderText: qsTr("Текст сзади")
+            text: pageParams.card.back
 
             Shortcut {
                 sequence: "Ctrl+B"
@@ -188,16 +175,25 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
 
-                Button {
+                Revise.Button {
                     id: btnAdd
                     anchors.fill: parent
-                    text: qsTr("Добавить")
+                    text: root.pageParams.editMode ? qsTr("Обновить") : qsTr(
+                                                         "Добавить")
+
                     clickable: cardFront.valid && cardFront.text.trim() !== ""
                                && cardBack.valid && cardBack.text.trim() !== ""
+
                     onClicked: {
-                        createClicked(root.deckId, cardFront.text,
-                                      cardBack.text)
-                        // Clear fields after adding
+                        if (root.pageParams.editMode) {
+                            deckService.update_card(root.card)
+                        } else {
+                            root.pageParams.card.difficulty = 2.5
+                            root.pageParams.card.front = cardFront.text.trim()
+                            root.pageParams.card.back = cardBack.text.trim()
+                            deckService.create_card(root.pageParams.card)
+                        }
+
                         cardFront.text = ""
                         cardBack.text = ""
                     }
@@ -208,7 +204,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
 
-                Button {
+                Revise.Button {
                     id: btnPreview
                     anchors.fill: parent
                     text: qsTr("Превью")
@@ -216,25 +212,41 @@ Item {
                                && cardBack.valid && cardBack.text.trim() !== ""
                     onClicked: {
                         Qt.inputMethod.hide()
-                        previewClicked(cardFront.text, cardBack.text)
+
+                        let card = new Revise.Card()
+                        card.front = cardFront.text
+                        card.back = cardBack.text
+
+                        // Dear readers of this code! Here is a high-quality example of a workaround. We navigate to
+                        // our own page by updating `pageParams` with a new card. In this case, when we return from
+                        // `cardPreview`, the card text will load normally from the history.
+                        router.navigate("cardEditor", {
+                                            "editMode": false,
+                                            "card": card
+                                        })
+                        router.navigate("cardPreview", {
+                                            "card": card
+                                        })
                     }
                 }
             }
         }
 
-        Button {
+        Revise.Button {
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             Layout.topMargin: 4
             text: qsTr("Назад")
             onClicked: {
                 Qt.inputMethod.hide()
-                root.backClicked()
+                router.back()
             }
         }
+
+        Revise.VerticalSpacer {}
     }
 
-    WrapTextPopup {
+    Revise.WrapTextDialog {
         id: wrapPopup
 
         onWrapClicked: function (wrapped) {
@@ -243,11 +255,10 @@ Item {
             cardBack.rawTextEdit.cursorVisible = true
             cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
                                         wrapped)
-            wrapPopup.close()
         }
     }
 
-    AddFormulaPopup {
+    Revise.AddFormulaPopup {
         id: addFormulaPopup
 
         onAddInline: {
@@ -267,14 +278,13 @@ Item {
         }
     }
 
-    AddCodePopup {
+    Revise.AddCodeDialog {
         id: addCodePopup
 
         onAddClicked: function (code, language) {
             cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
                                         `<pre><code class="${language.trim(
                                             )}">${code.trim()}</code></pre>`)
-            addCodePopup.close()
         }
     }
 }

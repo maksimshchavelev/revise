@@ -14,6 +14,9 @@ Item {
     z: 1000
     opacity: root.visible ? 1 : 0
 
+    signal opened
+    signal closed
+
     property string text
     property Item sourceItem
     property real maxHeightRatio: 0.85 // When content exceeds this ratio, enable scrolling

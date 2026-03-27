@@ -1,44 +1,27 @@
-// Edit deck
+// Edit deck page
+
 import QtQuick
 import QtQuick.Layouts
-import Revise
+import Revise as Revise
 
 Item {
     id: root
 
-    property int deckId: 0
-    property var deck: ({
-                            "name": "",
-                            "description": "",
-                            "timeLimit": 0,
-                            "newLimit": 0,
-                            "consolidateLimit": 0,
-                            "incorrectLimit": 0,
-                            "id": 0
-                        })
+    signal backClicked
 
-    signal backClicked()
-    signal updateClicked(int deckId, string name, string description, int timeLimit, int newLimit, int consolidateLimit, int incorrectLimit)
-    signal addCardClicked(int deckId)
-    signal cardClicked(int cardId)
+    property var pageParams: null
+
+    property Revise.Deck deck: pageParams ? pageParams.deck : Revise.Deck
+    property int deckId: deck.id
 
     onDeckIdChanged: {
-        if (deckId > 0) {
-            root.deck = deckService.deck(deckId)
-            cardsModel.setDeck(deckId)
-        }
-    }
-
-    Shortcut {
-        sequence: "Escape"
-        onActivated: exitClicked()
-    }
-
-    function exitClicked() {
-        root.backClicked()
+        root.deck = deckService.deck(deckId)
+        cardsModel.setDeck(deckId)
     }
 
     Flickable {
+        id: flickable
+
         anchors.fill: parent
         contentWidth: width
         contentHeight: layout.implicitHeight
@@ -47,17 +30,20 @@ Item {
 
         ColumnLayout {
             id: layout
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 3
-            anchors.rightMargin: 3
+
             spacing: 8
 
-            AppText {
+            anchors {
+                fill: parent
+                leftMargin: 3
+                rightMargin: 3
+            }
+
+            Revise.AppText {
                 text: qsTr("Название")
             }
 
-            ValidatedTextField {
+            Revise.ValidatedTextField {
                 id: deckName
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
@@ -65,11 +51,11 @@ Item {
                 text: root.deck.name
             }
 
-            AppText {
+            Revise.AppText {
                 text: qsTr("Описание")
             }
 
-            ValidatedTextField {
+            Revise.ValidatedTextField {
                 id: deckDescription
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
@@ -77,18 +63,18 @@ Item {
                 text: root.deck.description
             }
 
-            CheckupableOption {
+            Revise.CheckupableOption {
                 id: limitTime
                 text: qsTr("Ограничить время ответа")
                 Layout.fillWidth: true
                 checked: root.deck ? root.deck.timeLimit > 0 : false
             }
 
-            AppText {
+            Revise.AppText {
                 text: qsTr("Ограничение времени")
             }
 
-            ValidatedTextField {
+            Revise.ValidatedTextField {
                 id: deckTimeLimit
                 editable: limitTime.checked
                 Layout.fillWidth: true
@@ -102,11 +88,11 @@ Item {
                 text: root.deck.timeLimit
             }
 
-            AppText {
+            Revise.AppText {
                 text: qsTr("Ограничение новых карточек")
             }
 
-            ValidatedTextField {
+            Revise.ValidatedTextField {
                 id: deckNewLimit
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
@@ -119,11 +105,11 @@ Item {
                 text: root.deck.newLimit
             }
 
-            AppText {
+            Revise.AppText {
                 text: qsTr("Ограничение повторяемых")
             }
 
-            ValidatedTextField {
+            Revise.ValidatedTextField {
                 id: deckConsolidateLimit
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
@@ -136,11 +122,11 @@ Item {
                 text: root.deck.consolidateLimit
             }
 
-            AppText {
+            Revise.AppText {
                 text: qsTr("Ограничение ошибочных")
             }
 
-            ValidatedTextField {
+            Revise.ValidatedTextField {
                 id: deckIncorrectLimit
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
@@ -156,7 +142,7 @@ Item {
             RowLayout {
                 Layout.fillWidth: true
 
-                AppText {
+                Revise.AppText {
                     Layout.fillWidth: true
                     text: qsTr("Список карточек (всего " + cardsModel.cardsCount + "):")
                 }
@@ -166,9 +152,16 @@ Item {
                 }
 
                 // Create button
-                Button {
+                Revise.Button {
                     text: qsTr("Добавить")
-                    onClicked: root.addCardClicked(root.deckId)
+                    onClicked: {
+                        let card = new Revise.Card()
+                        card.deckId = deckId
+                        router.navigate("cardEditor", {
+                                            "editMode": false,
+                                            "card": card
+                                        })
+                    }
                 }
             }
 
@@ -183,13 +176,11 @@ Item {
                 Layout.preferredHeight: Math.min(contentHeight,
                                                  root.height * 0.55)
 
-                onContentHeightChanged: console.log(contentHeight)
-
                 delegate: Item {
                     width: ListView.view.width
                     height: card.implicitHeight
 
-                    CardView {
+                    Revise.CardDelegate {
                         id: card
                         width: parent.width
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -198,46 +189,64 @@ Item {
                         front: model.front
                         back: model.back
 
-                        onClicked: {
-                            root.cardClicked(card.cardId)
-                        }
+                        onClicked: cardEventDialog.open(parseInt(card.cardId))
                     }
                 }
             }
 
-            Button {
+            Revise.Button {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 Layout.topMargin: 4
                 text: qsTr("Обновить")
-                clickable: deckName.valid && deckName.text.trim() !== ""
-                           && (deckDescription.valid || deckDescription.text.trim()
-                               === "") && (!limitTime.checked
-                                           || (deckTimeLimit.valid && deckTimeLimit.text.trim()
-                                               !== "")) && deckNewLimit.valid
-                           && deckNewLimit.text.trim() !== ""
-                           && deckConsolidateLimit.valid && deckConsolidateLimit.text.trim()
-                           !== "" && deckIncorrectLimit.valid
-                           && deckIncorrectLimit.text.trim() !== ""
+                clickable: deckName.valid && deckName.text.trim()
+                           !== "" && (deckDescription.valid
+                                      || deckDescription.text.trim()
+                                      === "") && (!limitTime.checked
+                                                  || (deckTimeLimit.valid && deckTimeLimit.text.trim(
+                                                          ) !== ""))
+                           && deckNewLimit.valid && deckNewLimit.text.trim(
+                               ) !== ""
+                           && deckConsolidateLimit.valid && deckConsolidateLimit.text.trim(
+                               ) !== ""
+                           && deckIncorrectLimit.valid && deckIncorrectLimit.text.trim(
+                               ) !== ""
                 onClicked: {
-                    updateClicked(
-                                root.deckId, deckName.text,
-                                deckDescription.text,
-                                limitTime.checked ? parseInt(
-                                                        deckTimeLimit.text) : 0,
-                                parseInt(deckNewLimit.text),
-                                parseInt(deckConsolidateLimit.text),
-                                parseInt(deckIncorrectLimit.text))
+                    deckService.update_deck(root.deck)
                 }
             }
 
-            Button {
+            Revise.Button {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 Layout.topMargin: 4
                 text: qsTr("Закрыть")
-                onClicked: root.backClicked()
+                onClicked: router.back()
             }
+
+            Revise.VerticalSpacer {}
+        }
+    }
+
+    Revise.CardEventDialog {
+        id: cardEventDialog
+        backgroundItem: flickable
+
+        onPreviewClicked: function (cardId) {
+            Qt.inputMethod.hide()
+            router.navigate("cardPreview", {"card": deckService.card(cardId)})
+        }
+
+        onRemoveClicked: function (cardId) {
+            deckService.remove_card(cardId)
+        }
+
+        onEditClicked: function (cardId) {
+            Qt.inputMethod.hide()
+            router.navigate("cardEditor", {
+                                "editMode": true,
+                                "card": deckService.card(cardId)
+                            })
         }
     }
 }

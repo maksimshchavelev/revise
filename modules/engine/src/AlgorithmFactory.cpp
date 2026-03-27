@@ -6,7 +6,7 @@
 namespace engine {
 
 std::unique_ptr<core::IAlgorithm> create_study_algorithm(const AlgorithmType type) {
-    return std::unique_ptr<SM2Algorithm>();
+    return std::make_unique<SM2Algorithm>();
 }
 
 } // namespace engine

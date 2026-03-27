@@ -161,7 +161,11 @@ Item {
 
     function _openBase() {
         root.visible = true
-        backgroundItem.visible = false
+
+        if (backgroundItem) {
+            backgroundItem.visible = false
+        }
+
         popupContainer.height = Qt.binding(function () {
             return popupContainer.targetHeight
         })
@@ -170,7 +174,11 @@ Item {
 
     function _closeBase() {
         root.visible = false
-        backgroundItem.visible = true
+
+        if (backgroundItem) {
+            backgroundItem.visible = true
+        }
+
         root.closed()
     }
 

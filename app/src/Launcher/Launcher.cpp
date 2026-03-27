@@ -43,46 +43,49 @@ int Launcher::run() {
 
     m_ui.init_engine(m_app);
 
-    m_router.push_page("main", m_ui.create_page(QUrl("qrc:/qml/MainLayout.qml")));
-    m_router.push_page("editDeck", m_ui.create_page(QUrl("qrc:/qml/pages/EditDeck.qml")));
+    m_router.push_page("home", m_ui.create_page(QUrl("qrc:/qml/pages/Home.qml")));
+    m_router.push_page("deckEditor", m_ui.create_page(QUrl("qrc:/qml/pages/DeckEditor.qml")));
+    m_router.push_page("training", m_ui.create_page(QUrl("qrc:/qml/pages/Training.qml")));
+    m_router.push_page("cardEditor", m_ui.create_page(QUrl("qrc:/qml/pages/CardEditor.qml")));
+    m_router.push_page("cardPreview", m_ui.create_page(QUrl("qrc:/qml/pages/CardPreview.qml")));
 
-    m_router.navigate(ui::Page{"main"});
+    m_router.navigate(ui::Page{"home"});
 
     return m_app.exec();
 }
 
 
 void Launcher::init() {
-    if (m_streak_storage = std::make_shared<io::SqlStreakStorage>(m_db, m_db_context); m_streak_storage) {
-        qDebug() << "Streak storage created";
+    if (m_streak_storage = std::make_shared<io::SqlStreakStorage>(m_db, m_db_context); !m_streak_storage) {
+        qWarning() << "Failed to create streak storage, got nullptr";
     }
 
-    if (m_streak_service = engine::create_streak_service(m_streak_storage); m_streak_service) {
-        qDebug() << "Streak service created";
+    if (m_streak_service = engine::create_streak_service(m_streak_storage); !m_streak_service) {
+        qWarning() << "Failed to create streak service, got nullptr";
     }
 
-    if (m_algorithm = engine::create_study_algorithm(engine::AlgorithmType::SM2); m_algorithm) {
-        qDebug() << "SM2 study algorithm created";
+    if (m_algorithm = engine::create_study_algorithm(engine::AlgorithmType::SM2); !m_algorithm) {
+        qWarning() << "Failed to create SM2 algorithm, got nullptr";
     }
 
-    if (m_anki_importer = io::create_deck_importer(io::ImporterFormat::ANKI); m_anki_importer) {
-        qDebug() << "Anki deck importer created";
+    if (m_anki_importer = io::create_deck_importer(io::ImporterFormat::ANKI); !m_anki_importer) {
+        qWarning() << "Failed to create anki deck importer, got nullptr";
     }
 
-    if (m_revise_importer = io::create_deck_importer(io::ImporterFormat::REVISE); m_revise_importer) {
-        qDebug() << "Revise deck importer created";
+    if (m_revise_importer = io::create_deck_importer(io::ImporterFormat::REVISE); !m_revise_importer) {
+        qWarning() << "Failed to create revise deck importer, got nullptr";
     }
 
-    if (m_revise_exporter = io::create_deck_exporter(io::ExporterFormat::REVISE); m_revise_exporter) {
-        qDebug() << "Revise deck exporter created";
+    if (m_revise_exporter = io::create_deck_exporter(io::ExporterFormat::REVISE); !m_revise_exporter) {
+        qWarning() << "Failed to create revise deck exporter, got nullptr";
     }
 
-    if (m_deck_media_storage = io::create_deck_media_storage(); m_deck_media_storage) {
-        qDebug() << "Deck media storage created";
+    if (m_deck_media_storage = io::create_deck_media_storage(); !m_deck_media_storage) {
+        qWarning() << "Failed to create deck media storage, got nullptr";
     }
 
-    if (m_deck_storage = std::make_unique<io::SqlDeckStorage>(m_db, m_db_context); m_deck_storage) {
-        qDebug() << "Deck storage created";
+    if (m_deck_storage = std::make_unique<io::SqlDeckStorage>(m_db, m_db_context); !m_deck_storage) {
+        qWarning() << "Failed to create sql deck storage, got nullptr";
     }
 
     engine::DeckServiceDeps deck_service_deps{.deck_storage = *m_deck_storage,
@@ -91,22 +94,22 @@ void Launcher::init() {
                                               .revise_deck_importer = *m_revise_importer,
                                               .deck_exporter = *m_revise_exporter};
 
-    if (m_deck_service = std::make_unique<engine::DeckService>(deck_service_deps); m_deck_service) {
-        qDebug() << "Deck service created";
+    if (m_deck_service = std::make_unique<engine::DeckService>(deck_service_deps); !m_deck_service) {
+        qWarning() << "Failed to create deck service, got nullptr";
     }
 
     engine::StudyEngineDeps study_engine_deps{.algorithm = *m_algorithm, .deck_storage = *m_deck_storage};
 
-    if (m_study_engine = std::make_unique<engine::StudyEngine>(study_engine_deps); m_study_engine) {
-        qDebug() << "Study engine created";
+    if (m_study_engine = std::make_unique<engine::StudyEngine>(study_engine_deps); !m_study_engine) {
+        qWarning() << "Failed to create study engine, got nullptr";
     }
 
-    if (m_study_service = std::make_unique<engine::StudyService>(*m_study_engine); m_study_service) {
-        qDebug() << "Study service created";
+    if (m_study_service = std::make_unique<engine::StudyService>(*m_study_engine); !m_study_service) {
+        qWarning() << "Failed to create study service, got nullptr";
     }
 
-    if (m_popup_service = engine::create_popup_service(); m_popup_service) {
-        qDebug() << "Popup service created";
+    if (m_popup_service = engine::create_popup_service(); !m_popup_service) {
+        qWarning() << "Failed to create popup service, got nullptr";
     }
 }
 
