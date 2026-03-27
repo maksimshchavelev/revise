@@ -27,13 +27,13 @@ Item {
 
             Behavior on width {
                 NumberAnimation {
-                    duration: 150
+                    duration: 15
                 }
             }
 
             Behavior on color {
                 ColorAnimation {
-                    duration: 150
+                    duration: 15
                 }
             }
         }
