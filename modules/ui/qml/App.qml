@@ -17,10 +17,7 @@ ApplicationWindow {
 
     title: "Revise"
 
-    background: Image {
-        fillMode: Image.Tile
-        source: "qrc:/res/img/background_blurred.png"
-    }
+    background: Revise.Background {}
 
     Loader {
         id: pageLoader

@@ -39,4 +39,8 @@ QtObject {
     readonly property real textSizeBig: 38
 
     readonly property color debugBounds: "#e30000"
+
+    readonly property color backgroundGradient1: "#2a285c"
+    readonly property color backgroundGradient2: "#5c2831"
+    readonly property color background: "#121315"
 }
