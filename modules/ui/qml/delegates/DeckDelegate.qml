@@ -87,6 +87,11 @@ Item {
                     pointSize: Revise.Theme.textSizeMedium
                     bold: true
                 }
+
+                Revise.HoverableTooltip {
+                    anchors.fill: parent
+                    text: root.deckName
+                }
             }
 
             Revise.IconButton {
@@ -116,6 +121,12 @@ Item {
                 verticalAlignment: Revise.Text.AlignVCenter
                 color: Revise.Theme.textColorDark
                 font.pointSize: Revise.Theme.textSizeDefault
+            }
+
+            Revise.HoverableTooltip {
+                visible: root.deckDescription.length > 0
+                anchors.fill: parent
+                text: root.deckDescription
             }
         }
 
@@ -222,6 +233,12 @@ Item {
             background.opacity: 0.2
 
             onClicked: root.clicked()
+
+            Revise.HoverableTooltip {
+                visible: !root.repeatableToday
+                anchors.fill: parent
+                text: qsTr("Сегодня учить нечего. Отдохните")
+            }
         }
 
         Revise.Spacer {}
