@@ -4,7 +4,7 @@ import QtQuick
 QtObject {
     readonly property color tintColor: "#060606"
     readonly property color textColor: "#D8D8D8"
-    readonly property color textColorDark: "#8c8c8c"
+    readonly property color textColorDark: "#929292"
 
     readonly property color progressbarLowColor: "#f05f32"
     readonly property color progressbarMediumColor: "#f0dd32"
@@ -34,13 +34,27 @@ QtObject {
 
     readonly property color popupBorder: "#5e5e5e"
 
-    readonly property real textSizeDefault: 19
-    readonly property real textSizeMedium: 24
-    readonly property real textSizeBig: 38
+    // Font size
+    readonly property int textSizeDefault: 10
+    readonly property int textSizeMedium: 13
+    readonly property int textSizeBig: 18
 
     readonly property color debugBounds: "#e30000"
 
+    // Background
     readonly property color backgroundGradient1: "#2a285c"
     readonly property color backgroundGradient2: "#5c2831"
     readonly property color background: "#121315"
+
+    // Decks
+    readonly property color deckTint: "#4E5156"
+
+    // Borders
+    readonly property color buttonBorder: "#4E5156"
+
+    // Other colors
+    readonly property color green: "#6DD23E"
+    readonly property color blue: "#3C5CFA"
+    readonly property color red: "#E84747"
+    readonly property color grey: "#929292"
 }

@@ -28,6 +28,8 @@ QVariant DecksModel::data(const QModelIndex& index, int role) const {
     switch (role) {
     case NameRole:
         return deck.deck.name;
+    case DescriptionRole:
+        return deck.deck.description;
     case TimeLimitRole:
         return deck.deck.time_limit;
     case DeckId:
@@ -48,6 +50,7 @@ QVariant DecksModel::data(const QModelIndex& index, int role) const {
 
 QHash<int, QByteArray> DecksModel::roleNames() const {
     static QHash<int, QByteArray> roles{{NameRole, "name"},
+                                        {DescriptionRole, "description"},
                                         {TimeLimitRole, "timeLimit"},
                                         {NewCardsRole, "newCards"},
                                         {ConsolidateCardsRole, "consolidateCards"},
@@ -64,7 +67,7 @@ void DecksModel::update() {
 
     auto res = m_deck_service.deck_summaries();
 
-    if (res.has_value()) {
+    if (res) {
         m_decks = std::move(res.value());
     }
 

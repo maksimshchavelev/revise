@@ -1,115 +1,247 @@
 // A deck that will be displayed on the main page
-
 import QtQuick
 import QtQuick.Layouts
-import Revise
+import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
+import Revise as Revise
 
 Item {
     id: root
 
-    implicitHeight: row.implicitHeight + 20
-    implicitWidth: 400
-    Layout.fillWidth: true
-    Layout.alignment: Qt.AlignHCenter
-    scale: root.pressed ? 0.98 : 1
+    width: 170
+    height: 210
+    scale: hoverHandler.hovered ? 1.02 : 1.0
 
-    property real newCards: 0 // Cards that have not yet been studied
-    property real consolidateCards: 0 // Cards that have already been studied and need to be reviewed
-    property real incorrectCards: 0 // Cards that the user answered incorrectly during the last training session
-    property real deckId: 0
-    property string deckName: "" // Name of deck
-    property bool isTimeLimited: false
+    property int newCards: 0 // Cards that have not yet been studied
+    property int consolidateCards: 0 // Cards that have already been studied and need to be reviewed
+    property int incorrectCards: 0 // Cards that the user answered incorrectly during the last training session
+    property int deckId: 0 // deck id
+    property int timeLimit: 0 // time limit
+    property string deckName
+    property string deckDescription
     property bool repeatableToday: false
 
-    signal clicked(string deckName)
+    property Item backgroundItem: null // for blurring
+    property var mappedPos: root.mapToItem(root.backgroundItem, 0, 0)
 
-    property bool pressed: false
+    signal clicked()
 
     Rectangle {
-        anchors.fill: parent
-        color: root.pressed ? "#111111" : "black"
-        opacity: 0.4
-        radius: 15
-        clip: true
+        id: background
 
-        Behavior on color {
-            ColorAnimation {
-                easing.type: Easing.OutBack
-                duration: 100
-            }
+        anchors.fill: parent
+        radius: 10
+        color: "black"
+        layer.enabled: true
+        layer.effect: DropShadow {
+            horizontalOffset: 4
+            verticalOffset: 4
+            radius: 8
+            samples: 32
+            color: "#80000000"
         }
-    }
 
-    Item {
-        anchors.fill: parent
-        anchors.margins: 10
-
-        RowLayout {
-            id: row
+        ShaderEffectSource {
+            id: croppedBackground
             anchors.fill: parent
-            spacing: 20
+            sourceItem: root.backgroundItem
+            live: true
+            hideSource: true
+            visible: true
 
-            RowLayout {
-                spacing: 10
-
-                StatefulIndicator {
-                    visible: root.isTimeLimited
-                    activeIcon: "qrc:/res/img/clocks.png"
-                    showBackground: false
-                    width: 20
-                    height: 20
-                    contentMargins: 0
-                }
-
-                AppText {
-                    id: text
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                    color: Theme.deckTextColor
-                    text: root.deckName
-                    font.bold: true
-                }
-            }
-
-            // Statistics
-            RowLayout {
-                spacing: 5
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-
-                AppText {
-                    color: root.newCards == 0 ? Theme.deckTextColor : Theme.deckNewCardsTextColor
-                    text: root.newCards
-                    font.bold: true
-                }
-
-                AppText {
-                    color: root.consolidateCards == 0 ? Theme.deckTextColor : Theme.deckConsolidateCardsTextColor
-                    text: root.consolidateCards
-                    font.bold: true
-                }
-
-                AppText {
-                    color: root.incorrectCards == 0 ? Theme.deckTextColor : Theme.deckIncorrectCardsTextColor
-                    text: root.incorrectCards
-                    font.bold: true
-                }
-            }
+            sourceRect: Qt.rect(root.mappedPos.x, root.mappedPos.y, root.width,
+                                root.height)
         }
     }
 
-    MouseArea {
+    Rectangle {
+        id: tint
         anchors.fill: parent
-        onPressed: root.pressed = true
-        onReleased: root.pressed = false
-        onClicked: root.clicked(root.deckName)
+        color: Revise.Theme.deckTint
+        opacity: 0.2
+        radius: 10
+    }
+
+    ColumnLayout {
+        id: content
+
+        anchors {
+            fill: parent
+            margins: 5
+        }
+
+        // Deck name
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            Revise.Text {
+                height: parent.height
+                width: menuButton.x - parent.x
+                text: root.deckName
+                elide: Text.ElideRight
+                color: Revise.Theme.textColor
+                verticalAlignment: Revise.Text.AlignVCenter
+
+                font {
+                    pointSize: Revise.Theme.textSizeMedium
+                    bold: true
+                }
+            }
+
+            Revise.IconButton {
+                id: menuButton
+
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.margins: 5
+
+                source: "qrc:/res/img/menu.svg"
+                size: Revise.Theme.textSizeDefault + 5
+                color: Revise.Theme.textColorDark
+                opacity: 0.7
+            }
+        }
+
+        // Deck description
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            Revise.Text {
+                anchors.fill: parent
+                text: root.deckDescription.length > 0 ? root.deckDescription : qsTr(
+                                                            "Без описания...")
+                elide: Text.ElideRight
+                verticalAlignment: Revise.Text.AlignVCenter
+                color: Revise.Theme.textColorDark
+                font.pointSize: Revise.Theme.textSizeDefault
+            }
+        }
+
+        // New cards
+        RowLayout {
+            Layout.fillWidth: true
+
+            Revise.Text {
+                text: qsTr("Новые")
+                font.pointSize: Revise.Theme.textSizeDefault
+                color: Revise.Theme.green
+            }
+
+            Revise.HorizontalSpacer {}
+
+            Revise.Text {
+                text: root.newCards
+                font.pointSize: Revise.Theme.textSizeDefault
+                color: root.newCards > 0 ? Revise.Theme.green : Revise.Theme.textColorDark
+            }
+        }
+
+        // Review cards
+        RowLayout {
+            Layout.fillWidth: true
+
+            Revise.Text {
+                text: qsTr("Закрепляемые")
+                font.pointSize: Revise.Theme.textSizeDefault
+                color: Revise.Theme.blue
+            }
+
+            Revise.HorizontalSpacer {}
+
+            Revise.Text {
+                text: root.consolidateCards
+                font.pointSize: Revise.Theme.textSizeDefault
+                color: root.newCards > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
+            }
+        }
+
+        // Incorrect cards
+        RowLayout {
+            Layout.fillWidth: true
+
+            Revise.Text {
+                text: qsTr("Ошибочные")
+                font.pointSize: Revise.Theme.textSizeDefault
+                color: Revise.Theme.red
+            }
+
+            Revise.HorizontalSpacer {}
+
+            Revise.Text {
+                text: root.consolidateCards
+                font.pointSize: Revise.Theme.textSizeDefault
+                color: root.newCards > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
+            }
+        }
+
+        // Time limit
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 10
+
+            property bool timeUnlimited: root.timeLimit === 0
+            property int iconSize: Revise.Theme.textSizeDefault + 6
+
+            Revise.Icon {
+                size: parent.iconSize
+                source: "qrc:/res/img/clocks.svg"
+                color: Revise.Theme.textColor
+            }
+
+            Revise.HorizontalSpacer {}
+
+            Revise.Icon {
+                visible: parent.timeUnlimited
+                size: parent.iconSize
+                source: "qrc:/res/img/infinity.svg"
+                color: Revise.Theme.textColorDark
+            }
+
+            Revise.Text {
+                visible: !parent.timeUnlimited
+                text: qsTr(`${root.timeLimit} с`)
+                font.pointSize: Revise.Theme.textSizeDefault
+                color: Revise.Theme.textColor
+                verticalAlignment: Revise.Text.AlignVCenter
+            }
+        }
+
+        Revise.Spacer {}
+
+        Revise.Button {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: parent.width * 0.85
+            Layout.preferredHeight: 30
+
+            text: "Учить"
+            font.bold: true
+            clickable: root.repeatableToday
+            background.color: hovered ? Revise.Theme.grey : "transparent"
+            background.opacity: 0.2
+
+            onClicked: root.clicked()
+        }
+
+        Revise.Spacer {}
+    }
+
+    onXChanged: remapPosition()
+    onYChanged: remapPosition()
+
+    function remapPosition() {
+        mappedPos = root.mapToItem(root.backgroundItem, 0, 0)
+    }
+
+    HoverHandler {
+        id: hoverHandler
     }
 
     Behavior on scale {
         NumberAnimation {
-            easing.type: Easing.OutBack
-            duration: 100
+            easing.type: Easing.InOutQuad
+            duration: 60
         }
     }
-
-    DebugBounds {}
 }

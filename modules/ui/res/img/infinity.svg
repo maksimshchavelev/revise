@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   sodipodi:docname="infinity.svg"
+   inkscape:export-filename="infinity.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1293"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     showgrid="true"
+     inkscape:zoom="32"
+     inkscape:cx="1.390625"
+     inkscape:cy="12.296875"
+     inkscape:window-width="1764"
+     inkscape:window-height="1207"
+     inkscape:window-x="66"
+     inkscape:window-y="32"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1416" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1288" />
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 1.4419666,5.6893633 c 2.5463805,-3.6492253 4.8209559,-0.247284 6.6137626,2.3379761 0,0 2.6151878,4.4012226 4.6892788,3.8947906 2.055459,-0.501876 2.494557,-2.8127402 2.488818,-4.0106723 C 15.214577,3.8990639 11.904392,3.1851262 10.406761,4.9252953 9.2069579,6.3193994 6.388602,11.333597 4.3522393,11.84728 1.4004638,12.591873 -0.21786006,8.5157719 1.4235072,5.7165149"
+       id="path7042-1-6"
+       sodipodi:nodetypes="ccssssc"
+       inkscape:label="inf" />
+  </g>
+</svg>

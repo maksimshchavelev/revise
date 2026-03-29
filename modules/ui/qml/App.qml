@@ -12,12 +12,12 @@ ApplicationWindow {
     minimumWidth: 480
     minimumHeight: 320
 
-    width: 720
-    height: 560
+    width: 1080
+    height: 720
 
     title: "Revise"
 
-    background: Revise.Background {}
+    // background: Revise.Background {}
 
     Loader {
         id: pageLoader

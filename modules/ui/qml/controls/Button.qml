@@ -2,76 +2,69 @@
 
 import QtQuick
 import QtQuick.Layouts
-import Revise
+import Revise as Revise
 
 Item {
     id: root
 
-    property string text
-    property real fontPixelSize: Theme.textSizeDefault
-    property real radius: root.height * 0.2
-    property bool pressed: false
-    property bool textBold: false
-    property color textColor: Theme.textColor
+    property real radius: root.height * 0.35
+    property bool pressed: tapHandler.pressed && clickable
+    property bool hovered: hoverHandler.hovered && clickable
     property bool clickable: true
+
+    property alias background: background
+    property alias text: txt.text
+    property alias color: txt.color
+    property alias font: txt.font
+
     signal clicked()
 
-    implicitWidth: textElement.implicitWidth + 40
-    implicitHeight: textElement.implicitHeight + 20
-    scale: root.pressed ? 0.98 : 1
+    implicitWidth: txt.implicitWidth + 40
+    implicitHeight: txt.implicitHeight + 10
+    scale: root.pressed ? 0.96 : 1
 
     Rectangle {
+        id: background
         anchors.fill: parent
         radius: root.radius
-        color: "white"
-        opacity: root.pressed ? 0.1 : 0.15
+        color: "transparent"
+        border.width: 1
+        border.color: Revise.Theme.buttonBorder
+    }
 
-        Behavior on opacity {
-            NumberAnimation {
-                easing.type: Easing.OutBack
-                duration: 90
+    Revise.Text {
+        id: txt
+        color: Revise.Theme.textColor
+        font.pointSize: Revise.Theme.textSizeDefault
+        anchors.centerIn: parent
+    }
+
+    Rectangle {
+        visible: !root.clickable
+        anchors.fill: parent
+        radius: root.radius
+        color: "black"
+        opacity: 0.3
+    }
+
+    HoverHandler {
+        id: hoverHandler
+        cursorShape: root.hovered && root.clickable ? Qt.PointingHandCursor : Qt.ArrowCursor
+    }
+
+    TapHandler {
+        id: tapHandler
+        onTapped: {
+            if (root.clickable) {
+                root.clicked()
             }
         }
     }
 
-    AppText {
-        id: textElement
-        anchors.centerIn: parent
-        anchors.margins: 5
-        text: root.text
-        color: root.textColor
-        font.bold: root.textBold
-    }
-
-    MouseArea {
-        anchors.fill: parent
-
-        onClicked: root.clicked()
-        onPressed: root.pressed = true
-        onReleased: root.pressed = false
-    }
-
     Behavior on scale {
         NumberAnimation {
-            easing.type: Easing.OutBack
-            duration: 90
+            easing.type: Easing.InOutQuad
+            duration: 60
         }
     }
-
-    Rectangle {
-        anchors.fill: parent
-        radius: root.radius
-        color: "black"
-        opacity: 0.4
-        visible: !root.clickable
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {}
-            onPressed: {}
-            onReleased: {}
-        }
-    }
-
-    DebugBounds {}
 }

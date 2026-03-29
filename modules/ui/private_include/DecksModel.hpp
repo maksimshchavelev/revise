@@ -13,6 +13,7 @@ class DecksModel final : public QAbstractListModel {
 
     enum DeckRoles {
         NameRole = Qt::UserRole + 1,
+        DescriptionRole,
         TimeLimitRole,
         NewCardsRole,
         ConsolidateCardsRole,

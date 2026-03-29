@@ -1,8 +1,9 @@
-// Home page
 
+// Home page
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Dialogs
+import QtQuick.Effects
 import Revise as Revise
 
 Item {
@@ -10,51 +11,73 @@ Item {
 
     property var pageParams: null
 
+    Revise.Background {
+        id: background
+        anchors.fill: parent
+    }
+
+    ShaderEffectSource {
+        id: bgSource
+        sourceItem: background
+        anchors.fill: parent
+        live: true
+        hideSource: false
+        visible: false
+    }
+
+    MultiEffect {
+        id: blurredBackground
+        anchors.fill: parent
+        source: bgSource
+        blur: 1.5
+        blurEnabled: true
+        visible: false
+    }
+
     ColumnLayout {
         id: layout
         anchors.fill: root
 
-        // Header
-        Revise.Header {
-            id: header
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: 70
-
-            onAddDeckClicked: addDeckDialog.open()
-        }
-
         // Decks
-        ListView {
+        GridView {
+            id: gridView
+
             model: decksModel
-            spacing: 10
             boundsBehavior: Flickable.StopAtBounds
             clip: true
 
+            cellWidth: 180
+            cellHeight: 220
+
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.rightMargin: 5
-            Layout.leftMargin: 5
+            Layout.margins: 5
 
-            delegate: Item {
-                width: ListView.view.width
-                height: childrenRect.height
+            delegate: Revise.DeckDelegate {
+                deckName: model.name
+                deckDescription: model.description
+                timeLimit: model.timeLimit
+                newCards: model.newCards
+                consolidateCards: model.consolidateCards
+                incorrectCards: model.incorrectCards
+                deckId: model.deckId
+                repeatableToday: model.repeatableToday
+                backgroundItem: blurredBackground
 
-                Revise.DeckDelegate {
-                    width: parent.width
-                    anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: deckEventDialog.open(deckId)
+            }
 
-                    deckName: model.name
-                    isTimeLimited: model.timeLimit > 0
-                    newCards: model.newCards
-                    consolidateCards: model.consolidateCards
-                    incorrectCards: model.incorrectCards
-                    deckId: model.deckId
-                    repeatableToday: model.repeatableToday
-
-                    onClicked: deckEventDialog.open(deckId)
+            function iterateDelegates() {
+                for (var i = 0; i < gridView.contentItem.children.length; i++) {
+                    var child = gridView.contentItem.children[i]
+                    if (child && typeof child.remapPosition === "function") {
+                        child.remapPosition()
+                    }
                 }
             }
+
+            onContentXChanged: iterateDelegates()
+            onContentYChanged: iterateDelegates()
         }
     }
 
@@ -70,7 +93,7 @@ Item {
         id: createDeckDialog
         backgroundItem: layout
 
-        onCreateClicked: function(deck) {
+        onCreateClicked: function (deck) {
             deckService.create_deck(deck)
         }
     }
@@ -79,20 +102,22 @@ Item {
         id: deckEventDialog
         backgroundItem: layout
 
-        onTrainClicked: function(deckId) {
+        onTrainClicked: function (deckId) {
             studyService.start(deckId)
             router.navigate("training", {})
         }
 
-        onRemoveClicked: function(deckId) {
+        onRemoveClicked: function (deckId) {
             deckService.remove_deck(deckId)
         }
 
-        onEditClicked: function(deckId) {
-            router.navigate("deckEditor", {"deck": deckService.deck(deckId)})
+        onEditClicked: function (deckId) {
+            router.navigate("deckEditor", {
+                                "deck": deckService.deck(deckId)
+                            })
         }
 
-        onExportClicked: function(deckId) {
+        onExportClicked: function (deckId) {
             exportDialog.deckId = deckId
             exportDialog.open()
         }
