@@ -1,4 +1,3 @@
-
 // Home page
 import QtQuick
 import QtQuick.Layouts
@@ -64,7 +63,20 @@ Item {
                 repeatableToday: model.repeatableToday
                 backgroundItem: blurredBackground
 
-                onClicked: deckEventDialog.open(deckId)
+                onStudyClicked: {
+                    studyService.start(deckId)
+                    router.navigate("training", {})
+                }
+
+                onEditClicked: {
+                    router.navigate("deckEditor", {
+                                        "deck": deckService.deck(deckId)
+                                    })
+                }
+
+                onRemoveClicked: {
+                    deckService.remove_deck(deckId)
+                }
             }
 
             function iterateDelegates() {

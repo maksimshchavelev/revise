@@ -16,6 +16,8 @@ Item {
     property alias text: txt.text
     property alias color: txt.color
     property alias font: txt.font
+    property alias horizontalAlignment: txt.horizontalAlignment
+    property alias verticalAlignment: txt.verticalAlignment
 
     signal clicked()
 
@@ -27,7 +29,8 @@ Item {
         id: background
         anchors.fill: parent
         radius: root.radius
-        color: "transparent"
+        color: hovered ? Revise.Theme.grey : "transparent"
+        opacity: 0.2
         border.width: 1
         border.color: Revise.Theme.buttonBorder
     }
@@ -36,7 +39,10 @@ Item {
         id: txt
         color: Revise.Theme.textColor
         font.pointSize: Revise.Theme.textSizeDefault
-        anchors.centerIn: parent
+        anchors.fill: parent
+        anchors.margins: 8
+        horizontalAlignment: Qt.AlignHCenter
+        verticalAlignment: Qt.AlignVCenter
     }
 
     Rectangle {

@@ -24,7 +24,9 @@ Item {
     property Item backgroundItem: null // for blurring
     property var mappedPos: root.mapToItem(root.backgroundItem, 0, 0)
 
-    signal clicked()
+    signal studyClicked()
+    signal editClicked()
+    signal removeClicked()
 
     Rectangle {
         id: background
@@ -105,6 +107,13 @@ Item {
                 size: Revise.Theme.textSizeDefault + 5
                 color: Revise.Theme.textColorDark
                 opacity: 0.7
+
+                onClicked: {
+                    kekabMenu.x = menuButton.x + menuButton.width + 10
+                    kekabMenu.y = menuButton.y
+                    kekabMenu.clampPosition()
+                    kekabMenu.open()
+                }
             }
         }
 
@@ -232,7 +241,7 @@ Item {
             background.color: hovered ? Revise.Theme.grey : "transparent"
             background.opacity: 0.2
 
-            onClicked: root.clicked()
+            onClicked: root.studyClicked()
 
             Revise.HoverableTooltip {
                 visible: !root.repeatableToday
@@ -242,6 +251,21 @@ Item {
         }
 
         Revise.Spacer {}
+    }
+
+    Revise.KekabMenu {
+        id: kekabMenu
+
+        Revise.KekabMenuButton {
+            text: qsTr("Редактировать")
+            onClicked: root.editClicked()
+        }
+
+        Revise.KekabMenuButton {
+            text: qsTr("Удалить")
+            color: Revise.Theme.red
+            onClicked: root.removeClicked()
+        }
     }
 
     onXChanged: remapPosition()
