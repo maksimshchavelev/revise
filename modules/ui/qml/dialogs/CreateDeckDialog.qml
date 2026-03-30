@@ -14,25 +14,25 @@ Revise.PopupBase {
     signal createClicked(Revise.Deck deck)
 
     // Deck name input
-    Revise.ValidatedTextField {
+    Revise.TextField {
         id: deckName
         Layout.fillWidth: true
         Layout.preferredHeight: 35
-        placeholderText: qsTr("Имя колоды")
+        placeholder.text: qsTr("Имя колоды")
         onTextChanged: {
             valid = !deckService.is_deck_exists(deckName.text)
         }
     }
 
     // Deck description
-    Revise.ValidatedTextField {
+    Revise.TextField {
         id: deckDescription
         Layout.fillWidth: true
         Layout.preferredHeight: 35
-        placeholderText: qsTr("Описание (необязательно)")
+        placeholder.text: qsTr("Описание (необязательно)")
     }
 
-    Revise.CheckupableOption {
+    Revise.CheckBoxOption {
         id: limitTime
         text: qsTr("Ограничить время ответа")
         Layout.fillWidth: true
@@ -40,12 +40,12 @@ Revise.PopupBase {
     }
 
     // Time limit
-    Revise.ValidatedTextField {
+    Revise.TextField {
         id: deckTimeLimit
         editable: limitTime.checked
         Layout.fillWidth: true
         Layout.preferredHeight: 35
-        placeholderText: qsTr("Ограничение времени (сек)")
+        placeholder.text: qsTr("Ограничение времени (сек)")
         inputMethodHints: Qt.ImhDigitsOnly
         validator: IntValidator {
             bottom: 1
@@ -54,11 +54,11 @@ Revise.PopupBase {
     }
 
     // New limit
-    Revise.ValidatedTextField {
+    Revise.TextField {
         id: deckNewLimit
         Layout.fillWidth: true
         Layout.preferredHeight: 35
-        placeholderText: qsTr("Максимум новых карточек")
+        placeholder.text: qsTr("Максимум новых карточек")
         inputMethodHints: Qt.ImhDigitsOnly
         validator: IntValidator {
             bottom: 1
@@ -67,11 +67,11 @@ Revise.PopupBase {
     }
 
     // Consolidate limit
-    Revise.ValidatedTextField {
+    Revise.TextField {
         id: deckConsolidateLimit
         Layout.fillWidth: true
         Layout.preferredHeight: 35
-        placeholderText: qsTr("Максимум повторяемых")
+        placeholder.text: qsTr("Максимум повторяемых")
         inputMethodHints: Qt.ImhDigitsOnly
         validator: IntValidator {
             bottom: 1
@@ -80,11 +80,11 @@ Revise.PopupBase {
     }
 
     // Incorrect limit
-    Revise.ValidatedTextField {
+    Revise.TextField {
         id: deckIncorrectLimit
         Layout.fillWidth: true
         Layout.preferredHeight: 35
-        placeholderText: qsTr("Максимум ошибочных")
+        placeholder.text: qsTr("Максимум ошибочных")
         inputMethodHints: Qt.ImhDigitsOnly
         validator: IntValidator {
             bottom: 1

@@ -2,6 +2,8 @@
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -21,6 +23,21 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: Revise.Theme.background
+    }
+
+    Image {
+        id: img
+        anchors.fill: parent
+        fillMode: Image.Tile
+        visible: false
+        source: "qrc:/res/img/background.svg"
+    }
+
+    ColorOverlay {
+        id: background
+        anchors.fill: img
+        source: img
+        color: Revise.Theme.backgroundLight
     }
 
     Flickable {
@@ -43,47 +60,47 @@ Item {
                 rightMargin: 3
             }
 
-            Revise.AppText {
+            Revise.Text {
                 text: qsTr("Название")
             }
 
-            Revise.ValidatedTextField {
+            Revise.TextField {
                 id: deckName
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
-                placeholderText: qsTr("Имя колоды")
+                placeholder.text: qsTr("Имя колоды")
                 text: root.deck.name
             }
 
-            Revise.AppText {
+            Revise.Text {
                 text: qsTr("Описание")
             }
 
-            Revise.ValidatedTextField {
+            Revise.TextField {
                 id: deckDescription
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
-                placeholderText: qsTr("Описание (необязательно)")
+                placeholder.text: qsTr("Описание (необязательно)")
                 text: root.deck.description
             }
 
-            Revise.CheckupableOption {
+            Revise.CheckBoxOption {
                 id: limitTime
                 text: qsTr("Ограничить время ответа")
                 Layout.fillWidth: true
                 checked: root.deck ? root.deck.timeLimit > 0 : false
             }
 
-            Revise.AppText {
+            Revise.Text {
                 text: qsTr("Ограничение времени")
             }
 
-            Revise.ValidatedTextField {
+            Revise.TextField {
                 id: deckTimeLimit
                 editable: limitTime.checked
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
-                placeholderText: qsTr("Ограничение времени (сек)")
+                placeholder.text: qsTr("Ограничение времени (сек)")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 1
@@ -92,15 +109,15 @@ Item {
                 text: root.deck.timeLimit
             }
 
-            Revise.AppText {
+            Revise.Text {
                 text: qsTr("Ограничение новых карточек")
             }
 
-            Revise.ValidatedTextField {
+            Revise.TextField {
                 id: deckNewLimit
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
-                placeholderText: qsTr("Максимум новых карточек")
+                placeholder.text: qsTr("Максимум новых карточек")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 1
@@ -109,15 +126,15 @@ Item {
                 text: root.deck.newLimit
             }
 
-            Revise.AppText {
+            Revise.Text {
                 text: qsTr("Ограничение повторяемых")
             }
 
-            Revise.ValidatedTextField {
+            Revise.TextField {
                 id: deckConsolidateLimit
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
-                placeholderText: qsTr("Максимум повторяемых")
+                placeholder.text: qsTr("Максимум повторяемых")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 1
@@ -126,15 +143,15 @@ Item {
                 text: root.deck.consolidateLimit
             }
 
-            Revise.AppText {
+            Revise.Text {
                 text: qsTr("Ограничение ошибочных")
             }
 
-            Revise.ValidatedTextField {
+            Revise.TextField {
                 id: deckIncorrectLimit
                 Layout.fillWidth: true
                 Layout.preferredHeight: 35
-                placeholderText: qsTr("Максимум ошибочных")
+                placeholder.text: qsTr("Максимум ошибочных")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 1
@@ -146,7 +163,7 @@ Item {
             RowLayout {
                 Layout.fillWidth: true
 
-                Revise.AppText {
+                Revise.Text {
                     Layout.fillWidth: true
                     text: qsTr("Список карточек (всего " + cardsModel.cardsCount + "):")
                 }
@@ -157,6 +174,7 @@ Item {
 
                 // Create button
                 Revise.Button {
+                    Layout.preferredHeight: 40
                     text: qsTr("Добавить")
                     onClicked: {
                         let card = new Revise.Card()
@@ -199,8 +217,8 @@ Item {
             }
 
             Revise.Button {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignRight
+                Layout.preferredHeight: 40
                 Layout.topMargin: 4
                 text: qsTr("Обновить")
                 clickable: deckName.valid && deckName.text.trim()
@@ -216,16 +234,15 @@ Item {
                            && deckIncorrectLimit.valid && deckIncorrectLimit.text.trim(
                                ) !== ""
                 onClicked: {
+                    root.deck.name = deckName.text
+                    root.deck.description = deckDescription.text
+                    root.deck.newLimit = parseInt(deckNewLimit.text)
+                    root.deck.consolidateLimit = parseInt(deckConsolidateLimit.text)
+                    root.deck.incorrectLimit = parseInt(deckIncorrectLimit.text)
+                    root.deck.timeLimit = limitTime.checked ? parseInt(deckTimeLimit.text) : 0
+
                     deckService.update_deck(root.deck)
                 }
-            }
-
-            Revise.Button {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.fillWidth: true
-                Layout.topMargin: 4
-                text: qsTr("Закрыть")
-                onClicked: router.back()
             }
 
             Revise.VerticalSpacer {}

@@ -8,7 +8,6 @@ Popup {
     property string text
     property int maxWidth: 300
 
-    // implicitWidth: Math.min(contentItem.implicitWidth + padding * 2, maxWidth)
     closePolicy: Popup.NoAutoClose
     modal: false
     focus: true
@@ -24,5 +23,6 @@ Popup {
         wrapMode: Text.WordWrap
         elide: Text.ElideRight
         maximumLineCount: 10
+        font.pointSize: Revise.Theme.fontSizeSmall
     }
 }

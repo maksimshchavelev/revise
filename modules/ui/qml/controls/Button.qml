@@ -2,6 +2,7 @@
 
 import QtQuick
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -25,6 +26,15 @@ Item {
     implicitHeight: txt.implicitHeight + 10
     scale: root.pressed ? 0.96 : 1
 
+    layer.enabled: true
+    layer.effect: DropShadow {
+        horizontalOffset: 4
+        verticalOffset: 4
+        radius: 8
+        samples: 32
+        color: "#80000000"
+    }
+
     Rectangle {
         id: background
         anchors.fill: parent
@@ -38,7 +48,7 @@ Item {
     Revise.Text {
         id: txt
         color: Revise.Theme.textColor
-        font.pointSize: Revise.Theme.textSizeDefault
+        font.pointSize: Revise.Theme.fontSizeDefault
         anchors.fill: parent
         anchors.margins: 8
         horizontalAlignment: Qt.AlignHCenter

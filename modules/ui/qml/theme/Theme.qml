@@ -28,16 +28,13 @@ QtObject {
 
     readonly property color checkboxBackground: "#A9A9A9"
 
-    readonly property color textInputDefaultBorder: "#4d4d4d"
-    readonly property color textInputValidBorder: "#6DD23E"
-    readonly property color textInputInvalidBorder: "#E84747"
-
     readonly property color popupBorder: "#5e5e5e"
 
     // Font size
-    readonly property int textSizeDefault: 10
-    readonly property int textSizeMedium: 13
-    readonly property int textSizeBig: 18
+    readonly property int fontSizeSmall: 10
+    readonly property int fontSizeDefault: 13
+    readonly property int fontSizeMedium: 16
+    readonly property int fontSizeBig: 18
 
     readonly property color debugBounds: "#e30000"
 
@@ -45,6 +42,7 @@ QtObject {
     readonly property color backgroundGradient1: "#2a285c"
     readonly property color backgroundGradient2: "#5c2831"
     readonly property color background: "#121315"
+    readonly property color backgroundLight: "#1c1e21"
 
     // Decks
     readonly property color deckTint: "#4E5156"
@@ -57,4 +55,9 @@ QtObject {
     readonly property color blue: "#3C5CFA"
     readonly property color red: "#E84747"
     readonly property color grey: "#929292"
+    readonly property color darkGrey: "#1c1c1f"
+
+    // Text input
+    readonly property color textFieldBackground: "#1c1c1f"
+    readonly property color textFieldBorder: "#47474f"
 }

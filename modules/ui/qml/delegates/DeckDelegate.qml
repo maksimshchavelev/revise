@@ -84,11 +84,7 @@ Item {
                 elide: Text.ElideRight
                 color: Revise.Theme.textColor
                 verticalAlignment: Revise.Text.AlignVCenter
-
-                font {
-                    pointSize: Revise.Theme.textSizeMedium
-                    bold: true
-                }
+                font.bold: true
 
                 Revise.HoverableTooltip {
                     anchors.fill: parent
@@ -104,7 +100,7 @@ Item {
                 anchors.margins: 5
 
                 source: "qrc:/res/img/menu.svg"
-                size: Revise.Theme.textSizeDefault + 5
+                size: 15
                 color: Revise.Theme.textColorDark
                 opacity: 0.7
 
@@ -129,7 +125,7 @@ Item {
                 elide: Text.ElideRight
                 verticalAlignment: Revise.Text.AlignVCenter
                 color: Revise.Theme.textColorDark
-                font.pointSize: Revise.Theme.textSizeDefault
+                font.pointSize: Revise.Theme.fontSizeSmall
             }
 
             Revise.HoverableTooltip {
@@ -145,7 +141,7 @@ Item {
 
             Revise.Text {
                 text: qsTr("Новые")
-                font.pointSize: Revise.Theme.textSizeDefault
+                font.pointSize: Revise.Theme.fontSizeSmall
                 color: Revise.Theme.green
             }
 
@@ -153,7 +149,7 @@ Item {
 
             Revise.Text {
                 text: root.newCards
-                font.pointSize: Revise.Theme.textSizeDefault
+                font.pointSize: Revise.Theme.fontSizeSmall
                 color: root.newCards > 0 ? Revise.Theme.green : Revise.Theme.textColorDark
             }
         }
@@ -164,7 +160,7 @@ Item {
 
             Revise.Text {
                 text: qsTr("Закрепляемые")
-                font.pointSize: Revise.Theme.textSizeDefault
+                font.pointSize: Revise.Theme.fontSizeSmall
                 color: Revise.Theme.blue
             }
 
@@ -172,7 +168,7 @@ Item {
 
             Revise.Text {
                 text: root.consolidateCards
-                font.pointSize: Revise.Theme.textSizeDefault
+                font.pointSize: Revise.Theme.fontSizeSmall
                 color: root.newCards > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
             }
         }
@@ -183,7 +179,7 @@ Item {
 
             Revise.Text {
                 text: qsTr("Ошибочные")
-                font.pointSize: Revise.Theme.textSizeDefault
+                font.pointSize: Revise.Theme.fontSizeSmall
                 color: Revise.Theme.red
             }
 
@@ -191,7 +187,7 @@ Item {
 
             Revise.Text {
                 text: root.consolidateCards
-                font.pointSize: Revise.Theme.textSizeDefault
+                font.pointSize: Revise.Theme.fontSizeSmall
                 color: root.newCards > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
             }
         }
@@ -202,7 +198,7 @@ Item {
             spacing: 10
 
             property bool timeUnlimited: root.timeLimit === 0
-            property int iconSize: Revise.Theme.textSizeDefault + 6
+            property int iconSize: 16
 
             Revise.Icon {
                 size: parent.iconSize
@@ -222,7 +218,7 @@ Item {
             Revise.Text {
                 visible: !parent.timeUnlimited
                 text: qsTr(`${root.timeLimit} с`)
-                font.pointSize: Revise.Theme.textSizeDefault
+                font.pointSize: Revise.Theme.fontSizeSmall
                 color: Revise.Theme.textColor
                 verticalAlignment: Revise.Text.AlignVCenter
             }
@@ -258,6 +254,7 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Редактировать")
+            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.editClicked()
@@ -267,6 +264,7 @@ Item {
         Revise.KekabMenuButton {
             text: qsTr("Удалить")
             color: Revise.Theme.red
+            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.removeClicked()
