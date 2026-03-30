@@ -1,6 +1,7 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "ui/Router.hpp" // for header
+#include <platform/Platform.hpp> // for Platform::supports_multiple_windows
 
 namespace ui {
 
@@ -10,13 +11,17 @@ void Router::push_page(QString name, QQmlComponent* page) {
 
 
 void Router::navigate(Page page) {
+    if (!platform::Platform::supports_multiple_windows()) {
+        page.mode = Page::OpenMode::Page;
+    }
+
     m_history.push_back(std::move(page));
     emit pageChanged();
 }
 
 
-void Router::navigate(QString page_name, QVariantMap params) {
-    navigate(Page{std::move(page_name), std::move(params)});
+void Router::navigate(QString page_name, QVariantMap params, Page::OpenMode mode) {
+    navigate(Page{std::move(page_name), std::move(params), mode});
 }
 
 

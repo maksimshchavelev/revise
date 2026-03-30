@@ -258,13 +258,19 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Редактировать")
-            onClicked: root.editClicked()
+            onClicked: {
+                kekabMenu.close()
+                root.editClicked()
+            }
         }
 
         Revise.KekabMenuButton {
             text: qsTr("Удалить")
             color: Revise.Theme.red
-            onClicked: root.removeClicked()
+            onClicked: {
+                kekabMenu.close()
+                root.removeClicked()
+            }
         }
     }
 

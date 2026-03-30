@@ -71,7 +71,7 @@ Item {
                 onEditClicked: {
                     router.navigate("deckEditor", {
                                         "deck": deckService.deck(deckId)
-                                    })
+                                    }, Revise.page.Window)
                 }
 
                 onRemoveClicked: {

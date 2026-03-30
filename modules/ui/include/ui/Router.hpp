@@ -24,10 +24,20 @@ struct Page {
 
     Q_PROPERTY(QString name MEMBER name)
     Q_PROPERTY(QVariantMap params MEMBER params)
+    Q_PROPERTY(OpenMode mode MEMBER mode)
 
   public:
+    /// @brief How to open a page?
+    enum class OpenMode {
+        Page,  ///< Open the page as a new tab
+        Window ///< Open the page in a separate window (*if supported by the platform*)
+    };
+
+    Q_ENUM(OpenMode)
+
     QString     name;   ///< Name of page
     QVariantMap params; ///< Parameters of page
+    OpenMode    mode;   ///< Open mode
 };
 
 /**
@@ -64,6 +74,9 @@ class Router final : public QObject {
      * Changes the current page to the one registered with the given name.
      *
      * @param page Page. See `ui::Page`
+     *
+     * @note The page opening mode can be changed (for example, if `Window` is not supported by the platform, the mode
+     * will be changed to `Page`)
      */
     void navigate(Page page);
 
@@ -74,10 +87,14 @@ class Router final : public QObject {
      *
      * @param page_name Name of page
      * @param params Params of page
+     * @param mode How to open a page? See `ui::Page::OpenMode`
      *
      * @note Can be called from QML
+     *
+     * @note The page opening mode can be changed (for example, if `Window` is not supported by the platform, the mode
+     * will be changed to `Page`)
      */
-    Q_INVOKABLE void navigate(QString page_name, QVariantMap params);
+    Q_INVOKABLE void navigate(QString page_name, QVariantMap params = {}, Page::OpenMode mode = Page::OpenMode::Page);
 
     /**
      * @brief Navigate back to the previous page.

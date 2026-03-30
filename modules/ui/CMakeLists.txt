@@ -71,6 +71,7 @@ target_include_directories(ui
 target_link_libraries(ui
     PUBLIC
         core
+        platform
         Qt6::Core
         Qt6::Qml
         Qt6::Gui

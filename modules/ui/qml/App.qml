@@ -18,7 +18,6 @@ ApplicationWindow {
     title: "Revise"
 
     // background: Revise.Background {}
-
     Loader {
         id: pageLoader
         anchors.fill: parent
@@ -27,13 +26,64 @@ ApplicationWindow {
 
         property bool loading: status === Loader.Loading
 
-        onLoaded: {
-            if (item && router.currentPage) {
-                if (item.hasOwnProperty("pageParams")) {
-                    item.pageParams = router.currentPage.params
-                } else {
-                    console.warn(`Page ${router.currentPage.name} hasn't 'pageParams' property`)
-                }
+        // onLoaded: {
+        //     if (item && router.currentPage) {
+        //         if (item.hasOwnProperty("pageParams")) {
+        //             item.pageParams = router.currentPage.params
+        //         } else {
+        //             console.warn(`Page ${router.currentPage.name} hasn't 'pageParams' property`)
+        //         }
+        //     }
+        // }
+    }
+
+    Item {
+        id: windowLayer
+    }
+
+    function createWindow(page, params) {
+        const component = router.currentPageComponent
+
+        const win = Qt.createQmlObject(`
+                                       import QtQuick
+                                       import QtQuick.Window
+
+                                       Window {
+                                       width: 720
+                                       height: 540
+                                       visible: false
+                                       title: "Revise"
+                                       }
+                                       `, windowLayer)
+
+        const item = component.createObject(win)
+
+        if (!item) {
+            console.error("Failed to create page object")
+            return
+        }
+
+        if (item.hasOwnProperty("pageParams")) {
+            item.pageParams = params
+        } else {
+            console.error("Page hasn't 'pageParams' property")
+        }
+
+        item.parent = win.contentItem
+        item.anchors.fill = win.contentItem
+
+        win.transientParent = appWindow
+        win.visible = true
+    }
+
+    Connections {
+        target: router
+
+        function onPageChanged() {
+            if (router.currentPage.mode === Revise.page.Page) {
+                pageLoader.sourceComponent = router.currentPageComponent
+            } else if (router.currentPage.mode === Revise.page.Window) {
+                createWindow(router.currentPageComponent, router.currentPage.params)
             }
         }
     }
@@ -54,7 +104,8 @@ ApplicationWindow {
         anchors.centerIn: parent
         width: 128
         height: 128
-        running: deckService.importInProgress || deckService.exportInProgress || pageLoader.loading
+        running: deckService.importInProgress || deckService.exportInProgress
+                 || pageLoader.loading
     }
 
     Connections {

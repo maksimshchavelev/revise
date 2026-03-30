@@ -17,11 +17,6 @@ Item {
         cardsModel.setDeck(deckId)
     }
 
-    Rectangle {
-        anchors.fill: parent
-        color: Revise.Theme.background
-    }
-
     Flickable {
         id: flickable
 
