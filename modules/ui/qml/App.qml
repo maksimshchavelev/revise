@@ -53,6 +53,8 @@ ApplicationWindow {
                                        height: 540
                                        visible: false
                                        title: "Revise"
+                                       minimumWidth: 320
+                                       minimumHeight: 240
                                        }
                                        `, windowLayer)
 
@@ -67,6 +69,12 @@ ApplicationWindow {
             item.pageParams = params
         } else {
             console.error("Page hasn't 'pageParams' property")
+        }
+
+        if (item.hasOwnProperty("windowTitle")) {
+            win.title = item.windowTitle
+        } else {
+            console.error("Page hasn't 'windowTitle' property")
         }
 
         item.parent = win.contentItem

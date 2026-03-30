@@ -8,6 +8,7 @@ Item {
     id: root
 
     property var pageParams: null // Revise.Deck expected
+    property string windowTitle: `${deck.name.length > 0 ? deck.name : "Unknown deck"} - Revise`
 
     property Revise.Deck deck: pageParams ? pageParams.deck : Revise.Deck
     property int deckId: deck.id
