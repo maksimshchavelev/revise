@@ -32,7 +32,7 @@ Item {
         id: content
 
         anchors.fill: parent
-        scale: root.hovered ? 0.99 : 1.0
+        scale: root.hovered ? 1.01 : 1.0
 
         Rectangle {
             id: background
@@ -40,8 +40,8 @@ Item {
             anchors.fill: parent
             radius: 10
             color: "black"
-
-            DropShadow {
+            layer.enabled: true
+            layer.effect: DropShadow {
                 horizontalOffset: 4
                 verticalOffset: 4
                 radius: 8
