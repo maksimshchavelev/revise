@@ -102,8 +102,8 @@ Item {
 
         Revise.IconButton {
             id: closeButton
-            Layout.preferredWidth: 18
-            Layout.preferredHeight: 18
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: 16
             source: "qrc:/res/img/close.svg"
             onClicked: root.close()
         }
