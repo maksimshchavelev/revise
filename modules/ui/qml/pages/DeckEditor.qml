@@ -243,6 +243,11 @@ Item {
 
                     deckService.update_deck(root.deck)
                 }
+
+                background.color: hovered ? Qt.lighter(Revise.Theme.green) : Revise.Theme.green
+                background.border.color: Qt.lighter(Revise.Theme.green)
+                background.opacity: 1
+                color: "black"
             }
 
             Revise.VerticalSpacer {}
