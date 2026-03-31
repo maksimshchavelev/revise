@@ -228,7 +228,7 @@ Item {
                         id: card
 
                         anchors.horizontalCenter: parent.horizontalCenter
-                        width: parent.width - 20
+                        width: parent.width - 30
 
                         cardId: model.id
                         front: model.front
