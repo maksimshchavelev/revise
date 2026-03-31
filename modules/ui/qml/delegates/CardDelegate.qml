@@ -171,6 +171,13 @@ Item {
                 }
             }
         }
+
+        Behavior on scale {
+            NumberAnimation {
+                easing.type: Easing.InOutQuad
+                duration: 60
+            }
+        }
     }
 
     onXChanged: remapPosition()
@@ -222,13 +229,6 @@ Item {
                 kekabMenu.close()
                 root.removeClicked()
             }
-        }
-    }
-
-    Behavior on scale {
-        NumberAnimation {
-            easing.type: Easing.InOutQuad
-            duration: 60
         }
     }
 
