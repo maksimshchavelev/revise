@@ -3,6 +3,7 @@
 #pragma once
 
 #include <QGuiApplication> // for QGuiApplication
+#include <QStandardPaths>  // for QStandardPaths
 
 // Database
 #include <io/Database.hpp>                 // for io::Database
@@ -51,7 +52,8 @@ class Launcher {
   private:
     QGuiApplication& m_app;
 
-    io::Database                 m_db;         ///< Database
+    io::Database                 m_db{"revise_main",
+                      QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/revise.db"}; ///< Database
     io::DatabaseExecutionContext m_db_context; ///< Database execution context
 
     std::shared_ptr<io::SqlStreakStorage> m_streak_storage; ///< Streak storage
