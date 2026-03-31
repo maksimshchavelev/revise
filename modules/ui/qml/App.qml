@@ -17,7 +17,6 @@ ApplicationWindow {
 
     title: "Revise"
 
-    // background: Revise.Background {}
     Loader {
         id: pageLoader
         anchors.fill: parent
@@ -25,16 +24,6 @@ ApplicationWindow {
         asynchronous: true
 
         property bool loading: status === Loader.Loading
-
-        // onLoaded: {
-        //     if (item && router.currentPage) {
-        //         if (item.hasOwnProperty("pageParams")) {
-        //             item.pageParams = router.currentPage.params
-        //         } else {
-        //             console.warn(`Page ${router.currentPage.name} hasn't 'pageParams' property`)
-        //         }
-        //     }
-        // }
     }
 
     Item {
@@ -96,11 +85,6 @@ ApplicationWindow {
         }
     }
 
-    Revise.InfoPopup {
-        id: scrollableInfoPopup
-        backgroundItem: pageLoader
-    }
-
     Rectangle {
         id: loaderScreen
         color: "black"
@@ -139,5 +123,12 @@ ApplicationWindow {
 
             popupService.response(response)
         }
+    }
+
+    Revise.Toast {
+        id: toast
+
+        x: appWindow.width - toast.width - 5
+        y: 10
     }
 }

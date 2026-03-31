@@ -60,4 +60,9 @@ QtObject {
     // Text input
     readonly property color textFieldBackground: "#1c1c1f"
     readonly property color textFieldBorder: "#47474f"
+
+    // Toast
+    readonly property color toastInfo: "#a5a1b0"
+    readonly property color toastSuccess: "#4eb374"
+    readonly property color toastError: "#d4613e"
 }
