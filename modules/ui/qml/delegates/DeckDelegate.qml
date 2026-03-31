@@ -252,6 +252,13 @@ Item {
 
             Revise.Spacer {}
         }
+
+        Behavior on scale {
+            NumberAnimation {
+                easing.type: Easing.InOutQuad
+                duration: 60
+            }
+        }
     }
 
     Revise.KekabMenu {
@@ -284,12 +291,5 @@ Item {
 
     HoverHandler {
         id: hoverHandler
-    }
-
-    Behavior on scale {
-        NumberAnimation {
-            easing.type: Easing.InOutQuad
-            duration: 60
-        }
     }
 }
