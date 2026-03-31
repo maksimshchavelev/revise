@@ -1,70 +1,247 @@
 // A deck that will be displayed on the main page
-
 import QtQuick
 import QtQuick.Layouts
-import Revise
+import Qt5Compat.GraphicalEffects
+import Revise as Revise
 
 Item {
     id: root
 
-    implicitHeight: text.implicitHeight + 20
-    implicitWidth: 400
-    Layout.fillWidth: true
-    Layout.alignment: Qt.AlignHCenter
-    scale: root.pressed ? 0.98 : 1
+    property bool pressed: tapHandler.pressed
+    property bool hovered: hoverHandler.hovered
 
     property string front
     property string back
+    property date nextReview
+    property double difficulty
     property int cardId: 0
+    property int status: 0
 
-    signal clicked(string cardId)
+    property Item backgroundItem: null // for blurring
+    property var mappedPos: root.mapToItem(root.backgroundItem, 0, 0)
 
-    property bool pressed: false
+    signal previewClicked()
+    signal increaseDifficultyClicked()
+    signal decreaseDifficultyClicked()
+    signal editClicked()
+    signal removeClicked()
 
-    Rectangle {
+    implicitHeight: layout.implicitHeight + 20
+
+    Item {
+        id: content
+
         anchors.fill: parent
-        color: root.pressed ? "#111111" : "black"
-        opacity: 0.4
-        radius: 10
-        clip: true
+        scale: root.hovered ? 0.99 : 1.0
 
-        Behavior on color {
-            ColorAnimation {
-                easing.type: Easing.OutBack
-                duration: 100
+        Rectangle {
+            id: background
+
+            anchors.fill: parent
+            radius: 10
+            color: "black"
+
+            DropShadow {
+                horizontalOffset: 4
+                verticalOffset: 4
+                radius: 8
+                samples: 32
+                color: "#80000000"
+            }
+
+            ShaderEffectSource {
+                id: croppedBackground
+                anchors.fill: parent
+                sourceItem: root.backgroundItem
+                live: true
+                hideSource: true
+                visible: true
+
+                sourceRect: Qt.rect(root.mappedPos.x, root.mappedPos.y,
+                                    root.width, root.height)
+            }
+        }
+
+        Rectangle {
+            id: tint
+            anchors.fill: parent
+            color: Revise.Theme.cardTint
+            opacity: 0.3
+            radius: 10
+        }
+
+        ColumnLayout {
+            id: layout
+
+            anchors.fill: parent
+            anchors.margins: 8
+            spacing: 4
+
+            RowLayout {
+                spacing: 10
+
+                Revise.Text {
+                    text: root.front
+                    font.bold: true
+                    font.pointSize: Revise.Theme.fontSizeMedium
+                    maximumLineCount: 1
+                    elide: Revise.Text.ElideRight
+                    Layout.fillWidth: true
+
+                    Revise.HoverableTooltip {
+                        anchors.fill: parent
+                        text: root.front
+                    }
+                }
+
+                Revise.IconButton {
+                    id: menuButton
+                    size: 16
+                    source: "qrc:/res/img/menu.svg"
+                    color: Revise.Theme.textColorDark
+                    onClicked: {
+                        kekabMenu.x = menuButton.x - kekabMenu.implicitWidth - 20
+                        kekabMenu.y = menuButton.y
+
+                        kekabMenu.clampPosition()
+                        kekabMenu.open()
+                    }
+                }
+            }
+
+            ColumnLayout {
+                spacing: 3
+                Layout.fillWidth: true
+
+                property int optionsWidth: 140
+
+                Revise.KeyValue {
+                    font.pointSize: Revise.Theme.fontSizeSmall
+                    keyWidth: parent.optionsWidth
+
+                    key.text: qsTr("Статус:")
+
+                    value.text: {
+                        if (root.status === 0)
+                            return qsTr("новая")
+                        if (root.status === 1)
+                            return qsTr("повторяемая")
+                        if (root.status === 2)
+                            return qsTr("ошибочная")
+                    }
+
+                    value.color: {
+                        if (root.status === 0)
+                            return Revise.Theme.green
+                        if (root.status === 1)
+                            return Revise.Theme.blue
+                        if (root.status === 2)
+                            return Revise.Theme.red
+                    }
+                }
+
+                Revise.KeyValue {
+                    font.pointSize: Revise.Theme.fontSizeSmall
+                    keyWidth: parent.optionsWidth
+
+                    key.text: qsTr("Следующий повтор:")
+
+                    value.text: Qt.formatDateTime(root.nextReview, "dd.MM.yyyy")
+                    value.color: {
+                        let date = new Date()
+
+                        if (root.nextReview.getTime() <= date.getTime()) {
+                            return Revise.Theme.blue
+                        }
+
+                        return Revise.Theme.textColorDark
+                    }
+                }
+
+                Revise.KeyValue {
+                    font.pointSize: Revise.Theme.fontSizeSmall
+                    keyWidth: parent.optionsWidth
+
+                    key.text: qsTr("Сложность:")
+
+                    value.text: root.difficulty.toFixed(1)
+                    value.color: Revise.ColorUtils.colorForRange(
+                                     root.difficulty, 0, 5, Revise.Theme.green,
+                                     Revise.Theme.red)
+                }
             }
         }
     }
 
-    Item {
-        anchors.fill: parent
-        anchors.margins: 10
-        clip: true
+    onXChanged: remapPosition()
+    onYChanged: remapPosition()
 
-        AppText {
-            id: text
-            text: root.front
-            elide: Text.ElideRight
-            wrapMode: Text.NoWrap
-            width: parent.width
-            anchors.verticalCenter: parent.verticalCenter
-        }
+    function remapPosition() {
+        mappedPos = root.mapToItem(root.backgroundItem, 0, 0)
     }
 
-    MouseArea {
-        anchors.fill: parent
-        onPressed: root.pressed = true
-        onReleased: root.pressed = false
-        onClicked: root.clicked(root.deckName)
+    Revise.KekabMenu {
+        id: kekabMenu
+
+        Revise.KekabMenuButton {
+            text: qsTr("Превью")
+            font.pointSize: Revise.Theme.fontSizeSmall
+            onClicked: {
+                kekabMenu.close()
+                root.previewClicked()
+            }
+        }
+
+        Revise.KekabMenuButton {
+            text: qsTr("Редактировать")
+            font.pointSize: Revise.Theme.fontSizeSmall
+            onClicked: {
+                kekabMenu.close()
+                root.editClicked()
+            }
+        }
+
+        Revise.KekabMenuButton {
+            text: qsTr("Повысить сложность")
+            font.pointSize: Revise.Theme.fontSizeSmall
+            onClicked: {
+                kekabMenu.close()
+                root.increaseDifficultyClicked()
+            }
+        }
+
+        Revise.KekabMenuButton {
+            text: qsTr("Понизить сложность")
+            font.pointSize: Revise.Theme.fontSizeSmall
+            onClicked: {
+                kekabMenu.close()
+                root.decreaseDifficultyClicked()
+            }
+        }
+
+        Revise.KekabMenuButton {
+            text: qsTr("Удалить")
+            color: Revise.Theme.red
+            font.pointSize: Revise.Theme.fontSizeSmall
+            onClicked: {
+                kekabMenu.close()
+                root.removeClicked()
+            }
+        }
     }
 
     Behavior on scale {
         NumberAnimation {
-            easing.type: Easing.OutBack
-            duration: 100
+            easing.type: Easing.InOutQuad
+            duration: 60
         }
     }
 
-    DebugBounds {}
-}
+    TapHandler {
+        id: tapHandler
+    }
 
+    HoverHandler {
+        id: hoverHandler
+    }
+}

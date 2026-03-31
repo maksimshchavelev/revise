@@ -47,6 +47,9 @@ QtObject {
     // Decks
     readonly property color deckTint: "#4E5156"
 
+    // Cards
+    readonly property color cardTint: "#4E5156"
+
     // Borders
     readonly property color buttonBorder: "#4E5156"
 

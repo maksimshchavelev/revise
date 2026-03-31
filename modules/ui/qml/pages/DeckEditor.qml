@@ -1,8 +1,8 @@
 // Edit deck page
-
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
@@ -26,7 +26,7 @@ Item {
     }
 
     Image {
-        id: img
+        id: background
         anchors.fill: parent
         fillMode: Image.Tile
         visible: false
@@ -34,10 +34,28 @@ Item {
     }
 
     ColorOverlay {
-        id: background
-        anchors.fill: img
-        source: img
+        id: backgroundOverlay
+        anchors.fill: blurredBackground
+        source: background
         color: Revise.Theme.backgroundLight
+    }
+
+    ShaderEffectSource {
+        id: bgSource
+        sourceItem: backgroundOverlay
+        anchors.fill: parent
+        live: true
+        hideSource: false
+        visible: false
+    }
+
+    MultiEffect {
+        id: blurredBackground
+        anchors.fill: parent
+        source: bgSource
+        blur: 1.2
+        blurEnabled: true
+        visible: false
     }
 
     Flickable {
@@ -48,6 +66,9 @@ Item {
         contentHeight: layout.implicitHeight
         clip: true
         boundsBehavior: Flickable.StopAtBounds
+
+        onContentXChanged: iterateDelegates()
+        onContentYChanged: iterateDelegates()
 
         ColumnLayout {
             id: layout
@@ -189,6 +210,7 @@ Item {
 
             // List of the cards
             ListView {
+                id: listView
                 model: cardsModel
                 spacing: 10
                 boundsBehavior: Flickable.StopAtBounds
@@ -204,16 +226,30 @@ Item {
 
                     Revise.CardDelegate {
                         id: card
-                        width: parent.width
+
                         anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width - 20
 
                         cardId: model.id
                         front: model.front
                         back: model.back
+                        nextReview: model.nextReview
+                        difficulty: model.difficulty
+                        backgroundItem: blurredBackground
+                    }
 
-                        onClicked: cardEventDialog.open(parseInt(card.cardId))
+                    function remapPosition() {
+                        card.remapPosition()
                     }
                 }
+
+                ScrollBar.vertical: ScrollBar {
+                    policy: ScrollBar.AsNeeded
+                    interactive: true
+                }
+
+                onContentXChanged: iterateDelegates()
+                onContentYChanged: iterateDelegates()
             }
 
             Revise.Button {
@@ -237,14 +273,17 @@ Item {
                     root.deck.name = deckName.text
                     root.deck.description = deckDescription.text
                     root.deck.newLimit = parseInt(deckNewLimit.text)
-                    root.deck.consolidateLimit = parseInt(deckConsolidateLimit.text)
+                    root.deck.consolidateLimit = parseInt(
+                                deckConsolidateLimit.text)
                     root.deck.incorrectLimit = parseInt(deckIncorrectLimit.text)
-                    root.deck.timeLimit = limitTime.checked ? parseInt(deckTimeLimit.text) : 0
+                    root.deck.timeLimit = limitTime.checked ? parseInt(
+                                                                  deckTimeLimit.text) : 0
 
                     deckService.update_deck(root.deck)
                 }
 
-                background.color: hovered ? Qt.lighter(Revise.Theme.green) : Revise.Theme.green
+                background.color: hovered ? Qt.lighter(
+                                                Revise.Theme.green) : Revise.Theme.green
                 background.border.color: Qt.lighter(Revise.Theme.green)
                 background.opacity: 1
                 color: "black"
@@ -260,7 +299,9 @@ Item {
 
         onPreviewClicked: function (cardId) {
             Qt.inputMethod.hide()
-            router.navigate("cardPreview", {"card": deckService.card(cardId)})
+            router.navigate("cardPreview", {
+                                "card": deckService.card(cardId)
+                            })
         }
 
         onRemoveClicked: function (cardId) {
@@ -273,6 +314,15 @@ Item {
                                 "editMode": true,
                                 "card": deckService.card(cardId)
                             })
+        }
+    }
+
+    function iterateDelegates() {
+        for (var i = 0; i < listView.contentItem.children.length; i++) {
+            var child = listView.contentItem.children[i]
+            if (child && typeof child.remapPosition === "function") {
+                child.remapPosition()
+            }
         }
     }
 }

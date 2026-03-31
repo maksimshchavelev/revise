@@ -15,7 +15,7 @@ class CardsModel final : public QAbstractListModel {
 
     CardsModel(core::IDeckService& service, QObject* parent = nullptr);
 
-    enum CardRoles { FrontRole = Qt::UserRole + 1, BackRole, IdRole };
+    enum CardRoles { FrontRole = Qt::UserRole + 1, BackRole, IdRole, NextReviewRole, DifficultyRole };
 
     /**
      * @brief Set current deck. The cards will be loaded specifically for this deck.
