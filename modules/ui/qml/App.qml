@@ -101,19 +101,6 @@ ApplicationWindow {
     }
 
     Connections {
-        id: popupServiceConnection
-        target: popupService
-
-        function onRequested(req) {
-            if (req.type === PopupType.INFO) {
-                infoPopup.open(req.message)
-            } else {
-                console.warn("Unknown popup type")
-            }
-        }
-    }
-
-    Connections {
         id: toastServiceConnection
         target: toastService
 
