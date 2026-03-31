@@ -29,7 +29,7 @@ Item {
 
         ColumnLayout {
             id: layout
-            spacing: 10
+            spacing: 4
         }
 
         Behavior on scale {
