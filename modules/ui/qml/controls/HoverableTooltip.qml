@@ -7,8 +7,8 @@ Item {
     property string text
     property int offset: 8
     property int delay: 750 // ms
-    property int windowWidth: Window.window.width
-    property int windowHeight: Window.window.height
+    property int windowWidth: Window.window ? Window.window.width : 0
+    property int windowHeight: Window.window ? Window.window.height : 0
 
     Revise.Tooltip {
         id: tooltip

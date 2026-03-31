@@ -9,8 +9,8 @@ Item {
     default property alias content: layout.data
     property alias opened: popup.opened
 
-    property int windowWidth: Window.window.width
-    property int windowHeight: Window.window.height
+    property int windowWidth: Window.window ? Window.window.width : 0
+    property int windowHeight: Window.window ? Window.window.height : 0
 
     Popup {
         id: popup
