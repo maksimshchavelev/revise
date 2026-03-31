@@ -109,16 +109,19 @@ ApplicationWindow {
             toast.text = msg.message
 
             if (msg.type === Revise.toastRequest.INFO) {
+                toast.duration = 2500
                 toast.color = Revise.Theme.toastInfo
                 toast.icon = "qrc:/res/img/info.svg"
             }
 
             if (msg.type === Revise.toastRequest.SUCCESS) {
+                toast.duration = 2500
                 toast.color = Revise.Theme.toastSuccess
                 toast.icon = "qrc:/res/img/success.svg"
             }
 
             if (msg.type === Revise.toastRequest.ERROR) {
+                toast.duration = 4000
                 toast.color = Revise.Theme.toastError
                 toast.icon = "qrc:/res/img/error.svg"
             }
