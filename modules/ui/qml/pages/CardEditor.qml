@@ -17,11 +17,11 @@ Item {
             text: qsTr("Текст спереди")
         }
 
-        Revise.ValidatedTextField {
+        Revise.TextField {
             id: cardFront
             Layout.fillWidth: true
             Layout.preferredHeight: 35
-            placeholderText: qsTr("Текст спереди")
+            placeholder.text: qsTr("Текст спереди")
             inputMethodHints: Qt.ImhNoAutoUppercase
             text: pageParams.card.front
 
@@ -248,47 +248,47 @@ Item {
         Revise.VerticalSpacer {}
     }
 
-    Revise.WrapTextDialog {
-        id: wrapPopup
+    // Revise.WrapTextDialog {
+    //     id: wrapPopup
 
-        onWrapClicked: function (wrapped) {
-            cardBack.rawTextEdit.focus = true
-            cardBack.rawTextEdit.forceActiveFocus()
-            cardBack.rawTextEdit.cursorVisible = true
-            cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
-                                        wrapped)
-        }
-    }
+    //     onWrapClicked: function (wrapped) {
+    //         cardBack.rawTextEdit.focus = true
+    //         cardBack.rawTextEdit.forceActiveFocus()
+    //         cardBack.rawTextEdit.cursorVisible = true
+    //         cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
+    //                                     wrapped)
+    //     }
+    // }
 
-    Revise.AddFormulaPopup {
-        id: addFormulaPopup
+    // Revise.AddFormulaPopup {
+    //     id: addFormulaPopup
 
-        onAddInline: {
-            wrapPopup.buttonText = qsTr("Добавить формулу")
-            wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
-            wrapPopup.wrapLeft = "\\("
-            wrapPopup.wrapRight = "\\) "
-            wrapPopup.open()
-        }
+    //     onAddInline: {
+    //         wrapPopup.buttonText = qsTr("Добавить формулу")
+    //         wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
+    //         wrapPopup.wrapLeft = "\\("
+    //         wrapPopup.wrapRight = "\\) "
+    //         wrapPopup.open()
+    //     }
 
-        onAddDisplay: {
-            wrapPopup.buttonText = qsTr("Добавить формулу")
-            wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
-            wrapPopup.wrapLeft = "\\["
-            wrapPopup.wrapRight = "\\] "
-            wrapPopup.open()
-        }
-    }
+    //     onAddDisplay: {
+    //         wrapPopup.buttonText = qsTr("Добавить формулу")
+    //         wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
+    //         wrapPopup.wrapLeft = "\\["
+    //         wrapPopup.wrapRight = "\\] "
+    //         wrapPopup.open()
+    //     }
+    // }
 
-    Revise.AddCodeDialog {
-        id: addCodePopup
+    // Revise.AddCodeDialog {
+    //     id: addCodePopup
 
-        onAddClicked: function (code, language) {
-            cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
-                                        `<pre><code class="${language.trim(
-                                            )}">${code.trim()}</code></pre>`)
-        }
-    }
+    //     onAddClicked: function (code, language) {
+    //         cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
+    //                                     `<pre><code class="${language.trim(
+    //                                         )}">${code.trim()}</code></pre>`)
+    //     }
+    // }
 
     onPageParamsChanged: console.log(root.pageParams.card, root.pageParams.card.deck_id)
 }

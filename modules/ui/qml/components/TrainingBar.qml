@@ -29,62 +29,62 @@ Item {
         anchors.fill: parent
         clip: true
 
-        Button {
-            text: qsTr("Плохо")
-            textColor: Theme.trainingBarWrong
-            textBold: true
-            Layout.preferredWidth: parent.width / 4 - 10
-            onClicked: {
-                root.badClicked()
-            }
-        }
+        // Button {
+        //     text: qsTr("Плохо")
+        //     textColor: Theme.trainingBarWrong
+        //     textBold: true
+        //     Layout.preferredWidth: parent.width / 4 - 10
+        //     onClicked: {
+        //         root.badClicked()
+        //     }
+        // }
 
-        Button {
-            text: qsTr("Трудно")
-            textColor: Theme.trainingBarHard
-            textBold: true
-            Layout.preferredWidth: parent.width / 4 - 10
-            onClicked: {
-                root.hardClicked()
-            }
-        }
+        // Button {
+        //     text: qsTr("Трудно")
+        //     textColor: Theme.trainingBarHard
+        //     textBold: true
+        //     Layout.preferredWidth: parent.width / 4 - 10
+        //     onClicked: {
+        //         root.hardClicked()
+        //     }
+        // }
 
-        Button {
-            text: qsTr("Сойдет")
-            textColor: Theme.trainingBarNormal
-            textBold: true
-            Layout.preferredWidth: parent.width / 4 - 10
-            onClicked: {
-                root.normalClicked()
-            }
-        }
+        // Button {
+        //     text: qsTr("Сойдет")
+        //     textColor: Theme.trainingBarNormal
+        //     textBold: true
+        //     Layout.preferredWidth: parent.width / 4 - 10
+        //     onClicked: {
+        //         root.normalClicked()
+        //     }
+        // }
 
-        Button {
-            text: qsTr("Легко")
-            textColor: Theme.trainingBarEasy
-            textBold: true
-            Layout.preferredWidth: parent.width / 4 - 10
-            onClicked: {
-                root.easyClicked()
-            }
-        }
+        // Button {
+        //     text: qsTr("Легко")
+        //     textColor: Theme.trainingBarEasy
+        //     textBold: true
+        //     Layout.preferredWidth: parent.width / 4 - 10
+        //     onClicked: {
+        //         root.easyClicked()
+        //     }
+        // }
     }
 
     // Not reversed
-    RowLayout {
-        visible: !studyService.flipped
-        anchors.margins: 12
-        anchors.fill: parent
-        clip: true
+    // RowLayout {
+    //     visible: !studyService.flipped
+    //     anchors.margins: 12
+    //     anchors.fill: parent
+    //     clip: true
 
-        Button {
-            text: qsTr("Перевернуть")
-            Layout.alignment: Qt.AlignCenter
-            Layout.fillWidth: true
-            onClicked: studyService.flip()
-            textBold: true
-        }
-    }
+    //     Button {
+    //         text: qsTr("Перевернуть")
+    //         Layout.alignment: Qt.AlignCenter
+    //         Layout.fillWidth: true
+    //         onClicked: studyService.flip()
+    //         textBold: true
+    //     }
+    // }
 
     DebugBounds {}
 }

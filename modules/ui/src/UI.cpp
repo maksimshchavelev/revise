@@ -7,6 +7,7 @@
 #include "PopupService.hpp"  // for PopupService wrapper
 #include "StreakService.hpp" // for StreakService wrapper
 #include "StudyService.hpp"  // for StudyService
+#include "ToastService.hpp"  // for ToastService
 #include <QQmlContext>       // for QQmlContext
 
 namespace ui {
@@ -64,6 +65,12 @@ void UI::bind_study_service(core::IStudyService& study_service) {
 void UI::bind_popup_service(core::IPopupService& popup_service) {
     auto* service = new PopupService(popup_service, &m_engine);
     m_engine.rootContext()->setContextProperty("popupService", service);
+}
+
+
+void UI::bind_toast_service(core::IToastService& toast_service) {
+    auto* service = new ToastService(toast_service, &m_engine);
+    m_engine.rootContext()->setContextProperty("toastService", service);
 }
 
 

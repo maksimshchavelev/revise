@@ -33,6 +33,9 @@
 // Popup service
 #include <core/IPopupService.hpp> // for core::IPopupService
 
+// Toast service
+#include <core/IToastService.hpp> // for core::IToastService
+
 // UI
 #include <ui/Router.hpp> // for Router
 #include <ui/UI.hpp>     // for UI
@@ -70,12 +73,16 @@ class Launcher {
 
     std::unique_ptr<core::IPopupService> m_popup_service; ///< Popup service
 
+    std::unique_ptr<core::IToastService> m_toast_service; ///< Toast service
+
     ui::UI     m_ui;     ///< Main UI class
     ui::Router m_router; ///< Router for page navigation
 
     void init();
 
     void connect_signals();
+
+    void post_launch();
 };
 
 } // namespace revise

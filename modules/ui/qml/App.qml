@@ -114,14 +114,29 @@ ApplicationWindow {
     }
 
     Connections {
-        id: popupConnection
-        target: scrollableInfoPopup
+        id: toastServiceConnection
+        target: toastService
 
-        function onClosed() {
-            let action = new PopupAction("closed")
-            let response = new PopupResponse(action)
+        function onRequested(msg) {
+            toast.header = msg.header
+            toast.text = msg.message
 
-            popupService.response(response)
+            if (msg.type === Revise.toastRequest.INFO) {
+                toast.color = Revise.Theme.toastInfo
+                toast.icon = "qrc:/res/img/info.svg"
+            }
+
+            if (msg.type === Revise.toastRequest.SUCCESS) {
+                toast.color = Revise.Theme.toastSuccess
+                toast.icon = "qrc:/res/img/success.svg"
+            }
+
+            if (msg.type === Revise.toastRequest.ERROR) {
+                toast.color = Revise.Theme.toastError
+                toast.icon = "qrc:/res/img/error.svg"
+            }
+
+            toast.open()
         }
     }
 
@@ -130,5 +145,7 @@ ApplicationWindow {
 
         x: appWindow.width - toast.width - 5
         y: 10
+
+        onClosed: toastService.closed()
     }
 }

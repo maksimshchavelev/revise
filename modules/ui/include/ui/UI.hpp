@@ -10,6 +10,7 @@
 #include <core/IPopupService.hpp>  // for core::IPopupService
 #include <core/IStreakService.hpp> // for core::IStreakService
 #include <core/IStudyService.hpp>  // for core::IStudyService
+#include <core/IToastService.hpp>  // for core::IToastService
 
 #include "Router.hpp" // for Router
 
@@ -51,6 +52,9 @@ class UI {
 
     /// Make PopupService accessible from qml
     void bind_popup_service(core::IPopupService& popup_service);
+
+    /// Make ToastService accessible from qml
+    void bind_toast_service(core::IToastService& toast_service);
 
     /// Make Router accessible from qml
     void bind_router(Router& router);
