@@ -125,6 +125,10 @@ void Launcher::init() {
 void Launcher::connect_signals() {
     m_study_service->connect<core::IStudyService::training_finished>(
         [this](auto& e) { m_router.navigate("home", {}); });
+
+    m_deck_service->connect<core::IDeckService::decks_updated>([this](auto& e){
+        m_toast_service->request(core::Toast{.header = "Колода обновлена", .message = "Колода была обновлена", .type = core::ToastType::INFO});
+    });
 }
 
 

@@ -281,12 +281,24 @@ std::expected<core::Deck, QString> DeckService::deck(int deck_id) {
 
 
 std::expected<void, QString> DeckService::update_deck(const core::Deck& deck) {
-    return m_deps.deck_storage.update_decks({deck});
+    auto res = m_deps.deck_storage.update_decks({deck});
+
+    if (res) {
+        dispatch(decks_updated{});
+    }
+
+    return res;
 }
 
 
 std::expected<void, QString> DeckService::create_card(const core::Card& card) {
-    return m_deps.deck_storage.insert_cards({card});
+    auto res = m_deps.deck_storage.insert_cards({card});
+
+    if (res) {
+        dispatch(card_created{});
+    }
+
+    return res;
 }
 
 
@@ -302,12 +314,24 @@ std::expected<core::Card, QString> DeckService::card(int id) {
 
 
 std::expected<void, QString> DeckService::remove_card(int id) {
-    return m_deps.deck_storage.remove_cards({id});
+    auto res = m_deps.deck_storage.remove_cards({id});
+
+    if (res) {
+        dispatch(card_removed{});
+    }
+
+    return res;
 }
 
 
 std::expected<void, QString> DeckService::update_card(const core::Card& card) {
-    return m_deps.deck_storage.update_cards({card});
+    auto res = m_deps.deck_storage.update_cards({card});
+
+    if (res) {
+        dispatch(cards_updated{});
+    }
+
+    return res;
 }
 
 
