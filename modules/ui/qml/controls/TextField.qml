@@ -67,11 +67,13 @@ Item {
         font: root.font
         onTextChanged: root.valid = root.isValid()
         color: Revise.Theme.textColor
+        readOnly: !root.editable
     }
 
     Rectangle {
         color: "black"
-        opacity: 0.3
+        opacity: 0.35
+        anchors.fill: parent
         visible: !root.editable
     }
 
