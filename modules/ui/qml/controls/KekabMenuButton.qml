@@ -6,4 +6,5 @@ Revise.Button {
     background.border.width: 0
     Layout.fillWidth: true
     horizontalAlignment: Revise.Text.AlignLeft
+    font.pointSize: Revise.Theme.fontSizeSmall
 }

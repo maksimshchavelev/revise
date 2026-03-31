@@ -254,7 +254,6 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Редактировать")
-            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.editClicked()
@@ -264,7 +263,6 @@ Item {
         Revise.KekabMenuButton {
             text: qsTr("Удалить")
             color: Revise.Theme.red
-            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.removeClicked()

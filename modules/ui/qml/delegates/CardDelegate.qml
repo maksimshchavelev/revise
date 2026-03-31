@@ -185,7 +185,6 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Превью")
-            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.previewClicked()
@@ -194,7 +193,6 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Редактировать")
-            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.editClicked()
@@ -203,7 +201,6 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Повысить сложность")
-            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.increaseDifficultyClicked()
@@ -212,7 +209,6 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Понизить сложность")
-            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.decreaseDifficultyClicked()
@@ -222,7 +218,6 @@ Item {
         Revise.KekabMenuButton {
             text: qsTr("Удалить")
             color: Revise.Theme.red
-            font.pointSize: Revise.Theme.fontSizeSmall
             onClicked: {
                 kekabMenu.close()
                 root.removeClicked()
