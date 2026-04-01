@@ -7,6 +7,7 @@ Item {
     id: root
 
     property var pageParams: null // contains editMode and Revise.Card (named "card")
+    property string windowTitle: qsTr(`${pageParams.editMode ? "Редактирование" : "Добавление"} карточки - Revise`)
 
     ColumnLayout {
         anchors.fill: parent
@@ -247,48 +248,4 @@ Item {
 
         Revise.VerticalSpacer {}
     }
-
-    // Revise.WrapTextDialog {
-    //     id: wrapPopup
-
-    //     onWrapClicked: function (wrapped) {
-    //         cardBack.rawTextEdit.focus = true
-    //         cardBack.rawTextEdit.forceActiveFocus()
-    //         cardBack.rawTextEdit.cursorVisible = true
-    //         cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
-    //                                     wrapped)
-    //     }
-    // }
-
-    // Revise.AddFormulaPopup {
-    //     id: addFormulaPopup
-
-    //     onAddInline: {
-    //         wrapPopup.buttonText = qsTr("Добавить формулу")
-    //         wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
-    //         wrapPopup.wrapLeft = "\\("
-    //         wrapPopup.wrapRight = "\\) "
-    //         wrapPopup.open()
-    //     }
-
-    //     onAddDisplay: {
-    //         wrapPopup.buttonText = qsTr("Добавить формулу")
-    //         wrapPopup.textPlaceholder = qsTr("Введите LaTeX")
-    //         wrapPopup.wrapLeft = "\\["
-    //         wrapPopup.wrapRight = "\\] "
-    //         wrapPopup.open()
-    //     }
-    // }
-
-    // Revise.AddCodeDialog {
-    //     id: addCodePopup
-
-    //     onAddClicked: function (code, language) {
-    //         cardBack.rawTextEdit.insert(cardBack.rawTextEdit.cursorPosition,
-    //                                     `<pre><code class="${language.trim(
-    //                                         )}">${code.trim()}</code></pre>`)
-    //     }
-    // }
-
-    onPageParamsChanged: console.log(root.pageParams.card, root.pageParams.card.deck_id)
 }

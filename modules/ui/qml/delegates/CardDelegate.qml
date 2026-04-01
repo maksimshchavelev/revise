@@ -208,6 +208,7 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Повысить сложность")
+            clickable: difficulty < 5
             onClicked: {
                 kekabMenu.close()
                 root.increaseDifficultyClicked()
@@ -216,6 +217,7 @@ Item {
 
         Revise.KekabMenuButton {
             text: qsTr("Понизить сложность")
+            clickable: difficulty > 0
             onClicked: {
                 kekabMenu.close()
                 root.decreaseDifficultyClicked()

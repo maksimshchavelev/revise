@@ -220,6 +220,29 @@ Item {
                                                 "card": deckService.card(cardId)
                                             }, Revise.page.Window)
                         }
+
+                        onEditClicked: {
+                            router.navigate("cardEditor", {
+                                                "card": deckService.card(cardId),
+                                                "editMode": true
+                                            }, Revise.page.Window)
+                        }
+
+                        onIncreaseDifficultyClicked: {
+                            let card = deckService.card(cardId)
+                            card.difficulty += 0.5
+                            deckService.update_card(card)
+                        }
+
+                        onDecreaseDifficultyClicked: {
+                            let card = deckService.card(cardId)
+                            card.difficulty -= 0.5
+                            deckService.update_card(card)
+                        }
+
+                        onRemoveClicked: {
+                            deckService.remove_card(cardId)
+                        }
                     }
 
                     function remapPosition() {
