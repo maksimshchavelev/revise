@@ -216,9 +216,12 @@ Item {
                         backgroundItem: blurOverlay.blurredItem
 
                         onPreviewClicked: {
-                            router.navigate("cardPreview", {
-                                                "card": deckService.card(cardId)
-                                            }, Revise.page.Window)
+                            let card = deckService.card(cardId)
+
+                            cardEditSession.front = card.front
+                            cardEditSession.back = card.back
+
+                            router.navigate("cardPreview", {}, Revise.page.Window)
                         }
 
                         onEditClicked: {

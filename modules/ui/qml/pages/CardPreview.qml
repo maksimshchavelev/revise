@@ -8,11 +8,11 @@ import Revise as Revise
 Item {
     id: root
 
-    property var pageParams: null // Revise.Card expected
+    property var pageParams: null
     property var windowTitle: qsTr("Просмотр карточки - Revise")
 
-    property string front : pageParams ? pageParams.card.front : ""
-    property string back : pageParams ? pageParams.card.back : ""
+    property string front : cardEditSession.front
+    property string back : cardEditSession.back
     property bool flipped: false
 
     Rectangle {
@@ -38,8 +38,7 @@ Item {
             id: htmlCard
             Layout.fillWidth: true
             Layout.fillHeight: true
-            html: root.flipped ? (countLines(root.back) > 2 ? verticalCenterText(root.back) : centerHtml(root.back))
-                               : centerHtml(root.front)
+            html: root.flipped ? root.back : root.front
         }
 
         Revise.Button {

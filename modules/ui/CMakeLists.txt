@@ -73,6 +73,7 @@ target_link_libraries(ui
     PUBLIC
         core
         platform
+        utils
         Qt6::Core
         Qt6::Qml
         Qt6::Gui

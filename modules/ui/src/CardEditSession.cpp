@@ -2,6 +2,7 @@
 
 #include "CardEditSession.hpp" // for header
 #include <QDebug>              // for debug messages
+#include <utils/Html.hpp>      // for html utils
 
 namespace ui {
 
@@ -31,7 +32,13 @@ void CardEditSession::end() {
 
 
 QString CardEditSession::front() {
-    return m_card_edit_session.front();
+    QString front = m_card_edit_session.front();
+
+    if (utils::Html::new_lines(front) < 3) {
+        front = utils::Html::center_horizontal(front);
+    }
+
+    return utils::Html::center_vertical(front);
 }
 
 
@@ -42,7 +49,13 @@ void CardEditSession::set_front(QString front) {
 
 
 QString CardEditSession::back() {
-    return m_card_edit_session.back();
+    QString back = m_card_edit_session.back();
+
+    if (utils::Html::new_lines(back) < 3) {
+        back = utils::Html::center_horizontal(back);
+    }
+
+    return utils::Html::center_vertical(back);
 }
 
 
