@@ -52,3 +52,5 @@ class ToastService final : public QObject {
 };
 
 } // namespace ui
+
+Q_DECLARE_METATYPE(ui::ToastRequest)

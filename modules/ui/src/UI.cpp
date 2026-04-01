@@ -71,6 +71,7 @@ void UI::bind_popup_service(core::IPopupService& popup_service) {
 void UI::bind_toast_service(core::IToastService& toast_service) {
     auto* service = new ToastService(toast_service, &m_engine);
     m_engine.rootContext()->setContextProperty("toastService", service);
+    qRegisterMetaType<ToastRequest>("ToastRequest");
 }
 
 
