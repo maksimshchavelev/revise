@@ -4,8 +4,20 @@
 
 #include "Notifiable.hpp" // for Notifiable
 #include <QString>        // for QString
+#include <expected>       // for std::expected
 
 namespace core {
+
+/// @brief Describes `ICardEditSession` errors
+struct CardEditSessionError {
+    enum class Error {
+        BeginFailed, ///< Failed to begin session
+        EndFailed,   ///< Failed to end session
+    };
+
+    Error   error;       ///< Error
+    QString description; ///< Error description
+};
 
 /**
  * @brief A class that implements the card editing session interface
@@ -26,12 +38,12 @@ class ICardEditSession : public Notifiable {
      * @param front Card front
      * @param back Card back
      */
-    virtual void begin(QString front, QString back) = 0;
+    virtual std::expected<void, CardEditSessionError> begin(QString front, QString back) = 0;
 
     /**
      * @brief End editing session
      */
-    virtual void end() = 0;
+    virtual std::expected<void, CardEditSessionError> end() = 0;
 
     /**
      * @brief Set card front

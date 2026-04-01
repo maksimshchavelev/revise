@@ -4,13 +4,17 @@
 
 namespace engine {
 
-void CardEditSession::begin(QString front, QString back) {
+std::expected<void, core::CardEditSessionError> CardEditSession::begin(QString front, QString back) {
     m_front = std::move(front);
     m_back = std::move(back);
+
+    return {};
 }
 
-void CardEditSession::end() {
+std::expected<void, core::CardEditSessionError> CardEditSession::end() {
     dispatch(editing_finished{m_front, m_back});
+
+    return {};
 }
 
 void CardEditSession::set_front(QString front) {

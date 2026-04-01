@@ -9,6 +9,8 @@ namespace ui {
 
 /// @brif CardEditSession wrapper
 class CardEditSession : public QObject {
+    Q_OBJECT
+
   public:
     Q_PROPERTY(QString front READ front WRITE set_front NOTIFY frontChanged FINAL)
     Q_PROPERTY(QString back READ back WRITE set_back NOTIFY backChanged FINAL)

@@ -10,10 +10,10 @@ namespace engine {
 class CardEditSession : public core::ICardEditSession {
   public:
     /// @copydoc core::ICardEditSession::begin
-    void begin(QString front, QString back) override;
+    std::expected<void, core::CardEditSessionError> begin(QString front, QString back) override;
 
     /// @copydoc core::ICardEditSession::end
-    void end() override;
+    std::expected<void, core::CardEditSessionError>  end() override;
 
     /// @copydoc core::ICardEditSession::set_front
     void set_front(QString front) override;

@@ -1,6 +1,7 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "CardEditSession.hpp" // for header
+#include <QDebug>              // for debug messages
 
 namespace ui {
 
@@ -9,12 +10,20 @@ CardEditSession::CardEditSession(core::ICardEditSession& card_edit_session, QObj
 
 
 void CardEditSession::begin(QString front, QString back) {
-    m_card_edit_session.begin(std::move(front), std::move(back));
+    auto res = m_card_edit_session.begin(std::move(front), std::move(back));
+
+    if (!res) {
+        qWarning() << "Failed to begin card edit session, cause:" << res.error().description;
+    }
 }
 
 
 void CardEditSession::end() {
-    m_card_edit_session.end();
+    auto res = m_card_edit_session.end();
+
+    if (!res) {
+        qWarning() << "Failed to end card edit session, cause:" << res.error().description;
+    }
 }
 
 
