@@ -4,3 +4,4 @@ build/*
 CMakeLists.txt.user
 revise.db
 docs
+./CMakeLists.txt.user
