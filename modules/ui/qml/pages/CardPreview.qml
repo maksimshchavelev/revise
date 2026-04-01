@@ -34,7 +34,7 @@ Item {
         spacing: 8
         visible: !htmlCard.loading
 
-        Revise.HtmlView {
+        Revise.CardView {
             id: htmlCard
             Layout.fillWidth: true
             Layout.fillHeight: true
