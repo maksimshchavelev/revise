@@ -127,8 +127,10 @@ void Launcher::connect_signals() {
         [this](auto& e) { m_router.navigate("home", {}); });
 
     m_deck_service->connect<core::IDeckService::decks_updated>([this](auto& e) {
-        m_toast_service->request(core::Toast{
-            .header = "Колода обновлена", .message = "Колода была обновлена", .type = core::ToastType::INFO});
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Колода обновлена"),
+                        .message = QCoreApplication::translate("deck events", "Колода была обновлена"),
+                        .type = core::ToastType::INFO});
     });
 
     m_deck_service->connect<core::IDeckService::deck_exported>([this](auto& e) {
@@ -144,9 +146,6 @@ void Launcher::post_launch() {
     qDebug() << "Qt launched";
 
     m_router.navigate(ui::Page{"home"});
-
-    m_toast_service->request(
-        core::Toast{.header = "Добро пожаловать!", .message = "Добро пожаловать!", .type = core::ToastType::INFO});
 }
 
 } // namespace revise
