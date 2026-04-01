@@ -20,6 +20,10 @@ struct Toast {
     QString   header;  ///< Toast header
     QString   message; ///< Toast message
     ToastType type;    ///< Toast type
+
+    bool operator==(const Toast& other) const {
+        return header == other.header && message == other.message && type == other.type;
+    }
 };
 
 /**

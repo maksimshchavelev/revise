@@ -5,6 +5,10 @@
 namespace engine {
 
 void ToastService::request(core::Toast toast) {
+    if (m_requests.contains(toast)) {
+        return;
+    }
+
     m_requests.enqueue(std::move(toast));
 
     if (m_requests.size() == 1) {
