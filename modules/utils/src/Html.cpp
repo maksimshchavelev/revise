@@ -48,7 +48,7 @@ QString Html::center_vertical(const QString &html)
     }
 
     return QString(R"(
-        div style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh;">
+        <div style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh;">
            <div style="text-align: left;">%1</div>
         </div>
     )").arg(html);

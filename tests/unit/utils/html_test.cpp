@@ -14,7 +14,7 @@ TEST(HtmlTest, center_vertical_empty_html) {
 TEST(HtmlTest, center_vertical_html) {
     QString res = Html::center_vertical("<p>Hello world</p>");
     QString expected = R"(
-        div style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh;">
+        <div style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh;">
            <div style="text-align: left;"><p>Hello world</p></div>
         </div>
     )";
