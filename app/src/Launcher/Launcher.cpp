@@ -3,14 +3,15 @@
 #include "Launcher/Launcher.hpp" // for header
 #include <QtWebView>             // for QtWebView::initialize()
 
-#include <engine/AlgorithmFactory.hpp>     // for engine::create_study_algorithm
-#include <engine/DeckService.hpp>          // for engine::DeckService
-#include <engine/PopupServiceFactory.hpp>  // for engine::create_popup_service
-#include <engine/StreakServiceFactory.hpp> // for engine::create_streak_service
-#include <engine/ToastServiceFactory.hpp>  // for engine:create_toast_service
-#include <io/DeckExporterFactory.hpp>      // for io::create_deck_exporter
-#include <io/DeckImporterFactory.hpp>      // for io::create_deck_importer
-#include <io/DeckMediaStorageFactory.hpp>  // for io::create_deck_media_storage
+#include <engine/AlgorithmFactory.hpp>       // for engine::create_study_algorithm
+#include <engine/CardEditSessionFactory.hpp> // for engine:create_card_edit_session
+#include <engine/DeckService.hpp>            // for engine::DeckService
+#include <engine/PopupServiceFactory.hpp>    // for engine::create_popup_service
+#include <engine/StreakServiceFactory.hpp>   // for engine::create_streak_service
+#include <engine/ToastServiceFactory.hpp>    // for engine:create_toast_service
+#include <io/DeckExporterFactory.hpp>        // for io::create_deck_exporter
+#include <io/DeckImporterFactory.hpp>        // for io::create_deck_importer
+#include <io/DeckMediaStorageFactory.hpp>    // for io::create_deck_media_storage
 
 namespace revise {
 
@@ -118,6 +119,11 @@ void Launcher::init() {
 
     if (m_popup_service = engine::create_popup_service(); !m_popup_service) {
         qWarning() << "Failed to create popup service, got nullptr";
+    }
+
+    if (m_card_edit_session = engine::create_card_edit_session(engine::CardEditSessionType::Local);
+        !m_card_edit_session) {
+        qWarning() << "Failed to create card edit session, got nullptr";
     }
 }
 

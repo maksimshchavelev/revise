@@ -37,6 +37,9 @@
 // Toast service
 #include <core/IToastService.hpp> // for core::IToastService
 
+// Card edit session
+#include <core/ICardEditSession.hpp> // for core::ICardEditSession
+
 // UI
 #include <ui/Router.hpp> // for Router
 #include <ui/UI.hpp>     // for UI
@@ -76,6 +79,8 @@ class Launcher {
     std::unique_ptr<core::IPopupService> m_popup_service; ///< Popup service
 
     std::unique_ptr<core::IToastService> m_toast_service; ///< Toast service
+
+    std::unique_ptr<core::ICardEditSession> m_card_edit_session; ///< Card edit session
 
     ui::UI     m_ui;     ///< Main UI class
     ui::Router m_router; ///< Router for page navigation
