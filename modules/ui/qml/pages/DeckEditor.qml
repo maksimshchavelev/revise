@@ -26,25 +26,14 @@ Item {
     }
 
     Revise.SolidBackground {
+        id: background
         anchors.fill: parent
     }
 
-    ShaderEffectSource {
-        id: bgSource
-        sourceItem: backgroundOverlay
+    Revise.BlurOverlay {
+        id: blurOverlay
         anchors.fill: parent
-        live: true
-        hideSource: false
-        visible: false
-    }
-
-    MultiEffect {
-        id: blurredBackground
-        anchors.fill: parent
-        source: bgSource
-        blur: 1.2
-        blurEnabled: true
-        visible: false
+        sourceItem: background
     }
 
     Flickable {
@@ -224,7 +213,7 @@ Item {
                         back: model.back
                         nextReview: model.nextReview
                         difficulty: model.difficulty
-                        backgroundItem: blurredBackground
+                        backgroundItem: blurOverlay.blurredItem
                     }
 
                     function remapPosition() {

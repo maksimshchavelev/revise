@@ -15,22 +15,11 @@ Item {
         anchors.fill: parent
     }
 
-    ShaderEffectSource {
-        id: bgSource
+    Revise.BlurOverlay {
+        id: blurOverlay
+        anchors.fill: parent
         sourceItem: background
-        anchors.fill: parent
-        live: true
-        hideSource: false
-        visible: false
-    }
-
-    MultiEffect {
-        id: blurredBackground
-        anchors.fill: parent
-        source: bgSource
-        blur: 1.5
-        blurEnabled: true
-        visible: false
+        blur: 1.4
     }
 
     ColumnLayout {
@@ -61,7 +50,7 @@ Item {
                 incorrectCards: model.incorrectCards
                 deckId: model.deckId
                 repeatableToday: model.repeatableToday
-                backgroundItem: blurredBackground
+                backgroundItem: blurOverlay.blurredItem
 
                 onStudyClicked: {
                     studyService.start(deckId)
