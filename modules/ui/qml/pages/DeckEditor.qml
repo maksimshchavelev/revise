@@ -230,7 +230,7 @@ Item {
                 onContentYChanged: iterateDelegates()
             }
 
-            Revise.Button {
+            Revise.AcceptButton {
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredHeight: 40
                 Layout.topMargin: 4
@@ -259,12 +259,6 @@ Item {
 
                     deckService.update_deck(root.deck)
                 }
-
-                background.color: hovered ? Qt.lighter(
-                                                Revise.Theme.acceptButtonBackground) : Revise.Theme.acceptButtonBackground
-                background.border.color: Qt.lighter(Revise.Theme.acceptButtonBackground)
-                background.opacity: 0.95
-                color: "black"
             }
 
             Revise.VerticalSpacer {}

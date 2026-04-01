@@ -53,6 +53,7 @@ QtObject {
     // Buttons
     readonly property color buttonBorder: "#4E5156"
     readonly property color acceptButtonBackground: "#51c44b"
+    readonly property color acceptButtonTextColor: "#060f06"
 
     // Other colors
     readonly property color green: "#6DD23E"
