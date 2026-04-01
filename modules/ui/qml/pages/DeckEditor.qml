@@ -25,19 +25,8 @@ Item {
         color: Revise.Theme.background
     }
 
-    Image {
-        id: background
+    Revise.SolidBackground {
         anchors.fill: parent
-        fillMode: Image.Tile
-        visible: false
-        source: "qrc:/res/img/background.svg"
-    }
-
-    ColorOverlay {
-        id: backgroundOverlay
-        anchors.fill: blurredBackground
-        source: background
-        color: Revise.Theme.backgroundLight
     }
 
     ShaderEffectSource {
