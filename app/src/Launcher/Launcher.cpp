@@ -126,6 +126,7 @@ void Launcher::connect_signals() {
     m_study_service->connect<core::IStudyService::training_finished>(
         [this](auto& e) { m_router.navigate("home", {}); });
 
+    // Deck events
     m_deck_service->connect<core::IDeckService::decks_updated>([this](auto& e) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("deck events", "Колода обновлена"),
@@ -145,6 +146,28 @@ void Launcher::connect_signals() {
             core::Toast{.header = QCoreApplication::translate("deck events", "Экспорт не удался"),
                         .message = QCoreApplication::translate("deck events", "Причина: ") + e.error,
                         .type = core::ToastType::ERROR});
+    });
+
+    // Card events
+    m_deck_service->connect<core::IDeckService::card_created>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Карточка добавлена"),
+                        .message = QCoreApplication::translate("deck events", "Карточка успешно добавлена!"),
+                        .type = core::ToastType::SUCCESS});
+    });
+
+    m_deck_service->connect<core::IDeckService::cards_updated>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Карточка обновлена"),
+                        .message = QCoreApplication::translate("deck events", "Карточка была обновлена"),
+                        .type = core::ToastType::INFO});
+    });
+
+    m_deck_service->connect<core::IDeckService::card_removed>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Карточка удалена"),
+                        .message = QCoreApplication::translate("deck events", "Карточка успешно удалена!"),
+                        .type = core::ToastType::SUCCESS});
     });
 }
 
