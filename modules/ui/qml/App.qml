@@ -108,20 +108,22 @@ ApplicationWindow {
             toast.header = msg.header
             toast.text = msg.message
 
+            let totalLength = toast.header.length + toast.text.length
+
             if (msg.type === Revise.toastRequest.INFO) {
-                toast.duration = 2500
+                toast.duration = Math.max(2500, totalLength * 1000 / 20)
                 toast.color = Revise.Theme.toastInfo
                 toast.icon = "qrc:/res/img/info.svg"
             }
 
             if (msg.type === Revise.toastRequest.SUCCESS) {
-                toast.duration = 2500
+                toast.duration = Math.max(2500, totalLength * 1000 / 20)
                 toast.color = Revise.Theme.toastSuccess
                 toast.icon = "qrc:/res/img/success.svg"
             }
 
             if (msg.type === Revise.toastRequest.ERROR) {
-                toast.duration = 4000
+                toast.duration = Math.max(4000, totalLength * 1000 / 20)
                 toast.color = Revise.Theme.toastError
                 toast.icon = "qrc:/res/img/error.svg"
             }
