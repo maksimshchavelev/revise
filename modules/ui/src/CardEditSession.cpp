@@ -15,6 +15,9 @@ void CardEditSession::begin(QString front, QString back) {
     if (!res) {
         qWarning() << "Failed to begin card edit session, cause:" << res.error().description;
     }
+
+    emit frontChanged();
+    emit backChanged();
 }
 
 
