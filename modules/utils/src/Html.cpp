@@ -1,7 +1,5 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#pragma once
-
 #include "utils/Html.hpp"                  // for header
 #include <QRegularExpressionMatchIterator> // for QRegularExpressionMatchIterator
 
@@ -40,6 +38,60 @@ QString Html::replace_images_src(const QString& html, const QMap<QString, QStrin
     }
 
     return result;
+}
+
+
+QString Html::center_vertical(const QString &html)
+{
+    if (html.isEmpty()) {
+        return {};
+    }
+
+    return QString(R"(
+        div style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh;">
+           <div style="text-align: left;">%1</div>
+        </div>
+    )").arg(html);
+}
+
+
+QString Html::center_horizontal(const QString &html)
+{
+    if (html.isEmpty()) {
+        return {};
+    }
+
+    return QString(R"(
+        <div style="text-align: center;">
+            %1
+        </div>
+    )").arg(html);
+}
+
+
+std::size_t Html::new_lines(const QString &html)
+{
+    if (html.isEmpty()) {
+        return 0;
+    }
+
+    std::size_t res{0};
+
+    res += html.count("<br>");
+    res += html.count("<p>");
+    res += html.count("<h1>");
+    res += html.count("<h2>");
+    res += html.count("<h3>");
+    res += html.count("<h4>");
+    res += html.count("<h5>");
+    res += html.count("<h6>");
+    res += html.count("<blockquote>");
+    res += html.count("<pre>");
+    res += html.count("<li>");
+    res += html.count("\[");
+    res += html.count("$$");
+
+    return res;
 }
 
 } // namespace utils

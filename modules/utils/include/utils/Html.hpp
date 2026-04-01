@@ -69,6 +69,27 @@ class Html {
      * @endcode
      */
     static QString replace_images_src(const QString& html, const QMap<QString, QString>& mapped_images);
+
+    /**
+     * @brief Centers HTML text vertically by wrapping it in a special tag
+     * @param html HTML (not empty) that needs to be wrapped
+     * @return Wrapped HTML
+     */
+    static QString center_vertical(const QString& html);
+
+    /**
+     * @brief Centers HTML text horizontally by wrapping it in a special tag
+     * @param html HTML (not empty) that needs to be wrapped
+     * @return Wrapped HTML
+     */
+    static QString center_horizontal(const QString& html);
+
+    /**
+     * @brief Counts the number of lines in HTML, taking line break tags into account
+     * @param html HTML
+     * @return Lines count
+     */
+    static std::size_t new_lines(const QString& html);
 };
 
 } // namespace utils
