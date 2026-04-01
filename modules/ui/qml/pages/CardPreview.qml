@@ -10,11 +10,8 @@ Item {
 
     property var pageParams: null // Revise.Card expected
 
-    // front of the card
     property string front : pageParams ? pageParams.card.front : string()
-    // back of the card
     property string back : pageParams ? pageParams.card.back : string()
-    // flipped?
     property bool flipped: false
 
     Rectangle {
