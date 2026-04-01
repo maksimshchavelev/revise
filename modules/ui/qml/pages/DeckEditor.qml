@@ -261,9 +261,9 @@ Item {
                 }
 
                 background.color: hovered ? Qt.lighter(
-                                                Revise.Theme.green) : Revise.Theme.green
-                background.border.color: Qt.lighter(Revise.Theme.green)
-                background.opacity: 1
+                                                Revise.Theme.acceptButtonBackground) : Revise.Theme.acceptButtonBackground
+                background.border.color: Qt.lighter(Revise.Theme.acceptButtonBackground)
+                background.opacity: 0.95
                 color: "black"
             }
 

@@ -50,8 +50,9 @@ QtObject {
     // Cards
     readonly property color cardTint: "#4E5156"
 
-    // Borders
+    // Buttons
     readonly property color buttonBorder: "#4E5156"
+    readonly property color acceptButtonBackground: "#51c44b"
 
     // Other colors
     readonly property color green: "#6DD23E"
