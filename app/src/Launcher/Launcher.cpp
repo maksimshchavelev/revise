@@ -139,6 +139,13 @@ void Launcher::connect_signals() {
                         .message = QCoreApplication::translate("deck events", "Колода успешно экспортирована!"),
                         .type = core::ToastType::SUCCESS});
     });
+
+    m_deck_service->connect<core::IDeckService::export_failed>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Экспорт не удался"),
+                        .message = QCoreApplication::translate("deck events", "Причина: ") + e.error,
+                        .type = core::ToastType::ERROR});
+    });
 }
 
 
