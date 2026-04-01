@@ -46,15 +46,6 @@ Item {
             text: qsTr("Перевернуть")
             onClicked: root.flip()
         }
-
-        Revise.Button {
-            Layout.fillWidth: true
-            text: qsTr("Назад")
-            onClicked: {
-                root.flipped = false
-                router.back()
-            }
-        }
     }
 
     function flip() {
