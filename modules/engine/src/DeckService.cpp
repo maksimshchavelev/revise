@@ -189,7 +189,6 @@ void DeckService::import_deck_async(const QString& path) {
                 }
             }
         } else {
-            // Insert cards if deck not exists
             cards_to_insert = std::move(import_res->cards);
         }
 
@@ -205,7 +204,6 @@ void DeckService::import_deck_async(const QString& path) {
             return;
         }
 
-        // Finish
         dispatch(decks_updated{});
         dispatch(deck_imported{});
     });
@@ -254,7 +252,6 @@ void DeckService::export_deck_async(int deck_id, const QString& path) {
             return;
         }
 
-        // Build summary and request export
         auto export_res = m_deps.deck_exporter.export_to_file(
             core::ExportData{
                 .deck = std::move(deck), .media_directory = std::move(media_dir), .cards = std::move(cards)},
@@ -265,6 +262,8 @@ void DeckService::export_deck_async(int deck_id, const QString& path) {
                 QString("Failed to export deck with id = %1, cause: %2").arg(deck_id).arg(export_res.error())});
             return;
         }
+
+        dispatch(deck_exported{});
     });
 }
 

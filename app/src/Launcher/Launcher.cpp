@@ -126,8 +126,16 @@ void Launcher::connect_signals() {
     m_study_service->connect<core::IStudyService::training_finished>(
         [this](auto& e) { m_router.navigate("home", {}); });
 
-    m_deck_service->connect<core::IDeckService::decks_updated>([this](auto& e){
-        m_toast_service->request(core::Toast{.header = "Колода обновлена", .message = "Колода была обновлена", .type = core::ToastType::INFO});
+    m_deck_service->connect<core::IDeckService::decks_updated>([this](auto& e) {
+        m_toast_service->request(core::Toast{
+            .header = "Колода обновлена", .message = "Колода была обновлена", .type = core::ToastType::INFO});
+    });
+
+    m_deck_service->connect<core::IDeckService::deck_exported>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Колода экспортирована"),
+                        .message = QCoreApplication::translate("deck events", "Колода успешно экспортирована!"),
+                        .type = core::ToastType::SUCCESS});
     });
 }
 
@@ -137,7 +145,8 @@ void Launcher::post_launch() {
 
     m_router.navigate(ui::Page{"home"});
 
-    m_toast_service->request(core::Toast{.header = "Добро пожаловать!", .message = "Добро пожаловать!", .type = core::ToastType::INFO});
+    m_toast_service->request(
+        core::Toast{.header = "Добро пожаловать!", .message = "Добро пожаловать!", .type = core::ToastType::INFO});
 }
 
 } // namespace revise
