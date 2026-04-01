@@ -6,9 +6,12 @@ namespace ui {
 
 CardsModel::CardsModel(core::IDeckService& service, QObject* parent) :
     QAbstractListModel(parent), m_deck_service(service) {
-    m_deck_service.connect<core::IDeckService::cards_updated>([this](const core::IDeckService::cards_updated& e) {
-        setDeck(m_last_deck_id); // reload
-    });
+
+    m_deck_service.connect<core::IDeckService::cards_updated>([this](auto& e) { setDeck(m_last_deck_id); });
+
+    m_deck_service.connect<core::IDeckService::card_removed>([this](auto& e) { setDeck(m_last_deck_id); });
+
+    m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) { setDeck(m_last_deck_id); });
 }
 
 
