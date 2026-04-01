@@ -214,6 +214,12 @@ Item {
                         nextReview: model.nextReview
                         difficulty: model.difficulty
                         backgroundItem: blurOverlay.blurredItem
+
+                        onPreviewClicked: {
+                            router.navigate("cardPreview", {
+                                                "card": deckService.card(cardId)
+                                            }, Revise.page.Window)
+                        }
                     }
 
                     function remapPosition() {

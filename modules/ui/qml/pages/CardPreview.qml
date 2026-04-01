@@ -9,9 +9,10 @@ Item {
     id: root
 
     property var pageParams: null // Revise.Card expected
+    property var windowTitle: qsTr("Просмотр карточки - Revise")
 
-    property string front : pageParams ? pageParams.card.front : string()
-    property string back : pageParams ? pageParams.card.back : string()
+    property string front : pageParams ? pageParams.card.front : ""
+    property string back : pageParams ? pageParams.card.back : ""
     property bool flipped: false
 
     Rectangle {
@@ -43,6 +44,7 @@ Item {
 
         Revise.Button {
             Layout.fillWidth: true
+            Layout.preferredHeight: 40
             text: qsTr("Перевернуть")
             onClicked: root.flip()
         }

@@ -1,14 +1,14 @@
 import QtQuick
 import QtWebView
 import QtCore
-import Revise
+import Revise as Revise
 
 WebView {
     id: web
 
     property string html
-    property int fontSize: Theme.textSizeDefault
-    property color textColor: Theme.textColor
+    property int fontSize: Revise.Theme.fontSizeMedium
+    property color textColor: Revise.Theme.textColor
     property bool ready: false
 
     property string pendingHtml: ""
@@ -151,7 +151,5 @@ WebView {
             pendingHtml = html
         }
     }
-
-    DebugBounds {}
 }
 
