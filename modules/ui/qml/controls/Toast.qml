@@ -95,7 +95,7 @@ Item {
                 font.pointSize: Revise.Theme.fontSizeSmall
                 horizontalAlignment: Text.AlignLeft
                 color: "black"
-                maximumLineCount: 3
+                maximumLineCount: 10
                 opacity: 0.75
             }
         }
