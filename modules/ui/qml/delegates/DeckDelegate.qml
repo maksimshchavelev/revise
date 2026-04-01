@@ -26,6 +26,7 @@ Item {
     signal studyClicked
     signal editClicked
     signal removeClicked
+    signal exportClicked
 
     Item {
         anchors.fill: parent
@@ -269,6 +270,14 @@ Item {
             onClicked: {
                 kekabMenu.close()
                 root.editClicked()
+            }
+        }
+
+        Revise.KekabMenuButton {
+            text: qsTr("Экспортировать")
+            onClicked: {
+                kekabMenu.close()
+                root.exportClicked()
             }
         }
 

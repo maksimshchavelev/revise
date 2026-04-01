@@ -66,6 +66,11 @@ Item {
                 onRemoveClicked: {
                     deckService.remove_deck(deckId)
                 }
+
+                onExportClicked: {
+                    exportDialog.deckId = deckId
+                    exportDialog.open()
+                }
             }
 
             function iterateDelegates() {
@@ -99,31 +104,6 @@ Item {
         }
     }
 
-    Revise.DeckEventDialog {
-        id: deckEventDialog
-        backgroundItem: layout
-
-        onTrainClicked: function (deckId) {
-            studyService.start(deckId)
-            router.navigate("training", {})
-        }
-
-        onRemoveClicked: function (deckId) {
-            deckService.remove_deck(deckId)
-        }
-
-        onEditClicked: function (deckId) {
-            router.navigate("deckEditor", {
-                                "deck": deckService.deck(deckId)
-                            })
-        }
-
-        onExportClicked: function (deckId) {
-            exportDialog.deckId = deckId
-            exportDialog.open()
-        }
-    }
-
     FileDialog {
         id: importDialog
 
@@ -139,8 +119,7 @@ Item {
 
         property int deckId: 0
 
-        title: qsTr("Сохранить .rpkg")
-
+        title: qsTr("Экспортировать как .rpkg")
         onAccepted: deckService.export_deck_async(deckId, selectedFolder)
     }
 }
