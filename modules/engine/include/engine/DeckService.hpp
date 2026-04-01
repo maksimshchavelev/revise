@@ -63,6 +63,9 @@ class DeckService final : public core::IDeckService {
     std::expected<QVector<core::Card>, QString> cards(int deck_id) override;
 
   private:
+    /// @brief Adjusts the card's parameters to the desired range (for example, normalizes the difficulty on a scale from 0 to 5)
+    core::Card normalize_card(const core::Card& card);
+
     DeckServiceDeps m_deps;
 
     std::atomic_bool m_import_in_progress{false}; ///< Is import in progress now

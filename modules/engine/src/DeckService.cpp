@@ -3,6 +3,7 @@
 #include "engine/DeckService.hpp"    // for header
 #include <QFuture>                   // for QFuture
 #include <QtConcurrent/QtConcurrent> // for QtConcurrent
+#include <QtGlobal>                  // for math
 #include <utils/Html.hpp>            // for html utils
 #include <utils/ScopeGuard.hpp>      // for ScopeGuard
 
@@ -291,7 +292,7 @@ std::expected<void, QString> DeckService::update_deck(const core::Deck& deck) {
 
 
 std::expected<void, QString> DeckService::create_card(const core::Card& card) {
-    auto res = m_deps.deck_storage.insert_cards({card});
+    auto res = m_deps.deck_storage.insert_cards({normalize_card(card)});
 
     if (res) {
         dispatch(card_created{});
@@ -324,7 +325,7 @@ std::expected<void, QString> DeckService::remove_card(int id) {
 
 
 std::expected<void, QString> DeckService::update_card(const core::Card& card) {
-    auto res = m_deps.deck_storage.update_cards({card});
+    auto res = m_deps.deck_storage.update_cards({normalize_card(card)});
 
     if (res) {
         dispatch(cards_updated{});
@@ -341,6 +342,27 @@ std::expected<QVector<core::DeckSummary>, QString> DeckService::deck_summaries()
 
 std::expected<QVector<core::Card>, QString> DeckService::cards(int deck_id) {
     return m_deps.deck_storage.fetch_cards(deck_id);
+}
+
+
+core::Card DeckService::normalize_card(const core::Card& card) {
+    core::Card copy = card;
+
+    copy.difficulty = qBound(0.0f, copy.difficulty, 5.0f);
+
+    if (copy.global_id < 0) {
+        copy.global_id = 0;
+    }
+
+    if (copy.id < 0) {
+        copy.id = 0;
+    }
+
+    if (copy.interval < 0) {
+        copy.interval = 0;
+    }
+
+    return copy;
 }
 
 } // namespace engine
