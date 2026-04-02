@@ -178,10 +178,12 @@ Item {
                     onClicked: {
                         let card = new Revise.Card()
                         card.deck_id = deckId
+                        card.difficulty = 2.5
+                        card.next_review = new Date()
                         router.navigate("cardEditor", {
                                             "editMode": false,
                                             "card": card
-                                        })
+                                        }, Revise.page.Window)
                     }
                 }
             }

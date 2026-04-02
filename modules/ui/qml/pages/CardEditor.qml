@@ -9,243 +9,86 @@ Item {
     property var pageParams: null // contains editMode and Revise.Card (named "card")
     property string windowTitle: qsTr(`${pageParams.editMode ? "Редактирование" : "Добавление"} карточки - Revise`)
 
+    Rectangle {
+        anchors.fill: parent
+        color: Revise.Theme.background
+    }
+
+    Revise.SolidBackground {
+        anchors.fill: parent
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 4
         spacing: 8
 
-        Revise.AppText {
+        Revise.Text {
             text: qsTr("Текст спереди")
         }
 
-        Revise.TextField {
-            id: cardFront
+        Revise.HtmlCardEditor {
+            id: frontEditor
             Layout.fillWidth: true
-            Layout.preferredHeight: 35
-            placeholder.text: qsTr("Текст спереди")
-            inputMethodHints: Qt.ImhNoAutoUppercase
-            text: pageParams.card.front
-
-            // onTextChanged: valid = !deckService.is_card_exists(root.deckId, cardFront.text)
-            Shortcut {
-                sequence: "Ctrl+Return"
-                onActivated: {
-                    cardFront.rawTextInput.focus = false
-                    cardBack.rawTextEdit.focus = true
-                    cardBack.rawTextEdit.forceActiveFocus()
-                }
-            }
+            Layout.preferredHeight: 150
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-
-            Revise.AppText {
-                text: qsTr("Текст сзади")
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
-
-            Flow {
-                Layout.fillWidth: true
-                spacing: 5
-                layoutDirection: Qt.RightToLeft
-
-                // Tool buttons
-                Revise.Button {
-                    id: addMathButton
-                    text: "f(x)"
-                    onClicked: {
-                        addFormulaPopup.open()
-                    }
-                    implicitWidth: 48
-                    implicitHeight: 32
-                }
-
-                Revise.Button {
-                    id: addBoldButton
-                    text: "<b>B</b>"
-                    onClicked: {
-                        wrapPopup.buttonText = qsTr("Сделать <b>жирным</b>")
-                        wrapPopup.wrapLeft = "<b>"
-                        wrapPopup.wrapRight = "</b>"
-                        wrapPopup.textPlaceholder = qsTr("Введите текст")
-                        wrapPopup.open()
-                    }
-
-                    implicitWidth: 48
-                    implicitHeight: 32
-                }
-
-                Revise.Button {
-                    id: addItalicButton
-                    text: "<i>I</i>"
-                    onClicked: {
-                        wrapPopup.buttonText = qsTr("Выделить <b>курсивом</b>")
-                        wrapPopup.wrapLeft = "<i>"
-                        wrapPopup.wrapRight = "</i>"
-                        wrapPopup.textPlaceholder = qsTr("Введите текст")
-                        wrapPopup.open()
-                    }
-
-                    implicitWidth: 48
-                    implicitHeight: 32
-                }
-
-                Revise.Button {
-                    id: addUnderlinedButton
-                    text: "<u>U</u>"
-                    onClicked: {
-                        wrapPopup.buttonText = qsTr("<b>Подчеркнуть</b>")
-                        wrapPopup.wrapLeft = "<i>"
-                        wrapPopup.wrapRight = "</i>"
-                        wrapPopup.textPlaceholder = qsTr("Введите текст")
-                        wrapPopup.open()
-                    }
-                    implicitWidth: 48
-                    implicitHeight: 32
-                }
-
-                Revise.Button {
-                    id: addCodeButton
-                    text: "code"
-                    onClicked: {
-                        addCodePopup.open()
-                    }
-                    implicitWidth: 48
-                    implicitHeight: 32
-                }
-            }
+        Revise.Text {
+            text: qsTr("Текст сзади")
         }
 
-        Revise.ValidatedMultilineTextField {
-            id: cardBack
+        Revise.HtmlCardEditor {
+            id: backEditor
             Layout.fillWidth: true
             Layout.fillHeight: true
-            inputMethodHints: Qt.ImhNoAutoUppercase
-            placeholderText: qsTr("Текст сзади")
-            text: pageParams.card.back
-
-            Shortcut {
-                sequence: "Ctrl+B"
-                onActivated: cardBack.wrapSelection("<b>", "</b>")
-            }
-
-            Shortcut {
-                sequence: "Ctrl+I"
-                onActivated: cardBack.wrapSelection("<i>", "</i>")
-            }
-
-            Shortcut {
-                sequence: "Ctrl+U"
-                onActivated: cardBack.wrapSelection("<u>", "</u>")
-            }
-
-            Shortcut {
-                sequence: "Ctrl+F"
-                onActivated: addFormulaPopup.open()
-            }
-
-            function wrapSelection(left, right) {
-                var start = rawTextEdit.selectionStart
-                var end = rawTextEdit.selectionEnd
-                var selected = rawTextEdit.selectedText
-
-                if (selected.length === 0)
-                    return
-
-                // build new text using rawTextEdit.text, not parent's text
-                var newText = rawTextEdit.text.substring(
-                            0,
-                            start) + left + selected + right + rawTextEdit.text.substring(
-                            end)
-
-                rawTextEdit.text = newText
-                rawTextEdit.cursorPosition = start + (left + selected + right).length
-                rawTextEdit.deselect()
-            }
         }
 
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
+        Revise.AcceptButton {
+            Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+            Layout.margins: 10
+            Layout.preferredHeight: 35
+            text: pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
+            onClicked: {
+                let frontHtml = ""
+                let backHtml = ""
+                let received = 0
 
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
+                function saveIfReady() {
+                    if (received === 2) {
+                        root.pageParams.card.front = frontHtml
+                        root.pageParams.card.back = backHtml
 
-                Revise.Button {
-                    id: btnAdd
-                    anchors.fill: parent
-                    text: root.pageParams.editMode ? qsTr("Обновить") : qsTr(
-                                                         "Добавить")
-
-                    clickable: cardFront.valid && cardFront.text.trim() !== ""
-                               && cardBack.valid && cardBack.text.trim() !== ""
-
-                    onClicked: {
-                        if (root.pageParams.editMode) {
-                            root.pageParams.card.front = cardFront.text.trim()
-                            root.pageParams.card.back = cardBack.text.trim()
-
+                        if (root.pageParams.editMode === true) {
                             deckService.update_card(root.pageParams.card)
                         } else {
-                            root.pageParams.card.difficulty = 2.5
-                            root.pageParams.card.front = cardFront.text.trim()
-                            root.pageParams.card.back = cardBack.text.trim()
-
                             deckService.create_card(root.pageParams.card)
-                        }
-
-                        if (!pageParams.editMode) {
-                            cardFront.text = ""
-                            cardBack.text = ""
+                            frontEditor.clear()
+                            backEditor.clear()
                         }
                     }
                 }
-            }
 
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
+                frontEditor.getHtml(function (html) {
+                    frontHtml = html
+                    received++
+                    saveIfReady()
+                })
 
-                Revise.Button {
-                    id: btnPreview
-                    anchors.fill: parent
-                    text: qsTr("Превью")
-                    clickable: cardFront.valid && cardFront.text.trim() !== ""
-                               && cardBack.valid && cardBack.text.trim() !== ""
-                    onClicked: {
-                        Qt.inputMethod.hide()
-
-                        pageParams.card.front = cardFront.text
-                        pageParams.card.back = cardBack.text
-
-                        // Dear readers of this code! Here is a high-quality example of a workaround. We navigate to
-                        // our own page by updating `pageParams` with a new card. In this case, when we return from
-                        // `cardPreview`, the card text will load normally from the history.
-                        router.navigate("cardEditor", pageParams)
-                        router.navigate("cardPreview", {
-                                            "card": pageParams.card
-                                        })
-                    }
-                }
+                backEditor.getHtml(function (html) {
+                    backHtml = html
+                    received++
+                    saveIfReady()
+                })
             }
         }
+    }
 
-        Revise.Button {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.fillWidth: true
-            Layout.topMargin: 4
-            text: qsTr("Назад")
-            onClicked: {
-                Qt.inputMethod.hide()
-                router.back()
-            }
+    onPageParamsChanged: {
+        if (!root.pageParams) {
+            return
         }
 
-        Revise.VerticalSpacer {}
+        frontEditor.setHtml(root.pageParams.card.front)
+        backEditor.setHtml(root.pageParams.card.back)
     }
 }
