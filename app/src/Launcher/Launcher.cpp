@@ -1,7 +1,9 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "Launcher/Launcher.hpp" // for header
-#include <QtWebView>             // for QtWebView::initialize()
+
+#include <QtConcurrent> // for QtConcurrent
+#include <QtWebView>    // for QtWebView::initialize()
 
 #include <engine/AlgorithmFactory.hpp>       // for engine::create_study_algorithm
 #include <engine/CardEditSessionFactory.hpp> // for engine:create_card_edit_session
@@ -12,6 +14,8 @@
 #include <io/DeckExporterFactory.hpp>        // for io::create_deck_exporter
 #include <io/DeckImporterFactory.hpp>        // for io::create_deck_importer
 #include <io/DeckMediaStorageFactory.hpp>    // for io::create_deck_media_storage
+
+#include <utils/Directory.hpp> // for directory tools
 
 namespace revise {
 
@@ -183,6 +187,26 @@ void Launcher::post_launch() {
     qDebug() << "Qt launched";
 
     m_router.navigate(ui::Page{"home"});
+
+    extract_web_bundle_async();
+}
+
+
+void Launcher::extract_web_bundle_async() {
+    auto _ = QtConcurrent::run([this]() {
+        auto copy_res = utils::Directory::copy_recursively(
+            ":/res/html", QString("%1/web").arg(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)));
+
+        if (!copy_res) {
+            m_toast_service->request(core::Toast{
+                .header = QCoreApplication::translate("application events", "Ошибка распаковки ресурсов"),
+                .message = QString(QCoreApplication::translate(
+                                       "application events",
+                                       "Не удалось распаковать web bundle: %1. Приложение может работать некорректно!"))
+                               .arg(copy_res.error().description),
+                .type = core::ToastType::ERROR});
+        }
+    });
 }
 
 } // namespace revise

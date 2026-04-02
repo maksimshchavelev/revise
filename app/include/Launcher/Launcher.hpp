@@ -90,6 +90,8 @@ class Launcher {
     void connect_signals();
 
     void post_launch();
+
+    void extract_web_bundle_async();
 };
 
 } // namespace revise
