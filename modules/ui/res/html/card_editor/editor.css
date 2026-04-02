@@ -1,0 +1,184 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+#editor {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+div.ql-toolbar {
+    flex: 0 0 auto;
+    background-color: #2b2b2b;
+    border: none;
+    font-size: 18px;
+}
+
+div.ql-toolbar button .ql-stroke {
+    stroke: #929292 !important;
+}
+div.ql-toolbar button .ql-fill {
+    fill: #929292 !important;
+}
+div.ql-toolbar button:hover .ql-stroke {
+    stroke: #D8D8D8 !important;
+}
+div.ql-toolbar button:hover .ql-fill {
+    fill: #D8D8D8 !important;
+}
+div.ql-toolbar button.ql-active .ql-stroke {
+    stroke: #ffffff !important;
+}
+div.ql-toolbar button.ql-active .ql-fill {
+    fill: #ffffff !important;
+}
+
+.ql-container {
+    flex: 1 1 auto;
+    overflow: hidden;
+    background-color: #1c1e21;
+}
+
+.ql-editor {
+    height: 100%;
+    overflow-y: auto;
+    color: #D8D8D8;
+    font-family: "AnonymousPro", monospace;
+    font-size: 16px;
+}
+
+.ql-snow .ql-picker {
+    color: #D8D8D8 !important;
+}
+.ql-snow .ql-picker-label::before {
+    color: #D8D8D8 !important;
+}
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+    background-color: #2b2b2b !important;
+    border: 1px solid #444 !important;
+}
+.ql-snow .ql-picker-item::before {
+    color: #D8D8D8 !important;
+}
+.ql-snow .ql-picker-item:hover {
+    background-color: #3a3a3a !important;
+}
+.ql-snow .ql-picker-item:hover::before {
+    color: #D8D8D8 !important;
+}
+.ql-snow .ql-picker-item.ql-selected::before {
+    color: #ffffff !important;
+}
+
+.ql-snow .ql-picker.ql-align .ql-picker-options {
+    background-color: #2b2b2b !important;
+    border: 1px solid #444 !important;
+}
+.ql-snow .ql-picker.ql-align .ql-picker-item {
+    color: #D8D8D8 !important;
+}
+.ql-snow .ql-picker.ql-align .ql-picker-item:hover {
+    background-color: #3a3a3a !important;
+    color: #D8D8D8 !important;
+}
+
+.ql-snow .ql-picker.ql-syntax .ql-picker-label {
+    color: #D8D8D8 !important;
+}
+.ql-snow .ql-picker.ql-syntax .ql-picker-label svg {
+    stroke: #D8D8D8 !important;
+}
+.ql-snow .ql-picker.ql-syntax.ql-expanded .ql-picker-options {
+    background-color: #2b2b2b !important;
+    border: 1px solid #444 !important;
+}
+.ql-snow .ql-picker.ql-syntax .ql-picker-item {
+    color: #D8D8D8 !important;
+}
+.ql-snow .ql-picker.ql-syntax .ql-picker-item.ql-selected {
+    color: #ffffff !important;
+    background-color: #3a3a3a !important;
+}
+
+.ql-snow .ql-tooltip {
+    background-color: #232529 !important;
+    color: #D8D8D8 !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+}
+.ql-snow .ql-tooltip input {
+    background-color: #1c1e21 !important;
+    color: #D8D8D8 !important;
+    border: none !important;
+    outline: none !important;
+}
+.ql-snow .ql-tooltip input:focus {
+    border: 1px solid #888888 !important;
+}
+.ql-snow .ql-tooltip a {
+    color: #D8D8D8 !important;
+}
+
+.ql-toolbar,
+.ql-container {
+    border: none !important;
+}
+
+.katex {
+    font-family: "AnonymousPro", monospace !important;
+}
+.katex * {
+    font-family: "AnonymousPro", monospace !important;
+}
+
+@font-face {
+    font-family: "AnonymousPro";
+    src: url("../deps/fonts/anonymous_pro/AnonymousPro-Regular.ttf");
+    font-weight: normal;
+}
+@font-face {
+    font-family: "AnonymousPro";
+    src: url("../deps/fonts/anonymous_pro/AnonymousPro-Bold.ttf");
+    font-weight: bold;
+}
+@font-face {
+    font-family: "AnonymousPro";
+    src: url("../deps/fonts/anonymous_pro/AnonymousPro-Italic.ttf");
+    font-style: italic;
+}
+@font-face {
+    font-family: "AnonymousPro";
+    src: url("../deps/fonts/anonymous_pro/AnonymousPro-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
+.ql-toolbar [class*="align"] svg,
+.ql-toolbar [class*="align"] .ql-stroke,
+.ql-toolbar [class*="align"] .ql-fill,
+.ql-toolbar [class*="align"] path {
+    stroke: #929292 !important;
+    fill: #929292 !important;
+}
+
+.ql-toolbar [class*="align"]:hover svg,
+.ql-toolbar [class*="align"]:hover .ql-stroke,
+.ql-toolbar [class*="align"]:hover .ql-fill {
+    stroke: #D8D8D8 !important;
+    fill: #D8D8D8 !important;
+}
+
+.ql-toolbar .ql-active[class*="align"] svg,
+.ql-toolbar .ql-active[class*="align"] .ql-stroke,
+.ql-toolbar .ql-active[class*="align"] .ql-fill {
+    stroke: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+.ql-editor.ql-blank::before {
+    color: #888888 !important;
+    font-style: normal;
+}
