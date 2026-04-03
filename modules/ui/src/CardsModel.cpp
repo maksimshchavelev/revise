@@ -38,6 +38,8 @@ QVariant CardsModel::data(const QModelIndex& index, int role) const {
         return card.next_review;
     case DifficultyRole:
         return card.difficulty;
+    case StatusRole:
+        return static_cast<int>(card.state);
     default:
         return QVariant();
     }
@@ -49,7 +51,8 @@ QHash<int, QByteArray> CardsModel::roleNames() const {
                                         {BackRole, "back"},
                                         {IdRole, "id"},
                                         {NextReviewRole, "nextReview"},
-                                        {DifficultyRole, "difficulty"}};
+                                        {DifficultyRole, "difficulty"},
+                                        {StatusRole, "status"}};
 
     return roles;
 }

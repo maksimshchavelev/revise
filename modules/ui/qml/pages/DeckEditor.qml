@@ -209,6 +209,7 @@ Item {
                         back: model.back
                         nextReview: model.nextReview
                         difficulty: model.difficulty
+                        status: model.status
                         backgroundItem: blurOverlay.blurredItem
 
                         onPreviewClicked: {
