@@ -9,6 +9,10 @@ DecksModel::DecksModel(core::IDeckService& deck_service, core::IStudyService& st
 
     m_deck_service.connect<core::IDeckService::decks_updated>([this](auto& e) { update(); });
 
+    m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) { update(); });
+
+    m_deck_service.connect<core::IDeckService::card_removed>([this](auto& e) { update(); });
+
     m_study_service.connect<core::IStudyService::training_finished>([this](auto& e) { update(); });
 
     update();
