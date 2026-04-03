@@ -17,7 +17,7 @@ WebView {
     settings.localContentCanAccessFileUrls: true
 
     Component.onCompleted: {
-        const base = Qt.resolvedUrl(StandardPaths.writableLocation(StandardPaths.AppDataLocation) + "/web/card.html")
+        const base = Qt.resolvedUrl(StandardPaths.writableLocation(StandardPaths.AppDataLocation) + "/web/card/card.html")
         web.url = base
     }
 
