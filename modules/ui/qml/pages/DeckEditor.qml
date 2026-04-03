@@ -224,7 +224,7 @@ Item {
                             cardEditSession.front = card.front
                             cardEditSession.back = card.back
 
-                            router.navigate("cardPreview", {}, Revise.page.Window)
+                            router.navigate("cardPreview", {}, Revise.page.Page)
                         }
 
                         onEditClicked: {
