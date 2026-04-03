@@ -23,7 +23,7 @@ Item {
     signal clicked()
 
     implicitWidth: txt.implicitWidth + 40
-    implicitHeight: txt.implicitHeight + 10
+    implicitHeight: Math.max(40, txt.implicitHeight + 10)
     scale: root.pressed ? 0.96 : 1
 
     layer.enabled: true
