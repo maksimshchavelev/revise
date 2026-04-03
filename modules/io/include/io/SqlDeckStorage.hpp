@@ -15,9 +15,6 @@ class SqlDeckStorage final : public core::IDeckStorage {
   public:
     SqlDeckStorage(Database& db, DatabaseExecutionContext& context);
 
-    /// @copydoc core::IDeckStorage::get_deck_summaries
-    std::expected<QVector<core::DeckSummary>, QString> get_deck_summaries() override;
-
     /// @copydoc core::IDeckStorage::create_decks
     std::expected<void, QString> create_decks(const QVector<core::Deck>& decks) override;
 
@@ -32,6 +29,9 @@ class SqlDeckStorage final : public core::IDeckStorage {
 
     /// @copydoc core::IDeckStorage::fetch_decks
     std::expected<QVector<core::Deck>, QString> fetch_decks(const QVector<QString>& names) override;
+
+    /// @copydoc core::IDeckStorage::fetch_decks
+    std::expected<QVector<core::Deck>, QString> fetch_decks() override;
 
     /// @copydoc core::IDeckStorage::update_cards
     std::expected<void, QString> update_cards(const QVector<core::Card>& cards) override;

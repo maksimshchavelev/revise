@@ -4,6 +4,7 @@
 #include <QFuture>                   // for QFuture
 #include <QtConcurrent/QtConcurrent> // for QtConcurrent
 #include <QtGlobal>                  // for math
+#include <QtMinMax>                  // for min / max
 #include <utils/Html.hpp>            // for html utils
 #include <utils/ScopeGuard.hpp>      // for ScopeGuard
 
@@ -336,7 +337,33 @@ std::expected<void, QString> DeckService::update_card(const core::Card& card) {
 
 
 std::expected<QVector<core::DeckSummary>, QString> DeckService::deck_summaries() {
-    return m_deps.deck_storage.get_deck_summaries();
+    auto decks = m_deps.deck_storage.fetch_decks();
+
+    if (!decks) {
+        auto err = QString("DeckService::deck_summaries(): failed to fetch decks: '%1'").arg(decks.error());
+        return std::unexpected(std::move(err));
+    }
+
+    QVector<core::DeckSummary> summaries;
+    summaries.reserve(decks->size());
+
+    for (const auto& deck : decks.value()) {
+        auto study_info = m_deps.study_engine.get_study_info(deck.id);
+
+        if (!study_info) {
+            auto err = QString("DeckService::deck_summaries(): failed to get study info: '%1'").arg(study_info.error());
+            return std::unexpected(std::move(err));
+        }
+
+        core::DeckSummary s{.deck = deck,
+                            .new_cards = qMin(deck.new_limit, study_info->new_cards),
+                            .consolidate_cards = qMin(deck.consolidate_limit, study_info->consolidate_cards),
+                            .incorrect_cards = qMin(deck.incorrect_limit, study_info->incorrect_cards)};
+
+        summaries.push_back(std::move(s));
+    }
+
+    return summaries;
 }
 
 

@@ -102,20 +102,21 @@ void Launcher::init() {
         qWarning() << "Failed to create toast service, got nullptr";
     }
 
-    engine::DeckServiceDeps deck_service_deps{.deck_storage = *m_deck_storage,
-                                              .deck_media_storage = *m_deck_media_storage,
-                                              .anki_deck_importer = *m_anki_importer,
-                                              .revise_deck_importer = *m_revise_importer,
-                                              .deck_exporter = *m_revise_exporter};
-
-    if (m_deck_service = std::make_unique<engine::DeckService>(deck_service_deps); !m_deck_service) {
-        qWarning() << "Failed to create deck service, got nullptr";
-    }
-
     engine::StudyEngineDeps study_engine_deps{.algorithm = *m_algorithm, .deck_storage = *m_deck_storage};
 
     if (m_study_engine = std::make_unique<engine::StudyEngine>(study_engine_deps); !m_study_engine) {
         qWarning() << "Failed to create study engine, got nullptr";
+    }
+
+    engine::DeckServiceDeps deck_service_deps{.deck_storage = *m_deck_storage,
+                                              .deck_media_storage = *m_deck_media_storage,
+                                              .anki_deck_importer = *m_anki_importer,
+                                              .revise_deck_importer = *m_revise_importer,
+                                              .deck_exporter = *m_revise_exporter,
+                                              .study_engine = *m_study_engine};
+
+    if (m_deck_service = std::make_unique<engine::DeckService>(deck_service_deps); !m_deck_service) {
+        qWarning() << "Failed to create deck service, got nullptr";
     }
 
     if (m_study_service = std::make_unique<engine::StudyService>(*m_study_engine); !m_study_service) {

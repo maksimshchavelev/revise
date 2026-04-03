@@ -9,58 +9,6 @@ namespace io {
 SqlDeckStorage::SqlDeckStorage(Database& db, DatabaseExecutionContext& context) : m_db(db), m_context(context) {}
 
 
-std::expected<QVector<core::DeckSummary>, QString> SqlDeckStorage::get_deck_summaries() {
-    return m_context.exec([this]() -> std::expected<QVector<core::DeckSummary>, QString> {
-        QSqlQuery q(m_db.raw_db());
-
-        q.prepare(R"(
-            SELECT
-                d.id AS deck_id,
-                d.name AS deck_name,
-                d.description AS deck_description,
-                d.time_limit AS deck_time_limit,
-                d.new_limit AS deck_new_limit,
-                d.consolidate_limit AS deck_consolidate_limit,
-                d.incorrect_limit AS deck_incorrect_limit,
-                COALESCE( MIN( SUM(CASE WHEN c.state = 0 THEN 1 ELSE 0 END), d.new_limit ), 0) AS new_cards,
-                COALESCE( MIN( SUM(CASE WHEN c.state = 1 THEN 1 ELSE 0 END), d.consolidate_limit ), 0) AS consolidate_cards,
-                COALESCE( MIN( SUM(CASE WHEN c.state = 2 THEN 1 ELSE 0 END), d.incorrect_limit ), 0) AS incorrect_cards
-            FROM decks d
-            LEFT JOIN cards c ON c.deck_id = d.id
-            GROUP BY d.id
-            ORDER BY (new_cards + consolidate_cards + incorrect_cards) DESC
-        )");
-
-        if (!q.exec()) {
-            return std::unexpected(q.lastError().text());
-        }
-
-        QVector<core::DeckSummary> result;
-
-        while (q.next()) {
-            core::Deck di;
-            di.id = q.value("deck_id").toInt();
-            di.name = q.value("deck_name").toString();
-            di.description = q.value("deck_description").toString();
-            di.time_limit = q.value("deck_time_limit").toInt();
-            di.new_limit = q.value("deck_new_limit").toInt();
-            di.consolidate_limit = q.value("deck_consolidate_limit").toInt();
-            di.incorrect_limit = q.value("deck_incorrect_limit").toInt();
-
-            core::DeckSummary s;
-            s.deck = std::move(di);
-            s.new_cards = q.value("new_cards").toInt();
-            s.consolidate_cards = q.value("consolidate_cards").toInt();
-            s.incorrect_cards = q.value("incorrect_cards").toInt();
-
-            result.push_back(std::move(s));
-        }
-
-        return result;
-    });
-}
-
-
 std::expected<void, QString> SqlDeckStorage::create_decks(const QVector<core::Deck>& decks) {
     return m_context.exec([this, &decks]() -> std::expected<void, QString> {
         const bool need_transaction = decks.size() > 1;
@@ -258,6 +206,37 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks(const QV
 
                 result.push_back(std::move(deck));
             }
+        }
+
+        return result;
+    });
+}
+
+
+std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks() {
+    return m_context.exec([this]() -> std::expected<QVector<core::Deck>, QString> {
+        QVector<core::Deck> result;
+        QSqlQuery           q(m_db.raw_db());
+
+        result.reserve(256);
+
+        q.prepare("SELECT * FROM decks");
+
+        if (!q.exec()) {
+            return std::unexpected(QString("Failed to fetch decks by names, cause: %1").arg(q.lastError().text()));
+        }
+
+        while (q.next()) {
+            core::Deck deck{.name = q.value("name").toString(),
+                            .description = q.value("description").toString(),
+                            .time_limit = q.value("time_limit").toInt(),
+                            .new_limit = q.value("new_limit").toInt(),
+                            .consolidate_limit = q.value("consolidate_limit").toInt(),
+                            .incorrect_limit = q.value("incorrect_limit").toInt(),
+                            .id = q.value("id").toInt(),
+                            .global_id = q.value("global_id").toInt()};
+
+            result.push_back(std::move(deck));
         }
 
         return result;

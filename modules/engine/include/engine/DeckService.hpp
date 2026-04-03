@@ -8,6 +8,7 @@
 #include <core/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
 #include <core/IDeckService.hpp>      // for core::IDeckService
 #include <core/IDeckStorage.hpp>      // for core::IDeckStorage
+#include <core/IStudyEngine.hpp>      // for core::IStudyEngine
 
 namespace engine {
 
@@ -17,6 +18,7 @@ struct DeckServiceDeps {
     core::IDeckImporter&     anki_deck_importer;
     core::IDeckImporter&     revise_deck_importer;
     core::IDeckExporter&     deck_exporter;
+    core::IStudyEngine&      study_engine;
 };
 
 /**

@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "Card.hpp"  // for Card
-#include "Deck.hpp"  // for Deck
-#include <QString>   // for QString
-#include <QVector>   // for QVector
-#include <expected>  // for std::expected
+#include "Card.hpp" // for Card
+#include "Deck.hpp" // for Deck
+#include <QString>  // for QString
+#include <QVector>  // for QVector
+#include <expected> // for std::expected
 
 namespace core {
 
@@ -16,15 +16,8 @@ namespace core {
  * Implementations provide concrete storage logic.
  */
 class IDeckStorage {
-public:
+  public:
     virtual ~IDeckStorage() = default;
-
-    /**
-     * @brief Get summary statistics on decks
-     * @return `std::expected<QVector<DeckSummary>, QString>` containing `QVector<DeckSummary>` on success,
-     *         or an error description on failure
-     */
-    virtual std::expected<QVector<DeckSummary>, QString> get_deck_summaries() = 0;
 
     /**
      * @brief Create new decks from a vector
@@ -62,6 +55,13 @@ public:
      *         or an error description on failure
      */
     virtual std::expected<QVector<Deck>, QString> fetch_decks(const QVector<QString>& names) = 0;
+
+    /**
+     * @brief Get *all* decks
+     * @return `std::expected<QVector<Deck>, QString>` containing fetched decks on success,
+     *         or an error description on failure
+     */
+    virtual std::expected<QVector<Deck>, QString> fetch_decks() = 0;
 
     /**
      * @brief Update cards from a vector
