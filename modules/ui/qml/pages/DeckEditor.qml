@@ -174,7 +174,6 @@ Item {
 
                 // Create button
                 Revise.Button {
-                    Layout.preferredHeight: 40
                     text: qsTr("Добавить")
                     onClicked: {
                         let card = new Revise.Card()
