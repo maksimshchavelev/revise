@@ -13,11 +13,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: Revise.Theme.background
-    }
-
-    Revise.SolidBackground {
-        anchors.fill: parent
+        color: "black"
     }
 
     ColumnLayout {
