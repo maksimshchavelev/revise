@@ -51,13 +51,11 @@ Item {
 
             Revise.Button {
                 visible: !root.openedAsWindow
-                Layout.preferredHeight: 40
                 text: qsTr("Назад")
                 onClicked: router.back()
             }
 
             Revise.AcceptButton {
-                Layout.preferredHeight: 40
                 text: pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
                 onClicked: {
                     let frontHtml = ""
