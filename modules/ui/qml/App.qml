@@ -42,6 +42,19 @@ ApplicationWindow {
                 console.error("Page hasn't 'openedAsWindow' property")
             }
         }
+
+        onLoadingChanged: {
+            if (loading) {
+                loadingScreen.startLoading()
+            } else {
+                loadingScreen.endLoading()
+            }
+        }
+    }
+
+    Revise.LoadingScreen {
+        id: loadingScreen
+        anchors.fill: parent
     }
 
     Item {
@@ -107,21 +120,6 @@ ApplicationWindow {
                 createWindow(router.currentPageComponent, router.currentPage.params)
             }
         }
-    }
-
-    Rectangle {
-        id: loaderScreen
-        color: "black"
-        visible: pageLoader.status === Loader.Loading
-        anchors.fill: parent
-    }
-
-    BusyIndicator {
-        anchors.centerIn: parent
-        width: 128
-        height: 128
-        running: deckService.importInProgress || deckService.exportInProgress
-                 || pageLoader.loading
     }
 
     Connections {
