@@ -53,6 +53,7 @@ Item {
     Revise.LoadingScreen {
         id: loadingScreen
         anchors.fill: parent
+        visible: root.openedAsWindow
     }
 
     function flip() {
