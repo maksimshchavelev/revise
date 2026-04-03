@@ -1,9 +1,8 @@
 // Footer for the training tab. Four buttons with difficulty levels
 
 import QtQuick
-
 import QtQuick.Layouts
-import Revise
+import Revise as Revise
 
 Item {
     id: root
@@ -16,12 +15,6 @@ Item {
     signal hardClicked()
     signal badClicked()
 
-    Rectangle {
-        anchors.fill: parent
-        color: Theme.toolbarColor
-        opacity: 0.4
-    }
-
     // Flipped
     RowLayout {
         visible: studyService.flipped
@@ -29,63 +22,53 @@ Item {
         anchors.fill: parent
         clip: true
 
-        // Button {
-        //     text: qsTr("Плохо")
-        //     textColor: Theme.trainingBarWrong
-        //     textBold: true
-        //     Layout.preferredWidth: parent.width / 4 - 10
-        //     onClicked: {
-        //         root.badClicked()
-        //     }
-        // }
+        Revise.Button {
+            text: qsTr("Плохо")
+            color: Revise.Theme.trainingBarWrong
+            font.bold: true
+            Layout.preferredWidth: parent.width / 4 - 10
+            onClicked: root.badClicked()
+        }
 
-        // Button {
-        //     text: qsTr("Трудно")
-        //     textColor: Theme.trainingBarHard
-        //     textBold: true
-        //     Layout.preferredWidth: parent.width / 4 - 10
-        //     onClicked: {
-        //         root.hardClicked()
-        //     }
-        // }
+        Revise.Button {
+            text: qsTr("Трудно")
+            color: Revise.Theme.trainingBarHard
+            font.bold: true
+            Layout.preferredWidth: parent.width / 4 - 10
+            onClicked: root.hardClicked()
+        }
 
-        // Button {
-        //     text: qsTr("Сойдет")
-        //     textColor: Theme.trainingBarNormal
-        //     textBold: true
-        //     Layout.preferredWidth: parent.width / 4 - 10
-        //     onClicked: {
-        //         root.normalClicked()
-        //     }
-        // }
+        Revise.Button {
+            text: qsTr("Сойдет")
+            color: Revise.Theme.trainingBarNormal
+            font.bold: true
+            Layout.preferredWidth: parent.width / 4 - 10
+            onClicked: root.normalClicked()
+        }
 
-        // Button {
-        //     text: qsTr("Легко")
-        //     textColor: Theme.trainingBarEasy
-        //     textBold: true
-        //     Layout.preferredWidth: parent.width / 4 - 10
-        //     onClicked: {
-        //         root.easyClicked()
-        //     }
-        // }
+        Revise.Button {
+            text: qsTr("Легко")
+            color: Revise.Theme.trainingBarEasy
+            font.bold: true
+            Layout.preferredWidth: parent.width / 4 - 10
+            onClicked: root.easyClicked()
+        }
     }
 
     // Not reversed
-    // RowLayout {
-    //     visible: !studyService.flipped
-    //     anchors.margins: 12
-    //     anchors.fill: parent
-    //     clip: true
+    RowLayout {
+        visible: !studyService.flipped
+        anchors.margins: 12
+        anchors.fill: parent
+        clip: true
 
-    //     Button {
-    //         text: qsTr("Перевернуть")
-    //         Layout.alignment: Qt.AlignCenter
-    //         Layout.fillWidth: true
-    //         onClicked: studyService.flip()
-    //         textBold: true
-    //     }
-    // }
-
-    DebugBounds {}
+        Revise.Button {
+            text: qsTr("Перевернуть")
+            Layout.alignment: Qt.AlignCenter
+            Layout.fillWidth: true
+            onClicked: studyService.flip()
+            font.bold: true
+        }
+    }
 }
 
