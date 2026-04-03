@@ -4,10 +4,12 @@
 
 namespace ui {
 
-DecksModel::DecksModel(core::IDeckService& deck_service, QObject* parent) :
-    QAbstractListModel(parent), m_deck_service(deck_service) {
-    m_deck_service.connect<core::IDeckService::decks_updated>(
-        [this](const core::IDeckService::decks_updated& e) { update(); });
+DecksModel::DecksModel(core::IDeckService& deck_service, core::IStudyService& study_service, QObject* parent) :
+    QAbstractListModel(parent), m_deck_service(deck_service), m_study_service(study_service) {
+
+    m_deck_service.connect<core::IDeckService::decks_updated>([this](auto& e) { update(); });
+
+    m_study_service.connect<core::IStudyService::training_finished>([this](auto& e) { update(); });
 
     update();
 }

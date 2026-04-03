@@ -43,7 +43,7 @@ class UI {
     void bind_deck_service(core::IDeckService& deck_service);
 
     /// Make DecksModel accessible from qml
-    void bind_decks_model(core::IDeckService& deck_service);
+    void bind_decks_model(core::IDeckService& deck_service, core::IStudyService& study_service);
 
     /// Make CardsModel accessible from qml
     void bind_cards_model(core::IDeckService& deck_service);

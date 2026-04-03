@@ -3,13 +3,14 @@
 #pragma once
 
 #include <QAbstractListModel>
-#include <core/IDeckService.hpp> // for core::IDeckService
+#include <core/IDeckService.hpp>  // for core::IDeckService
+#include <core/IStudyService.hpp> // for core::IStudyService
 
 namespace ui {
 
 class DecksModel final : public QAbstractListModel {
   public:
-    DecksModel(core::IDeckService& deck_service, QObject* parent = nullptr);
+    DecksModel(core::IDeckService& deck_service, core::IStudyService& study_service, QObject* parent = nullptr);
 
     enum DeckRoles {
         NameRole = Qt::UserRole + 1,
@@ -30,6 +31,7 @@ class DecksModel final : public QAbstractListModel {
 
   private:
     core::IDeckService&        m_deck_service;
+    core::IStudyService&       m_study_service;
     QVector<core::DeckSummary> m_decks;
 
     /// Reload data
