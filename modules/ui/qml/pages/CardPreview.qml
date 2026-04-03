@@ -44,14 +44,12 @@ Item {
 
         Revise.Button {
             Layout.fillWidth: true
-            Layout.preferredHeight: 40
             text: qsTr("Перевернуть")
             onClicked: root.flip()
         }
 
         Revise.Button {
             Layout.fillWidth: true
-            Layout.preferredHeight: 40
             text: qsTr("Назад")
             onClicked: router.back()
         }
