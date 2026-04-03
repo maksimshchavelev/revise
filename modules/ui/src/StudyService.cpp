@@ -1,6 +1,7 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "StudyService.hpp" // for header
+#include <utils/Html.hpp>   // for Html utils
 
 namespace ui {
 
@@ -41,20 +42,17 @@ void StudyService::abort() {
 }
 
 
-void StudyService::flip()
-{
+void StudyService::flip() {
     m_study_service.flip();
 }
 
 
-void StudyService::pause()
-{
+void StudyService::pause() {
     m_study_service.pause();
 }
 
 
-void StudyService::resume()
-{
+void StudyService::resume() {
     m_study_service.resume();
 }
 
@@ -73,8 +71,15 @@ QString StudyService::front() const {
     auto res = m_study_service.current_card();
 
     if (!res) {
+        qWarning() << "StudyService::back(): failed to get card front";
         return QString();
     }
+
+    if (utils::Html::new_lines(res->front) < 3) {
+        res->front = utils::Html::center_horizontal(res->front);
+    }
+
+    res->front = utils::Html::center_vertical(res->front);
 
     return res->front;
 }
@@ -84,8 +89,15 @@ QString StudyService::back() const {
     auto res = m_study_service.current_card();
 
     if (!res) {
+        qWarning() << "StudyService::back(): failed to get card back";
         return QString();
     }
+
+    if (utils::Html::new_lines(res->back) < 3) {
+        res->back = utils::Html::center_horizontal(res->back);
+    }
+
+    res->back = utils::Html::center_vertical(res->back);
 
     return res->back;
 }
