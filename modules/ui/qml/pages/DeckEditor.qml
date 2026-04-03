@@ -249,10 +249,7 @@ Item {
                     }
                 }
 
-                ScrollBar.vertical: ScrollBar {
-                    policy: ScrollBar.AsNeeded
-                    interactive: true
-                }
+                ScrollBar.vertical: Revise.Scrollbar {}
 
                 onContentXChanged: iterateDelegates()
                 onContentYChanged: iterateDelegates()

@@ -70,4 +70,8 @@ QtObject {
     readonly property color toastInfo: "#a5a1b0"
     readonly property color toastSuccess: "#4eb374"
     readonly property color toastError: "#d4613e"
+
+    // Scrollbar
+    readonly property color scrollbarBackground: "#1c1e21"
+    readonly property color scrollbar: "#292c30"
 }
