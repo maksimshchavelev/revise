@@ -24,6 +24,8 @@ Item {
         pointSize: Revise.Theme.fontSizeDefault
     })
 
+    implicitHeight: 35
+
     layer.enabled: true
     layer.effect: DropShadow {
         horizontalOffset: 5
