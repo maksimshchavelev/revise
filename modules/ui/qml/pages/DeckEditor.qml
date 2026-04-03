@@ -67,7 +67,6 @@ Item {
             Revise.TextField {
                 id: deckName
                 Layout.fillWidth: true
-                Layout.preferredHeight: 35
                 placeholder.text: qsTr("Имя колоды")
                 text: root.deck.name
             }
@@ -79,7 +78,6 @@ Item {
             Revise.TextField {
                 id: deckDescription
                 Layout.fillWidth: true
-                Layout.preferredHeight: 35
                 placeholder.text: qsTr("Описание (необязательно)")
                 text: root.deck.description
             }
@@ -99,7 +97,6 @@ Item {
                 id: deckTimeLimit
                 editable: limitTime.checked
                 Layout.fillWidth: true
-                Layout.preferredHeight: 35
                 placeholder.text: qsTr("Ограничение времени (сек)")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
@@ -116,7 +113,6 @@ Item {
             Revise.TextField {
                 id: deckNewLimit
                 Layout.fillWidth: true
-                Layout.preferredHeight: 35
                 placeholder.text: qsTr("Максимум новых карточек")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
@@ -133,7 +129,6 @@ Item {
             Revise.TextField {
                 id: deckConsolidateLimit
                 Layout.fillWidth: true
-                Layout.preferredHeight: 35
                 placeholder.text: qsTr("Максимум повторяемых")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
@@ -150,7 +145,6 @@ Item {
             Revise.TextField {
                 id: deckIncorrectLimit
                 Layout.fillWidth: true
-                Layout.preferredHeight: 35
                 placeholder.text: qsTr("Максимум ошибочных")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
