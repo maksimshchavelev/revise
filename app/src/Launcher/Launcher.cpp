@@ -180,6 +180,40 @@ void Launcher::connect_signals() {
                         .message = QCoreApplication::translate("deck events", "Карточка успешно удалена!"),
                         .type = core::ToastType::SUCCESS});
     });
+
+    // Study
+    m_study_service->connect<core::IStudyService::error>([this](auto& e) {
+        core::Toast toast;
+
+        toast.header = QCoreApplication::translate("study events", "Не удалось начать обучение");
+        toast.message = QCoreApplication::translate("study events", "Ошибка: ") + e.message;
+        toast.type = core::ToastType::ERROR;
+
+        m_toast_service->request(std::move(toast));
+        m_router.back();
+    });
+
+    m_study_service->connect<core::IStudyService::training_finished>([this](auto& e) {
+        core::Toast toast;
+
+        toast.header = QCoreApplication::translate("study events", "Обучение завершено");
+        toast.message = QCoreApplication::translate("study events", "Продолжайте в том же духе!");
+        toast.type = core::ToastType::SUCCESS;
+
+        m_toast_service->request(std::move(toast));
+
+        m_router.navigate(ui::Page{"home"});
+    });
+
+    m_study_service->connect<core::IStudyService::training_aborted>([this](auto& e) {
+        core::Toast toast;
+
+        toast.header = QCoreApplication::translate("study events", "Обучение прервано");
+        toast.message = QCoreApplication::translate("study events", "Отдохните и вернитесь чуть позже :)");
+        toast.type = core::ToastType::INFO;
+
+        m_toast_service->request(std::move(toast));
+    });
 }
 
 
