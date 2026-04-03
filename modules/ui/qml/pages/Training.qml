@@ -1,29 +1,26 @@
 // Training page
 
 import QtQuick
-import QtQuick.Controls as QQC
+import QtQuick.Controls
 import QtQuick.Layouts
-import Revise
+import Revise as Revise
 
 Item {
     id: root
 
+    property bool openedAsWindow: false
     property var pageParams: null // nothing now
 
     Rectangle {
         anchors.fill: parent
-        color: "black"
+        color: Revise.Theme.background
     }
 
-    QQC.BusyIndicator {
-        anchors.centerIn: parent
-        width: parent.width * 0.35
-        height: width
-        running: htmlCard.loading
+    Revise.SolidBackground {
+        anchors.fill: parent
     }
 
     ColumnLayout {
-        visible: !htmlCard.loading
         anchors.fill: parent
         spacing: 0
 
@@ -34,7 +31,7 @@ Item {
             Layout.preferredHeight: 30
             Layout.topMargin: 8
 
-            ColorfulProgressbar {
+            Revise.ColorfulProgressbar {
                 id: progressBar
                 anchors.centerIn: parent
                 width: parent.width * 0.95
@@ -50,11 +47,11 @@ Item {
             visible: !htmlCard.visible
         }
 
-        HtmlView {
+        Revise.CardView {
             id: htmlCard
             Layout.fillWidth: true
             Layout.fillHeight: true
-            html: loading ? "" : get_html()
+            html: studyService.flipped ? studyService.back : studyService.front
             onLoadingChanged: {
                 if (loading) {
                     studyService.pause()
@@ -62,14 +59,9 @@ Item {
                     studyService.resume()
                 }
             }
-
-            function get_html() {
-                return studyService.flipped ? (countLines(studyService.back) > 2 ? verticalCenterText(studyService.back) : centerHtml(studyService.back))
-                                    : centerHtml(studyService.front)
-            }
         }
 
-        TrainingBar {
+        Revise.TrainingBar {
             id: trainingBar
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignBottom
