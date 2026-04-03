@@ -11,17 +11,14 @@ StudyEngine::StudyEngine(StudyEngineDeps deps) : m_deps(deps) {}
 
 
 std::expected<void, QString> StudyEngine::start(int deck_id) {
-    // Reset cards
     m_cards.clear();
     m_trained_cards.clear();
 
-    // Reset session state
     m_session_state.current_card = std::nullopt;
     m_session_state.flipped = false;
     m_session_state.time_limit = 0;
     m_session_state.time_remaining = 0;
 
-    // Load cards
     auto fetched_cards = m_deps.deck_storage.fetch_cards(deck_id);
 
     if (!fetched_cards) {
@@ -39,7 +36,6 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
         fetched_cards.value() //
         | std::views::filter([](const auto& card) { return card.next_review <= QDateTime::currentDateTime(); });
 
-    // Filter cards by types and limits
     auto new_cards = filtered_cards                                                         //
                      | std::views::filter([](const auto& card) { return card.state == 0; }) //
                      | std::views::take(deck_info->first().new_limit);                      //
@@ -52,7 +48,6 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
                            | std::views::filter([](const auto& card) { return card.state == 2; }) //
                            | std::views::take(deck_info->first().incorrect_limit);                //
 
-    // Emplace cards
     for (const auto& card : new_cards) {
         m_cards.emplaceBack(std::move(card));
     }
@@ -65,7 +60,6 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
         m_cards.emplaceBack(std::move(card));
     }
 
-    // shuffle queue
     auto shuffle = [](QQueue<core::Card>& source) {
         QList<core::Card> list;
 
@@ -79,6 +73,10 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
             source.enqueue(item);
         }
     };
+
+    if (m_cards.empty()) {
+        return std::unexpected(QString("Failed to begin studying: nothing to study"));
+    }
 
     shuffle(m_cards);
 
@@ -133,15 +131,15 @@ std::expected<core::IStudyEngine::StudyInfo, QString> StudyEngine::get_study_inf
 
     // Count
     int new_cards = std::count_if(filtered_cards.begin(), filtered_cards.end(), [](const auto& card) {
-        return card.state == 0; // new
+        return card.state == 0; //
     });
 
     int consolidate_cards = std::count_if(filtered_cards.begin(), filtered_cards.end(), [](const auto& card) {
-        return card.state == 1; // consolidate
+        return card.state == 1; //
     });
 
     int incorrect_cards = std::count_if(filtered_cards.begin(), filtered_cards.end(), [](const auto& card) {
-        return card.state == 2; // incorrect
+        return card.state == 2; //
     });
 
     return core::IStudyEngine::StudyInfo{
@@ -161,14 +159,11 @@ StudyEngine::SessionState& StudyEngine::state() {
 std::expected<StudyEngine::StepResult, QString> StudyEngine::answer(float difficulty) {
     core::Card card = m_cards.dequeue();
 
-    // Delegate scheduling decision to algorithm
     core::AlgorithmResult alg_res = m_deps.algorithm.process_answer(card, difficulty);
 
     if (alg_res.requeue) {
-        // Put updated card to the end of the queue
         m_cards.enqueue(alg_res.updated_card);
     } else {
-        // Move to trained
         m_trained_cards.append(alg_res.updated_card);
     }
 
