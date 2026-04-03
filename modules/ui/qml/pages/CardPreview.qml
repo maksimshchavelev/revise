@@ -50,7 +50,17 @@ Item {
         }
     }
 
+    Revise.LoadingScreen {
+        id: loadingScreen
+        anchors.fill: parent
+    }
+
     function flip() {
         root.flipped = !root.flipped
+    }
+
+    Component.onCompleted: {
+        loadingScreen.startLoading()
+        loadingScreen.endLoading()
     }
 }
