@@ -9,6 +9,7 @@ Item {
     id: root
 
     property var pageParams: null
+    property bool openedAsWindow: false
     property var windowTitle: qsTr("Просмотр карточки - Revise")
 
     property string front : cardEditSession.front

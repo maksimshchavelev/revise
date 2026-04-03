@@ -10,6 +10,7 @@ Item {
     id: root
 
     property var pageParams: null // Revise.Deck expected
+    property bool openedAsWindow: false
     property string windowTitle: `${deck.name.length > 0 ? deck.name : "Unknown deck"} - Revise`
 
     property Revise.Deck deck: pageParams ? pageParams.deck : Revise.Deck
@@ -183,7 +184,7 @@ Item {
                         router.navigate("cardEditor", {
                                             "editMode": false,
                                             "card": card
-                                        }, Revise.page.Window)
+                                        }, Revise.page.Page)
                     }
                 }
             }
@@ -230,7 +231,7 @@ Item {
                             router.navigate("cardEditor", {
                                                 "card": deckService.card(cardId),
                                                 "editMode": true
-                                            }, Revise.page.Window)
+                                            }, Revise.page.Page)
                         }
 
                         onIncreaseDifficultyClicked: {
@@ -264,62 +265,49 @@ Item {
                 onContentYChanged: iterateDelegates()
             }
 
-            Revise.AcceptButton {
+            RowLayout {
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredHeight: 40
-                Layout.topMargin: 4
-                text: qsTr("Обновить")
-                clickable: deckName.valid && deckName.text.trim()
-                           !== "" && (deckDescription.valid
-                                      || deckDescription.text.trim()
-                                      === "") && (!limitTime.checked
-                                                  || (deckTimeLimit.valid && deckTimeLimit.text.trim(
-                                                          ) !== ""))
-                           && deckNewLimit.valid && deckNewLimit.text.trim(
-                               ) !== ""
-                           && deckConsolidateLimit.valid && deckConsolidateLimit.text.trim(
-                               ) !== ""
-                           && deckIncorrectLimit.valid && deckIncorrectLimit.text.trim(
-                               ) !== ""
-                onClicked: {
-                    root.deck.name = deckName.text
-                    root.deck.description = deckDescription.text
-                    root.deck.newLimit = parseInt(deckNewLimit.text)
-                    root.deck.consolidateLimit = parseInt(
-                                deckConsolidateLimit.text)
-                    root.deck.incorrectLimit = parseInt(deckIncorrectLimit.text)
-                    root.deck.timeLimit = limitTime.checked ? parseInt(
-                                                                  deckTimeLimit.text) : 0
+                Layout.margins: 5
 
-                    deckService.update_deck(root.deck)
+                Revise.Button {
+                    visible: !root.openedAsWindow
+                    Layout.fillHeight: true
+                    text: qsTr("Назад")
+                    onClicked: router.back()
+                }
+
+                Revise.AcceptButton {
+                    text: qsTr("Обновить")
+                    Layout.fillHeight: true
+                    clickable: deckName.valid && deckName.text.trim()
+                               !== "" && (deckDescription.valid
+                                          || deckDescription.text.trim()
+                                          === "") && (!limitTime.checked
+                                                      || (deckTimeLimit.valid && deckTimeLimit.text.trim(
+                                                              ) !== ""))
+                               && deckNewLimit.valid && deckNewLimit.text.trim(
+                                   ) !== ""
+                               && deckConsolidateLimit.valid && deckConsolidateLimit.text.trim(
+                                   ) !== ""
+                               && deckIncorrectLimit.valid && deckIncorrectLimit.text.trim(
+                                   ) !== ""
+                    onClicked: {
+                        root.deck.name = deckName.text
+                        root.deck.description = deckDescription.text
+                        root.deck.newLimit = parseInt(deckNewLimit.text)
+                        root.deck.consolidateLimit = parseInt(
+                                    deckConsolidateLimit.text)
+                        root.deck.incorrectLimit = parseInt(deckIncorrectLimit.text)
+                        root.deck.timeLimit = limitTime.checked ? parseInt(
+                                                                      deckTimeLimit.text) : 0
+
+                        deckService.update_deck(root.deck)
+                    }
                 }
             }
 
             Revise.VerticalSpacer {}
-        }
-    }
-
-    Revise.CardEventDialog {
-        id: cardEventDialog
-        backgroundItem: flickable
-
-        onPreviewClicked: function (cardId) {
-            Qt.inputMethod.hide()
-            router.navigate("cardPreview", {
-                                "card": deckService.card(cardId)
-                            })
-        }
-
-        onRemoveClicked: function (cardId) {
-            deckService.remove_card(cardId)
-        }
-
-        onEditClicked: function (cardId) {
-            Qt.inputMethod.hide()
-            router.navigate("cardEditor", {
-                                "editMode": true,
-                                "card": deckService.card(cardId)
-                            })
         }
     }
 

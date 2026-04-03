@@ -9,6 +9,7 @@ Item {
     id: root
 
     property var pageParams: null
+    property bool openedAsWindow: false
 
     Revise.Background {
         id: background
@@ -60,7 +61,7 @@ Item {
                 onEditClicked: {
                     router.navigate("deckEditor", {
                                         "deck": deckService.deck(deckId)
-                                    }, Revise.page.Window)
+                                    }, Revise.page.Page)
                 }
 
                 onRemoveClicked: {

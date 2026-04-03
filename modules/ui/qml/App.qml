@@ -24,6 +24,24 @@ ApplicationWindow {
         asynchronous: true
 
         property bool loading: status === Loader.Loading
+
+        onLoaded: {
+            if (router.currentPage.mode !== Revise.page.Page) {
+                return
+            }
+
+            if (item.hasOwnProperty("pageParams")) {
+                item.pageParams = router.currentPage.params
+            } else {
+                console.error("Page hasn't 'pageParams' property")
+            }
+
+            if (item.hasOwnProperty("openedAsWindow")) {
+                item.openedAsWindow = false
+            } else {
+                console.error("Page hasn't 'openedAsWindow' property")
+            }
+        }
     }
 
     Item {
@@ -64,6 +82,12 @@ ApplicationWindow {
             win.title = item.windowTitle
         } else {
             console.error("Page hasn't 'windowTitle' property")
+        }
+
+        if (item.hasOwnProperty("openedAsWindow")) {
+            item.openedAsWindow = true
+        } else {
+            console.error("Page hasn't 'openedAsWindow' property")
         }
 
         item.parent = win.contentItem

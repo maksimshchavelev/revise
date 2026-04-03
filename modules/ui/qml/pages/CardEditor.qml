@@ -7,6 +7,7 @@ Item {
     id: root
 
     property var pageParams: null // contains editMode and Revise.Card (named "card")
+    property bool openedAsWindow: false
     property string windowTitle: qsTr(`${pageParams.editMode ? "Редактирование" : "Добавление"} карточки - Revise`)
 
     Rectangle {
@@ -43,42 +44,53 @@ Item {
             Layout.fillHeight: true
         }
 
-        Revise.AcceptButton {
+        RowLayout {
             Layout.alignment: Qt.AlignRight | Qt.AlignBottom
-            Layout.margins: 10
-            Layout.preferredHeight: 35
-            text: pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
-            onClicked: {
-                let frontHtml = ""
-                let backHtml = ""
-                let received = 0
+            Layout.margins: 5
+            Layout.preferredHeight: 40
 
-                function saveIfReady() {
-                    if (received === 2) {
-                        root.pageParams.card.front = frontHtml
-                        root.pageParams.card.back = backHtml
+            Revise.Button {
+                visible: !root.openedAsWindow
+                Layout.preferredHeight: 40
+                text: qsTr("Назад")
+                onClicked: router.back()
+            }
 
-                        if (root.pageParams.editMode === true) {
-                            deckService.update_card(root.pageParams.card)
-                        } else {
-                            deckService.create_card(root.pageParams.card)
-                            frontEditor.clear()
-                            backEditor.clear()
+            Revise.AcceptButton {
+                Layout.preferredHeight: 40
+                text: pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
+                onClicked: {
+                    let frontHtml = ""
+                    let backHtml = ""
+                    let received = 0
+
+                    function saveIfReady() {
+                        if (received === 2) {
+                            root.pageParams.card.front = frontHtml
+                            root.pageParams.card.back = backHtml
+
+                            if (root.pageParams.editMode === true) {
+                                deckService.update_card(root.pageParams.card)
+                            } else {
+                                deckService.create_card(root.pageParams.card)
+                                frontEditor.clear()
+                                backEditor.clear()
+                            }
                         }
                     }
+
+                    frontEditor.getHtml(function (html) {
+                        frontHtml = html
+                        received++
+                        saveIfReady()
+                    })
+
+                    backEditor.getHtml(function (html) {
+                        backHtml = html
+                        received++
+                        saveIfReady()
+                    })
                 }
-
-                frontEditor.getHtml(function (html) {
-                    frontHtml = html
-                    received++
-                    saveIfReady()
-                })
-
-                backEditor.getHtml(function (html) {
-                    backHtml = html
-                    received++
-                    saveIfReady()
-                })
             }
         }
     }
