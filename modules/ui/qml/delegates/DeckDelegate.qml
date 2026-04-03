@@ -174,7 +174,7 @@ Item {
                 Revise.Text {
                     text: root.consolidateCards
                     font.pointSize: Revise.Theme.fontSizeSmall
-                    color: root.newCards > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
+                    color: root.consolidateCards > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
                 }
             }
 
@@ -191,9 +191,9 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.Text {
-                    text: root.consolidateCards
+                    text: root.incorrectCards
                     font.pointSize: Revise.Theme.fontSizeSmall
-                    color: root.newCards > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
+                    color: root.incorrectCards > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
                 }
             }
 
