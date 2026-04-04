@@ -90,7 +90,7 @@ Item {
 
     Revise.LoadingIconButton {
         id: addButton
-        source: "qrc:/res/img/add_deck.png"
+        source: "qrc:/res/img/add_deck.svg"
         anchors {
             right: root.right
             bottom: root.bottom
