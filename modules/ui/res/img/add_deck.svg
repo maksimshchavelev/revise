@@ -44,11 +44,11 @@
        inkscape:collect="always"
        id="linearGradient9073">
       <stop
-         style="stop-color:#dbc7b8;stop-opacity:1;"
+         style="stop-color:#1b8fdd;stop-opacity:1;"
          offset="0.03074084"
          id="stop9069" />
       <stop
-         style="stop-color:#de9271;stop-opacity:1;"
+         style="stop-color:#6b0dc8;stop-opacity:0.70079577;"
          offset="1"
          id="stop9071" />
     </linearGradient>
@@ -73,12 +73,8 @@
        cy="24"
        r="23.42618" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:3.23528;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
-       d="m 23.99123,11.548389 0.01754,24.903222"
-       id="path4694" />
-    <path
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:3.23528;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
-       d="M 36.451611,23.99123 11.548389,24.00877"
-       id="path4694-3" />
+       id="path4694-3"
+       style="mix-blend-mode:normal;fill:none;fill-opacity:1;stroke:#d9e9ff;stroke-width:2.55495;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:0.952429"
+       d="m 33.833235,23.993075 -19.666469,0.01385 m 9.826308,-9.840159 0.01385,19.666469" />
   </g>
 </svg>
