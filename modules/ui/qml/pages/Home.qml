@@ -88,6 +88,16 @@ Item {
         }
     }
 
+    Revise.LoadingIconButton {
+        id: addButton
+        source: "qrc:/res/img/add_deck.png"
+        anchors {
+            right: root.right
+            bottom: root.bottom
+            margins: 24
+        }
+    }
+
     Revise.AddDeckDialog {
         id: addDeckDialog
         backgroundItem: layout

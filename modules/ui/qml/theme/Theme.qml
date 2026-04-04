@@ -74,4 +74,7 @@ QtObject {
     // Scrollbar
     readonly property color scrollbarBackground: "#1c1e21"
     readonly property color scrollbar: "#292c30"
+
+    // Loading icon button
+    readonly property color loadingIconButtonBackground: "#1c1e21"
 }

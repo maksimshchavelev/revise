@@ -7,6 +7,8 @@ Item {
 
     property bool running: true
     property int size: 36
+    property color frontColor: Revise.Theme.textColor
+    property color backColor: Qt.lighter(Revise.Theme.background)
 
     width: root.size
     height: root.size
@@ -18,7 +20,7 @@ Item {
         // Back
         ShapePath {
             strokeWidth: 3
-            strokeColor: Qt.lighter(Revise.Theme.background)
+            strokeColor: root.backColor
             fillColor: "transparent"
 
             PathAngleArc {
@@ -35,7 +37,7 @@ Item {
         // Front
         ShapePath {
             strokeWidth: 3
-            strokeColor: Revise.Theme.textColor
+            strokeColor: root.frontColor
             fillColor: "transparent"
             capStyle: ShapePath.RoundCap
 
