@@ -20,7 +20,8 @@ class DecksModel final : public QAbstractListModel {
         ConsolidateCardsRole,
         IncorrectCardsRole,
         DeckId,
-        RepeatableToday
+        RepeatableToday,
+        IsSpecialRole ///< If true, this is a special deck used to add a new deck
     };
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;

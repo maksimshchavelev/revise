@@ -42,35 +42,53 @@ Item {
             Layout.fillHeight: true
             Layout.margins: 5
 
-            delegate: Revise.DeckDelegate {
-                deckName: model.name
-                deckDescription: model.description
-                timeLimit: model.timeLimit
-                newCards: model.newCards
-                consolidateCards: model.consolidateCards
-                incorrectCards: model.incorrectCards
-                deckId: model.deckId
-                repeatableToday: model.repeatableToday
-                backgroundItem: blurOverlay.blurredItem
+            delegate: DelegateChooser {
+                role: "isSpecial"
 
-                onStudyClicked: {
-                    studyService.start(deckId)
-                    router.navigate("training", {})
+                DelegateChoice {
+                    roleValue: true
+
+                    delegate: Revise.AddDeckDelegate {
+                        backgroundItem: blurOverlay.blurredItem
+
+                        onImportClicked: importDialog.open()
+                    }
                 }
 
-                onEditClicked: {
-                    router.navigate("deckEditor", {
-                                        "deck": deckService.deck(deckId)
-                                    }, Revise.page.Page)
-                }
+                DelegateChoice {
+                    roleValue: false
 
-                onRemoveClicked: {
-                    deckService.remove_deck(deckId)
-                }
+                    delegate: Revise.DeckDelegate {
+                        deckName: model.name
+                        deckDescription: model.description
+                        timeLimit: model.timeLimit
+                        newCards: model.newCards
+                        consolidateCards: model.consolidateCards
+                        incorrectCards: model.incorrectCards
+                        deckId: model.deckId
+                        repeatableToday: model.repeatableToday
+                        backgroundItem: blurOverlay.blurredItem
 
-                onExportClicked: {
-                    exportDialog.deckId = deckId
-                    exportDialog.open()
+                        onStudyClicked: {
+                            studyService.start(deckId)
+                            router.navigate("training", {})
+                        }
+
+                        onEditClicked: {
+                            router.navigate("deckEditor", {
+                                                "deck": deckService.deck(deckId)
+                                            }, Revise.page.Page)
+                        }
+
+                        onRemoveClicked: {
+                            deckService.remove_deck(deckId)
+                        }
+
+                        onExportClicked: {
+                            exportDialog.deckId = deckId
+                            exportDialog.open()
+                        }
+                    }
                 }
             }
 
@@ -86,24 +104,6 @@ Item {
             onContentXChanged: iterateDelegates()
             onContentYChanged: iterateDelegates()
         }
-    }
-
-    Revise.LoadingIconButton {
-        id: addButton
-        source: "qrc:/res/img/add_deck.svg"
-        anchors {
-            right: root.right
-            bottom: root.bottom
-            margins: 24
-        }
-    }
-
-    Revise.AddDeckDialog {
-        id: addDeckDialog
-        backgroundItem: layout
-
-        onImportClicked: importDialog.open()
-        onCreateClicked: createDeckDialog.open()
     }
 
     Revise.CreateDeckDialog {

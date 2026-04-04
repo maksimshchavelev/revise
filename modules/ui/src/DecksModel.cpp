@@ -48,6 +48,8 @@ QVariant DecksModel::data(const QModelIndex& index, int role) const {
         return deck.incorrect_cards;
     case RepeatableToday:
         return deck.new_cards > 0 || deck.consolidate_cards > 0 || deck.incorrect_cards > 0;
+    case IsSpecialRole:
+        return index.row() == 0;
     default:
         return QVariant();
     }
@@ -62,7 +64,8 @@ QHash<int, QByteArray> DecksModel::roleNames() const {
                                         {ConsolidateCardsRole, "consolidateCards"},
                                         {IncorrectCardsRole, "incorrectCards"},
                                         {DeckId, "deckId"},
-                                        {RepeatableToday, "repeatableToday"}};
+                                        {RepeatableToday, "repeatableToday"},
+                                        {IsSpecialRole, "isSpecial"}};
 
     return roles;
 }
@@ -74,7 +77,9 @@ void DecksModel::update() {
     auto res = m_deck_service.deck_summaries();
 
     if (res) {
-        m_decks = std::move(res.value());
+        m_decks.clear();
+        m_decks.emplace_back();
+        m_decks.append(std::move(res.value()));
     }
 
     endResetModel();
