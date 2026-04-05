@@ -10,6 +10,7 @@
 #include <QUuid>                           // for QUuid
 #include <quazip.h>                        // for QuaZip
 #include <quazipfile.h>                    // for QuaZipFile
+#include <utils/ScopeGuard.hpp>            // for ScopeGuard
 
 namespace io {
 
@@ -23,6 +24,8 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
     if (!export_dir.mkdir(export_dir.path())) {
         return std::unexpected(QString("Failed to make temporary export directory: %1").arg(export_dir.path()));
     }
+
+    utils::ScopeGuard _([&]() {}, [&]() { export_dir.removeRecursively(); });
 
     // export db
     QSqlDatabase export_db = QSqlDatabase::addDatabase("QSQLITE", "revise_export");
