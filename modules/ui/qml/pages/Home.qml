@@ -106,15 +106,6 @@ Item {
         }
     }
 
-    Revise.CreateDeckDialog {
-        id: createDeckDialog
-        backgroundItem: layout
-
-        onCreateClicked: function (deck) {
-            deckService.create_deck(deck)
-        }
-    }
-
     FileDialog {
         id: importDialog
 
