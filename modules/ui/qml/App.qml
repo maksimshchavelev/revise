@@ -41,6 +41,12 @@ ApplicationWindow {
             } else {
                 console.error("Page hasn't 'openedAsWindow' property")
             }
+
+            if (item.hasOwnProperty("windowTitle")) {
+                appWindow.title = item.windowTitle
+            } else {
+                console.error("Page hasn't 'windowTitle' property")
+            }
         }
 
         onLoadingChanged: {
