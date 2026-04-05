@@ -147,6 +147,20 @@ void Launcher::connect_signals() {
                         .type = core::ToastType::INFO});
     });
 
+    m_deck_service->connect<core::IDeckService::deck_created>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Колода создана"),
+                        .message = QCoreApplication::translate("deck events", "Новая колода создана!"),
+                        .type = core::ToastType::SUCCESS});
+    });
+
+    m_deck_service->connect<core::IDeckService::deck_removed>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Колода удалена"),
+                        .message = QCoreApplication::translate("deck events", "Колода была удалена!"),
+                        .type = core::ToastType::SUCCESS});
+    });
+
     m_deck_service->connect<core::IDeckService::deck_exported>([this](auto& e) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("deck events", "Колода экспортирована"),
@@ -157,6 +171,20 @@ void Launcher::connect_signals() {
     m_deck_service->connect<core::IDeckService::export_failed>([this](auto& e) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("deck events", "Экспорт не удался"),
+                        .message = QCoreApplication::translate("deck events", "Причина: ") + e.error,
+                        .type = core::ToastType::ERROR});
+    });
+
+    m_deck_service->connect<core::IDeckService::deck_imported>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Колода импортирована"),
+                        .message = QCoreApplication::translate("deck events", "Колода успешно импортирована"),
+                        .type = core::ToastType::SUCCESS});
+    });
+
+    m_deck_service->connect<core::IDeckService::import_failed>([this](auto& e) {
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("deck events", "Импорт не удался"),
                         .message = QCoreApplication::translate("deck events", "Причина: ") + e.error,
                         .type = core::ToastType::ERROR});
     });
