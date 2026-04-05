@@ -30,6 +30,12 @@ class DeckMediaStorage final : public core::IDeckMediaStorage {
     /// @copydoc core::IDeckMediaStorage::deck_media_storage
     QString deck_media_folder(int deck_id) const override;
 
+    /// @copydoc core::IDeckMediaStorage::create_media_folder
+    std::expected<void, QString> create_media_folder(int deck_id) override;
+
+    /// @copydoc core::IDeckMediaStorage::create_media_folder
+    bool has_media_directory(int deck_id) const override;
+
   private:
     const QString m_dir; ///< Directory with media
 };

@@ -73,4 +73,24 @@ QString DeckMediaStorage::deck_media_folder(int deck_id) const {
     return QString("%1/%2").arg(m_dir).arg(deck_id);
 }
 
+
+std::expected<void, QString> DeckMediaStorage::create_media_folder(int deck_id) {
+    QDir dir(deck_media_folder(deck_id));
+
+    if (dir.exists()) {
+        return {};
+    }
+
+    if (!dir.mkdir(dir.absolutePath())) {
+        return std::unexpected(QString("Failed to create deck media folder: %1").arg(dir.absolutePath()));
+    }
+
+    return {};
+}
+
+
+bool DeckMediaStorage::has_media_directory(int deck_id) const {
+    return QDir(deck_media_folder(deck_id)).exists();
+}
+
 } // namespace io

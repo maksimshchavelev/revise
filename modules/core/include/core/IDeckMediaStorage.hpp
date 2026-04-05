@@ -58,6 +58,20 @@ class IDeckMediaStorage {
      * @return The path
      */
     virtual QString deck_media_folder(int deck_id) const = 0;
+
+    /**
+     * @brief Creates a media folder for the deck. Called, for example, when creating or importing a deck
+     * @param deck_id Deck ID
+     * @return `std::expected<void, QString>` with `void` if success, otherwise an error description
+     */
+    virtual std::expected<void, QString> create_media_folder(int deck_id) = 0;
+
+    /**
+     * @brief Checks whether the deck has a media directory
+     * @param deck_id Deck ID
+     * @return true if has
+     */
+    virtual bool has_media_directory(int deck_id) const = 0;
 };
 
 } // namespace core

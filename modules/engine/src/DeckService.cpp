@@ -233,7 +233,11 @@ void DeckService::export_deck_async(int deck_id, const QString& path) {
 
         core::Deck          deck;
         QVector<core::Card> cards;
-        const QString       media_dir = m_deps.deck_media_storage.deck_media_folder(deck_id);
+        QString             media_dir;
+
+        if (m_deps.deck_media_storage.has_media_directory(deck_id)) {
+            media_dir = m_deps.deck_media_storage.deck_media_folder(deck_id);
+        }
 
         // Fetch deck
         if (auto res = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id}); res) {
