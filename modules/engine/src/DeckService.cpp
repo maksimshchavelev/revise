@@ -33,6 +33,8 @@ std::expected<void, QString> DeckService::remove_deck(int deck_id) {
         dispatch(decks_updated{});
     }
 
+    m_deps.deck_media_storage.remove_deck_media(deck_id);
+
     return res;
 }
 
@@ -109,17 +111,17 @@ void DeckService::import_deck_async(const QString& path) {
                                                                         .time_limit = 0,
                                                                         .new_limit = 30,
                                                                         .consolidate_limit = 30,
-                                                                        .incorrect_limit = 30}}); !res) {
-                dispatch(import_failed{
-                                       QString("Could not create deck with name: %1").arg(import_res->deck_name)});
+                                                                        .incorrect_limit = 30}});
+                !res) {
+                dispatch(import_failed{QString("Could not create deck with name: %1").arg(import_res->deck_name)});
                 return;
             }
 
             deck_fetch_request = m_deps.deck_storage.fetch_decks({import_res->deck_name});
 
             if (!deck_fetch_request) {
-                dispatch(import_failed{
-                                       QString("Could not fetch created deck with name: %1").arg(import_res->deck_name)});
+                dispatch(
+                    import_failed{QString("Could not fetch created deck with name: %1").arg(import_res->deck_name)});
                 return;
             }
 
