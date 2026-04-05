@@ -52,6 +52,7 @@ Item {
                         backgroundItem: blurOverlay.blurredItem
 
                         onImportClicked: importDialog.open()
+                        onCreateClicked: router.navigate("createDeck", {}, Revise.page.Window)
                     }
                 }
 
