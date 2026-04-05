@@ -58,6 +58,7 @@ int Launcher::run() {
     m_router.push_page("training", m_ui.create_page(QUrl("qrc:/qml/pages/Training.qml")));
     m_router.push_page("cardEditor", m_ui.create_page(QUrl("qrc:/qml/pages/CardEditor.qml")));
     m_router.push_page("cardPreview", m_ui.create_page(QUrl("qrc:/qml/pages/CardPreview.qml")));
+    m_router.push_page("createDeck", m_ui.create_page(QUrl("qrc:/qml/pages/CreateDeck.qml")));
 
     QTimer::singleShot(0, [this]() { post_launch(); });
 
