@@ -136,7 +136,6 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
         return std::unexpected(res.error());
     }
 
-    export_dir.removeRecursively();
     return {};
 }
 
