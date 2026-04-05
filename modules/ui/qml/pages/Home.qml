@@ -115,7 +115,7 @@ Item {
         onAccepted: deckService.import_deck_async(selectedFile)
 
         nameFilters: [qsTr("Колода Revise (*.rpkg)"), qsTr(
-                "Колода Anki (*.apkg")]
+                "Колода Anki (*.apkg)")]
     }
 
     FolderDialog {
