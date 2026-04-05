@@ -9,6 +9,7 @@
 #include <QUuid>                           // for QUuid
 #include <quazip.h>                        // for QuaZip
 #include <quazipfile.h>                    // for QuaZipFile
+#include <utils/ScopeGuard.hpp>            // for utils::ScopeGuard
 #include <zstd.h>                          // for ZSTD
 
 namespace io {
@@ -24,6 +25,16 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
     QMap<QString /* image name */, QByteArray /* binary image */> mapped_images;
 
     QDir().mkdir(import_dir); // make import directory
+
+    QSqlDatabase anki_db = QSqlDatabase::addDatabase("QSQLITE", "anki_import");
+    anki_db.setDatabaseName(db_path);
+
+    utils::ScopeGuard _([]() {},
+                        [&]() {
+                            QDir(import_dir).removeRecursively();
+                            anki_db.close();
+                            QSqlDatabase::removeDatabase("anki_import");
+                        });
 
     // Unzip .apkg
     if (auto res = unzip(path, import_dir); !res.has_value()) {
@@ -73,10 +84,6 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
 
     // Save to res
     res.user_data = QVariant::fromValue(std::move(mapped_images));
-
-    // Anki database
-    QSqlDatabase anki_db = QSqlDatabase::addDatabase("QSQLITE", "anki_import");
-    anki_db.setDatabaseName(db_path);
 
     if (!anki_db.open()) {
         return std::unexpected(QString("Failed to import anki DB: %1").arg(anki_db.lastError().text()));
@@ -132,11 +139,6 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
                                        .front = std::move(front),
                                        .back = std::move(back)});
     }
-
-    // Clear resources
-    anki_db.close();
-    QSqlDatabase::removeDatabase("anki_import");
-    QDir(import_dir).removeRecursively();
 
     return res;
 }
