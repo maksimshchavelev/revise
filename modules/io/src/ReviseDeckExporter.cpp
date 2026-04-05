@@ -15,7 +15,7 @@ namespace io {
 
 // Public method
 std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::ExportData& data, const QString& path) {
-    // Make temporary directory
+    // temporary export dir
     QDir export_dir(QString("%1/revise_export_%2")
                         .arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation))
                         .arg(QUuid::createUuid().toString(QUuid::WithoutBraces)));
@@ -24,11 +24,10 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
         return std::unexpected(QString("Failed to make temporary export directory: %1").arg(export_dir.path()));
     }
 
-    // Make sql database
+    // export db
     QSqlDatabase export_db = QSqlDatabase::addDatabase("QSQLITE", "revise_export");
     export_db.setDatabaseName(QString("%1/db").arg(export_dir.path()));
 
-    // Open sql database
     if (!export_db.open()) {
         return std::unexpected(QString("Failed to open export database: %1").arg(export_db.lastError().text()));
     }
@@ -36,7 +35,6 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
     // Make tables
     QSqlQuery q(export_db);
 
-    // Make decks table
     q.prepare(R"(
         CREATE TABLE decks (
         id INTEGER PRIMARY KEY,
@@ -53,7 +51,6 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
                                    .arg(q.lastError().text()));
     }
 
-    // Make cards table
     q.prepare(R"(
         CREATE TABLE cards (
         id INTEGER PRIMARY KEY,
@@ -66,12 +63,11 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
                                    .arg(q.lastError().text()));
     }
 
-    // Begin transaction
     if (!export_db.transaction()) {
         return std::unexpected(QString("Failed to begin export db transaction: %1").arg(export_db.lastError().text()));
     }
 
-    // Export deck
+    // fill deck
     q.prepare(R"(
         INSERT INTO decks (name, description, time_limit, new_limit, consolidate_limit, incorrect_limit)
         VALUES (:name, :description, :time_limit, :new_limit, :consolidate_limit, :incorrect_limit)
@@ -87,7 +83,7 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
         return std::unexpected(QString("Failed to insert deck into export db: %1").arg(q.lastError().text()));
     }
 
-    // Export cards
+    // fill cards
     for (const auto& card : data.cards) {
         q.prepare(R"(
             INSERT INTO cards (front, back)
@@ -101,7 +97,6 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
         }
     }
 
-    // Commit transaction
     if (!export_db.commit()) {
         return std::unexpected(QString("Failed to commit export db transaction: %1").arg(export_db.lastError().text()));
     }
@@ -109,7 +104,7 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
     export_db.close();
     QSqlDatabase::removeDatabase("revise_export");
 
-    // Now export media
+    // export media
     if (!data.media_directory.isEmpty()) {
         QDir media_dir(data.media_directory);
 
@@ -117,7 +112,7 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
             return std::unexpected(QString("Media directory '%1' is not exists").arg(media_dir.path()));
         }
 
-        // Create media dir
+        // export media dir
         QDir().mkdir(QString("%1/media").arg(export_dir.path()));
 
         QStringList files = media_dir.entryList(QDir::Files);
@@ -131,7 +126,7 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
         }
     }
 
-    // Now archive all
+    // compress
     const QString out = QString("%1/%2.rpkg").arg(path).arg(data.deck.name);
 
     if (auto res = compress_directory_to_zip(export_dir.path(), out); !res.has_value()) {
