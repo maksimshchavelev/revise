@@ -9,6 +9,7 @@ Item {
     id: root
 
     property var pageParams: null
+    property string windowTitle: qsTr("Revise")
     property bool openedAsWindow: false
 
     Revise.Background {
