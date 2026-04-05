@@ -124,38 +124,49 @@ Item {
 
             Revise.VerticalSpacer {}
 
-            Revise.AcceptButton {
-                text: qsTr("Создать")
+            RowLayout {
+                Layout.margins: 6
                 Layout.alignment: Qt.AlignRight
-                clickable: deckName.valid && deckName.text !== ""
-                           && (deckDescription.valid || deckDescription.text
-                               === "") && (!limitTime.checked
-                                           || (deckTimeLimit.valid && deckTimeLimit.text
-                                               !== "")) && deckNewLimit.valid
-                           && deckNewLimit.text !== ""
-                           && deckConsolidateLimit.valid && deckConsolidateLimit.text
-                           !== "" && deckIncorrectLimit.valid
-                           && deckIncorrectLimit.text !== ""
+                spacing: 6
 
-                onClicked: {
-                    let deck = new Revise.Deck(deckName.text,
-                                               deckDescription.text,
-                                               parseInt(deckTimeLimit.text),
-                                               parseInt(deckNewLimit.text),
-                                               parseInt(
-                                                   deckConsolidateLimit.text),
-                                               parseInt(
-                                                   deckIncorrectLimit.text))
+                Revise.Button {
+                    visible: !root.openedAsWindow
+                    text: qsTr("Назад")
+                    onClicked: router.back()
+                }
 
-                    deckService.create_deck(deck)
+                Revise.AcceptButton {
+                    text: qsTr("Создать")
+                    clickable: deckName.valid && deckName.text !== ""
+                               && (deckDescription.valid || deckDescription.text
+                                   === "") && (!limitTime.checked
+                                               || (deckTimeLimit.valid && deckTimeLimit.text
+                                                   !== "")) && deckNewLimit.valid
+                               && deckNewLimit.text !== ""
+                               && deckConsolidateLimit.valid && deckConsolidateLimit.text
+                               !== "" && deckIncorrectLimit.valid
+                               && deckIncorrectLimit.text !== ""
 
-                    deckName.text = ""
-                    deckDescription.text = ""
-                    deckTimeLimit.text = ""
-                    deckNewLimit.text = ""
-                    deckConsolidateLimit.text = ""
-                    deckIncorrectLimit.text = ""
-                    limitTime.checked = false
+                    onClicked: {
+                        let deck = new Revise.Deck(deckName.text,
+                                                   deckDescription.text,
+                                                   parseInt(deckTimeLimit.text),
+                                                   parseInt(deckNewLimit.text),
+                                                   parseInt(
+                                                       deckConsolidateLimit.text),
+                                                   parseInt(
+                                                       deckIncorrectLimit.text))
+
+                        deckService.create_deck(deck)
+
+                        deckName.text = ""
+                        deckDescription.text = ""
+                        deckTimeLimit.text = ""
+                        deckNewLimit.text = ""
+                        deckConsolidateLimit.text = ""
+                        deckIncorrectLimit.text = ""
+                        limitTime.checked = false
+                    }
                 }
             }
         }
