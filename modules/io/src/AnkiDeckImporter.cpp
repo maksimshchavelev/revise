@@ -24,7 +24,7 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
     const QString unpacked_media_path = import_dir + "/unpacked_media";
     QMap<QString /* image name */, QByteArray /* binary image */> mapped_images;
 
-    QDir().mkdir(import_dir); // make import directory
+    QDir().mkdir(import_dir);
 
     QSqlDatabase anki_db = QSqlDatabase::addDatabase("QSQLITE", "anki_import");
     anki_db.setDatabaseName(db_path);
@@ -61,21 +61,16 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
 
     // Map media
     for (const auto& [image_name, archive_name] : map_images(unpacked_media_path).toStdMap()) {
-        // We need to unpack the archive using zstd, read it, and write it to QByteArray.
-
-        // Decompress zstd
         const QString archive_path = QString("%1/%2").arg(import_dir).arg(archive_name);
         const QString unpacked_path = QString("%1/unpacked_%2").arg(import_dir).arg(archive_name);
         if (auto res = decompress_zstd_file(archive_path, unpacked_path); !res.has_value()) {
             return std::unexpected(res.error());
         }
 
-        // Read decompressed zstd
         QFile file(unpacked_path);
         if (file.open(QIODevice::ReadOnly)) {
             QByteArray data = file.readAll();
             file.close();
-            // Save
             mapped_images[image_name] = std::move(data);
         } else {
             return std::unexpected(QString("Failed to read unpacked image file '%1'").arg(unpacked_path));
