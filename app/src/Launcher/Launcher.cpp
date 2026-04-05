@@ -67,6 +67,8 @@ int Launcher::run() {
 
 
 void Launcher::init() {
+    m_db.init_db();
+
     if (m_streak_storage = std::make_shared<io::SqlStreakStorage>(m_db, m_db_context); !m_streak_storage) {
         qWarning() << "Failed to create streak storage, got nullptr";
     }
