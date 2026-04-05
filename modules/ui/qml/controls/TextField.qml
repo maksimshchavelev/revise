@@ -77,6 +77,7 @@ Item {
         opacity: 0.35
         anchors.fill: parent
         visible: !root.editable
+        radius: background.radius
     }
 
     HoverHandler {
