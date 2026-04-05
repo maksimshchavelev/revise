@@ -140,7 +140,7 @@ void Launcher::connect_signals() {
         [this](auto& e) { m_router.navigate("home", {}); });
 
     // Deck events
-    m_deck_service->connect<core::IDeckService::decks_updated>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::deck_updated>([this](auto& e) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("deck events", "Колода обновлена"),
                         .message = QCoreApplication::translate("deck events", "Колода была обновлена"),
