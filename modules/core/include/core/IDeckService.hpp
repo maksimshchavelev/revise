@@ -19,6 +19,7 @@ class IDeckService : public Notifiable {
     EVENT(deck_created)                 ///< Deck created
     EVENT(deck_removed)                 ///< Deck removed
     EVENT(decks_updated)                ///< Any deck has been updated
+    EVENT(deck_updated)                 ///< Deck updated
     EVENT(import_started)               ///< Import started
     EVENT(import_finished)              ///< Import finished
     EVENT(deck_imported)                ///< Deck imported

@@ -289,6 +289,7 @@ std::expected<void, QString> DeckService::update_deck(const core::Deck& deck) {
     auto res = m_deps.deck_storage.update_decks({deck});
 
     if (res) {
+        dispatch(deck_updated{});
         dispatch(decks_updated{});
     }
 
