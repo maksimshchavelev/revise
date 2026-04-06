@@ -123,7 +123,8 @@ ApplicationWindow {
             if (router.currentPage.mode === Revise.page.Page) {
                 pageLoader.sourceComponent = router.currentPageComponent
             } else if (router.currentPage.mode === Revise.page.Window) {
-                createWindow(router.currentPageComponent, router.currentPage.params)
+                createWindow(router.currentPageComponent,
+                             router.currentPage.params)
             }
         }
     }
@@ -167,5 +168,12 @@ ApplicationWindow {
         y: 10
 
         onClosed: toastService.closed()
+    }
+
+    Keys.onPressed: function (event) {
+        if (event.key === Qt.Key_Escape) {
+            event.accepted = true
+            router.back()
+        }
     }
 }
