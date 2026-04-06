@@ -53,7 +53,7 @@ Item {
                         backgroundItem: blurOverlay.blurredItem
 
                         onImportClicked: importDialog.open()
-                        onCreateClicked: router.navigate("createDeck", {}, Revise.page.Page)
+                        onCreateClicked: root.createDeckPage()
                     }
                 }
 
@@ -108,6 +108,10 @@ Item {
         }
     }
 
+    function createDeckPage() {
+        router.navigate("createDeck", {}, Revise.page.Page)
+    }
+
     FileDialog {
         id: importDialog
 
@@ -125,5 +129,15 @@ Item {
 
         title: qsTr("Экспортировать как .rpkg")
         onAccepted: deckService.export_deck_async(deckId, selectedFolder)
+    }
+
+    Shortcut {
+        sequence: "Ctrl+N"
+        onActivated: root.createDeckPage()
+    }
+
+    Shortcut {
+        sequence: "Ctrl+I"
+        onActivated: importDialog.open()
     }
 }
