@@ -9,6 +9,7 @@
 #include <engine/CardEditSessionFactory.hpp> // for engine:create_card_edit_session
 #include <engine/DeckService.hpp>            // for engine::DeckService
 #include <engine/PopupServiceFactory.hpp>    // for engine::create_popup_service
+#include <engine/SearchEngine.hpp>           // for engine::SearchEngine
 #include <engine/StreakServiceFactory.hpp>   // for engine::create_streak_service
 #include <engine/ToastServiceFactory.hpp>    // for engine:create_toast_service
 #include <io/DeckExporterFactory.hpp>        // for io::create_deck_exporter
@@ -133,6 +134,10 @@ void Launcher::init() {
     if (m_card_edit_session = engine::create_card_edit_session(engine::CardEditSessionType::Local);
         !m_card_edit_session) {
         qWarning() << "Failed to create card edit session, got nullptr";
+    }
+
+    if (m_search_engine = std::make_unique<engine::SearchEngine>(*m_deck_storage); !m_search_engine) {
+        qWarning() << "Failed to create search engine, got nullptr";
     }
 }
 

@@ -40,6 +40,9 @@
 // Card edit session
 #include <core/ICardEditSession.hpp> // for core::ICardEditSession
 
+// Search engine
+#include <core/search/ISearchEngine.hpp> // for core::ISearchEngine
+
 // UI
 #include <ui/Router.hpp> // for Router
 #include <ui/UI.hpp>     // for UI
@@ -81,6 +84,8 @@ class Launcher {
     std::unique_ptr<core::IToastService> m_toast_service; ///< Toast service
 
     std::unique_ptr<core::ICardEditSession> m_card_edit_session; ///< Card edit session
+
+    std::unique_ptr<core::ISearchEngine> m_search_engine; ///< Search engine
 
     ui::UI     m_ui;     ///< Main UI class
     ui::Router m_router; ///< Router for page navigation
