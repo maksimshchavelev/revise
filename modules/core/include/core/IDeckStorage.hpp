@@ -94,6 +94,13 @@ class IDeckStorage {
     virtual std::expected<QVector<Card>, QString> fetch_cards(const QVector<int>& ids) = 0;
 
     /**
+     * @brief Fetch all cards
+     * @return `std::expected<QVector<Card>, QString>` containing cards on success,
+     *         or an error description on failure
+     */
+    virtual std::expected<QVector<Card>, QString> fetch_cards() = 0;
+
+    /**
      * @brief Remove cards with the specified IDs
      * @param ids Vector of card IDs to remove
      * @return `std::expected<void, QString>` empty on success, or with error description on failure
