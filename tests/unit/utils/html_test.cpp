@@ -1,5 +1,5 @@
-#include <utils/Html.hpp>
 #include <gtest/gtest.h>
+#include <utils/Html.hpp>
 
 using namespace utils;
 
@@ -79,3 +79,23 @@ TEST(HtmlTest, new_lines_html) {
     ASSERT_EQ(res, 10);
 }
 
+
+// plain_text
+
+TEST(HtmlTest, plain_text_empty) {
+    QString res = Html::plain_text("");
+
+    ASSERT_TRUE(res.isEmpty());
+}
+
+TEST(HtmlTest, plain_text_no_tags) {
+    QString res = Html::plain_text("Hello world!");
+
+    ASSERT_STREQ(res.toStdString().c_str(), "Hello world!");
+}
+
+TEST(HtmlTest, plain_text_tags) {
+    QString res = Html::plain_text("<div><p>Hello world!</p></div>");
+
+    ASSERT_STREQ(res.toStdString().c_str(), "Hello world!");
+}

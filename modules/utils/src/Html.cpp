@@ -41,8 +41,7 @@ QString Html::replace_images_src(const QString& html, const QMap<QString, QStrin
 }
 
 
-QString Html::center_vertical(const QString &html)
-{
+QString Html::center_vertical(const QString& html) {
     if (html.isEmpty()) {
         return {};
     }
@@ -51,12 +50,12 @@ QString Html::center_vertical(const QString &html)
         <div style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh;">
            <div style="text-align: left;">%1</div>
         </div>
-    )").arg(html);
+    )")
+        .arg(html);
 }
 
 
-QString Html::center_horizontal(const QString &html)
-{
+QString Html::center_horizontal(const QString& html) {
     if (html.isEmpty()) {
         return {};
     }
@@ -65,12 +64,12 @@ QString Html::center_horizontal(const QString &html)
         <div style="text-align: center;">
             %1
         </div>
-    )").arg(html);
+    )")
+        .arg(html);
 }
 
 
-std::size_t Html::new_lines(const QString &html)
-{
+std::size_t Html::new_lines(const QString& html) {
     if (html.isEmpty()) {
         return 0;
     }
@@ -92,6 +91,11 @@ std::size_t Html::new_lines(const QString &html)
     res += html.count("$$");
 
     return res;
+}
+
+
+QString Html::plain_text(QString html) {
+    return html.remove(QRegularExpression("<[^>]+>"));
 }
 
 } // namespace utils

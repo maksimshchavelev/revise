@@ -90,6 +90,13 @@ class Html {
      * @return Lines count
      */
     static std::size_t new_lines(const QString& html);
+
+    /**
+     * @brief Removes all HTML tags, returning plain text
+     * @param html Source HTML
+     * @return Processed plain text
+     */
+    static QString plain_text(QString html);
 };
 
 } // namespace utils
