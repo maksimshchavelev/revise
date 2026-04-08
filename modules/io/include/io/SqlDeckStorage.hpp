@@ -45,6 +45,9 @@ class SqlDeckStorage final : public core::IDeckStorage {
     /// @copydoc core::IDeckStorage::fetch_cards
     std::expected<QVector<core::Card>, QString> fetch_cards(const QVector<int>& ids) override;
 
+    /// @copydoc core::IDeckStorage::fetch_cards
+    std::expected<QVector<core::Card>, QString> fetch_cards() override;
+
     /// @copydoc core::IDeckStorage::remove_cards
     std::expected<void, QString> remove_cards(const QVector<int>& ids) override;
 

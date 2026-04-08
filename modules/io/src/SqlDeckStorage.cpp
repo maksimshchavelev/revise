@@ -420,6 +420,38 @@ std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards(const QV
 }
 
 
+std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards() {
+    return m_context.exec([this]() -> std::expected<QVector<core::Card>, QString> {
+        QVector<core::Card> result;
+        QSqlQuery           q(m_db.raw_db());
+
+        q.prepare("SELECT * FROM cards");
+
+        if (!q.exec()) {
+            return std::unexpected(QString("Failed to fetch all cards, cause: %1").arg(q.lastError().text()));
+        }
+
+        while (q.next()) {
+            core::Card card{.id = q.value("id").toInt(),
+                            .deck_id = q.value("deck_id").toInt(),
+                            .state = q.value("state").toInt(),
+                            .incorrect_streak = q.value("incorrect_streak").toInt(),
+                            .interval = q.value("interval").toInt(),
+                            .difficulty = q.value("difficulty").toFloat(),
+                            .next_review = q.value("next_review").toDateTime(),
+                            .created_at = q.value("created_at").toDateTime(),
+                            .updated_at = q.value("updated_at").toDateTime(),
+                            .front = q.value("front").toString(),
+                            .back = q.value("back").toString()};
+
+            result.push_back(std::move(card));
+        }
+
+        return result;
+    });
+}
+
+
 std::expected<void, QString> SqlDeckStorage::remove_cards(const QVector<int>& ids) {
     return m_context.exec([this, &ids]() -> std::expected<void, QString> {
         const bool need_transaction = ids.size() > 1;
