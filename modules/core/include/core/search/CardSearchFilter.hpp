@@ -34,7 +34,11 @@ struct CardFilterChain final : public CardSearchFilter {
     }
 };
 
-template <typename L, typename R> CardFilterChain operator|(L&& lhs, R&& rhs) {
+template <typename Filter>
+concept CardFilter =
+    std::is_base_of_v<CardSearchFilter, std::decay_t<Filter>> && !std::is_same_v<CardFilterChain, std::decay_t<Filter>>;
+
+template <CardFilter L, CardFilter R> CardFilterChain operator|(L&& lhs, R&& rhs) {
     CardFilterChain result;
 
     result.add(std::forward<L>(lhs));
@@ -43,7 +47,7 @@ template <typename L, typename R> CardFilterChain operator|(L&& lhs, R&& rhs) {
     return result;
 }
 
-template <typename Filter> CardFilterChain operator|(CardFilterChain lhs, Filter&& rhs) {
+template <CardFilter Filter> CardFilterChain operator|(CardFilterChain lhs, Filter&& rhs) {
     lhs.add(std::forward<Filter>(rhs));
     return lhs;
 }
