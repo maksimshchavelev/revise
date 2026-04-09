@@ -5,7 +5,7 @@ Item {
     id: root
 
     property int minVisibleTime: 300
-    property int thresholdTime: 10 // The time period during which you can cancel the loading
+    property int thresholdTime: 0 // The time period during which you can cancel the loading
     property int fadeOutDuration: 200
     property double startTime: 0
 
