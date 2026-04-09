@@ -62,9 +62,25 @@ void CardsModel::setDeck(int deckId) {
     m_last_deck_id = deckId;
 
     beginResetModel();
-    auto res = m_deck_service.cards(m_last_deck_id);
 
-    if (res.has_value()) {
+    if (m_search_front.trimmed().isEmpty()) {
+        auto res = m_deck_service.cards(m_last_deck_id);
+
+        if (!res) {
+            qWarning() << "Failed to fetch cards in cards model:" << res.error();
+            return;
+        }
+
+        m_cards = std::move(res.value());
+    } else {
+        auto res = m_deck_service.search_cards(core::CardDeckIdSearchFilter{m_last_deck_id} |
+                                               core::CardFrontSearchFilter{m_search_front});
+
+        if (!res) {
+            qWarning() << "Failed to fetch searched cards in cards model:" << res.error().message;
+            return;
+        }
+
         m_cards = std::move(res.value());
     }
 
@@ -75,6 +91,16 @@ void CardsModel::setDeck(int deckId) {
 
 int CardsModel::cards_count() const noexcept {
     return m_cards.size();
+}
+
+
+QString CardsModel::search_front() const {
+    return m_search_front;
+}
+
+void CardsModel::set_search_front(QString front) {
+    m_search_front = std::move(front);
+    emit search_front_changed();
 }
 
 } // namespace ui

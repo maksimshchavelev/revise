@@ -12,6 +12,7 @@ class CardsModel final : public QAbstractListModel {
 
   public:
     Q_PROPERTY(int cardsCount READ cards_count NOTIFY updated FINAL);
+    Q_PROPERTY(QString searchFront READ search_front WRITE set_search_front NOTIFY search_front_changed)
 
     CardsModel(core::IDeckService& service, QObject* parent = nullptr);
 
@@ -29,10 +30,12 @@ class CardsModel final : public QAbstractListModel {
 
   signals:
     void updated();
+    void search_front_changed();
 
   private:
     core::IDeckService& m_deck_service;
     QVector<core::Card> m_cards;
+    QString             m_search_front;
     int                 m_last_deck_id{0};
 
     /**
@@ -41,6 +44,12 @@ class CardsModel final : public QAbstractListModel {
      * @note First, call the `load` method to load information about the deck.
      */
     int cards_count() const noexcept;
+
+    /// @brief Cards are searched by their front side. Returns the search query
+    QString search_front() const;
+
+    /// @brief Cards are searched by their front side. Sets the search query
+    void set_search_front(QString front);
 };
 
 } // namespace ui
