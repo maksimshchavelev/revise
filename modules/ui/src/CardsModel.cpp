@@ -100,6 +100,7 @@ QString CardsModel::search_front() const {
 
 void CardsModel::set_search_front(QString front) {
     m_search_front = std::move(front);
+    setDeck(m_last_deck_id);
     emit search_front_changed();
 }
 

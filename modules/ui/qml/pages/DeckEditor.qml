@@ -158,12 +158,20 @@ Item {
                 Layout.fillWidth: true
 
                 Revise.Text {
-                    Layout.fillWidth: true
-                    text: qsTr("Список карточек (всего " + cardsModel.cardsCount + "):")
+                    text: {
+                        if (searchField.text.trim().length === 0) {
+                            return qsTr("Список карточек (всего " + cardsModel.cardsCount + "):")
+                        }
+
+                        return qsTr("Список карточек (найдено " + cardsModel.cardsCount + "):")
+                    }
                 }
 
-                Item {
+                Revise.SearchField {
+                    id: searchField
                     Layout.fillWidth: true
+                    placeholder.text: qsTr("Что хотите найти?")
+                    onTextChanged: cardsModel.searchFront = text
                 }
 
                 // Create button
@@ -301,6 +309,8 @@ Item {
             Revise.VerticalSpacer {}
         }
     }
+
+    Component.onCompleted: cardsModel.searchFront = ""
 
     function iterateDelegates() {
         for (var i = 0; i < listView.contentItem.children.length; i++) {
