@@ -54,11 +54,9 @@ Item {
 
             spacing: 8
 
-            anchors {
-                fill: parent
-                leftMargin: 3
-                rightMargin: 3
-            }
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 4
 
             Revise.Text {
                 text: qsTr("Название")
@@ -171,7 +169,14 @@ Item {
                     id: searchField
                     Layout.fillWidth: true
                     placeholder.text: qsTr("Что хотите найти?")
-                    onTextChanged: cardsModel.searchFront = text
+                    onTextChanged: searchDebounce.restart()
+
+                    Timer {
+                        id: searchDebounce
+                        interval: 300
+                        repeat: false
+                        onTriggered: cardsModel.searchFront = searchField.text
+                    }
                 }
 
                 // Create button
@@ -199,8 +204,7 @@ Item {
                 clip: true
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: Math.min(contentHeight,
-                                                 root.height * 0.55)
+                Layout.preferredHeight: root.height * 0.55
 
                 delegate: Item {
                     width: ListView.view.width
@@ -262,7 +266,13 @@ Item {
 
                 onContentXChanged: iterateDelegates()
                 onContentYChanged: iterateDelegates()
+
+                Revise.LoadingScreen {
+                    id: cardsLoadingScreen
+                    anchors.fill: parent
+                }
             }
+
 
             RowLayout {
                 Layout.alignment: Qt.AlignRight
@@ -311,6 +321,18 @@ Item {
     }
 
     Component.onCompleted: cardsModel.searchFront = ""
+
+    Connections {
+        target: cardsModel
+
+        function onLoadingStarted() {
+            cardsLoadingScreen.startLoading()
+        }
+
+        function onLoadingFinished() {
+            cardsLoadingScreen.endLoading()
+        }
+    }
 
     function iterateDelegates() {
         for (var i = 0; i < listView.contentItem.children.length; i++) {

@@ -1,6 +1,7 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "CardsModel.hpp" // for header
+#include "CardsModel.hpp"            // for header
+#include <QtConcurrent/QtConcurrent> // for QtConcurrent
 
 namespace ui {
 
@@ -60,32 +61,44 @@ QHash<int, QByteArray> CardsModel::roleNames() const {
 
 void CardsModel::setDeck(int deckId) {
     m_last_deck_id = deckId;
+    ++m_last_request_id;
 
-    beginResetModel();
+    auto _ = QtConcurrent::run([&]() {
+        int current_request_id = m_last_request_id;
 
-    if (m_search_front.trimmed().isEmpty()) {
-        auto res = m_deck_service.cards(m_last_deck_id);
+        beginResetModel();
+        emit loadingStarted();
 
-        if (!res) {
-            qWarning() << "Failed to fetch cards in cards model:" << res.error();
-            return;
+        if (m_search_front.trimmed().isEmpty()) {
+            auto res = m_deck_service.cards(m_last_deck_id);
+
+            if (!res) {
+                qWarning() << "Failed to fetch cards in cards model:" << res.error();
+                return;
+            }
+
+            if (current_request_id == m_last_request_id) {
+                m_cards = std::move(res.value());
+                emit updated();
+            }
+        } else {
+            auto res = m_deck_service.search_cards(core::CardDeckIdSearchFilter{m_last_deck_id} |
+                                                   core::CardFrontSearchFilter{m_search_front});
+
+            if (!res) {
+                qWarning() << "Failed to fetch searched cards in cards model:" << res.error().message;
+                return;
+            }
+
+            if (current_request_id == m_last_request_id) {
+                m_cards = std::move(res.value());
+                emit updated();
+            }
         }
 
-        m_cards = std::move(res.value());
-    } else {
-        auto res = m_deck_service.search_cards(core::CardDeckIdSearchFilter{m_last_deck_id} |
-                                               core::CardFrontSearchFilter{m_search_front});
-
-        if (!res) {
-            qWarning() << "Failed to fetch searched cards in cards model:" << res.error().message;
-            return;
-        }
-
-        m_cards = std::move(res.value());
-    }
-
-    endResetModel();
-    emit updated();
+        emit loadingFinished();
+        endResetModel();
+    });
 }
 
 
@@ -101,7 +114,7 @@ QString CardsModel::search_front() const {
 void CardsModel::set_search_front(QString front) {
     m_search_front = std::move(front);
     setDeck(m_last_deck_id);
-    emit search_front_changed();
+    emit searchFrontChanged();
 }
 
 } // namespace ui
