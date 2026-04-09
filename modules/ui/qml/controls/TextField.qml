@@ -71,6 +71,7 @@ Item {
         onTextChanged: root.valid = root.isValid()
         color: Revise.Theme.textColor
         readOnly: !root.editable
+        clip: true
     }
 
     Rectangle {
