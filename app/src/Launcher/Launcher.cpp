@@ -112,12 +112,17 @@ void Launcher::init() {
         qWarning() << "Failed to create study engine, got nullptr";
     }
 
+    if (m_search_engine = std::make_unique<engine::SearchEngine>(*m_deck_storage); !m_search_engine) {
+        qWarning() << "Failed to create search engine, got nullptr";
+    }
+
     engine::DeckServiceDeps deck_service_deps{.deck_storage = *m_deck_storage,
                                               .deck_media_storage = *m_deck_media_storage,
                                               .anki_deck_importer = *m_anki_importer,
                                               .revise_deck_importer = *m_revise_importer,
                                               .deck_exporter = *m_revise_exporter,
-                                              .study_engine = *m_study_engine};
+                                              .study_engine = *m_study_engine,
+                                              .search_engine = *m_search_engine};
 
     if (m_deck_service = std::make_unique<engine::DeckService>(deck_service_deps); !m_deck_service) {
         qWarning() << "Failed to create deck service, got nullptr";
@@ -134,10 +139,6 @@ void Launcher::init() {
     if (m_card_edit_session = engine::create_card_edit_session(engine::CardEditSessionType::Local);
         !m_card_edit_session) {
         qWarning() << "Failed to create card edit session, got nullptr";
-    }
-
-    if (m_search_engine = std::make_unique<engine::SearchEngine>(*m_deck_storage); !m_search_engine) {
-        qWarning() << "Failed to create search engine, got nullptr";
     }
 }
 

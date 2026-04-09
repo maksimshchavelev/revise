@@ -19,6 +19,7 @@ struct DeckServiceDeps {
     core::IDeckImporter&     revise_deck_importer;
     core::IDeckExporter&     deck_exporter;
     core::IStudyEngine&      study_engine;
+    core::ISearchEngine&     search_engine;
 };
 
 /**
@@ -63,6 +64,9 @@ class DeckService final : public core::IDeckService {
 
     /// @copydoc core::IDeckService::cards
     std::expected<QVector<core::Card>, QString> cards(int deck_id) override;
+
+    /// @copydoc core::IDeckService::search_cards
+    std::expected<QVector<core::Card>, core::SearchError> search_cards(const core::CardFilterChain& filters) override;
 
   private:
     /// @brief Adjusts the card's parameters to the desired range (for example, normalizes the difficulty on a scale from 0 to 5)

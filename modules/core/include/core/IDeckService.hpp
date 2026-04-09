@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include "Card.hpp"       // for Card
-#include "Deck.hpp"       // for Deck
-#include "Notifiable.hpp" // for Notifiable
-#include <expected>       // for std::expected
+#include "Card.hpp"                 // for Card
+#include "Deck.hpp"                 // for Deck
+#include "Notifiable.hpp"           // for Notifiable
+#include "search/ISearchEngine.hpp" // for search engine
+#include <expected>                 // for std::expected
 
 namespace core {
 
@@ -130,6 +131,13 @@ class IDeckService : public Notifiable {
      * failure
      */
     virtual std::expected<QVector<Card>, QString> cards(int deck_id) = 0;
+
+    /**
+     * @brief Search cards in the database
+     * @param filters Search filters
+     * @return `std::expected<QVector<Card>, SearchError>`
+     */
+    virtual std::expected<QVector<Card>, SearchError> search_cards(const CardFilterChain& filters) = 0;
 };
 
 } // namespace core

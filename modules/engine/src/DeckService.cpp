@@ -387,6 +387,11 @@ std::expected<QVector<core::Card>, QString> DeckService::cards(int deck_id) {
 }
 
 
+std::expected<QVector<core::Card>, core::SearchError> DeckService::search_cards(const core::CardFilterChain& filters) {
+    return m_deps.search_engine.search_cards(filters);
+}
+
+
 core::Card DeckService::normalize_card(const core::Card& card) {
     core::Card copy = card;
 
