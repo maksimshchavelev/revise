@@ -5,6 +5,7 @@ Item {
     id: root
 
     property int minVisibleTime: 300
+    property int thresholdTime: 10 // The time period during which you can cancel the loading
     property int fadeOutDuration: 200
     property double startTime: 0
 
@@ -27,6 +28,16 @@ Item {
         onTriggered: opacityAnimation.start()
     }
 
+    Timer {
+        id: thresholdTimer
+        interval: root.thresholdTime
+        onTriggered: {
+            hideTimer.stop()
+            startTime = new Date()
+            root.opacity = 1.0
+        }
+    }
+
     NumberAnimation {
         id: opacityAnimation
         target: root
@@ -37,9 +48,7 @@ Item {
     }
 
     function startLoading() {
-        hideTimer.stop()
-        startTime = new Date()
-        root.opacity = 1.0
+        thresholdTimer.restart()
     }
 
     function endLoading() {
@@ -48,5 +57,6 @@ Item {
 
         hideTimer.interval = delay
         hideTimer.start()
+        thresholdTimer.stop()
     }
 }
