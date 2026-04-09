@@ -66,7 +66,6 @@ void CardsModel::setDeck(int deckId) {
     auto _ = QtConcurrent::run([&]() {
         int current_request_id = m_last_request_id;
 
-        beginResetModel();
         emit loadingStarted();
 
         if (m_search_front.trimmed().isEmpty()) {
@@ -78,6 +77,7 @@ void CardsModel::setDeck(int deckId) {
             }
 
             if (current_request_id == m_last_request_id) {
+                beginResetModel();
                 m_cards = std::move(res.value());
                 emit updated();
             }
@@ -91,6 +91,7 @@ void CardsModel::setDeck(int deckId) {
             }
 
             if (current_request_id == m_last_request_id) {
+                beginResetModel();
                 m_cards = std::move(res.value());
                 emit updated();
             }
