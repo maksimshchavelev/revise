@@ -57,6 +57,7 @@ Item {
         color: Revise.Theme.textColorDark
         opacity: 0.45
         visible: root.text.length === 0
+        elide: Revise.Text.ElideRight
     }
 
     TextInput {
