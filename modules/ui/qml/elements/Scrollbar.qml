@@ -5,6 +5,7 @@ import Revise as Revise
 ScrollBar {
     policy: ScrollBar.AsNeeded
     interactive: true
+    minimumSize: 0.1
 
     background: Rectangle {
         color: Revise.Theme.scrollbarBackground
