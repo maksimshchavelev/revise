@@ -1,5 +1,4 @@
 // Training page
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -9,6 +8,7 @@ Item {
     id: root
 
     property bool openedAsWindow: false
+    property string windowTitle: qsTr("Обучение - Revise")
     property var pageParams: null // nothing now
 
     Rectangle {
@@ -20,20 +20,34 @@ Item {
         anchors.fill: parent
         spacing: 0
 
-        // Progress bar with consistent layout space
-        Item {
+        RowLayout {
             id: progressBarContainer
-            Layout.fillWidth: true
+            Layout.preferredWidth: parent.width
             Layout.preferredHeight: 30
-            Layout.topMargin: 8
+            Layout.margins: 12
+            spacing: 12
 
             Revise.ColorfulProgressbar {
                 id: progressBar
-                anchors.centerIn: parent
-                width: parent.width * 0.95
-                height: 20
+                Layout.fillWidth: true
+                Layout.preferredHeight: 20
                 visible: studyService.timeLimit > 0 && !studyService.flipped
-                progress: studyService.timeLimit > 0 ? studyService.timeRemaining / studyService.timeLimit : 0
+                progress: studyService.timeLimit > 0 ? studyService.timeRemaining
+                                                       / studyService.timeLimit : 0
+            }
+
+            Revise.IconButton {
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                source: "qrc:/res/img/edit.svg"
+                color: Revise.Theme.textColor
+                size: 24
+                onClicked: {
+                    studyService.pause()
+                    router.navigate("cardEditor", {
+                                        "editMode": true,
+                                        "card": studyService.card
+                                    }, Revise.page.Page)
+                }
             }
         }
 
@@ -68,4 +82,6 @@ Item {
             onBadClicked: studyService.answer(5.0)
         }
     }
+
+    Component.onCompleted: studyService.reloadCurrentCard()
 }

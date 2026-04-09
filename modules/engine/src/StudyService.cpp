@@ -102,6 +102,15 @@ const std::optional<core::Card>& StudyService::current_card() const {
 }
 
 
+void StudyService::reload_current_card() {
+    auto res = m_study_engine.reload_state();
+
+    if (!res) {
+        dispatch(error{QString("Failed to reload current card in study service: %1").arg(res.error())});
+    }
+}
+
+
 int StudyService::time_limit() const {
     return m_study_engine.state().time_limit;
 }
@@ -117,14 +126,12 @@ bool StudyService::flipped() const {
 }
 
 
-void StudyService::pause()
-{
+void StudyService::pause() {
     m_running = false;
 }
 
 
-void StudyService::resume()
-{
+void StudyService::resume() {
     m_running = true;
 }
 

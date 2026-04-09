@@ -13,6 +13,7 @@ StudyService::StudyService(core::IStudyService& study_service, QObject* parent) 
         emit back_changed();
         emit front_changed();
         emit flipped_changed();
+        emit card_changed();
     });
 
     m_study_service.connect<core::IStudyService::remaining_time_changed>(
@@ -21,6 +22,7 @@ StudyService::StudyService(core::IStudyService& study_service, QObject* parent) 
     m_study_service.connect<core::IStudyService::card_changed>([this](const auto& e) {
         emit back_changed();
         emit front_changed();
+        emit card_changed();
     });
 
     m_study_service.connect<core::IStudyService::flipped_changed>([this](const auto& e) { emit flipped_changed(); });
@@ -54,6 +56,14 @@ void StudyService::pause() {
 
 void StudyService::resume() {
     m_study_service.resume();
+}
+
+
+void StudyService::reloadCurrentCard() {
+    m_study_service.reload_current_card();
+
+    emit back_changed();
+    emit front_changed();
 }
 
 
@@ -105,6 +115,18 @@ QString StudyService::back() const {
 
 bool StudyService::flipped() const {
     return m_study_service.flipped();
+}
+
+
+Card StudyService::card() {
+    auto res = m_study_service.current_card();
+
+    if (!res) {
+        qWarning() << "Failed to get card in ui::StudyService (got nullopt)";
+        return Card{};
+    }
+
+    return *res;
 }
 
 } // namespace ui

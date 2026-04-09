@@ -36,6 +36,9 @@ class StudyEngine final : public core::IStudyEngine {
     /// @copydoc core::IStudyEngine::state
     SessionState& state() override;
 
+    /// @copydoc core::IStudyEngine::reload_state
+    std::expected<void, QString> reload_state() override;
+
     /// @copydoc core::IStudyEngine::abort
     std::expected<void, QString> abort() override;
 

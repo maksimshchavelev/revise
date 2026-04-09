@@ -94,6 +94,29 @@ std::expected<void, QString> StudyEngine::flip() {
 }
 
 
+std::expected<void, QString> StudyEngine::reload_state() {
+    if (!state().current_card) {
+        return {};
+    }
+
+    auto card = m_deps.deck_storage.fetch_cards(QVector<int>{state().current_card->id});
+
+    if (!card) {
+        return std::unexpected(
+            QString("Failed to reload study engine state: failed to fetch card: %1").arg(card.error()));
+    }
+
+    if (card->isEmpty()) {
+        return std::unexpected(
+            QString("Failed to reload study engine state: deck storage returned empty vector").arg(card.error()));
+    }
+
+    state().current_card = std::move(card->first());
+
+    return {};
+}
+
+
 std::expected<void, QString> StudyEngine::abort() {
     m_cards.clear();
     m_trained_cards.clear();

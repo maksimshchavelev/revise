@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Card.hpp"               // for Card
 #include <QObject>                // for QObject
 #include <core/IStudyService.hpp> // for core::IStudyService
 
@@ -16,6 +17,7 @@ class StudyService : public QObject {
     Q_PROPERTY(QString front READ front NOTIFY front_changed FINAL)
     Q_PROPERTY(QString back READ back NOTIFY back_changed FINAL)
     Q_PROPERTY(bool flipped READ flipped NOTIFY flipped_changed FINAL)
+    Q_PROPERTY(Card card READ card NOTIFY card_changed FINAL)
 
     StudyService(core::IStudyService& study_service, QObject* parent = nullptr);
 
@@ -43,23 +45,29 @@ class StudyService : public QObject {
     /// @brief Resume training
     Q_INVOKABLE void resume();
 
+    /// @brief Reload current card
+    Q_INVOKABLE void reloadCurrentCard();
+
   signals:
     void time_limit_changed();
     void time_remaining_changed();
     void front_changed();
     void back_changed();
     void flipped_changed();
+    void card_changed();
 
   private:
     core::IStudyService& m_study_service;
 
     float time_remaining() const;
-    int time_limit() const;
+    int   time_limit() const;
 
     QString front() const;
     QString back() const;
 
     bool flipped() const;
+
+    Card card();
 };
 
 } // namespace ui

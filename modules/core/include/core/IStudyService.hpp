@@ -69,6 +69,13 @@ class IStudyService : public Notifiable {
     virtual const std::optional<core::Card>& current_card() const = 0;
 
     /**
+     * @brief Reload current card (if exists)
+     * @note Emits the following events:
+     * - `error` in case of error (with error description)
+     */
+    virtual void reload_current_card() = 0;
+
+    /**
      * @brief Get total time limit for the current card
      * @return Time limit
      */

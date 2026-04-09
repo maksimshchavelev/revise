@@ -31,6 +31,9 @@ class StudyService final : public core::IStudyService {
     /// @copydoc core::IStudyService::current_card
     const std::optional<core::Card>& current_card() const override;
 
+    /// @copydoc core::IStudyService::reload_current_card
+    void reload_current_card() override;
+
     /// @copydoc core::IStudyService::time_limit
     int time_limit() const override;
 

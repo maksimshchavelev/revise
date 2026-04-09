@@ -73,6 +73,13 @@ class IStudyEngine {
     virtual SessionState& state() = 0;
 
     /**
+     * @brief Reloads session state
+     * @return `std::expected<void, QString>` with `void` in case of success or with an error description in
+     * case of failure
+     */
+    virtual std::expected<void, QString> reload_state() = 0;
+
+    /**
      * @brief Abort current session
      * @return `std::expected<void, QString>` with `void` in case of success or with an error description in
      * case of failure
