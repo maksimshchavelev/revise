@@ -256,6 +256,17 @@ void Launcher::connect_signals() {
 
         m_toast_service->request(std::move(toast));
     });
+
+    // Streak service
+    m_streak_service->connect<core::IStreakService::reset>([this](auto& e) {
+        core::Toast toast;
+
+        toast.header = QCoreApplication::translate("streak events", "Страйк сброшен!");
+        toast.message = QCoreApplication::translate("streak events", "Занимайтесь каждый день, чтобы увеличивать свой страйк");
+        toast.type = core::ToastType::INFO;
+
+        m_toast_service->request(std::move(toast));
+    });
 }
 
 
