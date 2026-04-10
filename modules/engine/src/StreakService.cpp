@@ -55,7 +55,11 @@ std::expected<void, QString> StreakService::reset_if_overdue() {
         return std::unexpected(QString("Failed to read streak from storage: %1").arg(streak.error()));
     }
 
-    auto res = set(streak.value().value);
+    if (streak->value == 0) {
+        return {};
+    }
+
+    auto res = set(0);
 
     if (!res.has_value()) {
         return std::unexpected(QString("Failed to reset streak value, storage error: %1").arg(res.error()));
