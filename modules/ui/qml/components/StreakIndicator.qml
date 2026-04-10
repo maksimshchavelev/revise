@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import Revise
+import Revise as Revise
 
 Item {
     id: root
@@ -18,19 +18,17 @@ Item {
         StatefulIndicator {
             showBackground: false
             active: root.updatedToday
-            activeIcon: "qrc:/res/img/streak_updated.png"
-            inactiveIcon: "qrc:/res/img/streak.png"
-            width: 50
-            height: 50
+            activeIcon: "qrc:/res/img/streak_updated.svg"
+            inactiveIcon: "qrc:/res/img/streak.svg"
+            width: 36
+            height: 36
         }
 
-        AppText {
+        Revise.Text {
             text: streak
-            font.pixelSize: Theme.textSizeBig
+            font.pointSize: Revise.Theme.fontSizeBig
             font.bold: true
-            color: root.updatedToday ? Theme.streakUpdatedTextColor : Theme.streakTextColor
+            color: root.updatedToday ? Revise.Theme.streakUpdatedTextColor : Revise.Theme.textColorDark
         }
     }
-
-    DebugBounds {}
 }
