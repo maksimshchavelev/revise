@@ -1,0 +1,61 @@
+// The sidebar displayed on the left (on the desktop) with the navigation menu and the streak display
+
+import QtQuick
+import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
+import Revise as Revise
+
+Item {
+    id: root
+
+    property alias background: background
+
+    layer.enabled: true
+    layer.effect: DropShadow {
+        horizontalOffset: 4
+        verticalOffset: 4
+        radius: 8
+        samples: 32
+        color: "#80000000"
+    }
+
+    Rectangle {
+        id: background
+        color: Revise.Theme.backgroundLight
+        anchors.fill: parent
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 6
+        anchors.topMargin: 12
+        spacing: 12
+
+        Revise.StreakIndicator {
+            streak: streakService.streak
+            updatedToday: streakService.updatedToday
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        Revise.MenuButton {
+            text: qsTr("Колоды")
+            selected: router.currentPage.name === "home"
+            Layout.fillWidth: true
+        }
+
+        Revise.MenuButton {
+            text: qsTr("Настройки")
+            selected: router.currentPage.name === "settings"
+            Layout.fillWidth: true
+        }
+
+        Revise.VerticalSpacer {}
+
+        Revise.Text {
+            color: Revise.Theme.textColorDark
+            font.pointSize: Revise.Theme.fontSizeSmall
+            text: qsTr("Revise 1.3.0")
+            Layout.alignment: Qt.AlignHCenter
+        }
+    }
+}

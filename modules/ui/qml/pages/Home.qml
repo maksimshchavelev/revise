@@ -24,9 +24,22 @@ Item {
         blur: 1.4
     }
 
+    Revise.Toolbar {
+        id: toolbar
+        width: 150
+        height: parent.height
+    }
+
     ColumnLayout {
         id: layout
-        anchors.fill: root
+
+        anchors {
+            left: toolbar.right
+            top: root.top
+            bottom: root.bottom
+            right: root.right
+            leftMargin: 6
+        }
 
         // Decks
         GridView {
