@@ -1,12 +1,12 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "io/Database.hpp"       // for Database header
-#include <QDateTime>             // for QDateTime
-#include <QDebug>                // for QDebug, QWarning
-#include <QDir>                  // for QDir
-#include <QFileInfo>             // for QFileInfo
-#include <QSqlError>             // for QSqlError
-#include <QSqlQuery>             // for QSqlQuery
+#include "io/Database.hpp" // for Database header
+#include <QDateTime>       // for QDateTime
+#include <QDebug>          // for QDebug, QWarning
+#include <QDir>            // for QDir
+#include <QFileInfo>       // for QFileInfo
+#include <QSqlError>       // for QSqlError
+#include <QSqlQuery>       // for QSqlQuery
 
 namespace io {
 
@@ -33,14 +33,11 @@ std::expected<void, QString> Database::init_db() {
     QSqlQuery decks_query(m_db);
     QSqlQuery cards_query(m_db);
     QSqlQuery fk_query(m_db);
+    QSqlQuery schema_versions_query(m_db);
 
     // Enable foreign key support
     if (!fk_query.exec("PRAGMA foreign_keys = ON")) {
-        return std::unexpected(fk_query.lastError().text());
-    }
-
-    if (!streak_query.exec()) {
-        return std::unexpected(streak_query.lastError().text());
+        return std::unexpected(QString("Failed to exec 'PRAGMA foreign_keys = ON' query: %1").arg(fk_query.lastError().text()));
     }
 
     // Insert streak
@@ -49,7 +46,7 @@ std::expected<void, QString> Database::init_db() {
     streak_query.bindValue(":date", QDateTime::currentDateTime().addDays(-1).toString("yyyy-MM-dd HH:mm:ss"));
 
     if (!streak_query.exec()) {
-        return std::unexpected(streak_query.lastError().text());
+        return std::unexpected(QString("Failed to exec streak init query: %1").arg(streak_query.lastError().text()));
     }
 
     // Create DECKS table
@@ -65,7 +62,7 @@ std::expected<void, QString> Database::init_db() {
     )");
 
     if (!decks_query.exec()) {
-        return std::unexpected(decks_query.lastError().text());
+        return std::unexpected(QString("Failed to exec decks init query: %1").arg(decks_query.lastError().text()));
     }
 
     // Create CARDS table
@@ -87,7 +84,18 @@ std::expected<void, QString> Database::init_db() {
     ))");
 
     if (!cards_query.exec()) {
-        return std::unexpected(cards_query.lastError().text());
+        return std::unexpected(QString("Failed to exec cards init query: %1").arg(cards_query.lastError().text()));
+    }
+
+    // create schema_versions table
+    if (!schema_versions_query.exec(R"(
+        CREATE TABLE IF NOT EXISTS schema_versions (
+            table_name TEXT PRIMARY KEY,
+            version INTEGER DEFAULT 1
+        )
+    )")) {
+        return std::unexpected(
+            QString("Failed to create 'schema_versions' table: %1").arg(schema_versions_query.lastError().text()));
     }
 
     if (auto migration_res = migrate(); !migration_res.has_value()) {
@@ -301,4 +309,4 @@ std::expected<void, QString> Database::migrage_1_to_2() {
     return {}; // success
 }
 
-} // namespace revise
+} // namespace io
