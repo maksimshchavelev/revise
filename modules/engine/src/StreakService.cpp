@@ -106,10 +106,17 @@ std::expected<void, QString> StreakService::update() {
 
     if (!streak) {
         return std::unexpected(
-            QString(" StreakService::update(): Failed to read streak from storage: %1").arg(streak.error()));
+            QString("StreakService::update(): Failed to read streak from storage: %1").arg(streak.error()));
     }
 
-    if (updated_today()) {
+    auto updated_res = updated_today();
+
+    if (!updated_res) {
+        return std::unexpected(
+            QString("StreakService::update(): We were unable to verify that the strike was updated today: %1").arg(updated_res.error()));
+    }
+
+    if (*updated_res) {
         return {};
     }
 
@@ -138,11 +145,7 @@ std::expected<bool, QString> StreakService::updated_today() const {
     today_begin.setTime(QTime(0, 0, 0));
     today_end.setTime(QTime(23, 59, 59));
 
-    if (today_begin <= streak->updated_at && streak->updated_at <= today_end) {
-        return true;
-    }
-
-    return false;
+    return today_begin <= streak->updated_at && streak->updated_at <= today_end;
 }
 
 } // namespace engine
