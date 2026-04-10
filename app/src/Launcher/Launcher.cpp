@@ -242,6 +242,8 @@ void Launcher::connect_signals() {
 
         m_toast_service->request(std::move(toast));
 
+
+
         m_router.navigate(ui::Page{"home"});
     });
 

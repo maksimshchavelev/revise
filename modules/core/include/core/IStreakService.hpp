@@ -23,16 +23,16 @@ class IStreakService : public Notifiable {
 
     /**
      * @brief Get the current streak
-     * @return `std::expected<Streak, QString>` with `core::Streak` if success, otherwise error description
+     * @return `std::expected<int, QString>` with streak value if success, otherwise error description
      */
-    virtual std::expected<Streak, QString> get() = 0;
+    virtual std::expected<int, QString> get() = 0;
 
     /**
      * @brief Set the streak
      * @param streak Streak
      * @return `std::expected<void, QString>` with `void` if success, otherwise error description
      */
-    virtual std::expected<void, QString> set(const Streak& streak) = 0;
+    virtual std::expected<void, QString> set(int streak) = 0;
 
     /**
      * @brief Resets the streak if it is overdue. How exactly the overdue criterion is determined is determined by the
@@ -40,6 +40,24 @@ class IStreakService : public Notifiable {
      * @return `std::expected<int, QString>` with `void` if success, otherwise error description
      */
     virtual std::expected<void, QString> reset_if_overdue() = 0;
+
+    /**
+     * @brief Check if your streak has expired
+     * @return `true` if yes
+     */
+    virtual std::expected<bool, QString> overdue() const = 0;
+
+    /**
+     * @brief Updates the streak. If the strike has already been updated today, it does nothing.
+     * @return `std::expected<void, QString>` with `void` if success, otherwise error description
+     */
+    virtual std::expected<void, QString> update() = 0;
+
+    /**
+     * @brief Check if the streak has been updated today
+     * @return `std::expected<bool, QString>` with `true` if yes (or `false` if no), otherwise error description
+     */
+    virtual std::expected<bool, QString> updated_today() const = 0;
 
   protected:
     std::shared_ptr<IStreakStorage> m_storage;

@@ -14,16 +14,25 @@ class StreakService final : public core::IStreakService {
     StreakService(std::shared_ptr<core::IStreakStorage> storage);
 
     /// @see `core::IStreakService` for details
-    std::expected<core::Streak, QString> get() override;
+    std::expected<int, QString> get() override;
 
     /// @see `core::IStreakService` for details
-    std::expected<void, QString> set(const core::Streak& streak) override;
+    std::expected<void, QString> set(int streak) override;
 
     /**
      * @brief Resets the streak if it was last updated two or more days ago.
      * @see `core::IStreakService` for details
      */
     std::expected<void, QString> reset_if_overdue() override;
+
+    /// @copydoc core::IStreakService::overdue
+    virtual std::expected<bool, QString> overdue() const override;
+
+    /// @copydoc core::IStreakService::update
+    virtual std::expected<void, QString> update() override;
+
+    /// @copydoc core::IStreakService::updated_today
+    std::expected<bool, QString> updated_today() const override;
 };
 
 } // namespace engine

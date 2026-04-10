@@ -30,28 +30,20 @@ int StreakService::get() {
         return 0;
     }
 
-    return res->value;
+    return *res;
 }
 
 
 bool StreakService::updated_today() {
-    auto res = m_streak_service.get();
+    auto res = m_streak_service.updated_today();
 
     if (!res.has_value()) {
-        qWarning() << "ui::StreakService::updated_today() failed to fetch 'updated at' date from core::IStreakService:"
+        qWarning() << "ui::StreakService::updated_today() failed to call m_streak_service.updated_today():"
                    << res.error();
         return false;
     }
 
-    QDateTime today;
-
-    QDateTime today_begin = today;
-    QDateTime today_end = today;
-
-    today_begin.setTime(QTime(0, 0, 0));
-    today_end.setTime(QTime(23, 59, 59));
-
-    return today_begin <= res->updated_at && res->updated_at <= today_end;
+    return *res;
 }
 
 } // namespace ui
