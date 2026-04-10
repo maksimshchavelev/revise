@@ -15,47 +15,14 @@ ApplicationWindow {
     width: 1080
     height: 720
 
-    title: "Revise"
+    title: pageLoader.currentWindowTitle
 
-    Loader {
+    Revise.Loader {
         id: pageLoader
         anchors.fill: parent
-        sourceComponent: router.currentPageComponent
-        asynchronous: true
 
-        property bool loading: status === Loader.Loading
-
-        onLoaded: {
-            if (router.currentPage.mode !== Revise.page.Page) {
-                return
-            }
-
-            if (item.hasOwnProperty("pageParams")) {
-                item.pageParams = router.currentPage.params
-            } else {
-                console.error("Page hasn't 'pageParams' property")
-            }
-
-            if (item.hasOwnProperty("openedAsWindow")) {
-                item.openedAsWindow = false
-            } else {
-                console.error("Page hasn't 'openedAsWindow' property")
-            }
-
-            if (item.hasOwnProperty("windowTitle")) {
-                appWindow.title = item.windowTitle
-            } else {
-                console.error("Page hasn't 'windowTitle' property")
-            }
-        }
-
-        onLoadingChanged: {
-            if (loading) {
-                loadingScreen.startLoading()
-            } else {
-                loadingScreen.endLoading()
-            }
-        }
+        onLoadingStarted: loadingScreen.startLoading()
+        onLoadingFinished: loadingScreen.endLoading()
     }
 
     Revise.LoadingScreen {
@@ -67,65 +34,11 @@ ApplicationWindow {
         id: windowLayer
     }
 
-    function createWindow(page, params) {
-        const component = router.currentPageComponent
-
-        const win = Qt.createQmlObject(`
-                                       import QtQuick
-                                       import QtQuick.Window
-
-                                       Window {
-                                       width: 720
-                                       height: 540
-                                       visible: false
-                                       title: "Revise"
-                                       minimumWidth: 320
-                                       minimumHeight: 240
-                                       }
-                                       `, windowLayer)
-
-        const item = component.createObject(win)
-
-        if (!item) {
-            console.error("Failed to create page object")
-            return
-        }
-
-        if (item.hasOwnProperty("pageParams")) {
-            item.pageParams = params
-        } else {
-            console.error("Page hasn't 'pageParams' property")
-        }
-
-        if (item.hasOwnProperty("windowTitle")) {
-            win.title = item.windowTitle
-        } else {
-            console.error("Page hasn't 'windowTitle' property")
-        }
-
-        if (item.hasOwnProperty("openedAsWindow")) {
-            item.openedAsWindow = true
-        } else {
-            console.error("Page hasn't 'openedAsWindow' property")
-        }
-
-        item.parent = win.contentItem
-        item.anchors.fill = win.contentItem
-
-        win.transientParent = appWindow
-        win.visible = true
-    }
-
     Connections {
         target: router
 
         function onPageChanged() {
-            if (router.currentPage.mode === Revise.page.Page) {
-                pageLoader.sourceComponent = router.currentPageComponent
-            } else if (router.currentPage.mode === Revise.page.Window) {
-                createWindow(router.currentPageComponent,
-                             router.currentPage.params)
-            }
+            pageLoader.requestPage(router.currentPageComponent, router.currentPage.params)
         }
     }
 
