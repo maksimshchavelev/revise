@@ -68,7 +68,7 @@ int Launcher::run() {
 
 
 void Launcher::init() {
-    if(auto res = m_db.init_db(); !res) {
+    if (auto res = m_db.init_db(); !res) {
         qWarning() << "Failed to init db:" << res.error();
     }
 
@@ -242,7 +242,7 @@ void Launcher::connect_signals() {
 
         m_toast_service->request(std::move(toast));
 
-
+        m_streak_service->update();
 
         m_router.navigate(ui::Page{"home"});
     });
@@ -265,6 +265,10 @@ void Launcher::post_launch() {
     m_router.navigate(ui::Page{"home"});
 
     extract_web_bundle_async();
+
+    if (auto res = m_streak_service->reset_if_overdue(); !res) {
+        qWarning() << "Failed to reset streak:" << res.error();
+    }
 }
 
 
