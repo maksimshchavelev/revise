@@ -20,8 +20,8 @@ Item {
             active: root.updatedToday
             activeIcon: "qrc:/res/img/streak_updated.svg"
             inactiveIcon: "qrc:/res/img/streak.svg"
-            width: 36
-            height: 36
+            width: 40
+            height: 40
         }
 
         Revise.Text {
