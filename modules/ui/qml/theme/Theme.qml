@@ -14,7 +14,7 @@ QtObject {
     readonly property color toolbarColor: "black"
 
     readonly property color streakTextColor: "#9A9A9A"
-    readonly property color streakUpdatedTextColor: "#E25418"
+    readonly property color streakUpdatedTextColor: "#e09955"
 
     readonly property color deckTextColor: "#AAAAAA"
     readonly property color deckNewCardsTextColor: "#6DD23E"
