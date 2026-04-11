@@ -43,6 +43,9 @@
 // Search engine
 #include <core/search/ISearchEngine.hpp> // for core::ISearchEngine
 
+// Settings
+#include <core/settings/ISettings.hpp> // for core::ISettings
+
 // UI
 #include <ui/Router.hpp> // for Router
 #include <ui/UI.hpp>     // for UI
@@ -86,6 +89,8 @@ class Launcher {
     std::unique_ptr<core::ICardEditSession> m_card_edit_session; ///< Card edit session
 
     std::unique_ptr<core::ISearchEngine> m_search_engine; ///< Search engine
+
+    std::unique_ptr<core::ISettings> m_settings; ///< Settings
 
     ui::UI     m_ui;     ///< Main UI class
     ui::Router m_router; ///< Router for page navigation

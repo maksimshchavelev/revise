@@ -15,6 +15,7 @@
 #include <io/DeckExporterFactory.hpp>        // for io::create_deck_exporter
 #include <io/DeckImporterFactory.hpp>        // for io::create_deck_importer
 #include <io/DeckMediaStorageFactory.hpp>    // for io::create_deck_media_storage
+#include <io/Settings.hpp>                   // for io::Settings
 
 #include <utils/Directory.hpp> // for directory tools
 
@@ -71,6 +72,10 @@ int Launcher::run() {
 void Launcher::init() {
     if (auto res = m_db.init_db(); !res) {
         qWarning() << "Failed to init db:" << res.error();
+    }
+
+    if (m_settings = std::make_unique<io::Settings>(); !m_settings) {
+        qWarning() << "Failed to create settings, got nullptr";
     }
 
     if (m_streak_storage = std::make_shared<io::SqlStreakStorage>(m_db, m_db_context); !m_streak_storage) {
@@ -263,7 +268,8 @@ void Launcher::connect_signals() {
         core::Toast toast;
 
         toast.header = QCoreApplication::translate("streak events", "Страйк сброшен!");
-        toast.message = QCoreApplication::translate("streak events", "Занимайтесь каждый день, чтобы увеличивать свой страйк");
+        toast.message =
+            QCoreApplication::translate("streak events", "Занимайтесь каждый день, чтобы увеличивать свой страйк");
         toast.type = core::ToastType::INFO;
 
         m_toast_service->request(std::move(toast));
