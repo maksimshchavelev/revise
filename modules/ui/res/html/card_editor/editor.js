@@ -62,6 +62,26 @@ document.addEventListener("DOMContentLoaded", function () {
         return delta;
     }
 
+    quill.root.addEventListener('paste', function (e) {
+        const clipboard = e.clipboardData;
+        if (!clipboard) return;
+
+        const items = clipboard.items;
+
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+
+            if (item.type.startsWith('image/')) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }
+        }
+    }, true);
+
+    quill.clipboard.addMatcher('IMG', () => new Delta());
+
     /**
      * Replace text nodes with parsed math embeds during paste/import.
      */

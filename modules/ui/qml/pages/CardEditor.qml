@@ -8,7 +8,7 @@ Item {
 
     property var pageParams: null // contains editMode and Revise.Card (named "card")
     property bool openedAsWindow: false
-    property string windowTitle: qsTr(`${pageParams.editMode ? "Редактирование" : "Добавление"} карточки - Revise`)
+    property string windowTitle: qsTr(`${pageParams && pageParams.editMode ? "Редактирование" : "Добавление"} карточки - Revise`)
 
     Rectangle {
         anchors.fill: parent
@@ -68,7 +68,7 @@ Item {
             }
 
             Revise.AcceptButton {
-                text: pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
+                text: pageParams && pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
                 onClicked: {
                     let frontHtml = ""
                     let backHtml = ""
