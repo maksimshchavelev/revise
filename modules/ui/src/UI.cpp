@@ -6,6 +6,7 @@
 #include "DeckService.hpp"     // for DeckService wrapper
 #include "DecksModel.hpp"      // for DecksModel wrapper
 #include "PopupService.hpp"    // for PopupService wrapper
+#include "Settings.hpp"        // for Settings
 #include "StreakService.hpp"   // for StreakService wrapper
 #include "StudyService.hpp"    // for StudyService
 #include "ToastService.hpp"    // for ToastService
@@ -79,6 +80,12 @@ void UI::bind_toast_service(core::IToastService& toast_service) {
 void UI::bind_card_edit_session(core::ICardEditSession& session) {
     auto* service = new CardEditSession(session, &m_engine);
     m_engine.rootContext()->setContextProperty("cardEditSession", service);
+}
+
+
+void UI::bind_settings(core::ISettings& settings) {
+    auto* s = new Settings(settings, &m_engine);
+    m_engine.rootContext()->setContextProperty(QStringLiteral("settings"), s);
 }
 
 

@@ -1,0 +1,31 @@
+// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+
+#pragma once
+
+#include <QObject>                     // for QObject
+#include <core/settings/ISettings.hpp> // for core::ISettings
+
+namespace ui {
+
+class Settings final : public QObject {
+  public:
+    Q_PROPERTY(int maxInterval READ max_interval WRITE set_max_interval NOTIFY maxIntervalChanged FINAL)
+    Q_PROPERTY(float learningRate READ learning_rate WRITE set_learning_rate NOTIFY learningRateChanged FINAL)
+
+    Settings(core::ISettings& settings, QObject* parent = nullptr);
+
+  signals:
+    void maxIntervalChanged();
+    void learningRateChanged();
+
+  private:
+    int  max_interval() const;
+    void set_max_inverval(int interval);
+
+    float learning_rate() const;
+    void  set_learning_rate(float rate);
+
+    core::ISettings& m_settings;
+};
+
+} // namespace ui

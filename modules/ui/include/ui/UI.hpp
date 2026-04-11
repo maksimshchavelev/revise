@@ -6,12 +6,13 @@
 #include <QQmlApplicationEngine> // for QQmlApplicationEngine
 #include <QQmlComponent>         // for QQmlComponent
 
-#include <core/ICardEditSession.hpp> // for core::ICardEditSession
-#include <core/IDeckService.hpp>     // for core::IDeckService
-#include <core/IPopupService.hpp>    // for core::IPopupService
-#include <core/IStreakService.hpp>   // for core::IStreakService
-#include <core/IStudyService.hpp>    // for core::IStudyService
-#include <core/IToastService.hpp>    // for core::IToastService
+#include <core/ICardEditSession.hpp>   // for core::ICardEditSession
+#include <core/IDeckService.hpp>       // for core::IDeckService
+#include <core/IPopupService.hpp>      // for core::IPopupService
+#include <core/IStreakService.hpp>     // for core::IStreakService
+#include <core/IStudyService.hpp>      // for core::IStudyService
+#include <core/IToastService.hpp>      // for core::IToastService
+#include <core/settings/ISettings.hpp> // for core::ISettings
 
 #include "Router.hpp" // for Router
 
@@ -59,6 +60,9 @@ class UI {
 
     /// Make CardEditSession accessible from qml
     void bind_card_edit_session(core::ICardEditSession& session);
+
+    /// Make Settings accessible from qml
+    void bind_settings(core::ISettings& settings);
 
     /// Make Router accessible from qml
     void bind_router(Router& router);
