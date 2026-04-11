@@ -77,4 +77,7 @@ QtObject {
 
     // Loading icon button
     readonly property color loadingIconButtonBackground: "#1c1e21"
+
+    // Sizes
+    readonly property int settingsLabelWidth: 220
 }
