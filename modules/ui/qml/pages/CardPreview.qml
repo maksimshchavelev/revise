@@ -21,12 +21,6 @@ Item {
         color: "black"
     }
 
-    Revise.LoadingScreen {
-        id: loadingScreen
-        anchors.fill: parent
-        thresholdTime: 0
-    }
-
     ColumnLayout {
         id: layout
         anchors.fill: parent
@@ -54,6 +48,12 @@ Item {
         }
     }
 
+    Revise.LoadingScreen {
+        id: loadingScreen
+        anchors.fill: parent
+        thresholdTime: 0
+    }
+
     function flip() {
         root.flipped = !root.flipped
     }
@@ -65,7 +65,7 @@ Item {
 
     Timer {
         id: loadingTimer
-        interval: 100
+        interval: 50
         onTriggered: loadingScreen.endLoading()
     }
 }
