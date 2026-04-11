@@ -32,6 +32,12 @@ Item {
             id: frontEditor
             Layout.fillWidth: true
             Layout.preferredHeight: 150
+
+            Revise.LoadingScreen {
+                id: frontLoadingScreen
+                anchors.fill: parent
+                thresholdTime: 0
+            }
         }
 
         Revise.Text {
@@ -42,6 +48,12 @@ Item {
             id: backEditor
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            Revise.LoadingScreen {
+                id: backLoadingScreen
+                anchors.fill: parent
+                thresholdTime: 0
+            }
         }
 
         RowLayout {
@@ -100,5 +112,21 @@ Item {
 
         frontEditor.setHtml(root.pageParams.card.front)
         backEditor.setHtml(root.pageParams.card.back)
+    }
+
+    Component.onCompleted: {
+        frontLoadingScreen.startLoading()
+        backLoadingScreen.startLoading()
+
+        loadTimer.start()
+    }
+
+    Timer {
+        id: loadTimer
+        interval: 100
+        onTriggered: {
+            frontLoadingScreen.endLoading()
+            backLoadingScreen.endLoading()
+        }
     }
 }
