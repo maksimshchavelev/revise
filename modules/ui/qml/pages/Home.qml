@@ -26,7 +26,6 @@ Item {
 
     Revise.Toolbar {
         id: toolbar
-        width: 150
         height: parent.height
     }
 

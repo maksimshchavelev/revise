@@ -10,6 +10,9 @@ Item {
 
     property alias background: background
 
+    width: 150
+    height: layout.implicitHeight
+
     layer.enabled: true
     layer.effect: DropShadow {
         horizontalOffset: 4
@@ -26,6 +29,8 @@ Item {
     }
 
     ColumnLayout {
+        id: layout
+
         anchors.fill: parent
         anchors.margins: 6
         anchors.topMargin: 12
