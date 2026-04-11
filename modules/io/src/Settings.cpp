@@ -17,6 +17,7 @@ std::expected<void, core::SettingsError> Settings::set_learning_rate(float rate)
     }
 
     m_settings.setValue("algorithm_learning_rate", rate);
+    m_settings.sync();
     return {};
 }
 
@@ -31,6 +32,7 @@ std::expected<void, core::SettingsError> Settings::set_max_interval(int interval
     }
 
     m_settings.setValue("algorithm_max_interval", interval);
+    m_settings.sync();
     return {};
 }
 
