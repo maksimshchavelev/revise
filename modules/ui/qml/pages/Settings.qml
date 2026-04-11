@@ -57,10 +57,11 @@ Item {
                     Revise.TextField {
                         Layout.fillWidth: true
                         placeholder.text: qsTr("От 1 до 365")
+                        text: settings.maxInterval.toString()
                         inputMethodHints: Qt.ImhDigitsOnly
                         background.border.color: valid ? Revise.Theme.textFieldBorder : Revise.Theme.red
 
-                        validatorFunction: function(text) {
+                        validatorFunction: function (text) {
                             const value = parseInt(text)
                             return 1 <= value && value <= 365
                         }
@@ -68,6 +69,15 @@ Item {
                         validator: IntValidator {
                             bottom: 1
                             top: 365
+                        }
+
+                        onTextChanged: {
+                            if (!valid)
+                                return
+
+                            console.log("changing to ", parseInt(text))
+                            settings.maxInterval = parseInt(text)
+                            console.log(settings.maxInterval)
                         }
                     }
                 }
@@ -79,10 +89,11 @@ Item {
                     Revise.TextField {
                         Layout.fillWidth: true
                         placeholder.text: qsTr("От 1 до 5")
+                        text: settings.learningRate.toString()
                         inputMethodHints: Qt.ImhDigitsOnly
                         background.border.color: valid ? Revise.Theme.textFieldBorder : Revise.Theme.red
 
-                        validatorFunction: function(text) {
+                        validatorFunction: function (text) {
                             const value = parseFloat(text)
                             return 1 <= value && value <= 5
                         }
@@ -90,6 +101,13 @@ Item {
                         validator: DoubleValidator {
                             bottom: 1.0
                             top: 5.0
+                        }
+
+                        onTextChanged: {
+                            if (!valid)
+                                return
+
+                            settings.maxInterval = parseFloat(text)
                         }
                     }
                 }
