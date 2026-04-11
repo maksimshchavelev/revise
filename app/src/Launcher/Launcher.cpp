@@ -86,7 +86,7 @@ void Launcher::init() {
         qWarning() << "Failed to create streak service, got nullptr";
     }
 
-    if (m_algorithm = engine::create_study_algorithm(engine::AlgorithmType::SM2); !m_algorithm) {
+    if (m_algorithm = engine::create_study_algorithm(engine::AlgorithmType::SM2, *m_settings); !m_algorithm) {
         qWarning() << "Failed to create SM2 algorithm, got nullptr";
     }
 
