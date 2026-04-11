@@ -48,6 +48,7 @@ int Launcher::run() {
     m_ui.bind_popup_service(*m_popup_service);
     m_ui.bind_toast_service(*m_toast_service);
     m_ui.bind_card_edit_session(*m_card_edit_session);
+    m_ui.bind_settings(*m_settings);
     m_ui.bind_router(m_router);
     m_ui.enable_debug_bounds(debug_bounds ? debug_bounds.value() : false);
 
