@@ -21,11 +21,10 @@ Item {
         color: "black"
     }
 
-    QQC.BusyIndicator {
-        anchors.centerIn: parent
-        width: parent.width * 0.35
-        height: width
-        running: htmlCard.loading
+    Revise.LoadingScreen {
+        id: loadingScreen
+        anchors.fill: parent
+        thresholdTime: 0
     }
 
     ColumnLayout {
@@ -55,18 +54,18 @@ Item {
         }
     }
 
-    Revise.LoadingScreen {
-        id: loadingScreen
-        anchors.fill: parent
-        visible: root.openedAsWindow
-    }
-
     function flip() {
         root.flipped = !root.flipped
     }
 
     Component.onCompleted: {
         loadingScreen.startLoading()
-        loadingScreen.endLoading()
+        loadingTimer.start()
+    }
+
+    Timer {
+        id: loadingTimer
+        interval: 100
+        onTriggered: loadingScreen.endLoading()
     }
 }
