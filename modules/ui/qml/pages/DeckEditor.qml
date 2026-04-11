@@ -213,8 +213,11 @@ Item {
                     Revise.CardDelegate {
                         id: card
 
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        width: parent.width - 30
+                        anchors {
+                            fill: parent
+                            leftMargin: 10
+                            rightMargin: 25
+                        }
 
                         cardId: model.id
                         front: model.front
