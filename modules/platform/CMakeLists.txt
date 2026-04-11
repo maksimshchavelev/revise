@@ -22,3 +22,9 @@ target_link_libraries(platform
         core
         Qt6::Core
 )
+
+install(TARGETS platform
+    LIBRARY DESTINATION usr/lib
+    RUNTIME DESTINATION usr/bin
+    ARCHIVE DESTINATION usr/lib
+)

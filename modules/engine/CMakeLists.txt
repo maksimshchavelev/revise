@@ -29,3 +29,9 @@ set_target_properties(engine PROPERTIES
     AUTOUIC ON
 )
 
+install(TARGETS engine
+    LIBRARY DESTINATION usr/lib
+    RUNTIME DESTINATION usr/bin
+    ARCHIVE DESTINATION usr/lib
+)
+

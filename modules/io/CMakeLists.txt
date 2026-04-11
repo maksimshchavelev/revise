@@ -59,3 +59,9 @@ set_target_properties(io PROPERTIES
     AUTOUIC ON
 )
 
+install(TARGETS io
+    LIBRARY DESTINATION usr/lib
+    RUNTIME DESTINATION usr/bin
+    ARCHIVE DESTINATION usr/lib
+)
+

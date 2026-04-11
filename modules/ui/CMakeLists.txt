@@ -79,3 +79,6 @@ target_link_libraries(ui
         Qt6::Gui
 )
 
+install(DIRECTORY qml
+    DESTINATION qml
+)

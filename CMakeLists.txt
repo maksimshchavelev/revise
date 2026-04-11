@@ -12,6 +12,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG   "-g -O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
+set(CMAKE_INSTALL_PREFIX ./AppDir)
+
 option(REVISE_BUILD_TESTS "Need to build tests?" ON)
 option(REVISE_BUILD_APP "Need to build revise application?" ON)
 
@@ -60,3 +62,13 @@ add_custom_target(cppcheck
     COMMENT "Running cppcheck on source files"
 )
 
+install(TARGETS apprevise RUNTIME DESTINATION usr/bin)
+
+install(TARGETS ui
+    LIBRARY DESTINATION usr/lib
+    RUNTIME DESTINATION usr/bin
+    ARCHIVE DESTINATION usr/lib
+)
+
+install(FILES deploy/linux/revise.desktop DESTINATION usr/share/applications)
+install(FILES deploy/linux/revise.png DESTINATION usr/share/icons/hicolor/256x256/apps/)

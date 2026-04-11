@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Revise
+Exec=apprevise
+Icon=revise
+Categories=Education;
+Terminal=false

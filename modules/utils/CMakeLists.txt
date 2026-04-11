@@ -21,4 +21,8 @@ target_link_libraries(utils
     Qt6::Core
 )
 
-
+install(TARGETS utils
+    LIBRARY DESTINATION usr/lib
+    RUNTIME DESTINATION usr/bin
+    ARCHIVE DESTINATION usr/lib
+)
