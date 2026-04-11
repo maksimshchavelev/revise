@@ -8,6 +8,8 @@
 namespace ui {
 
 class Settings final : public QObject {
+    Q_OBJECT
+
   public:
     Q_PROPERTY(int maxInterval READ max_interval WRITE set_max_interval NOTIFY maxIntervalChanged FINAL)
     Q_PROPERTY(float learningRate READ learning_rate WRITE set_learning_rate NOTIFY learningRateChanged FINAL)
@@ -20,7 +22,7 @@ class Settings final : public QObject {
 
   private:
     int  max_interval() const;
-    void set_max_inverval(int interval);
+    void set_max_interval(int interval);
 
     float learning_rate() const;
     void  set_learning_rate(float rate);

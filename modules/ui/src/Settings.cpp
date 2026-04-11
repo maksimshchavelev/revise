@@ -11,12 +11,14 @@ int Settings::max_interval() const {
     return m_settings.max_interval();
 }
 
-void Settings::set_max_inverval(int interval) {
+void Settings::set_max_interval(int interval) {
     auto res = m_settings.set_max_interval(interval);
 
     if (!res) {
         qWarning() << res.error().message;
     }
+
+    emit maxIntervalChanged();
 }
 
 float Settings::learning_rate() const {
@@ -29,6 +31,8 @@ void Settings::set_learning_rate(float rate) {
     if (!res) {
         qWarning() << res.error().message;
     }
+
+    emit learningRateChanged();
 }
 
 } // namespace ui
