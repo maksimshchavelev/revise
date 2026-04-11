@@ -55,6 +55,7 @@ int Launcher::run() {
     connect_signals();
 
     m_router.push_page("home", m_ui.create_page(QUrl("qrc:/qml/pages/Home.qml")));
+    m_router.push_page("settings", m_ui.create_page(QUrl("qrc:/qml/pages/Settings.qml")));
     m_router.push_page("deckEditor", m_ui.create_page(QUrl("qrc:/qml/pages/DeckEditor.qml")));
     m_router.push_page("training", m_ui.create_page(QUrl("qrc:/qml/pages/Training.qml")));
     m_router.push_page("cardEditor", m_ui.create_page(QUrl("qrc:/qml/pages/CardEditor.qml")));

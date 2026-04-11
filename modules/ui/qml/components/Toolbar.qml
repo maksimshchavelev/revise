@@ -46,12 +46,14 @@ Item {
             text: qsTr("Колоды")
             selected: router.currentPage.name === "home"
             Layout.fillWidth: true
+            onClicked: router.navigate("home", {})
         }
 
         Revise.MenuButton {
             text: qsTr("Настройки")
             selected: router.currentPage.name === "settings"
             Layout.fillWidth: true
+            onClicked: router.navigate("settings", {})
         }
 
         Revise.VerticalSpacer {}
