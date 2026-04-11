@@ -22,7 +22,7 @@ class AlgorithmSettings {
     virtual int max_interval() const = 0;
 
     /// @brief Set maximum interval (from 1 to 365)
-    virtual std::expected<void, SettingsError> set_max_interval(int interval) const = 0;
+    virtual std::expected<void, SettingsError> set_max_interval(int interval) = 0;
 };
 
 } // namespace core
