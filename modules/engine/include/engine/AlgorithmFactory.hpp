@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include <core/IAlgorithm.hpp> // for core::IAlgorithm
-#include <memory>              // for std::unique_ptr
+#include <core/IAlgorithm.hpp>                 // for core::IAlgorithm
+#include <core/settings/AlgorithmSettings.hpp> // for core::AlgorithmSettings
+#include <memory>                              // for std::unique_ptr
 
 namespace engine {
 
@@ -14,8 +15,9 @@ enum class AlgorithmType {
 /**
  * @brief The function creates a specific implementation of IAlgorithm (study algorithm) and returns a pointer to it.
  * @type type Type of algorithm
+ * @settings Settings
  * @return `std::unique_ptr<core::IAlgorithm>`
  */
-std::unique_ptr<core::IAlgorithm> create_study_algorithm(const AlgorithmType type);
+std::unique_ptr<core::IAlgorithm> create_study_algorithm(AlgorithmType type, const core::AlgorithmSettings& settings);
 
 } // namespace engine

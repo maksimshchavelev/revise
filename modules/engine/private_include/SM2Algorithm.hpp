@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include <core/IAlgorithm.hpp> // for core::IAlgorithm
+#include <core/IAlgorithm.hpp>                 // for core::IAlgorithm
+#include <core/settings/AlgorithmSettings.hpp> // for AlgorithmSettings
 
 namespace engine {
 
@@ -17,10 +18,13 @@ namespace engine {
  */
 class SM2Algorithm final : public core::IAlgorithm {
   public:
-    SM2Algorithm() = default;
+    SM2Algorithm(const core::AlgorithmSettings& settings);
     ~SM2Algorithm() override = default;
 
     core::AlgorithmResult process_answer(const core::Card& old_card, float user_difficulty) noexcept override;
+
+  private:
+    const core::AlgorithmSettings& m_settings;
 };
 
 } // namespace engine
