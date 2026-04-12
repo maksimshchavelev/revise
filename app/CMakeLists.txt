@@ -15,6 +15,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       Qt6::Concurrent
       Qt6::WebView
       Qt6::Qml
+      Qt6::Core
       core
       platform
       ui
@@ -34,6 +35,7 @@ else() # Release
       Qt6::Concurrent
       Qt6::WebView
       Qt6::Qml
+      Qt6::Core
       core
       platform
       ui

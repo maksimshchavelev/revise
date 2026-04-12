@@ -2,8 +2,9 @@
 
 #include "Launcher/Launcher.hpp" // for header
 
-#include <QtConcurrent> // for QtConcurrent
-#include <QtWebView>    // for QtWebView::initialize()
+#include <QtConcurrent>           // for QtConcurrent
+#include <QtWebView>              // for QtWebView::initialize()
+#include <QtEnvironmentVariables> // for env variables
 
 #include <engine/AlgorithmFactory.hpp>       // for engine::create_study_algorithm
 #include <engine/CardEditSessionFactory.hpp> // for engine:create_card_edit_session
@@ -40,7 +41,8 @@ int Launcher::run() {
         qWarning() << "Failed to apply streak storage migrations:" << res.error();
     }
 
-    auto debug_bounds = qEnvironmentVariableIntegerValue("QML_DEBUG_BOUNDS");
+    bool ok{false};
+    auto debug_bounds = qEnvironmentVariableIntValue("QML_DEBUG_BOUNDS", &ok);
 
     m_ui.bind_streak_service(*m_streak_service);
     m_ui.bind_deck_service(*m_deck_service);
@@ -52,7 +54,7 @@ int Launcher::run() {
     m_ui.bind_card_edit_session(*m_card_edit_session);
     m_ui.bind_settings(*m_settings);
     m_ui.bind_router(m_router);
-    m_ui.enable_debug_bounds(debug_bounds ? debug_bounds.value() : false);
+    m_ui.enable_debug_bounds(ok ? debug_bounds : false);
 
     m_ui.init_engine(m_app);
 
