@@ -90,7 +90,7 @@ if (ANDROID)
   )
 endif()
 
-if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE AND NOT ANDROID)
     install(TARGETS apprevise RUNTIME DESTINATION usr/bin)
 
     install(FILES deploy/linux/revise.desktop DESTINATION usr/share/applications)
