@@ -311,8 +311,8 @@ void Launcher::extract_web_bundle_async() {
 }
 
 
-QString Launcher::global_data_dir()
-{
+QString Launcher::global_data_dir() {
+#ifdef Q_OS_LINUX
     QString base = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     if (base.isEmpty()) {
         base = QDir::homePath() + "/.local/share";
@@ -321,6 +321,9 @@ QString Launcher::global_data_dir()
     const QString app_dir = base + "/revise";
     QDir().mkpath(app_dir);
     return app_dir;
+#else
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#endif
 }
 
 } // namespace revise
