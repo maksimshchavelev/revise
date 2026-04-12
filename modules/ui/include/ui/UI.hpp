@@ -14,14 +14,15 @@
 #include <core/IToastService.hpp>      // for core::IToastService
 #include <core/settings/ISettings.hpp> // for core::ISettings
 
-#include "Router.hpp" // for Router
+#include "Router.hpp"    // for Router
+#include "UIExport.hpp"  // for UI_EXPORT macro
 
 namespace ui {
 
 /**
  * @brief Class that registers QML types and initializes the UI
  */
-class UI {
+class UI_EXPORT UI {
   public:
     /**
      * @brief Constructor

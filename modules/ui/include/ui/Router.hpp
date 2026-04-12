@@ -6,6 +6,7 @@
 #include <QObject>       // for QObject
 #include <QQmlComponent> // for QQmlComponent
 #include <QVector>       // for QVector
+#include "UIExport.hpp"  // for UI_EXPORT macro
 
 namespace ui {
 
@@ -18,7 +19,7 @@ namespace ui {
  *
  * @note Visible from QML
  */
-struct Page {
+struct UI_EXPORT Page {
     Q_GADGET
     QML_VALUE_TYPE(page)
 
@@ -50,7 +51,7 @@ struct Page {
  * to currentPageComponent. All navigation is performed through the C++ Router;
  * QML only reacts to the currently active page.
  */
-class Router final : public QObject {
+class UI_EXPORT Router final : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(Page currentPage READ current_page NOTIFY pageChanged FINAL)

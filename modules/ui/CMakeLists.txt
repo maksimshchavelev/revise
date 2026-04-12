@@ -45,6 +45,8 @@ set_target_properties(ui PROPERTIES
     AUTOUIC ON
 )
 
+target_compile_definitions(ui PRIVATE UI_BUILD_SHARED)
+
 qt_add_qml_module(ui
     URI Revise
     VERSION 1.0
