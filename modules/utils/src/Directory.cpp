@@ -21,7 +21,7 @@ std::expected<void, DirectoryError> utils::Directory::copy_recursively(const QSt
         it.next();
 
         QString relative_path = src_dir.relativeFilePath(it.filePath());
-        QString destination_path = destination + QDir().separator() + relative_path;
+        QString destination_path = destination + "/" + relative_path;
 
         if (it.fileInfo().isDir()) {
             if (QDir().mkpath(destination_path)) {
@@ -33,10 +33,14 @@ std::expected<void, DirectoryError> utils::Directory::copy_recursively(const QSt
             }
         }
 
-        if (QFile(destination_path).exists() && !QFile(destination_path).remove()) {
-            return std::unexpected(
-                DirectoryError{DirectoryError::Error::FailedToRemoveFile,
+        if (QFile(destination_path).exists()) {
+            QFile::setPermissions(destination_path, QFile::ReadOwner | QFile::WriteOwner);
+
+            if (!QFile(destination_path).remove()) {
+                return std::unexpected(
+                    DirectoryError{DirectoryError::Error::FailedToRemoveFile,
                                QString("Failed to remove existing destination file '%1'").arg(destination_path)});
+            }
         }
 
         if (!QFile(it.filePath()).copy(destination_path)) {
