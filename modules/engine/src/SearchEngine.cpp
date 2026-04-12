@@ -2,6 +2,7 @@
 
 #include "engine/SearchEngine.hpp" // for header
 #include <utils/Html.hpp>          // for html utils
+#include <ranges>                  // std::ranges
 
 namespace engine {
 
