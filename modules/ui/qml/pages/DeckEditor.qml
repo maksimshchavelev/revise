@@ -290,6 +290,7 @@ Item {
                 }
 
                 Revise.AcceptButton {
+                    id: updateButton
                     text: qsTr("Обновить")
                     Layout.fillHeight: true
                     clickable: deckName.valid && deckName.text.trim()
@@ -305,21 +306,35 @@ Item {
                                && deckIncorrectLimit.valid && deckIncorrectLimit.text.trim(
                                    ) !== ""
                     onClicked: {
-                        root.deck.name = deckName.text
-                        root.deck.description = deckDescription.text
-                        root.deck.newLimit = parseInt(deckNewLimit.text)
-                        root.deck.consolidateLimit = parseInt(
-                                    deckConsolidateLimit.text)
-                        root.deck.incorrectLimit = parseInt(deckIncorrectLimit.text)
-                        root.deck.timeLimit = limitTime.checked ? parseInt(
-                                                                      deckTimeLimit.text) : 0
-
-                        deckService.update_deck(root.deck)
+                        root.update()
                     }
                 }
             }
 
             Revise.VerticalSpacer {}
+        }
+    }
+
+    function update() {
+        root.deck.name = deckName.text
+        root.deck.description = deckDescription.text
+        root.deck.newLimit = parseInt(deckNewLimit.text)
+        root.deck.consolidateLimit = parseInt(
+                    deckConsolidateLimit.text)
+        root.deck.incorrectLimit = parseInt(deckIncorrectLimit.text)
+        root.deck.timeLimit = limitTime.checked ? parseInt(
+                                                      deckTimeLimit.text) : 0
+
+        deckService.update_deck(root.deck)
+    }
+
+    Shortcut {
+        sequence: "Ctrl+S"
+        onActivated: {
+            if (!updateButton.clickable)
+                return
+
+            root.update()
         }
     }
 
