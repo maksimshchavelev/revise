@@ -79,8 +79,29 @@ add_custom_command(TARGET apprevise POST_BUILD
 target_compile_definitions(apprevise PRIVATE BOOST_STACKTRACE_USE_BACKTRACE)
 
 include(GNUInstallDirs)
-install(TARGETS apprevise
+
+# install
+
+if (ANDROID)
+  install(TARGETS apprevise
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+  )
+endif()
+
+if(UNIX AND NOT APPLE)
+    install(TARGETS apprevise RUNTIME DESTINATION usr/bin)
+
+    install(FILES deploy/linux/revise.desktop DESTINATION usr/share/applications)
+    install(FILES deploy/linux/revise.png DESTINATION usr/share/icons/hicolor/256x256/apps)
+    install(FILES deploy/linux/copyright DESTINATION usr/share/doc/libc6)
+
+    install(DIRECTORY ${CMAKE_PREFIX_PATH}/resources/ DESTINATION usr/resources)
+    install(DIRECTORY ${CMAKE_PREFIX_PATH}/translations/qtwebengine_locales/ DESTINATION usr/translations/qtwebengine_locales)
+    install(PROGRAMS ${CMAKE_PREFIX_PATH}/libexec/QtWebEngineProcess DESTINATION usr/libexec)
+endif()
+
+if(WIN32)
+    install(TARGETS apprevise RUNTIME DESTINATION .)
+endif()

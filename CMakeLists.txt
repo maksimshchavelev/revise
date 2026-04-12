@@ -22,7 +22,14 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 endif()
 
-set(CMAKE_INSTALL_PREFIX ./AppDir)
+
+if (LINUX OR UNIX AND NOT APPL)
+    set(CMAKE_INSTALL_PREFIX ./AppDir)
+endif()
+
+if (WIN32)
+    set(CMAKE_INSTALL_PREFIX ./dist)
+endif()
 
 set(LINUXDEPLOYQT ~/linuxdeployqt-continuous-x86_64.AppImage CACHE FILEPATH "linuxdeployqt executable" FORCE)
 
@@ -78,20 +85,6 @@ add_custom_target(cppcheck
     COMMENT "Running cppcheck on source files"
 )
 
-# install
-
-install(TARGETS apprevise RUNTIME DESTINATION usr/bin)
-
-if(UNIX AND NOT APPLE)
-    install(FILES deploy/linux/revise.desktop DESTINATION usr/share/applications)
-    install(FILES deploy/linux/revise.png DESTINATION usr/share/icons/hicolor/256x256/apps)
-    install(FILES deploy/linux/copyright DESTINATION usr/share/doc/libc6)
-endif()
-
-install(DIRECTORY ${CMAKE_PREFIX_PATH}/resources/ DESTINATION usr/resources)
-install(DIRECTORY ${CMAKE_PREFIX_PATH}/translations/qtwebengine_locales/ DESTINATION usr/translations/qtwebengine_locales)
-install(PROGRAMS ${CMAKE_PREFIX_PATH}/libexec/QtWebEngineProcess DESTINATION usr/libexec)
-
 # build appimage (for linux)
 if (UNIX AND NOT APPLE)
     add_custom_target(appimage
@@ -103,6 +96,20 @@ if (UNIX AND NOT APPLE)
         DEPENDS apprevise
         USES_TERMINAL
         COMMENT "Build AppImage"
+    )
+endif()
+
+# build portable
+if (WIN32)
+    add_custom_target(portable
+        COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR}
+
+        COMMAND windeployqt --no-translations --qmldir dist/qml dist/apprevise.exe
+
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        DEPENDS apprevise
+        USES_TERMINAL
+        COMMENT "Build Windows Portable"
     )
 endif()
 

@@ -19,7 +19,7 @@ FetchContent_Declare(quazip
 )
 FetchContent_MakeAvailable(quazip)
 
-set(ZSTD_INSTALL OFF)
+set(ZSTD_BUILD_INSTALL OFF CACHE BOOL "" FORCE)
 set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "" FORCE)
 set(ZSTD_BUILD_SHARED OFF CACHE BOOL "" FORCE)
 set(ZSTD_BUILD_STATIC ON CACHE BOOL "" FORCE)
@@ -66,15 +66,17 @@ set_target_properties(io PROPERTIES
     AUTOUIC ON
 )
 
-install(TARGETS io
-    LIBRARY DESTINATION usr/lib
-    RUNTIME DESTINATION usr/bin
-    ARCHIVE DESTINATION usr/lib
-)
+if (UNIX AND NOT APPLE)
+    install(TARGETS QuaZip
+        LIBRARY DESTINATION usr/lib
+        RUNTIME DESTINATION usr/bin
+    )
+endif()
 
-install(TARGETS QuaZip
-    LIBRARY DESTINATION usr/lib
-    RUNTIME DESTINATION usr/bin
-    ARCHIVE DESTINATION usr/lib
-)
+if (WIN32)
+    install(TARGETS QuaZip
+        LIBRARY DESTINATION .
+        RUNTIME DESTINATION .
+    )
+endif()
 
