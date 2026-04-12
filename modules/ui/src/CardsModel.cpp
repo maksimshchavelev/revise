@@ -63,7 +63,7 @@ void CardsModel::setDeck(int deckId) {
     m_last_deck_id = deckId;
     ++m_last_request_id;
 
-    auto _ = QtConcurrent::run([&]() {
+    auto _ = QtConcurrent::run([this, deckId, search = m_search_front]() {
         int current_request_id = m_last_request_id;
 
         emit loadingStarted();
@@ -73,13 +73,18 @@ void CardsModel::setDeck(int deckId) {
 
             if (!res) {
                 qWarning() << "Failed to fetch cards in cards model:" << res.error();
+                emit loadingFinished();
                 return;
             }
 
             if (current_request_id == m_last_request_id) {
-                beginResetModel();
-                m_cards = std::move(res.value());
-                emit updated();
+                QMetaObject::invokeMethod(this, [this, cards = std::move(*res)]() {
+                    beginResetModel();
+                    m_cards = std::move(cards);
+                    emit updated();
+                    endResetModel();
+                    emit loadingFinished();
+                }, Qt::QueuedConnection);
             }
         } else {
             auto res = m_deck_service.search_cards(core::CardDeckIdSearchFilter{m_last_deck_id} |
@@ -87,18 +92,20 @@ void CardsModel::setDeck(int deckId) {
 
             if (!res) {
                 qWarning() << "Failed to fetch searched cards in cards model:" << res.error().message;
+                emit loadingFinished();
                 return;
             }
 
             if (current_request_id == m_last_request_id) {
-                beginResetModel();
-                m_cards = std::move(res.value());
-                emit updated();
+                QMetaObject::invokeMethod(this, [this, cards = std::move(*res)]() {
+                    beginResetModel();
+                    m_cards = std::move(cards);
+                    emit updated();
+                    endResetModel();
+                    emit loadingFinished();
+                }, Qt::QueuedConnection);
             }
         }
-
-        emit loadingFinished();
-        endResetModel();
     });
 }
 
