@@ -14,9 +14,22 @@ namespace io {
 // Public method
 Database::Database(const QString& connection_name, const QString& db_name, QObject* parent) :
     QObject(parent), m_connection_name(connection_name) {
+
+    QFileInfo info(db_name);
+    QDir      dir = info.dir();
+
+    if (!dir.mkpath(".")) {
+        throw std::runtime_error(
+            QString("Failed to create database directory: %1").arg(dir.absolutePath()).toStdString());
+    }
+
     auto res = open_connection(db_name);
     if (!res.has_value()) {
-        emit error_occurred(res.error());
+        throw std::runtime_error(QString("Failed to open db connection. db_name = %1, connection_name = %2, error: %3")
+                                     .arg(db_name)
+                                     .arg(connection_name)
+                                     .arg(res.error())
+                                     .toStdString());
     }
 }
 
@@ -37,17 +50,18 @@ std::expected<void, QString> Database::init_db() {
 
     // Enable foreign key support
     if (!fk_query.exec("PRAGMA foreign_keys = ON")) {
-        return std::unexpected(QString("Failed to exec 'PRAGMA foreign_keys = ON' query: %1").arg(fk_query.lastError().text()));
+        return std::unexpected(
+            QString("Failed to exec 'PRAGMA foreign_keys = ON' query: %1").arg(fk_query.lastError().text()));
     }
 
     // Insert streak
-    streak_query.prepare("INSERT OR IGNORE INTO streak (id, value, last_updated) VALUES (1, :val, :date)");
-    streak_query.bindValue(":val", 0);
-    streak_query.bindValue(":date", QDateTime::currentDateTime().addDays(-1).toString("yyyy-MM-dd HH:mm:ss"));
+    // streak_query.prepare("INSERT OR IGNORE INTO streak (id, value, last_updated) VALUES (1, :val, :date)");
+    // streak_query.bindValue(":val", 0);
+    // streak_query.bindValue(":date", QDateTime::currentDateTime().addDays(-1).toString("yyyy-MM-dd HH:mm:ss"));
 
-    if (!streak_query.exec()) {
-        return std::unexpected(QString("Failed to exec streak init query: %1").arg(streak_query.lastError().text()));
-    }
+    // if (!streak_query.exec()) {
+    //     return std::unexpected(QString("Failed to exec streak init query: %1").arg(streak_query.lastError().text()));
+    // }
 
     // Create DECKS table
     decks_query.prepare(R"(

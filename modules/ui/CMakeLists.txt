@@ -79,6 +79,12 @@ target_link_libraries(ui
         Qt6::Gui
 )
 
+install(TARGETS ui
+    LIBRARY DESTINATION usr/lib
+    RUNTIME DESTINATION usr/bin
+    ARCHIVE DESTINATION usr/lib
+)
+
 install(DIRECTORY qml
     DESTINATION qml
 )

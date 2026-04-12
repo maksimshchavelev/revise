@@ -30,6 +30,8 @@ int Launcher::run() {
     qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
 #endif
 
+    qDebug() << "Application data directory:" << global_data_dir();
+
     QtWebView::initialize();
 
     init();
@@ -306,6 +308,19 @@ void Launcher::extract_web_bundle_async() {
                 .type = core::ToastType::ERROR});
         }
     });
+}
+
+
+QString Launcher::global_data_dir()
+{
+    QString base = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+    if (base.isEmpty()) {
+        base = QDir::homePath() + "/.local/share";
+    }
+
+    const QString app_dir = base + "/revise";
+    QDir().mkpath(app_dir);
+    return app_dir;
 }
 
 } // namespace revise

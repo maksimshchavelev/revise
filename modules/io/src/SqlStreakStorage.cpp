@@ -6,11 +6,7 @@
 
 namespace io {
 
-SqlStreakStorage::SqlStreakStorage(Database& db, DatabaseExecutionContext& context) : m_db(db), m_context(context) {
-    if (auto res = create_streak_table(); !res.has_value()) {
-        throw std::runtime_error(res.error().toStdString());
-    }
-}
+SqlStreakStorage::SqlStreakStorage(Database& db, DatabaseExecutionContext& context) : m_db(db), m_context(context) {}
 
 
 std::expected<void, QString> SqlStreakStorage::save(const core::Streak streak) {
@@ -61,7 +57,7 @@ std::expected<core::Streak, QString> SqlStreakStorage::read() {
 
 
 std::expected<void, QString> SqlStreakStorage::migrate() {
-    return {}; // No migration is needed at this time.
+    return create_streak_table();
 }
 
 

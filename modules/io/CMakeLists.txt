@@ -10,6 +10,7 @@ include(FetchContent)
 set(QUAZIP_QT_MAJOR_VERSION 6 CACHE STRING "" FORCE)
 set(QUAZIP_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
 set(QUAZIP_ENABLE_TOOLS OFF CACHE BOOL "" FORCE)
+set(QUAZIP_INSTALL OFF CACHE BOOL "" FORCE)
 
 # quazip
 FetchContent_Declare(quazip
@@ -17,6 +18,12 @@ FetchContent_Declare(quazip
     GIT_TAG v1.5
 )
 FetchContent_MakeAvailable(quazip)
+
+set(ZSTD_INSTALL OFF)
+set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "" FORCE)
+set(ZSTD_BUILD_SHARED OFF CACHE BOOL "" FORCE)
+set(ZSTD_BUILD_STATIC ON CACHE BOOL "" FORCE)
+set(ZSTD_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
 # zstd
 FetchContent_Declare(
@@ -60,6 +67,12 @@ set_target_properties(io PROPERTIES
 )
 
 install(TARGETS io
+    LIBRARY DESTINATION usr/lib
+    RUNTIME DESTINATION usr/bin
+    ARCHIVE DESTINATION usr/lib
+)
+
+install(TARGETS QuaZip
     LIBRARY DESTINATION usr/lib
     RUNTIME DESTINATION usr/bin
     ARCHIVE DESTINATION usr/lib
