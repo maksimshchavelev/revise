@@ -47,6 +47,36 @@ set_target_properties(ui PROPERTIES
 
 target_compile_definitions(ui PRIVATE UI_BUILD_SHARED)
 
+# qt_add_qml_module(ui
+#     URI Revise
+#     VERSION 1.0
+#     SOURCES
+#         ${UI_SOURCES}
+#     QML_FILES
+#         ${QML_FILES}
+# )
+
+# Привет! У меня есть проект на С++ / Qt 6.10.1 / QML. Он разбит на модули - корневой
+#    CMakeLists.txt собирает все модули, включая app. Компиляция бинарника происходит именно в app.
+#    ui содержится в модуле ui - там находится и плагин, и С++ файлы, и QML файлы. Проблема в том,
+#    что при компиляции под Windows / Linux все работает нормально и никаких предупреждений нет, а
+#    при компиляции под андроид в qml файлах при директиве import Revise (мой модуль) возникает
+#    предупреждение QML module contains C++ plugins. Currently reading information... Из за этого
+#    предупреждения не работает автодополнение и подсветка синтаксиса сущностей, входящих в мой
+#    модуль. Кроме того, мои компоненты частично не работают - например для Revise.IconButton в
+#    runtime возникает ошибка "Revise.IconButton не содержит свойства size". IconButton наследуется
+#    от Revise.Icon, которая содержит такое свойство. И так как на остальных платформах все работает,
+#    дело не в моем коде. Так как на остальных платформах работает, архитектуру менять НЕ НАДО. Твоя
+#    задача - проанализировать архитектуру, cmake файлы и дать совет, как избавиться от
+#    предупреждения
+
+# qt_add_resources(ui
+#     PREFIX "/"
+#     FILES
+#         ${RESOURCES}
+#         ${QML_FILES}
+# )
+
 qt_add_qml_module(ui
     URI Revise
     VERSION 1.0
@@ -54,6 +84,7 @@ qt_add_qml_module(ui
         ${UI_SOURCES}
     QML_FILES
         ${QML_FILES}
+    NO_PLUGIN
 )
 
 qt_add_resources(ui
@@ -95,6 +126,8 @@ if (WIN32)
     )
 endif()
 
-install(DIRECTORY qml
-    DESTINATION qml
-)
+if (NOT ANDROID)
+    install(DIRECTORY qml
+        DESTINATION qml
+    )
+endif()
