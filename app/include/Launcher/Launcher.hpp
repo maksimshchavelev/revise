@@ -61,8 +61,8 @@ class Launcher {
   private:
     QGuiApplication& m_app;
 
-    io::Database                 m_db{"revise_main", global_data_dir() + "/revise.db"}; ///< Database
-    io::DatabaseExecutionContext m_db_context;                                          ///< Database execution context
+    std::optional<io::Database>  m_db;         ///< Database
+    io::DatabaseExecutionContext m_db_context; ///< Database execution context
 
     std::shared_ptr<io::SqlStreakStorage> m_streak_storage; ///< Streak storage
     std::unique_ptr<core::IStreakService> m_streak_service; ///< Streak service

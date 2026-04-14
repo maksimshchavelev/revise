@@ -75,7 +75,29 @@ int Launcher::run() {
 
 
 void Launcher::init() {
-    if (auto res = m_db.init_db(); !res) {
+    // TODO: remove in next updates
+    // "revise_main", global_data_dir() + "/revise.db"
+    const QString dest_db = global_data_dir() + "/revise.db";
+
+    if (QFile("./revise.db").exists()) {
+        qDebug() << "Found local database. Copying...";
+
+        if(!QFile(dest_db).remove()) {
+            qWarning() << "Failed to remove dest db:" << dest_db;
+        }
+
+        if (!QFile().copy("./revise.db", dest_db)) {
+            qWarning() << "Failed to copy ./revise.db to dest db:" << dest_db;
+        }
+
+        if (!QFile("./revise.db").remove()) {
+            qWarning() << "Failed to remove ./revise.db";
+        }
+    }
+
+    m_db.emplace("revise_main", dest_db);
+
+    if (auto res = m_db->init_db(); !res) {
         qWarning() << "Failed to init db:" << res.error();
     }
 
@@ -83,7 +105,7 @@ void Launcher::init() {
         qWarning() << "Failed to create settings, got nullptr";
     }
 
-    if (m_streak_storage = std::make_shared<io::SqlStreakStorage>(m_db, m_db_context); !m_streak_storage) {
+    if (m_streak_storage = std::make_shared<io::SqlStreakStorage>(*m_db, m_db_context); !m_streak_storage) {
         qWarning() << "Failed to create streak storage, got nullptr";
     }
 
@@ -111,7 +133,7 @@ void Launcher::init() {
         qWarning() << "Failed to create deck media storage, got nullptr";
     }
 
-    if (m_deck_storage = std::make_unique<io::SqlDeckStorage>(m_db, m_db_context); !m_deck_storage) {
+    if (m_deck_storage = std::make_unique<io::SqlDeckStorage>(*m_db, m_db_context); !m_deck_storage) {
         qWarning() << "Failed to create sql deck storage, got nullptr";
     }
 
