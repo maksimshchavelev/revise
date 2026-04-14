@@ -90,7 +90,7 @@ Item {
             right: root.right
             top: header.bottom
             bottom: root.bottom
-            margins: 6
+            margins: 4
         }
 
         ColumnLayout {
@@ -98,6 +98,7 @@ Item {
 
             spacing: 8
 
+            width: flickable.width
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.margins: 4
@@ -205,6 +206,9 @@ Item {
 
                     // Cards count
                     Revise.Text {
+                        Layout.fillWidth: true
+                        maximumLineCount: 2
+                        elide: Text.ElideRight
                         text: {
                             if (searchField.text.trim().length === 0) {
                                 return qsTr("Список карточек (всего "
@@ -266,8 +270,7 @@ Item {
 
                         anchors {
                             fill: parent
-                            leftMargin: 10
-                            rightMargin: 25
+                            rightMargin: 15
                         }
 
                         cardId: model.id
@@ -312,7 +315,9 @@ Item {
                     }
                 }
 
-                ScrollBar.vertical: Revise.Scrollbar {}
+                ScrollBar.vertical: Revise.Scrollbar {
+                    policy: ScrollBar.AlwaysOn
+                }
 
                 Revise.LoadingScreen {
                     id: cardsLoadingScreen
