@@ -7,7 +7,7 @@ WebView {
     id: web
 
     property string html
-    property int fontSize: Revise.Theme.fontSizeBig
+    property int fontSize: Revise.Theme.fontSizeMedium
     property color textColor: Revise.Theme.textColor
     property bool ready: false
 
