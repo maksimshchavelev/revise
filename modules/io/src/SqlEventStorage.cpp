@@ -1,6 +1,7 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "io/SqlEventStorage.hpp" // for SqlEventStorage header
+#include <QJsonDocument>          // for QJsonDocument
 #include <QJsonObject>            // for QJsonObject
 #include <QSqlError>              // for QSqlError
 #include <QSqlQuery>              // for QSqlQuery
