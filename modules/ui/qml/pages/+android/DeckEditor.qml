@@ -30,14 +30,68 @@ Item {
         anchors.fill: parent
     }
 
+    Rectangle {
+        id: header
+        width: root.width
+        height: 60
+        color: Revise.Theme.backgroundLight
+
+        RowLayout {
+            anchors {
+                fill: parent
+                rightMargin: 8
+                leftMargin: 16
+            }
+
+            Revise.IconButton {
+                Layout.alignment: Qt.AlignVCenter
+                visible: !root.openedAsWindow
+                source: "qrc:/res/img/back.svg"
+                size: 24
+                color: Revise.Theme.textColorDark
+                onClicked: router.back()
+            }
+
+            Revise.HorizontalSpacer {}
+
+            Revise.AcceptButton {
+                id: updateButton
+                text: qsTr("Обновить")
+                Layout.alignment: Qt.AlignVCenter
+                clickable: deckName.valid && deckName.text.trim()
+                           !== "" && (deckDescription.valid
+                                      || deckDescription.text.trim()
+                                      === "") && (!limitTime.checked
+                                                  || (deckTimeLimit.valid && deckTimeLimit.text.trim(
+                                                          ) !== ""))
+                           && deckNewLimit.valid && deckNewLimit.text.trim(
+                               ) !== ""
+                           && deckConsolidateLimit.valid && deckConsolidateLimit.text.trim(
+                               ) !== ""
+                           && deckIncorrectLimit.valid && deckIncorrectLimit.text.trim(
+                               ) !== ""
+                onClicked: {
+                    root.update()
+                }
+            }
+        }
+    }
+
     Flickable {
         id: flickable
 
-        anchors.fill: parent
         contentWidth: width
         contentHeight: layout.implicitHeight
-        clip: true
         boundsBehavior: Flickable.StopAtBounds
+        clip: true
+
+        anchors {
+            left: root.left
+            right: root.right
+            top: header.bottom
+            bottom: root.bottom
+            margins: 6
+        }
 
         ColumnLayout {
             id: layout
@@ -142,16 +196,38 @@ Item {
                 text: root.deck.incorrectLimit
             }
 
-            RowLayout {
+            ColumnLayout {
                 Layout.fillWidth: true
+                spacing: 6
 
-                Revise.Text {
-                    text: {
-                        if (searchField.text.trim().length === 0) {
-                            return qsTr("Список карточек (всего " + cardsModel.cardsCount + "):")
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    // Cards count
+                    Revise.Text {
+                        text: {
+                            if (searchField.text.trim().length === 0) {
+                                return qsTr("Список карточек (всего "
+                                            + cardsModel.cardsCount + "):")
+                            }
+
+                            return qsTr("Список карточек (найдено " + cardsModel.cardsCount + "):")
                         }
+                    }
 
-                        return qsTr("Список карточек (найдено " + cardsModel.cardsCount + "):")
+                    // Create button
+                    Revise.Button {
+                        text: qsTr("Добавить")
+                        onClicked: {
+                            let card = new Revise.Card()
+                            card.deck_id = deckId
+                            card.difficulty = 2.5
+                            card.next_review = new Date()
+                            router.navigate("cardEditor", {
+                                                "editMode": false,
+                                                "card": card
+                                            }, Revise.page.Page)
+                        }
                     }
                 }
 
@@ -166,21 +242,6 @@ Item {
                         interval: 300
                         repeat: false
                         onTriggered: cardsModel.searchFront = searchField.text
-                    }
-                }
-
-                // Create button
-                Revise.Button {
-                    text: qsTr("Добавить")
-                    onClicked: {
-                        let card = new Revise.Card()
-                        card.deck_id = deckId
-                        card.difficulty = 2.5
-                        card.next_review = new Date()
-                        router.navigate("cardEditor", {
-                                            "editMode": false,
-                                            "card": card
-                                        }, Revise.page.Page)
                     }
                 }
             }
@@ -227,7 +288,8 @@ Item {
 
                         onEditClicked: {
                             router.navigate("cardEditor", {
-                                                "card": deckService.card(cardId),
+                                                "card": deckService.card(
+                                                            cardId),
                                                 "editMode": true
                                             }, Revise.page.Page)
                         }
@@ -257,43 +319,6 @@ Item {
                     anchors.fill: parent
                 }
             }
-
-
-            RowLayout {
-                Layout.alignment: Qt.AlignRight
-                Layout.preferredHeight: 40
-                Layout.margins: 5
-
-                Revise.Button {
-                    visible: !root.openedAsWindow
-                    Layout.fillHeight: true
-                    text: qsTr("Назад")
-                    onClicked: router.back()
-                }
-
-                Revise.AcceptButton {
-                    id: updateButton
-                    text: qsTr("Обновить")
-                    Layout.fillHeight: true
-                    clickable: deckName.valid && deckName.text.trim()
-                               !== "" && (deckDescription.valid
-                                          || deckDescription.text.trim()
-                                          === "") && (!limitTime.checked
-                                                      || (deckTimeLimit.valid && deckTimeLimit.text.trim(
-                                                              ) !== ""))
-                               && deckNewLimit.valid && deckNewLimit.text.trim(
-                                   ) !== ""
-                               && deckConsolidateLimit.valid && deckConsolidateLimit.text.trim(
-                                   ) !== ""
-                               && deckIncorrectLimit.valid && deckIncorrectLimit.text.trim(
-                                   ) !== ""
-                    onClicked: {
-                        root.update()
-                    }
-                }
-            }
-
-            Revise.VerticalSpacer {}
         }
     }
 
@@ -301,8 +326,7 @@ Item {
         root.deck.name = deckName.text
         root.deck.description = deckDescription.text
         root.deck.newLimit = parseInt(deckNewLimit.text)
-        root.deck.consolidateLimit = parseInt(
-                    deckConsolidateLimit.text)
+        root.deck.consolidateLimit = parseInt(deckConsolidateLimit.text)
         root.deck.incorrectLimit = parseInt(deckIncorrectLimit.text)
         root.deck.timeLimit = limitTime.checked ? parseInt(
                                                       deckTimeLimit.text) : 0
