@@ -7,9 +7,6 @@ import Revise as Revise
 Item {
     id: root
 
-    property bool pressed: tapHandler.pressed
-    property bool hovered: hoverHandler.hovered
-
     property string front
     property string back
     property date nextReview
