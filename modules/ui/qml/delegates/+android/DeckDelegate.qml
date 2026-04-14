@@ -8,7 +8,7 @@ Item {
     id: root
 
     width: parent.width
-    height: 130
+    height: 140
 
     property int newCards: 0 // Cards that have not yet been studied
     property int consolidateCards: 0 // Cards that have already been studied and need to be reviewed
