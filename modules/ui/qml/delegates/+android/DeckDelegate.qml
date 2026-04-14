@@ -130,7 +130,7 @@ Item {
 
                         Revise.Text {
                             text: qsTr("Новые")
-                            font.pointSize: Revise.Theme.fontSizeSmall
+                            font.pixelSize: Revise.Theme.fontSizeSmall
                             color: Revise.Theme.green
                         }
 
@@ -138,7 +138,7 @@ Item {
 
                         Revise.Text {
                             text: root.newCards
-                            font.pointSize: Revise.Theme.fontSizeSmall
+                            font.pixelSize: Revise.Theme.fontSizeSmall
                             color: root.newCards > 0 ? Revise.Theme.green : Revise.Theme.textColorDark
                         }
                     }
@@ -149,7 +149,7 @@ Item {
 
                         Revise.Text {
                             text: qsTr("Закрепляемые")
-                            font.pointSize: Revise.Theme.fontSizeSmall
+                            font.pixelSize: Revise.Theme.fontSizeSmall
                             color: Revise.Theme.blue
                         }
 
@@ -157,7 +157,7 @@ Item {
 
                         Revise.Text {
                             text: root.consolidateCards
-                            font.pointSize: Revise.Theme.fontSizeSmall
+                            font.pixelSize: Revise.Theme.fontSizeSmall
                             color: root.consolidateCards
                                    > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
                         }
@@ -169,7 +169,7 @@ Item {
 
                         Revise.Text {
                             text: qsTr("Ошибочные")
-                            font.pointSize: Revise.Theme.fontSizeSmall
+                            font.pixelSize: Revise.Theme.fontSizeSmall
                             color: Revise.Theme.red
                         }
 
@@ -177,7 +177,7 @@ Item {
 
                         Revise.Text {
                             text: root.incorrectCards
-                            font.pointSize: Revise.Theme.fontSizeSmall
+                            font.pixelSize: Revise.Theme.fontSizeSmall
                             color: root.incorrectCards
                                    > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
                         }
@@ -209,7 +209,7 @@ Item {
                         Revise.Text {
                             visible: !parent.timeUnlimited
                             text: qsTr(`${root.timeLimit} с`)
-                            font.pointSize: Revise.Theme.fontSizeSmall
+                            font.pixelSize: Revise.Theme.fontSizeSmall
                             color: Revise.Theme.textColor
                             verticalAlignment: Revise.Text.AlignVCenter
                         }
@@ -231,7 +231,7 @@ Item {
                                                                     "Без описания...")
                         elide: Text.ElideRight
                         color: Revise.Theme.textColorDark
-                        font.pointSize: Revise.Theme.fontSizeSmall
+                        font.pixelSize: Revise.Theme.fontSizeSmall
                         wrapMode: Text.WordWrap
                     }
 

@@ -48,7 +48,7 @@ Item {
     Revise.Text {
         id: txt
         color: Revise.Theme.textColor
-        font.pointSize: Revise.Theme.fontSizeDefault
+        font.pixelSize: Revise.Theme.fontSizeDefault
         anchors.fill: parent
         anchors.margins: 8
         horizontalAlignment: Qt.AlignHCenter

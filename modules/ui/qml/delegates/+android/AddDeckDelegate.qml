@@ -96,7 +96,7 @@ Item {
                 text: root.description
                 elide: Text.ElideRight
                 color: Revise.Theme.textColorDark
-                font.pointSize: Revise.Theme.fontSizeSmall
+                font.pixelSize: Revise.Theme.fontSizeSmall
             }
 
             ColumnLayout {

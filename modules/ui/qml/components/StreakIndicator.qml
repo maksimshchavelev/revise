@@ -26,7 +26,7 @@ Item {
 
         Revise.Text {
             text: streak
-            font.pointSize: Revise.Theme.fontSizeBig
+            font.pixelSize: Revise.Theme.fontSizeBig
             font.bold: true
             color: root.updatedToday ? Revise.Theme.streakUpdatedTextColor : Revise.Theme.textColorDark
         }

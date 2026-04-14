@@ -60,7 +60,7 @@ Item {
 
         Revise.Text {
             color: Revise.Theme.textColorDark
-            font.pointSize: Revise.Theme.fontSizeSmall
+            font.pixelSize: Revise.Theme.fontSizeSmall
             text: qsTr("Revise 1.3.0")
             Layout.alignment: Qt.AlignHCenter
         }

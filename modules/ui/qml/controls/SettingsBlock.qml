@@ -38,7 +38,7 @@ Item {
 
         Revise.Text {
             id: header
-            font.pointSize: Revise.Theme.fontSizeMedium
+            font.pixelSize: Revise.Theme.fontSizeMedium
             font.bold: true
             text: qsTr("Настройка")
             Layout.fillWidth: true

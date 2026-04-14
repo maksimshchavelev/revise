@@ -92,7 +92,7 @@ Item {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 text: root.text
-                font.pointSize: Revise.Theme.fontSizeSmall
+                font.pixelSize: Revise.Theme.fontSizeSmall
                 horizontalAlignment: Text.AlignLeft
                 color: "black"
                 maximumLineCount: 10

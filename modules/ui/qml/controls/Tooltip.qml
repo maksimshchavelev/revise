@@ -23,6 +23,6 @@ Popup {
         wrapMode: Text.WordWrap
         elide: Text.ElideRight
         maximumLineCount: 10
-        font.pointSize: Revise.Theme.fontSizeSmall
+        font.pixelSize: Revise.Theme.fontSizeSmall
     }
 }

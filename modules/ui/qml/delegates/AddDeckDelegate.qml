@@ -107,7 +107,7 @@ Item {
                 elide: Text.ElideRight
                 verticalAlignment: Revise.Text.AlignVCenter
                 color: Revise.Theme.textColorDark
-                font.pointSize: Revise.Theme.fontSizeSmall
+                font.pixelSize: Revise.Theme.fontSizeSmall
             }
         }
 

@@ -83,7 +83,7 @@ Item {
                 Revise.Text {
                     text: root.front
                     font.bold: true
-                    font.pointSize: Revise.Theme.fontSizeMedium
+                    font.pixelSize: Revise.Theme.fontSizeMedium
                     maximumLineCount: 1
                     elide: Revise.Text.ElideRight
                     Layout.fillWidth: true
@@ -116,7 +116,7 @@ Item {
                 property int optionsWidth: 140
 
                 Revise.KeyValue {
-                    font.pointSize: Revise.Theme.fontSizeSmall
+                    font.pixelSize: Revise.Theme.fontSizeSmall
                     keyWidth: parent.optionsWidth
 
                     key.text: qsTr("Статус:")
@@ -141,7 +141,7 @@ Item {
                 }
 
                 Revise.KeyValue {
-                    font.pointSize: Revise.Theme.fontSizeSmall
+                    font.pixelSize: Revise.Theme.fontSizeSmall
                     keyWidth: parent.optionsWidth
 
                     key.text: qsTr("Следующий повтор:")
@@ -159,7 +159,7 @@ Item {
                 }
 
                 Revise.KeyValue {
-                    font.pointSize: Revise.Theme.fontSizeSmall
+                    font.pixelSize: Revise.Theme.fontSizeSmall
                     keyWidth: parent.optionsWidth
 
                     key.text: qsTr("Сложность:")
