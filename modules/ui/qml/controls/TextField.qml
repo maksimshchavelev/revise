@@ -1,5 +1,5 @@
-// Single-line text input field. You can set a validator. Multicolored border is present.
 
+// Single-line text input field. You can set a validator. Multicolored border is present.
 import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
@@ -20,9 +20,9 @@ Item {
     property bool editable: true
 
     property font font: Qt.font({
-        family: Revise.Fonts.regular.name,
-        pointSize: Revise.Theme.fontSizeDefault
-    })
+                                    "family": Revise.Fonts.regular.name,
+                                    "pointSize": Revise.Theme.fontSizeDefault
+                                })
 
     implicitHeight: 35
 
@@ -72,6 +72,7 @@ Item {
         color: Revise.Theme.textColor
         readOnly: !root.editable
         clip: true
+        enabled: false
     }
 
     Rectangle {
@@ -84,6 +85,25 @@ Item {
 
     HoverHandler {
         cursorShape: hovered && root.editable ? Qt.IBeamCursor : Qt.ArrowCursor
+    }
+
+    TapHandler {
+        onTapped: function (point) {
+            input.enabled = true
+            input.forceActiveFocus()
+            input.cursorPosition = input.positionAt(point.position.x,
+                                                    point.position.y)
+            Qt.inputMethod.show()
+        }
+    }
+
+    Connections {
+        target: input
+
+        function onActiveFocusChanged() {
+            if (!input.activeFocus)
+                input.enabled = false
+        }
     }
 
     function isValid() {
