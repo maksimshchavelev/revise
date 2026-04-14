@@ -53,24 +53,28 @@ Item {
 
             spacing: 12
 
-            delegate: DelegateChooser {
-                role: "isSpecial"
+            delegate: Loader {
+                id: delegateLoader
+                sourceComponent: model.isSpecial ? addDeckDelegate : deckDelegate
+                width: parent.width
+                height: addDeckDelegate.height
 
-                DelegateChoice {
-                    roleValue: true
+                // height: deckDelegate.height
+                // width: parent.width
+                Component {
+                    id: addDeckDelegate
 
-                    delegate: Revise.AddDeckDelegate {
+                    Revise.AddDeckDelegate {
                         backgroundItem: blurOverlay.blurredItem
-
                         onImportClicked: importDialog.open()
                         onCreateClicked: root.createDeckPage()
                     }
                 }
 
-                DelegateChoice {
-                    roleValue: false
+                Component {
+                    id: deckDelegate
 
-                    delegate: Revise.DeckDelegate {
+                    Revise.DeckDelegate {
                         deckName: model.name
                         deckDescription: model.description
                         timeLimit: model.timeLimit
