@@ -3,7 +3,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
