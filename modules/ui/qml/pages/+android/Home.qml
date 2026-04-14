@@ -17,13 +17,6 @@ Item {
         anchors.fill: parent
     }
 
-    Revise.BlurOverlay {
-        id: blurOverlay
-        anchors.fill: parent
-        sourceItem: background
-        blur: 1.4
-    }
-
     Revise.Toolbar {
         id: toolbar
         anchors.bottom: root.bottom
@@ -59,13 +52,10 @@ Item {
                 width: parent.width
                 height: addDeckDelegate.height
 
-                // height: deckDelegate.height
-                // width: parent.width
                 Component {
                     id: addDeckDelegate
 
                     Revise.AddDeckDelegate {
-                        backgroundItem: blurOverlay.blurredItem
                         onImportClicked: importDialog.open()
                         onCreateClicked: root.createDeckPage()
                     }
@@ -83,7 +73,6 @@ Item {
                         incorrectCards: model.incorrectCards
                         deckId: model.deckId
                         repeatableToday: model.repeatableToday
-                        backgroundItem: blurOverlay.blurredItem
 
                         onStudyClicked: {
                             studyService.start(deckId)
@@ -107,18 +96,6 @@ Item {
                     }
                 }
             }
-
-            function iterateDelegates() {
-                for (var i = 0; i < listView.contentItem.children.length; i++) {
-                    var child = listView.contentItem.children[i]
-                    if (child && typeof child.remapPosition === "function") {
-                        child.remapPosition()
-                    }
-                }
-            }
-
-            onContentXChanged: iterateDelegates()
-            onContentYChanged: iterateDelegates()
         }
     }
 
