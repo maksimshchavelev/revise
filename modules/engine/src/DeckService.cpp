@@ -55,7 +55,9 @@ void DeckService::import_deck_async(const QString& path) {
                 dispatch(import_finished{});
             });
 
-        const QString local_path = QUrl(path).toLocalFile();
+        const QUrl url(path);
+
+        const QString local_path = url.isLocalFile() ? url.toLocalFile() : url.toString();
 
         auto extract_extension = [](const QString& filename) -> QString {
             // Matches ".apkg", ".zip", ".anki" etc. before optional " (n)"
