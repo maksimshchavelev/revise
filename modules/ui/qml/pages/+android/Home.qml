@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Effects
+import QtQuick.Controls
 import Revise as Revise
 
 Item {
@@ -42,19 +43,29 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.margins: 6
+            Layout.bottomMargin: 2
+
+            ScrollBar.vertical: Revise.Scrollbar {
+                policy: ScrollBar.AlwaysOn
+            }
 
             spacing: 12
 
-            delegate: Loader {
-                id: delegateLoader
-                sourceComponent: model.isSpecial ? addDeckDelegate : deckDelegate
-                width: parent.width
-                height: addDeckDelegate.height
+            delegate: Item {
+                width: ListView.view.width
+                height: delegateLoader.height
+
+                Loader {
+                    id: delegateLoader
+                    sourceComponent: model.isSpecial ? addDeckDelegate : deckDelegate
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: 8
+                    anchors.rightMargin: 16
+                }
 
                 Component {
                     id: addDeckDelegate
-
                     Revise.AddDeckDelegate {
                         onImportClicked: importDialog.open()
                         onCreateClicked: root.createDeckPage()
@@ -63,7 +74,6 @@ Item {
 
                 Component {
                     id: deckDelegate
-
                     Revise.DeckDelegate {
                         deckName: model.name
                         deckDescription: model.description
@@ -78,17 +88,14 @@ Item {
                             studyService.start(deckId)
                             router.navigate("training", {})
                         }
-
                         onEditClicked: {
                             router.navigate("deckEditor", {
-                                                "deck": deckService.deck(deckId)
-                                            }, Revise.page.Page)
+                                "deck": deckService.deck(deckId)
+                            }, Revise.page.Page)
                         }
-
                         onRemoveClicked: {
                             deckService.remove_deck(deckId)
                         }
-
                         onExportClicked: {
                             exportDialog.deckId = deckId
                             exportDialog.open()
