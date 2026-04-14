@@ -3,20 +3,22 @@
 #include "Launcher/Launcher.hpp" // for header
 
 #include <QtConcurrent>           // for QtConcurrent
-#include <QtWebView>              // for QtWebView::initialize()
 #include <QtEnvironmentVariables> // for env variables
+#include <QtWebView>              // for QtWebView::initialize()
 
-#include <engine/AlgorithmFactory.hpp>       // for engine::create_study_algorithm
-#include <engine/CardEditSessionFactory.hpp> // for engine:create_card_edit_session
-#include <engine/DeckService.hpp>            // for engine::DeckService
-#include <engine/PopupServiceFactory.hpp>    // for engine::create_popup_service
-#include <engine/SearchEngine.hpp>           // for engine::SearchEngine
-#include <engine/StreakServiceFactory.hpp>   // for engine::create_streak_service
-#include <engine/ToastServiceFactory.hpp>    // for engine:create_toast_service
-#include <io/DeckExporterFactory.hpp>        // for io::create_deck_exporter
-#include <io/DeckImporterFactory.hpp>        // for io::create_deck_importer
-#include <io/DeckMediaStorageFactory.hpp>    // for io::create_deck_media_storage
-#include <io/Settings.hpp>                   // for io::Settings
+#include <engine/AlgorithmFactory.hpp>             // for engine::create_study_algorithm
+#include <engine/CardEditSessionFactory.hpp>       // for engine:create_card_edit_session
+#include <engine/DeckService.hpp>                  // for engine::DeckService
+#include <engine/PopupServiceFactory.hpp>          // for engine::create_popup_service
+#include <engine/SearchEngine.hpp>                 // for engine::SearchEngine
+#include <engine/StreakServiceFactory.hpp>         // for engine::create_streak_service
+#include <engine/ToastServiceFactory.hpp>          // for engine:create_toast_service
+#include <io/DeckExporterFactory.hpp>              // for io::create_deck_exporter
+#include <io/DeckImporterFactory.hpp>              // for io::create_deck_importer
+#include <io/DeckMediaStorageFactory.hpp>          // for io::create_deck_media_storage
+#include <io/Settings.hpp>                         // for io::Settings
+#include <platform/NotificationServiceFactory.hpp> // for notification service factory
+#include <platform/PermissionServiceFactory.hpp>   // for permission service factory
 
 #include <utils/Directory.hpp> // for directory tools
 
@@ -82,7 +84,7 @@ void Launcher::init() {
     if (QFile("./revise.db").exists()) {
         qDebug() << "Found local database. Copying...";
 
-        if(!QFile(dest_db).remove()) {
+        if (!QFile(dest_db).remove()) {
             qWarning() << "Failed to remove dest db:" << dest_db;
         }
 
@@ -174,6 +176,14 @@ void Launcher::init() {
     if (m_card_edit_session = engine::create_card_edit_session(engine::CardEditSessionType::Local);
         !m_card_edit_session) {
         qWarning() << "Failed to create card edit session, got nullptr";
+    }
+
+    if (m_permission_service = platform::create_permission_service(); !m_permission_service) {
+        qWarning() << "Failed to create permission service, got nullptr";
+    }
+
+    if (m_notification_service = platform::create_notification_service(); !m_notification_service) {
+        qWarning() << "Failed to create notification service, got nullptr";
     }
 }
 
@@ -311,6 +321,30 @@ void Launcher::post_launch() {
 
     extract_web_bundle_async();
 
+    auto _ = QtConcurrent::run([this]() {
+        if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
+            qDebug() << "Requesting POST_NOTIFICATIONS";
+            m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
+        }
+
+        if (!m_permission_service->check(core::Permission::READ_EXTERNAL_STORAGE)) {
+            qDebug() << "Requesting READ_EXTERNAL_STORAGE";
+            m_permission_service->request(core::Permission::READ_EXTERNAL_STORAGE);
+        }
+
+        if (!m_permission_service->check(core::Permission::WRITE_EXTERNAL_STORAGE)) {
+            qDebug() << "Requesting WRITE_EXTERNAL_STORAGE";
+            m_permission_service->request(core::Permission::WRITE_EXTERNAL_STORAGE);
+        }
+
+        if (!m_permission_service->check(core::Permission::SCHEDULE_EXACT_ALARM)) {
+            qDebug() << "Requesting SCHEDULE_EXACT_ALARM";
+            m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
+        }
+
+        schedule_notifications();
+    });
+
     if (auto res = m_streak_service->reset_if_overdue(); !res) {
         qWarning() << "Failed to reset streak:" << res.error();
     }
@@ -332,6 +366,23 @@ void Launcher::extract_web_bundle_async() {
                 .type = core::ToastType::ERROR});
         }
     });
+}
+
+
+void Launcher::schedule_notifications() {
+    auto current = QDateTime::currentDateTime();
+    current.setTime(QTime(10, 30, 0));
+
+    for (int i = 0; i < 14; ++i) {
+        current = current.addDays(i);
+
+        if (current <= QDateTime::currentDateTime()) {
+            continue;
+        }
+
+        m_notification_service->schedule_notification(
+            QCoreApplication::translate("notification", "Пора что-нибудь повторить!"), current);
+    }
 }
 
 

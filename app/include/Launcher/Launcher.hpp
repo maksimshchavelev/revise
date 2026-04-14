@@ -46,6 +46,10 @@
 // Settings
 #include <core/settings/ISettings.hpp> // for core::ISettings
 
+// Platform
+#include <core/INotificationService.hpp> // for core::INotificationService
+#include <core/IPermissionService.hpp>   // for core::IPermissionService
+
 // UI
 #include <ui/Router.hpp> // for Router
 #include <ui/UI.hpp>     // for UI
@@ -91,6 +95,9 @@ class Launcher {
 
     std::unique_ptr<core::ISettings> m_settings; ///< Settings
 
+    std::unique_ptr<core::INotificationService> m_notification_service; ///< Notification service
+    std::unique_ptr<core::IPermissionService>   m_permission_service;   ///< Permission service
+
     ui::UI     m_ui;     ///< Main UI class
     ui::Router m_router; ///< Router for page navigation
 
@@ -101,6 +108,8 @@ class Launcher {
     void post_launch();
 
     void extract_web_bundle_async();
+
+    void schedule_notifications();
 
     QString global_data_dir();
 };
