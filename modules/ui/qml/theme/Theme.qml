@@ -31,10 +31,10 @@ QtObject {
     readonly property color popupBorder: "#5e5e5e"
 
     // Font size
-    readonly property int fontSizeSmall: 10
-    readonly property int fontSizeDefault: 13
-    readonly property int fontSizeMedium: 16
-    readonly property int fontSizeBig: 22
+    readonly property int fontSizeSmall: 12
+    readonly property int fontSizeDefault: 16
+    readonly property int fontSizeMedium: 18
+    readonly property int fontSizeBig: 24
 
     readonly property color debugBounds: "#e30000"
 
