@@ -38,7 +38,8 @@ ApplicationWindow {
         target: router
 
         function onPageChanged() {
-            pageLoader.requestPage(router.currentPageComponent, router.currentPage.params)
+            pageLoader.requestPage(router.currentPageComponent,
+                                   router.currentPage.params)
         }
     }
 
@@ -83,8 +84,10 @@ ApplicationWindow {
         onClosed: toastService.closed()
     }
 
-    Keys.onPressed: function (event) {
-        if (event.key === Qt.Key_Escape) {
+    Item {
+        focus: true
+
+        Keys.onBackPressed: function (event) {
             event.accepted = true
             router.back()
         }
