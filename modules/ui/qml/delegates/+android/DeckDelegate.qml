@@ -2,7 +2,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -27,15 +26,6 @@ Item {
 
     Item {
         anchors.fill: parent
-
-        layer.enabled: true
-        layer.effect: DropShadow {
-            horizontalOffset: 4
-            verticalOffset: 4
-            radius: 8
-            samples: 32
-            color: "#80000000"
-        }
 
         Rectangle {
             id: tint
