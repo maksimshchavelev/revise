@@ -77,8 +77,13 @@ void DecksModel::update() {
     auto res = m_deck_service.deck_summaries();
 
     if (res) {
+        std::sort(res->begin(), res->end(), [](const core::DeckSummary& deck1, const core::DeckSummary& deck2) {
+            return deck1.new_cards + deck1.consolidate_cards + deck1.incorrect_cards >
+                   deck2.new_cards + deck2.consolidate_cards + deck2.incorrect_cards;
+        });
+
         m_decks.clear();
-        m_decks.emplace_back();
+        m_decks.emplace_back(); // special deck. Must be first always
         m_decks.append(std::move(res.value()));
     }
 
