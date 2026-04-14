@@ -28,6 +28,7 @@ RowLayout {
         id: key
         text: "key"
         font: root.font
+        color: Revise.Theme.textColorDark
         Layout.alignment: Qt.AlignLeft
         Layout.preferredWidth: root.keyWidth
     }
