@@ -10,7 +10,7 @@ Item {
 
     property alias background: background
 
-    height: 70
+    height: 60
     width: parent.width
 
     Rectangle {
