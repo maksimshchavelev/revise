@@ -33,6 +33,7 @@ Item {
             top: root.top
             bottom: toolbar.top
             right: root.right
+            margins: 6
         }
 
         flickableDirection: Flickable.VerticalFlick
