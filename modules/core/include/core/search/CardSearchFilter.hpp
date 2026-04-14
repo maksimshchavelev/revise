@@ -9,9 +9,16 @@
 
 namespace core {
 
+/// @brief Card filter kind
+enum class CardFilterKind { DeckId, Front, Unknown };
+
 /// @brief The base class for card search filters. All card filters must inherit from it
 struct CardSearchFilter {
     virtual ~CardSearchFilter() = default;
+
+    virtual CardFilterKind kind() const noexcept {
+        return CardFilterKind::Unknown;
+    };
 };
 
 /// @brief Card filter chain (helper struct)
@@ -56,12 +63,20 @@ template <CardFilter Filter> CardFilterChain operator|(CardFilterChain lhs, Filt
 struct CardDeckIdSearchFilter final : public CardSearchFilter {
     CardDeckIdSearchFilter(int deck_id) : deck_id{deck_id} {}
 
+    CardFilterKind kind() const noexcept override {
+        return CardFilterKind::DeckId;
+    }
+
     int deck_id{0};
 };
 
 /// @brief Filter search results by the front side of the card
 struct CardFrontSearchFilter final : public CardSearchFilter {
     CardFrontSearchFilter(QString front) : front{std::move(front)} {}
+
+    CardFilterKind kind() const noexcept override {
+        return CardFilterKind::Front;
+    }
 
     QString front;
 };
