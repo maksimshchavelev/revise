@@ -97,15 +97,15 @@ class DatabaseExecutionContext final : public QObject {
     {
         using Result = decltype(fn());
 
+        const bool in_db_thread = m_thread.isCurrentThread();
+
         // If we are already in the DB thread, we call the function directly. Without this check,
         // Qt::BlockingQueuedConnection will lead to a deadlock, as this flag blocks the calling thread.
-        if (QThread::currentThread() == m_thread.currentThread()) {
-            // void return type case
+        if (in_db_thread) {
             if constexpr (std::is_void_v<Result>) {
                 fn();
                 return;
             } else {
-                // non-void return type case
                 return fn();
             }
         }
