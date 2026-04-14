@@ -190,8 +190,9 @@ class Notifiable {
      * @param slot Callable taking `const Event&`
      */
     template <typename Event> void connect(Slot<Event> slot) {
-        auto& vec = m_slots[typeid(Event)];
-        vec.push_back([slot = std::move(slot)](const void* event) { slot(*static_cast<const Event*>(event)); });
+        using CleanEvent = std::remove_cvref_t<Event>;
+        auto& vec = m_slots[key<CleanEvent>()];
+        vec.push_back([slot = std::move(slot)](const void* event) { slot(*static_cast<const CleanEvent*>(event)); });
     }
 
   protected:
@@ -202,7 +203,8 @@ class Notifiable {
      * @param event The event instance to dispatch
      */
     template <typename Event> void dispatch(Event&& event) {
-        for (const auto& slot : m_slots[typeid(Event)]) {
+        using CleanEvent = std::remove_cvref_t<Event>;
+        for (const auto& slot : m_slots[key<CleanEvent>()]) {
             slot(&event);
         }
     }
@@ -212,7 +214,12 @@ class Notifiable {
     using ErasedSlot = std::function<void(const void*)>;
 
     /// Map of signal types to connected slots
-    std::unordered_map<std::type_index /* event name */, QVector<ErasedSlot> /* slots */> m_slots;
+    std::unordered_map<QString /* event name */, QVector<ErasedSlot> /* slots */> m_slots;
+
+    template <typename T>
+    static QString key() {
+        return typeid(T).name();
+    }
 };
 
 } // namespace core
