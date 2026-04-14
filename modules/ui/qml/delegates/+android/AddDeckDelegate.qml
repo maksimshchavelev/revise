@@ -8,7 +8,7 @@ Item {
     id: root
 
     width: parent.width
-    height: 120
+    height: 130
 
     property bool loading: false // If set to true, a loading animation will be displayed
     property string header: qsTr("Добавить колоду")
