@@ -52,54 +52,57 @@ Item {
             spacing: 12
 
             delegate: Item {
+                id: delegateRoot
                 width: ListView.view.width
-                height: delegateLoader.height
 
-                Loader {
-                    id: delegateLoader
-                    sourceComponent: model.isSpecial ? addDeckDelegate : deckDelegate
+                readonly property bool isSpecial: model.isSpecial
+
+                height: isSpecial ? specialDelegate.height : deckDelegate.height
+
+                Revise.AddDeckDelegate {
+                    id: specialDelegate
+                    visible: delegateRoot.isSpecial
+                    width: delegateRoot.width - 24
                     anchors.left: parent.left
-                    anchors.right: parent.right
                     anchors.leftMargin: 8
+                    anchors.right: parent.right
                     anchors.rightMargin: 16
+
+                    onImportClicked: importDialog.open()
+                    onCreateClicked: root.createDeckPage()
                 }
 
-                Component {
-                    id: addDeckDelegate
-                    Revise.AddDeckDelegate {
-                        onImportClicked: importDialog.open()
-                        onCreateClicked: root.createDeckPage()
-                    }
-                }
-
-                Component {
+                Revise.DeckDelegate {
                     id: deckDelegate
-                    Revise.DeckDelegate {
-                        deckName: model.name
-                        deckDescription: model.description
-                        timeLimit: model.timeLimit
-                        newCards: model.newCards
-                        consolidateCards: model.consolidateCards
-                        incorrectCards: model.incorrectCards
-                        deckId: model.deckId
-                        repeatableToday: model.repeatableToday
+                    visible: !delegateRoot.isSpecial
+                    width: delegateRoot.width - 24
+                    anchors.left: parent.left
+                    anchors.leftMargin: 8
+                    anchors.right: parent.right
+                    anchors.rightMargin: 16
 
-                        onStudyClicked: {
-                            studyService.start(deckId)
-                            router.navigate("training", {})
-                        }
-                        onEditClicked: {
-                            router.navigate("deckEditor", {
-                                "deck": deckService.deck(deckId)
-                            }, Revise.page.Page)
-                        }
-                        onRemoveClicked: {
-                            deckService.remove_deck(deckId)
-                        }
-                        onExportClicked: {
-                            exportDialog.deckId = deckId
-                            exportDialog.open()
-                        }
+                    deckName: model.name
+                    deckDescription: model.description
+                    timeLimit: model.timeLimit
+                    newCards: model.newCards
+                    consolidateCards: model.consolidateCards
+                    incorrectCards: model.incorrectCards
+                    deckId: model.deckId
+                    repeatableToday: model.repeatableToday
+
+                    onStudyClicked: {
+                        studyService.start(deckId)
+                        router.navigate("training", {})
+                    }
+                    onEditClicked: {
+                        router.navigate("deckEditor", {
+                                            "deck": deckService.deck(deckId)
+                                        }, Revise.page.Page)
+                    }
+                    onRemoveClicked: deckService.remove_deck(deckId)
+                    onExportClicked: {
+                        exportDialog.deckId = deckId
+                        exportDialog.open()
                     }
                 }
             }
