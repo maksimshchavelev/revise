@@ -4,11 +4,14 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import Revise as Revise
 
-Item {
+Rectangle {
     id: root
 
     width: parent.width
     height: 140
+    color: Revise.Theme.backgroundLight
+    radius: 10
+    clip: true
 
     property int newCards: 0 // Cards that have not yet been studied
     property int consolidateCards: 0 // Cards that have already been studied and need to be reviewed
@@ -24,201 +27,168 @@ Item {
     signal removeClicked
     signal exportClicked
 
-    Item {
-        anchors.fill: parent
+    ColumnLayout {
+        id: content
 
-        Rectangle {
-            id: tint
-            anchors.fill: parent
-            color: Revise.Theme.backgroundLight
-            radius: 10
+        anchors {
+            fill: parent
+            margins: 12
         }
 
-        ColumnLayout {
-            id: content
+        // Deck name and menu
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 12
 
-            anchors {
-                fill: parent
-                margins: 12
+            Revise.Text {
+                Layout.fillWidth: true
+                text: root.deckName
+                elide: Text.ElideRight
+                maximumLineCount: 2
+                color: Revise.Theme.textColor
+                verticalAlignment: Revise.Text.AlignVCenter
+                font.bold: true
             }
 
-            // Deck name and menu
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 12
+            Revise.IconButton {
+                id: menuButton
+                Layout.preferredWidth: 15
+                Layout.preferredHeight: 15
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
 
+                source: "qrc:/res/img/menu.svg"
+                size: 15
+                color: Revise.Theme.textColorDark
+                opacity: 0.7
+
+                onClicked: {
+                    kekabMenu.x = menuButton.x + menuButton.width + 10
+                    kekabMenu.y = menuButton.y
+                    kekabMenu.clampPosition()
+                    kekabMenu.open()
+                }
+            }
+        }
+
+        // Stats and description block
+        Row {
+            id: statsBlock
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignBottom
+            spacing: 12
+
+            // Stats
+            Column {
+                id: statsColumn
+                width: 150
+                spacing: 6
+
+                // New cards
+                Revise.KeyValue {
+                    width: parent.width
+
+                    key.text: qsTr("Новые")
+                    key.color: Revise.Theme.green
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
+
+                    value.text: root.newCards
+                    value.color: root.newCards > 0 ? Revise.Theme.green : Revise.Theme.textColorDark
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
+                }
+
+                // Review cards
+                Revise.KeyValue {
+                    width: parent.width
+
+                    key.text: qsTr("Закрепляемые")
+                    key.color: Revise.Theme.blue
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
+
+                    value.text: root.consolidateCards
+                    value.color: root.consolidateCards
+                                 > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
+                }
+
+                // Incorrect cards
+                Revise.KeyValue {
+                    width: parent.width
+
+                    key.text: qsTr("Ошибочные")
+                    key.color: Revise.Theme.red
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
+
+                    value.text: root.incorrectCards
+                    value.color: root.incorrectCards
+                                 > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
+                }
+
+                // Time limit
+                RowLayout {
+                    width: parent.width
+
+                    property bool timeUnlimited: root.timeLimit === 0
+                    property int iconSize: 16
+
+                    Revise.Icon {
+                        size: parent.iconSize
+                        source: "qrc:/res/img/clocks.svg"
+                        color: Revise.Theme.textColor
+                    }
+
+                    Revise.HorizontalSpacer {}
+
+                    Revise.Icon {
+                        visible: parent.timeUnlimited
+                        size: parent.iconSize
+                        source: "qrc:/res/img/infinity.svg"
+                        color: Revise.Theme.textColorDark
+                    }
+
+                    Revise.Text {
+                        visible: !parent.timeUnlimited
+                        text: qsTr(`${root.timeLimit} с`)
+                        font.pixelSize: Revise.Theme.fontSizeSmall
+                        color: Revise.Theme.textColor
+                        verticalAlignment: Revise.Text.AlignVCenter
+                    }
+                }
+            } // end stats
+
+            // Deck description and study button
+            ColumnLayout {
+                width: statsBlock.width - statsColumn.width - statsBlock.spacing
+                height: statsBlock.implicitHeight
+                spacing: 2
+
+                // Deck description
                 Revise.Text {
                     Layout.fillWidth: true
-                    text: root.deckName
-                    elide: Text.ElideRight
-                    maximumLineCount: 2
-                    color: Revise.Theme.textColor
-                    verticalAlignment: Revise.Text.AlignVCenter
-                    font.bold: true
-                }
-
-                Revise.IconButton {
-                    id: menuButton
-                    Layout.preferredWidth: 15
-                    Layout.preferredHeight: 15
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-
-                    source: "qrc:/res/img/menu.svg"
-                    size: 15
-                    color: Revise.Theme.textColorDark
-                    opacity: 0.7
-
-                    onClicked: {
-                        kekabMenu.x = menuButton.x + menuButton.width + 10
-                        kekabMenu.y = menuButton.y
-                        kekabMenu.clampPosition()
-                        kekabMenu.open()
-                    }
-                }
-            }
-
-            // Stats and description block
-            RowLayout {
-                id: statsBlock
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.alignment: Qt.AlignBottom
-                spacing: 12
-
-                // Stats
-                ColumnLayout {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 150
-                    Layout.maximumWidth: 150
+                    text: root.deckDescription.length > 0 ? root.deckDescription : qsTr(
+                                                                "Без описания...")
+                    elide: Text.ElideRight
+                    color: Revise.Theme.textColorDark
+                    font.pixelSize: Revise.Theme.fontSizeSmall
+                    wrapMode: Text.WordWrap
+                }
 
-                    // New cards
-                    RowLayout {
-                        Layout.fillWidth: true
-
-                        Revise.Text {
-                            text: qsTr("Новые")
-                            font.pixelSize: Revise.Theme.fontSizeSmall
-                            color: Revise.Theme.green
-                        }
-
-                        Revise.HorizontalSpacer {}
-
-                        Revise.Text {
-                            text: root.newCards
-                            font.pixelSize: Revise.Theme.fontSizeSmall
-                            color: root.newCards
-                                   > 0 ? Revise.Theme.green : Revise.Theme.textColorDark
-                        }
-                    }
-
-                    // Review cards
-                    RowLayout {
-                        Layout.fillWidth: true
-
-                        Revise.Text {
-                            text: qsTr("Закрепляемые")
-                            font.pixelSize: Revise.Theme.fontSizeSmall
-                            color: Revise.Theme.blue
-                        }
-
-                        Revise.HorizontalSpacer {}
-
-                        Revise.Text {
-                            text: root.consolidateCards
-                            font.pixelSize: Revise.Theme.fontSizeSmall
-                            color: root.consolidateCards
-                                   > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
-                        }
-                    }
-
-                    // Incorrect cards
-                    RowLayout {
-                        Layout.fillWidth: true
-
-                        Revise.Text {
-                            text: qsTr("Ошибочные")
-                            font.pixelSize: Revise.Theme.fontSizeSmall
-                            color: Revise.Theme.red
-                        }
-
-                        Revise.HorizontalSpacer {}
-
-                        Revise.Text {
-                            text: root.incorrectCards
-                            font.pixelSize: Revise.Theme.fontSizeSmall
-                            color: root.incorrectCards
-                                   > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
-                        }
-                    }
-
-                    // Time limit
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 10
-
-                        property bool timeUnlimited: root.timeLimit === 0
-                        property int iconSize: 16
-
-                        Revise.Icon {
-                            size: parent.iconSize
-                            source: "qrc:/res/img/clocks.svg"
-                            color: Revise.Theme.textColor
-                        }
-
-                        Revise.HorizontalSpacer {}
-
-                        Revise.Icon {
-                            visible: parent.timeUnlimited
-                            size: parent.iconSize
-                            source: "qrc:/res/img/infinity.svg"
-                            color: Revise.Theme.textColorDark
-                        }
-
-                        Revise.Text {
-                            visible: !parent.timeUnlimited
-                            text: qsTr(`${root.timeLimit} с`)
-                            font.pixelSize: Revise.Theme.fontSizeSmall
-                            color: Revise.Theme.textColor
-                            verticalAlignment: Revise.Text.AlignVCenter
-                        }
-                    }
-                } // end stats
-
-                // Deck description and study button
-                ColumnLayout {
+                // Study button
+                Revise.Button {
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                     Layout.fillWidth: true
-                    Layout.preferredHeight: statsBlock.implicitHeight
-                    Layout.maximumHeight: statsBlock.implicitHeight
-                    spacing: 2
+                    Layout.preferredHeight: 30
 
-                    // Deck description
-                    Revise.Text {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        text: root.deckDescription.length > 0 ? root.deckDescription : qsTr(
-                                                                    "Без описания...")
-                        elide: Text.ElideRight
-                        color: Revise.Theme.textColorDark
-                        font.pixelSize: Revise.Theme.fontSizeSmall
-                        wrapMode: Text.WordWrap
-                    }
+                    text: "Учить"
+                    font.bold: true
+                    clickable: root.repeatableToday
+                    background.color: hovered ? Revise.Theme.grey : "transparent"
+                    background.opacity: 0.2
 
-                    // Study button
-                    Revise.Button {
-                        Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 30
-
-                        text: "Учить"
-                        font.bold: true
-                        clickable: root.repeatableToday
-                        background.color: hovered ? Revise.Theme.grey : "transparent"
-                        background.opacity: 0.2
-
-                        onClicked: root.studyClicked()
-                    }
-                } // end deck description and study button
-            }
+                    onClicked: root.studyClicked()
+                }
+            } // end deck description and study button
         }
     }
 
