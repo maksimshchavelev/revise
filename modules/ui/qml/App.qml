@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Effects
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import Revise as Revise
