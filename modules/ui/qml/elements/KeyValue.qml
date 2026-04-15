@@ -10,34 +10,28 @@ import QtQuick
 import QtQuick.Layouts
 import Revise as Revise
 
-RowLayout {
+Row {
     id: root
-    spacing: 10
+    spacing: 6
 
     property alias key: key
     property alias value: value
-
-    property font font: Qt.font({
-        family: Revise.Fonts.regular.name,
-        pointSize: Revise.Theme.fontSizeDefault
-    })
 
     property int keyWidth: 100
 
     Revise.Text {
         id: key
         text: "key"
-        font: root.font
         color: Revise.Theme.textColorDark
-        Layout.alignment: Qt.AlignLeft
-        Layout.preferredWidth: root.keyWidth
+        width: root.keyWidth
     }
 
     Revise.Text {
         id: value
         text: "value"
-        font: root.font
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
+        horizontalAlignment: Revise.Text.AlignRight
+        width: root.width - key.width - root.spacing
     }
 }
