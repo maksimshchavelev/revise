@@ -6,79 +6,65 @@ Item {
     property var pendingPageComponent: null
     property var pendingPageParams: null
     property var currentWindowTitle: qsTr("Revise")
+    property bool frontIsA: true
 
     signal loadingStarted
     signal loadingFinished
 
-    Item {
-        id: currentPageLayer
+    Loader {
+        id: loaderA
+        visible: true
         anchors.fill: parent
-
-        Loader {
-            id: pageLoader
-            anchors.fill: parent
-            active: true
-            visible: true
-            asynchronous: false
-        }
+        asynchronous: true
+        onLoaded: handleLoaded()
     }
 
     Loader {
-        id: preloader
-        asynchronous: true
-        active: false
+        id: loaderB
         visible: false
+        anchors.fill: parent
+        asynchronous: true
+        onLoaded: handleLoaded()
+    }
+
+    function currentLoader() {
+        return frontIsA ? loaderA : loaderB
+    }
+
+    function standbyLoader() {
+        return frontIsA ? loaderB : loaderA
     }
 
     function requestPage(comp, params) {
         pendingPageComponent = comp
         pendingPageParams = params
-        preloader.sourceComponent = comp
-        preloader.active = true
+        loadingStarted()
+
+        const back = standbyLoader()
+        back.sourceComponent = pendingPageComponent
     }
 
-    Connections {
-        target: preloader
+    function configurePage(page) {
+        if ("pageParams" in page)
+            page.pageParams = pendingPageParams
 
-        function onStatusChanged() {
-            if (preloader.status === Loader.Loading) {
-                root.loadingStarted()
-            }
+        if ("openedAsWindow" in page)
+            page.openedAsWindow = false
 
-            if (preloader.status === Loader.Ready) {
-                pageLoader.sourceComponent = pendingPageComponent
-                preloader.active = false
-                preloader.sourceComponent = undefined
-                root.loadingFinished()
-            }
-        }
+        if ("windowTitle" in page)
+            currentWindowTitle = page.windowTitle
     }
 
-    Connections {
-        target: pageLoader
+    function handleLoaded() {
+        const front = currentLoader()
+        const back = standbyLoader()
 
-        function onLoaded() {
-            var newPage = pageLoader.item
-            if (!newPage)
-                return
+        front.visible = false
+        back.visible = true
+        front.sourceComponent = null
+        frontIsA = !frontIsA
 
-            if (newPage.hasOwnProperty("pageParams")) {
-                newPage.pageParams = pendingPageParams
-            } else {
-                console.error("Page hasn't 'pageParams' property")
-            }
-
-            if (newPage.hasOwnProperty("openedAsWindow")) {
-                newPage.openedAsWindow = false
-            } else {
-                console.error("Page hasn't 'openedAsWindow' property")
-            }
-
-            if (newPage.hasOwnProperty("windowTitle")) {
-                root.currentWindowTitle = newPage.windowTitle
-            } else {
-                console.error("Page hasn't 'windowTitle' property")
-            }
-        }
+        configurePage(back.item)
+        loadingFinished()
     }
 }
