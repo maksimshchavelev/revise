@@ -52,28 +52,27 @@ Item {
 
         Revise.VerticalSpacer {}
 
-        RowLayout {
+        Row {
             Layout.fillWidth: true
             spacing: 6
 
             Revise.Text {
-                Layout.fillWidth: true
-                Layout.maximumWidth: 150
-                Layout.alignment: Qt.AlignTop
+                id: txt
+                width: 150
                 text: root.description
                 elide: Text.ElideRight
                 color: Revise.Theme.textColorDark
                 font.pixelSize: Revise.Theme.fontSizeSmall
             }
 
-            ColumnLayout {
-                Layout.fillWidth: true
+            Column {
+                width: parent.width - txt.width - spacing
+                spacing: 6
 
                 // Create
                 Revise.Button {
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 30
+                    width: parent.width
+                    height: 30
 
                     text: qsTr("Создать")
                     font.bold: true
@@ -84,9 +83,8 @@ Item {
 
                 // Import
                 Revise.Button {
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 30
+                    width: parent.width
+                    height: 30
 
                     text: qsTr("Импортировать")
                     font.bold: true
