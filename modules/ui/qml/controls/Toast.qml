@@ -86,6 +86,7 @@ Item {
                 maximumLineCount: 2
                 color: "black"
                 opacity: 0.75
+                wrapMode: Text.WordWrap
             }
 
             Revise.Text {
@@ -97,6 +98,7 @@ Item {
                 color: "black"
                 maximumLineCount: 10
                 opacity: 0.75
+                wrapMode: Text.WordWrap
             }
         }
 
