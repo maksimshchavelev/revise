@@ -327,16 +327,6 @@ void Launcher::post_launch() {
             m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
         }
 
-        if (!m_permission_service->check(core::Permission::READ_EXTERNAL_STORAGE)) {
-            qDebug() << "Requesting READ_EXTERNAL_STORAGE";
-            m_permission_service->request(core::Permission::READ_EXTERNAL_STORAGE);
-        }
-
-        if (!m_permission_service->check(core::Permission::WRITE_EXTERNAL_STORAGE)) {
-            qDebug() << "Requesting WRITE_EXTERNAL_STORAGE";
-            m_permission_service->request(core::Permission::WRITE_EXTERNAL_STORAGE);
-        }
-
         if (!m_permission_service->check(core::Permission::SCHEDULE_EXACT_ALARM)) {
             qDebug() << "Requesting SCHEDULE_EXACT_ALARM";
             m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
