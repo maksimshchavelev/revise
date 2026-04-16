@@ -50,13 +50,7 @@ Rectangle {
                 size: 16
                 source: "qrc:/res/img/menu.svg"
                 color: Revise.Theme.textColorDark
-                onClicked: {
-                    kekabMenu.x = menuButton.x - kekabMenu.implicitWidth - 20
-                    kekabMenu.y = menuButton.y
-
-                    kekabMenu.clampPosition()
-                    kekabMenu.open()
-                }
+                onClicked: menuLoader.open()
             }
         }
 
@@ -130,50 +124,78 @@ Rectangle {
         }
     }
 
-    Revise.KekabMenu {
-        id: kekabMenu
+    Loader {
+        id: menuLoader
+        active: false
+        asynchronous: false
+        visible: false
 
-        Revise.KekabMenuButton {
-            text: qsTr("Превью")
-            onClicked: {
-                kekabMenu.close()
-                root.previewClicked()
+        sourceComponent: Component {
+            Revise.KekabMenu {
+                id: kekabMenu
+
+                Revise.KekabMenuButton {
+                    text: qsTr("Превью")
+                    onClicked: {
+                        kekabMenu.close()
+                        root.previewClicked()
+                    }
+                }
+
+                Revise.KekabMenuButton {
+                    text: qsTr("Редактировать")
+                    onClicked: {
+                        kekabMenu.close()
+                        root.editClicked()
+                    }
+                }
+
+                Revise.KekabMenuButton {
+                    text: qsTr("Повысить сложность")
+                    clickable: difficulty < 5
+                    onClicked: {
+                        kekabMenu.close()
+                        root.increaseDifficultyClicked()
+                    }
+                }
+
+                Revise.KekabMenuButton {
+                    text: qsTr("Понизить сложность")
+                    clickable: difficulty > 0
+                    onClicked: {
+                        kekabMenu.close()
+                        root.decreaseDifficultyClicked()
+                    }
+                }
+
+                Revise.KekabMenuButton {
+                    text: qsTr("Удалить")
+                    color: Revise.Theme.red
+                    onClicked: {
+                        kekabMenu.close()
+                        root.removeClicked()
+                    }
+                }
             }
         }
 
-        Revise.KekabMenuButton {
-            text: qsTr("Редактировать")
-            onClicked: {
-                kekabMenu.close()
-                root.editClicked()
-            }
+        onLoaded: {
+            showMenu()
         }
 
-        Revise.KekabMenuButton {
-            text: qsTr("Повысить сложность")
-            clickable: difficulty < 5
-            onClicked: {
-                kekabMenu.close()
-                root.increaseDifficultyClicked()
-            }
+        function open() {
+            if (!menuLoader.active)
+                active = true
+            else if (menuLoader.item)
+                showMenu()
         }
 
-        Revise.KekabMenuButton {
-            text: qsTr("Понизить сложность")
-            clickable: difficulty > 0
-            onClicked: {
-                kekabMenu.close()
-                root.decreaseDifficultyClicked()
-            }
-        }
+        function showMenu() {
+            menuLoader.x = menuButton.x
+            menuLoader.y = menuButton.y
 
-        Revise.KekabMenuButton {
-            text: qsTr("Удалить")
-            color: Revise.Theme.red
-            onClicked: {
-                kekabMenu.close()
-                root.removeClicked()
-            }
+            item.clampPosition()
+            item.open()
         }
     }
 }
