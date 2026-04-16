@@ -48,6 +48,7 @@ Rectangle {
                 color: Revise.Theme.textColor
                 verticalAlignment: Revise.Text.AlignVCenter
                 font.bold: true
+                wrapMode: Text.WordWrap
             }
 
             Revise.IconButton {
