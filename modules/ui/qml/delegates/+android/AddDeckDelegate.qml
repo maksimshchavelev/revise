@@ -63,6 +63,7 @@ Item {
                 elide: Text.ElideRight
                 color: Revise.Theme.textColorDark
                 font.pixelSize: Revise.Theme.fontSizeSmall
+                wrapMode: Text.WordWrap
             }
 
             Column {
