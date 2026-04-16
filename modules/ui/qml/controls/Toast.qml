@@ -4,15 +4,13 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
-Item {
+Rectangle {
     id: root
 
     property string header
     property string text
     property int duration: 4000 // ms
 
-    property alias background: background
-    property alias color: background.color
     property alias icon: icon.source
 
     signal opened
@@ -20,8 +18,9 @@ Item {
 
     width: 280
     height: rowLayout.implicitHeight + 20
-
+    radius: 10
     visible: false
+    color: Revise.Theme.toastSuccess
 
     layer.enabled: true
     layer.effect: DropShadow {
@@ -30,13 +29,6 @@ Item {
         radius: 8
         samples: 32
         color: "#80000000"
-    }
-
-    Rectangle {
-        id: background
-        anchors.fill: parent
-        color: Revise.Theme.toastSuccess
-        radius: 10
     }
 
     RowLayout {
