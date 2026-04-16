@@ -209,6 +209,7 @@ Item {
                         Layout.fillWidth: true
                         maximumLineCount: 2
                         elide: Text.ElideRight
+                        wrapMode: Text.WordWrap
                         text: {
                             if (searchField.text.trim().length === 0) {
                                 return qsTr("Список карточек (всего "
