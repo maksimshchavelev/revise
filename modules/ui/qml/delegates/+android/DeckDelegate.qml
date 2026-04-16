@@ -62,10 +62,7 @@ Rectangle {
                 opacity: 0.7
 
                 onClicked: {
-                    menuLoader.x = menuButton.x + menuButton.width + 10
-                    menuLoader.y = menuButton.y
-                    menuLoader.active = true
-                    menuLoader.item.clampPosition()
+                    menuLoader.open()
                 }
             }
         }
@@ -202,16 +199,6 @@ Rectangle {
             Revise.KekabMenu {
                 id: kekabMenu
 
-                Component.onCompleted: {
-                    clampPosition()
-                    open()
-                }
-
-                onClosed: {
-                    menuLoader.active = false
-                    menuLoader.sourceComponent = undefined
-                }
-
                 Revise.KekabMenuButton {
                     text: qsTr("Редактировать")
                     onClicked: {
@@ -237,6 +224,25 @@ Rectangle {
                     }
                 }
             }
+        }
+
+        onLoaded: {
+            showMenu()
+        }
+
+        function open() {
+            if (!menuLoader.active)
+                active = true
+            else if (menuLoader.item)
+                showMenu()
+        }
+
+        function showMenu() {
+            menuLoader.x = menuButton.x
+            menuLoader.y = menuButton.y
+
+            item.clampPosition()
+            item.open()
         }
     }
 }
