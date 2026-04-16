@@ -59,6 +59,7 @@ void StudyService::answer(float difficulty) {
             return;
         }
 
+        m_timer.stop();
         dispatch(training_finished{});
     }
 
@@ -93,6 +94,7 @@ void StudyService::abort() {
         return;
     }
 
+    m_timer.stop();
     dispatch(training_aborted{});
 }
 
