@@ -62,10 +62,10 @@ Rectangle {
                 opacity: 0.7
 
                 onClicked: {
-                    kekabMenu.x = menuButton.x + menuButton.width + 10
-                    kekabMenu.y = menuButton.y
-                    kekabMenu.clampPosition()
-                    kekabMenu.open()
+                    menuLoader.x = menuButton.x + menuButton.width + 10
+                    menuLoader.y = menuButton.y
+                    menuLoader.active = true
+                    menuLoader.item.clampPosition()
                 }
             }
         }
@@ -192,31 +192,50 @@ Rectangle {
         }
     }
 
-    Revise.KekabMenu {
-        id: kekabMenu
+    Loader {
+        id: menuLoader
+        active: false
+        asynchronous: false
+        visible: false
 
-        Revise.KekabMenuButton {
-            text: qsTr("Редактировать")
-            onClicked: {
-                kekabMenu.close()
-                root.editClicked()
-            }
-        }
+        sourceComponent: Component {
+            Revise.KekabMenu {
+                id: kekabMenu
 
-        Revise.KekabMenuButton {
-            text: qsTr("Экспортировать")
-            onClicked: {
-                kekabMenu.close()
-                root.exportClicked()
-            }
-        }
+                Component.onCompleted: {
+                    clampPosition()
+                    open()
+                }
 
-        Revise.KekabMenuButton {
-            text: qsTr("Удалить")
-            color: Revise.Theme.red
-            onClicked: {
-                kekabMenu.close()
-                root.removeClicked()
+                onClosed: {
+                    menuLoader.active = false
+                    menuLoader.sourceComponent = undefined
+                }
+
+                Revise.KekabMenuButton {
+                    text: qsTr("Редактировать")
+                    onClicked: {
+                        kekabMenu.close()
+                        root.editClicked()
+                    }
+                }
+
+                Revise.KekabMenuButton {
+                    text: qsTr("Экспортировать")
+                    onClicked: {
+                        kekabMenu.close()
+                        root.exportClicked()
+                    }
+                }
+
+                Revise.KekabMenuButton {
+                    text: qsTr("Удалить")
+                    color: Revise.Theme.red
+                    onClicked: {
+                        kekabMenu.close()
+                        root.removeClicked()
+                    }
+                }
             }
         }
     }

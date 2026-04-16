@@ -12,6 +12,8 @@ Item {
     property int windowWidth: Window.window ? Window.window.width : 0
     property int windowHeight: Window.window ? Window.window.height : 0
 
+    signal closed()
+
     Popup {
         id: popup
 
@@ -68,5 +70,6 @@ Item {
 
     function close() {
         popup.close()
+        root.closed()
     }
 }
