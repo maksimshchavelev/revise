@@ -59,7 +59,7 @@ Item {
                         placeholder.text: qsTr("От 1 до 365")
                         text: settings.maxInterval
                         inputMethodHints: Qt.ImhDigitsOnly
-                        background.border.color: valid ? Revise.Theme.textFieldBorder : Revise.Theme.red
+                        border.color: valid ? Revise.Theme.textFieldBorder : Revise.Theme.red
 
                         validatorFunction: function (text) {
                             const value = parseInt(text)
@@ -89,7 +89,7 @@ Item {
                         placeholder.text: qsTr("От 1 до 5")
                         text: settings.learningRate.toFixed(1)
                         inputMethodHints: Qt.ImhDigitsOnly
-                        background.border.color: valid ? Revise.Theme.textFieldBorder : Revise.Theme.red
+                        border.color: valid ? Revise.Theme.textFieldBorder : Revise.Theme.red
 
                         validatorFunction: function (text) {
                             const value = parseFloat(text)

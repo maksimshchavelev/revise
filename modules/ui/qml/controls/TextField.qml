@@ -1,15 +1,13 @@
-
 // Single-line text input field. You can set a validator. Multicolored border is present.
+
 import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
-Item {
+Rectangle {
     id: root
 
-    property alias radius: background.radius
-    property alias background: background
     property alias placeholder: placeholder
     property alias text: input.text
     property alias validator: input.validator
@@ -25,6 +23,11 @@ Item {
                                 })
 
     implicitHeight: 35
+    radius: 10
+    color: Revise.Theme.textFieldBackground
+    border.width: 1
+    border.color: Revise.Theme.textFieldBorder
+    clip: true
 
     layer.enabled: true
     layer.effect: DropShadow {
@@ -33,16 +36,6 @@ Item {
         radius: 8
         samples: 32
         color: "#80000000"
-    }
-
-    Rectangle {
-        id: background
-
-        radius: 10
-        color: Revise.Theme.textFieldBackground
-        border.width: 1
-        border.color: Revise.Theme.textFieldBorder
-        anchors.fill: parent
     }
 
     Revise.Text {
@@ -80,7 +73,7 @@ Item {
         opacity: 0.35
         anchors.fill: parent
         visible: !root.editable
-        radius: background.radius
+        radius: root.radius
     }
 
     HoverHandler {
