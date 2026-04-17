@@ -63,12 +63,6 @@ int Launcher::run() {
     connect_signals();
 
     m_router.push_page("home", m_ui.create_page(QUrl("qrc:/qml/pages/Home.qml")));
-    m_router.push_page("settings", m_ui.create_page(QUrl("qrc:/qml/pages/Settings.qml")));
-    m_router.push_page("deckEditor", m_ui.create_page(QUrl("qrc:/qml/pages/DeckEditor.qml")));
-    m_router.push_page("training", m_ui.create_page(QUrl("qrc:/qml/pages/Training.qml")));
-    m_router.push_page("cardEditor", m_ui.create_page(QUrl("qrc:/qml/pages/CardEditor.qml")));
-    m_router.push_page("cardPreview", m_ui.create_page(QUrl("qrc:/qml/pages/CardPreview.qml")));
-    m_router.push_page("createDeck", m_ui.create_page(QUrl("qrc:/qml/pages/CreateDeck.qml")));
 
     QTimer::singleShot(0, [this]() { post_launch(); });
 
@@ -318,6 +312,13 @@ void Launcher::post_launch() {
     qDebug() << "Qt launched";
 
     m_router.navigate(ui::Page{"home"});
+
+    m_router.push_page("settings", m_ui.create_page(QUrl("qrc:/qml/pages/Settings.qml")));
+    m_router.push_page("deckEditor", m_ui.create_page(QUrl("qrc:/qml/pages/DeckEditor.qml")));
+    m_router.push_page("training", m_ui.create_page(QUrl("qrc:/qml/pages/Training.qml")));
+    m_router.push_page("cardEditor", m_ui.create_page(QUrl("qrc:/qml/pages/CardEditor.qml")));
+    m_router.push_page("cardPreview", m_ui.create_page(QUrl("qrc:/qml/pages/CardPreview.qml")));
+    m_router.push_page("createDeck", m_ui.create_page(QUrl("qrc:/qml/pages/CreateDeck.qml")));
 
     extract_web_bundle_async();
 
