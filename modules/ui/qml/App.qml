@@ -20,8 +20,8 @@ ApplicationWindow {
     }
 
     Revise.LoadingScreen {
-        id: loadingScreen
         anchors.fill: parent
+        visible: loadingScreen.visible
     }
 
     Connections {
