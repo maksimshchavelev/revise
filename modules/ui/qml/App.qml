@@ -20,8 +20,19 @@ ApplicationWindow {
     }
 
     Revise.LoadingScreen {
+        id: screen
         anchors.fill: parent
-        visible: loadingScreen.visible
+    }
+
+    Connections {
+        target: loadingScreen
+
+        function onVisibleChanged() {
+            if (loadingScreen.visible)
+                screen.startLoading()
+            else
+                screen.endLoading()
+        }
     }
 
     Connections {
