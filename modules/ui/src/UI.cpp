@@ -89,6 +89,11 @@ void UI::bind_settings(core::ISettings& settings) {
 }
 
 
+void UI::bind_loading_screen(LoadingScreen& screen) {
+    m_engine.rootContext()->setContextProperty("loadingScreen", &screen);
+}
+
+
 void UI::bind_router(Router& router) {
     m_engine.rootContext()->setContextProperty("router", &router);
 }

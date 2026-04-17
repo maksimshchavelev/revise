@@ -14,8 +14,9 @@
 #include <core/IToastService.hpp>      // for core::IToastService
 #include <core/settings/ISettings.hpp> // for core::ISettings
 
-#include "Router.hpp"    // for Router
-#include "UIExport.hpp"  // for UI_EXPORT macro
+#include "LoadingScreen.hpp" // for LoadingScreen
+#include "Router.hpp"        // for Router
+#include "UIExport.hpp"      // for UI_EXPORT macro
 
 namespace ui {
 
@@ -64,6 +65,9 @@ class UI_EXPORT UI {
 
     /// Make Settings accessible from qml
     void bind_settings(core::ISettings& settings);
+
+    /// Make LoadingScreen accessible from qml
+    void bind_loading_screen(LoadingScreen& screen);
 
     /// Make Router accessible from qml
     void bind_router(Router& router);
