@@ -90,6 +90,7 @@ Item {
                     color: Revise.Theme.textColor
                     verticalAlignment: Revise.Text.AlignVCenter
                     font.bold: true
+                    wrapMode: Text.WordWrap
 
                     Revise.HoverableTooltip {
                         anchors.fill: parent
@@ -131,6 +132,7 @@ Item {
                     verticalAlignment: Revise.Text.AlignVCenter
                     color: Revise.Theme.textColorDark
                     font.pixelSize: Revise.Theme.fontSizeSmall
+                    wrapMode: Text.WordWrap
                 }
 
                 Revise.HoverableTooltip {
