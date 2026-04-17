@@ -32,12 +32,6 @@ Item {
             id: frontEditor
             Layout.fillWidth: true
             Layout.preferredHeight: 150
-
-            Revise.LoadingScreen {
-                id: frontLoadingScreen
-                anchors.fill: parent
-                thresholdTime: 0
-            }
         }
 
         Revise.Text {
@@ -48,12 +42,6 @@ Item {
             id: backEditor
             Layout.fillWidth: true
             Layout.fillHeight: true
-
-            Revise.LoadingScreen {
-                id: backLoadingScreen
-                anchors.fill: parent
-                thresholdTime: 0
-            }
         }
 
         RowLayout {
