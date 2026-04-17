@@ -38,8 +38,6 @@ void Router::navigate(Page page) {
     if (previous) {
         previous->setVisible(false);
         previous->setParentItem(nullptr);
-
-        qDebug() << previous->isVisible() << previous->parentItem();
     }
 
     m_pages[page.name]->setVisible(true);
