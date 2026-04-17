@@ -116,10 +116,11 @@ Item {
                 property int optionsWidth: 140
 
                 Revise.KeyValue {
-                    font.pixelSize: Revise.Theme.fontSizeSmall
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
                     keyWidth: parent.optionsWidth
-
                     key.text: qsTr("Статус:")
+
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
 
                     value.text: {
                         if (root.status === 0)
@@ -141,11 +142,11 @@ Item {
                 }
 
                 Revise.KeyValue {
-                    font.pixelSize: Revise.Theme.fontSizeSmall
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
                     keyWidth: parent.optionsWidth
-
                     key.text: qsTr("Следующий повтор:")
 
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
                     value.text: Qt.formatDateTime(root.nextReview, "dd.MM.yyyy")
                     value.color: {
                         let date = new Date()
@@ -159,11 +160,11 @@ Item {
                 }
 
                 Revise.KeyValue {
-                    font.pixelSize: Revise.Theme.fontSizeSmall
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
                     keyWidth: parent.optionsWidth
-
                     key.text: qsTr("Сложность:")
 
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
                     value.text: root.difficulty.toFixed(1)
                     value.color: Revise.ColorUtils.colorForRange(
                                      root.difficulty, 0, 5, Revise.Theme.green,
