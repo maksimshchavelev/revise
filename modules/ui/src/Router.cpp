@@ -56,7 +56,22 @@ void Router::navigate(QString page_name, QVariantMap params, Page::OpenMode mode
 
 void Router::back() {
     if (m_history.size() > 1) {
+        QQuickItem* previous = current_page_item();
+
+        previous->setVisible(false);
+        previous->setParentItem(nullptr);
+
+        QMetaObject::invokeMethod(previous, "onLeave", Qt::DirectConnection);
+
         m_history.pop_back();
+
+        QQuickItem* current = current_page_item();
+
+        current->setVisible(true);
+        current->setParentItem(nullptr);
+
+        QMetaObject::invokeMethod(previous, "onEnter", Qt::DirectConnection);
+
         emit pageChanged();
     }
 }
