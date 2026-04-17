@@ -48,27 +48,10 @@ Item {
         }
     }
 
-    Revise.LoadingScreen {
-        id: loadingScreen
-        anchors.fill: parent
-        thresholdTime: 0
-    }
-
     function flip() {
         root.flipped = !root.flipped
     }
 
     function onEnter() {}
     function onExit() {}
-
-    Component.onCompleted: {
-        loadingScreen.startLoading()
-        loadingTimer.start()
-    }
-
-    Timer {
-        id: loadingTimer
-        interval: 50
-        onTriggered: loadingScreen.endLoading()
-    }
 }
