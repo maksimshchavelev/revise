@@ -338,7 +338,9 @@ Item {
         }
     }
 
-    Component.onCompleted: cardsModel.searchFront = ""
+    function onEnter() {
+        cardsModel.searchFront = ""
+    }
 
     Connections {
         target: cardsModel
