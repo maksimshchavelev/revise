@@ -83,24 +83,9 @@ Item {
         }
     }
 
-    Revise.LoadingScreen {
-        id: loadingScreen
-        anchors.fill: parent
-        thresholdTime: 0
-    }
-
-    Component.onCompleted: {
-        loadingScreen.startLoading()
-        loadingTimer.start()
+    function onEnter() {
         studyService.reloadCurrentCard()
     }
 
-    Timer {
-        id: loadingTimer
-        interval: 50
-        onTriggered: loadingScreen.endLoading()
-    }
-
-    function onEnter() {}
     function onExit() {}
 }
