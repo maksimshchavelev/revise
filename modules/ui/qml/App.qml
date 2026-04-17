@@ -14,8 +14,6 @@ ApplicationWindow {
     width: 1080
     height: 720
 
-    title: pageLoader.currentWindowTitle
-
     Item {
         id: pageHost
         anchors.fill: parent
