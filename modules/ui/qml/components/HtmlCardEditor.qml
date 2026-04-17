@@ -34,7 +34,6 @@ Item {
 
         Component.onCompleted: {
             web.url = Qt.resolvedUrl(root.editor)
-            console.log(root.editor)
         }
     }
 
