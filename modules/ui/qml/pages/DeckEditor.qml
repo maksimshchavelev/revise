@@ -342,6 +342,8 @@ Item {
         cardsModel.searchFront = ""
     }
 
+    function onExit() {}
+
     Connections {
         target: cardsModel
 
