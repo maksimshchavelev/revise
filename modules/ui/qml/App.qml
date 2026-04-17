@@ -34,6 +34,18 @@ ApplicationWindow {
 
             newPage.parent = pageHost
             newPage.anchors.fill = pageHost
+
+            if (newPage.hasOwnProperty("pageParams")) {
+                newPage.pageParams = router.currentPage.params
+            } else {
+                console.warn(`Page ${router.currentPage.name} hasn't 'pageParams' property`)
+            }
+
+            if (newPage.hasOwnProperty("windowTitle")) {
+                appWindow.title = newPage.windowTitle
+            } else {
+                console.warn(`Page ${router.currentPage.name} hasn't 'windowTitle' property`)
+            }
         }
     }
 
