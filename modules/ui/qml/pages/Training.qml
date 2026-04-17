@@ -100,4 +100,7 @@ Item {
         interval: 50
         onTriggered: loadingScreen.endLoading()
     }
+
+    function onEnter() {}
+    function onExit() {}
 }
