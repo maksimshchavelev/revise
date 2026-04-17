@@ -108,6 +108,7 @@ Item {
                 verticalAlignment: Revise.Text.AlignVCenter
                 color: Revise.Theme.textColorDark
                 font.pixelSize: Revise.Theme.fontSizeSmall
+                wrapMode: Text.WordWrap
             }
         }
 
