@@ -39,7 +39,7 @@ void Router::navigate(Page page) {
         previous->setVisible(false);
         previous->setParentItem(nullptr);
 
-        QMetaObject::invokeMethod(previous, "onLeave", Qt::DirectConnection);
+        QMetaObject::invokeMethod(previous, "onExit", Qt::DirectConnection);
     }
 
     QMetaObject::invokeMethod(m_pages[page.name], "onEnter", Qt::DirectConnection);
@@ -61,7 +61,7 @@ void Router::back() {
         previous->setVisible(false);
         previous->setParentItem(nullptr);
 
-        QMetaObject::invokeMethod(previous, "onLeave", Qt::DirectConnection);
+        QMetaObject::invokeMethod(previous, "onExit", Qt::DirectConnection);
 
         m_history.pop_back();
 
