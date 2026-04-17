@@ -114,19 +114,6 @@ Item {
         backEditor.setHtml(root.pageParams.card.back)
     }
 
-    Component.onCompleted: {
-        frontLoadingScreen.startLoading()
-        backLoadingScreen.startLoading()
-
-        loadTimer.start()
-    }
-
-    Timer {
-        id: loadTimer
-        interval: 100
-        onTriggered: {
-            frontLoadingScreen.endLoading()
-            backLoadingScreen.endLoading()
-        }
-    }
+    function onEnter() {}
+    function onExit() {}
 }
