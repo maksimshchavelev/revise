@@ -38,8 +38,11 @@ void Router::navigate(Page page) {
     if (previous) {
         previous->setVisible(false);
         previous->setParentItem(nullptr);
+
+        QMetaObject::invokeMethod(previous, "onLeave", Qt::DirectConnection);
     }
 
+    QMetaObject::invokeMethod(m_pages[page.name], "onEnter", Qt::DirectConnection);
     m_pages[page.name]->setVisible(true);
     m_history.push_back(std::move(page));
     emit pageChanged();
