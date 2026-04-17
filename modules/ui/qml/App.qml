@@ -16,12 +16,9 @@ ApplicationWindow {
 
     title: pageLoader.currentWindowTitle
 
-    Revise.Loader {
-        id: pageLoader
+    Item {
+        id: pageHost
         anchors.fill: parent
-
-        onLoadingStarted: loadingScreen.startLoading()
-        onLoadingFinished: loadingScreen.endLoading()
     }
 
     Revise.LoadingScreen {
@@ -29,16 +26,14 @@ ApplicationWindow {
         anchors.fill: parent
     }
 
-    Item {
-        id: windowLayer
-    }
-
     Connections {
         target: router
 
         function onPageChanged() {
-            pageLoader.requestPage(router.currentPageComponent,
-                                   router.currentPage.params)
+            let newPage = router.currentPageItem
+
+            newPage.parent = pageHost
+            newPage.anchors.fill = pageHost
         }
     }
 

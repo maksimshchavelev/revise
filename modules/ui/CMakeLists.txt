@@ -80,6 +80,7 @@ target_link_libraries(ui
         Qt6::Core
         Qt6::Qml
         Qt6::Gui
+        Qt6::Quick
 )
 
 if (UNIX AND NOT APPLE)

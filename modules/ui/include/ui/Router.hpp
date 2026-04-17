@@ -2,11 +2,12 @@
 
 #pragma once
 
+#include "UIExport.hpp"  // for UI_EXPORT macro
 #include <QHash>         // for QHash
 #include <QObject>       // for QObject
 #include <QQmlComponent> // for QQmlComponent
+#include <QQuickItem>    // for QQuickItem
 #include <QVector>       // for QVector
-#include "UIExport.hpp"  // for UI_EXPORT macro
 
 namespace ui {
 
@@ -39,6 +40,10 @@ struct UI_EXPORT Page {
     QString     name;   ///< Name of page
     QVariantMap params; ///< Parameters of page
     OpenMode    mode;   ///< Open mode
+
+    inline bool operator==(const Page& other) const {
+        return name == other.name && params == other.params && mode == other.mode;
+    }
 };
 
 /**
@@ -55,7 +60,7 @@ class UI_EXPORT Router final : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(Page currentPage READ current_page NOTIFY pageChanged FINAL)
-    Q_PROPERTY(QQmlComponent* currentPageComponent READ current_page_component NOTIFY pageChanged FINAL)
+    Q_PROPERTY(QQuickItem* currentPageItem READ current_page_item NOTIFY pageChanged FINAL)
 
   public:
     /**
@@ -116,7 +121,7 @@ class UI_EXPORT Router final : public QObject {
      *
      * @return QQmlComponent* Pointer to the currently active page component.
      */
-    QQmlComponent* current_page_component();
+    QQuickItem* current_page_item();
 
     /**
      * @brief  Get the currently active page
@@ -129,8 +134,8 @@ class UI_EXPORT Router final : public QObject {
     void pageChanged();
 
   private:
-    QVector<Page>                                                       m_history; ///< Navigation history
-    QHash<QString /* page name */, QQmlComponent* /* page component */> m_pages;   ///< Pages
+    QVector<Page>                                               m_history; ///< Navigation history
+    QHash<QString /* page name */, QQuickItem* /* page item */> m_pages;   ///< Pages
 };
 
 } // namespace ui
