@@ -58,6 +58,9 @@ Item {
         root.flipped = !root.flipped
     }
 
+    function onEnter() {}
+    function onExit() {}
+
     Component.onCompleted: {
         loadingScreen.startLoading()
         loadingTimer.start()
