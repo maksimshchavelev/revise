@@ -124,6 +124,10 @@ Item {
         router.navigate("createDeck", {}, Revise.page.Page)
     }
 
+    function onEnter() {}
+
+    function onExit() {}
+
     FileDialog {
         id: importDialog
 
