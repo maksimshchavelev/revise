@@ -4,6 +4,7 @@
 
 #include "UIExport.hpp" // for UI_EXPORT macro
 #include <QObject>      // for QObject
+#include <atomic>       // for std::atomic_bool
 
 namespace ui {
 
@@ -20,11 +21,11 @@ class UI_EXPORT LoadingScreen final : public QObject {
 
     bool visible() const noexcept;
 
-signals:
+  signals:
     void visibleChanged();
 
   private:
-    bool m_visible; ///< Is loading screen visible
+    std::atomic_bool m_visible{false}; ///< Is loading screen visible
 };
 
 } // namespace ui
