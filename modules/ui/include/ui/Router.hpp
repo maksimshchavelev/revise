@@ -73,6 +73,8 @@ class UI_EXPORT Router final : public QObject {
      *
      * @param name Unique identifier for the page.
      * @param page Pointer to a QQmlComponent representing the page.
+     *
+     * @note This method is thread-affinity
      */
     void push_page(const QString& name, QQmlComponent* page);
 
@@ -85,6 +87,8 @@ class UI_EXPORT Router final : public QObject {
      *
      * @note The page opening mode can be changed (for example, if `Window` is not supported by the platform, the mode
      * will be changed to `Page`)
+     *
+     * @note This method is thread-affinity
      */
     void navigate(Page page);
 
@@ -101,6 +105,8 @@ class UI_EXPORT Router final : public QObject {
      *
      * @note The page opening mode can be changed (for example, if `Window` is not supported by the platform, the mode
      * will be changed to `Page`)
+     *
+     * @note This method is thread-affinity
      */
     Q_INVOKABLE void navigate(QString page_name, QVariantMap params = {}, Page::OpenMode mode = Page::OpenMode::Page);
 
@@ -112,6 +118,8 @@ class UI_EXPORT Router final : public QObject {
      * on current page).
      *
      * @note Can be called from QML
+     *
+     * @note This method is thread-affinity
      */
     Q_INVOKABLE void back();
 

@@ -7,6 +7,11 @@
 namespace ui {
 
 void Router::push_page(const QString& name, QQmlComponent* page) {
+    if (QThread::currentThread() != thread()) {
+        QMetaObject::invokeMethod(this, [this, name, page] { push_page(name, page); }, Qt::QueuedConnection);
+        return;
+    }
+
     if (m_pages.contains(name)) {
         return;
     }
