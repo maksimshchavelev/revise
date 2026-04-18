@@ -19,7 +19,7 @@ Rectangle {
 
     property font font: Qt.font({
                                     "family": Revise.Fonts.regular.name,
-                                    "pointSize": Revise.Theme.fontSizeDefault
+                                    "pixelSize": Revise.Theme.fontSizeDefault
                                 })
 
     implicitHeight: 35
