@@ -20,13 +20,13 @@ Item {
     property Item backgroundItem: null // for blurring
     property var mappedPos: root.mapToItem(root.backgroundItem, 0, 0)
 
-    signal previewClicked()
-    signal increaseDifficultyClicked()
-    signal decreaseDifficultyClicked()
-    signal editClicked()
-    signal removeClicked()
+    signal previewClicked
+    signal increaseDifficultyClicked
+    signal decreaseDifficultyClicked
+    signal editClicked
+    signal removeClicked
 
-    implicitHeight: layout.implicitHeight + 20
+    implicitHeight: 110
 
     Item {
         id: content
@@ -70,23 +70,26 @@ Item {
             radius: 10
         }
 
-        ColumnLayout {
+        Column {
             id: layout
+            width: parent.width - anchors.margins * 2
+            spacing: 10
 
-            anchors.fill: parent
-            anchors.margins: 8
-            spacing: 4
+            anchors {
+                centerIn: parent
+                margins: 8
+            }
 
-            RowLayout {
+            Row {
+                width: parent.width
                 spacing: 10
 
                 Revise.Text {
                     text: root.front
                     font.bold: true
                     font.pixelSize: Revise.Theme.fontSizeMedium
-                    maximumLineCount: 1
                     elide: Revise.Text.ElideRight
-                    Layout.fillWidth: true
+                    width: parent.width - menuButton.width - parent.spacing
 
                     Revise.HoverableTooltip {
                         anchors.fill: parent
@@ -109,18 +112,18 @@ Item {
                 }
             }
 
-            ColumnLayout {
-                spacing: 3
-                Layout.fillWidth: true
+            Column {
+                spacing: 4
+                width: parent.width
 
-                property int optionsWidth: 140
+                property int optionsWidth: 160
 
                 Revise.KeyValue {
-                    key.font.pixelSize: Revise.Theme.fontSizeSmall
+                    width: parent.width
                     keyWidth: parent.optionsWidth
                     key.text: qsTr("Статус:")
 
-                    value.font.pixelSize: Revise.Theme.fontSizeSmall
+                    value.horizontalAlignment: Text.AlignLeft
 
                     value.text: {
                         if (root.status === 0)
@@ -142,12 +145,13 @@ Item {
                 }
 
                 Revise.KeyValue {
-                    key.font.pixelSize: Revise.Theme.fontSizeSmall
+                    width: parent.width
                     keyWidth: parent.optionsWidth
                     key.text: qsTr("Следующий повтор:")
 
-                    value.font.pixelSize: Revise.Theme.fontSizeSmall
                     value.text: Qt.formatDateTime(root.nextReview, "dd.MM.yyyy")
+                    value.horizontalAlignment: Text.AlignLeft
+
                     value.color: {
                         let date = new Date()
 
@@ -160,11 +164,11 @@ Item {
                 }
 
                 Revise.KeyValue {
-                    key.font.pixelSize: Revise.Theme.fontSizeSmall
+                    width: parent.width
                     keyWidth: parent.optionsWidth
                     key.text: qsTr("Сложность:")
 
-                    value.font.pixelSize: Revise.Theme.fontSizeSmall
+                    value.horizontalAlignment: Text.AlignLeft
                     value.text: root.difficulty.toFixed(1)
                     value.color: Revise.ColorUtils.colorForRange(
                                      root.difficulty, 0, 5, Revise.Theme.green,
