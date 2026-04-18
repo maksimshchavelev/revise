@@ -100,13 +100,21 @@ void UI::bind_router(Router& router) {
 
 
 QQmlComponent* UI::create_page(QUrl source) {
-    auto* component = new QQmlComponent(&m_engine, std::move(source), &m_engine);
+    QQmlComponent* component{nullptr};
 
-    if (component->isError()) {
-        for (const auto& error : component->errors()) {
-            qWarning() << "ui::UI::create_page(): Failed to create component from file" << source << "cause:" << error;
-        }
-    }
+    QMetaObject::invokeMethod(
+        &m_engine,
+        [&]() {
+            component = new QQmlComponent(&m_engine, std::move(source), &m_engine);
+
+            if (component->isError()) {
+                for (const auto& error : component->errors()) {
+                    qWarning() << "ui::UI::create_page(): Failed to create component from file" << source
+                               << "cause:" << error;
+                }
+            }
+        },
+        Qt::BlockingQueuedConnection);
 
     return component;
 }

@@ -76,6 +76,7 @@ class UI_EXPORT UI {
      * @brief Creates a page component
      * @param source `.qml` page file
      * @return Pointer to `QQmlComponent`
+     * @note This method is thread-affinity
      */
     QQmlComponent* create_page(QUrl source);
 
