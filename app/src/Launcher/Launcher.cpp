@@ -279,6 +279,8 @@ void Launcher::connect_signals() {
 void Launcher::post_launch() {
     m_loading_screen.set_visible(true);
 
+    extract_web_bundle();
+
     QtWebView::initialize();
 
     connect_signals();
@@ -298,8 +300,6 @@ void Launcher::post_launch() {
     if (auto res = m_streak_service->reset_if_overdue(); !res) {
         qWarning() << "Failed to reset streak:" << res.error();
     }
-
-    extract_web_bundle();
 
     if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
         qDebug() << "Requesting POST_NOTIFICATIONS";
