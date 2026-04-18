@@ -6,8 +6,10 @@
 #include <QHash>         // for QHash
 #include <QObject>       // for QObject
 #include <QQmlComponent> // for QQmlComponent
+#include <QQmlIncubator> // for QQmlIncubator
 #include <QQuickItem>    // for QQuickItem
 #include <QVector>       // for QVector
+#include <memory>        // for std::shared_ptr
 
 namespace ui {
 
@@ -72,7 +74,7 @@ class UI_EXPORT Router final : public QObject {
      * @param name Unique identifier for the page.
      * @param page Pointer to a QQmlComponent representing the page.
      */
-    void push_page(QString name, QQmlComponent* page);
+    void push_page(const QString& name, QQmlComponent* page);
 
     /**
      * @brief Navigate to a previously pushed page.
@@ -134,8 +136,11 @@ class UI_EXPORT Router final : public QObject {
     void pageChanged();
 
   private:
-    QVector<Page>                                               m_history; ///< Navigation history
-    QHash<QString /* page name */, QQuickItem* /* page item */> m_pages;   ///< Pages
+    QVector<Page>                                                  m_history; ///< Navigation history
+    QHash<QString /* page name */, std::shared_ptr<QQmlIncubator>> m_pages;   ///< Pages
+
+    /// @brief Creates the page if it does not yet exist. If it exists, returns it
+    QQuickItem* page(const QString& name);
 };
 
 } // namespace ui
