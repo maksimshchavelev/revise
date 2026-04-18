@@ -74,7 +74,7 @@ Item {
 
             anchors {
                 fill: parent
-                margins: 5
+                margins: 8
             }
 
             // Deck name
@@ -83,12 +83,12 @@ Item {
                 Layout.fillHeight: true
 
                 Revise.Text {
+                    id: nameText
                     height: parent.height
-                    width: menuButton.x - parent.x
+                    width: menuButton.x - parent.x - 2
                     text: root.deckName
                     elide: Text.ElideRight
                     color: Revise.Theme.textColor
-                    verticalAlignment: Revise.Text.AlignVCenter
                     font.bold: true
                     wrapMode: Text.WordWrap
 
@@ -103,7 +103,7 @@ Item {
 
                     anchors.top: parent.top
                     anchors.right: parent.right
-                    anchors.margins: 5
+                    anchors.topMargin: 2
 
                     source: "qrc:/res/img/menu.svg"
                     size: 15
