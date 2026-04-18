@@ -103,5 +103,8 @@ Item {
     }
 
     function onEnter() {}
-    function onExit() {}
+    function onExit() {
+        frontEditor.clear()
+        backEditor.clear()
+    }
 }
