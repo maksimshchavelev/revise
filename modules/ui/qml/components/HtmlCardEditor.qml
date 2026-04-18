@@ -9,7 +9,6 @@ Item {
 
     property string editor: StandardPaths.writableLocation(
                                 StandardPaths.AppDataLocation) + "/web/card_editor/index.html"
-    property string pendingHtml
 
     WebView {
         id: web
@@ -19,18 +18,6 @@ Item {
 
         settings.allowFileAccess: true
         settings.localContentCanAccessFileUrls: true
-
-        onLoadingChanged: function (loadRequest) {
-            if (loadRequest.status === WebView.LoadSucceededStatus) {
-                let html = root.pendingHtml
-                    .replace(/\\/g, '\\\\')
-                    .replace(/'/g, "\\'")
-                    .replace(/"/g, '\\"')
-                    .replace(/\n/g, '\\n')
-                    .replace(/\r/g, '\\r')
-                web.runJavaScript(`editor.setHtml('${html}')`)
-            }
-        }
 
         Component.onCompleted: {
             web.url = Qt.resolvedUrl(root.editor)
@@ -47,7 +34,13 @@ Item {
     }
 
     function setHtml(html) {
-        root.pendingHtml = html
+        html = html
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r')
+        web.runJavaScript(`editor.setHtml('${html}')`)
     }
 
     function getHtml(callback) {
