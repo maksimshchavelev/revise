@@ -51,8 +51,9 @@
 #include <core/IPermissionService.hpp>   // for core::IPermissionService
 
 // UI
-#include <ui/Router.hpp> // for Router
-#include <ui/UI.hpp>     // for UI
+#include <ui/LoadingScreen.hpp> // for LoadingScreen
+#include <ui/Router.hpp>        // for Router
+#include <ui/UI.hpp>            // for UI
 
 namespace revise {
 
@@ -64,6 +65,8 @@ class Launcher {
 
   private:
     QGuiApplication& m_app;
+
+    ui::LoadingScreen m_loading_screen;
 
     std::optional<io::Database>  m_db;         ///< Database
     io::DatabaseExecutionContext m_db_context; ///< Database execution context
@@ -101,13 +104,14 @@ class Launcher {
     ui::UI     m_ui;     ///< Main UI class
     ui::Router m_router; ///< Router for page navigation
 
+    /// @brief Creates services that can be created after the event loop starts
     void init();
 
     void connect_signals();
 
     void post_launch();
 
-    void extract_web_bundle_async();
+    void extract_web_bundle();
 
     void schedule_notifications();
 

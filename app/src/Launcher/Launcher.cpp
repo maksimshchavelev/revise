@@ -30,18 +30,9 @@ Launcher::Launcher(QGuiApplication& app) : m_app(app) {}
 int Launcher::run() {
 #ifndef Q_OS_ANDROID
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
-    qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
 #endif
 
-    qDebug() << "Application data directory:" << global_data_dir();
-
-    QtWebView::initialize();
-
     init();
-
-    if (auto res = m_streak_storage->migrate(); !res) {
-        qWarning() << "Failed to apply streak storage migrations:" << res.error();
-    }
 
     bool ok{false};
     auto debug_bounds = qEnvironmentVariableIntValue("QML_DEBUG_BOUNDS", &ok);
@@ -52,49 +43,30 @@ int Launcher::run() {
     m_ui.bind_cards_model(*m_deck_service);
     m_ui.bind_study_service(*m_study_service);
     m_ui.bind_popup_service(*m_popup_service);
-    m_ui.bind_toast_service(*m_toast_service);
     m_ui.bind_card_edit_session(*m_card_edit_session);
     m_ui.bind_settings(*m_settings);
-    m_ui.bind_router(m_router);
     m_ui.enable_debug_bounds(ok ? debug_bounds : false);
+    m_ui.bind_toast_service(*m_toast_service);
+    m_ui.bind_router(m_router);
+    m_ui.bind_loading_screen(m_loading_screen);
 
     m_ui.init_engine(m_app);
 
-    connect_signals();
-
-    m_router.push_page("home", m_ui.create_page(QUrl("qrc:/qml/pages/Home.qml")));
-
-    QTimer::singleShot(0, [this]() { post_launch(); });
+    QTimer::singleShot(0, [this]() { auto _ = QtConcurrent::run([this]() { post_launch(); }); });
 
     return m_app.exec();
 }
 
 
 void Launcher::init() {
-    // TODO: remove in next updates
-    // "revise_main", global_data_dir() + "/revise.db"
-    const QString dest_db = global_data_dir() + "/revise.db";
-
-    if (QFile("./revise.db").exists()) {
-        qDebug() << "Found local database. Copying...";
-
-        if (!QFile(dest_db).remove()) {
-            qWarning() << "Failed to remove dest db:" << dest_db;
-        }
-
-        if (!QFile().copy("./revise.db", dest_db)) {
-            qWarning() << "Failed to copy ./revise.db to dest db:" << dest_db;
-        }
-
-        if (!QFile("./revise.db").remove()) {
-            qWarning() << "Failed to remove ./revise.db";
-        }
-    }
-
-    m_db.emplace("revise_main", dest_db);
+    m_db.emplace("revise_main", global_data_dir() + "/revise.db");
 
     if (auto res = m_db->init_db(); !res) {
         qWarning() << "Failed to init db:" << res.error();
+    }
+
+    if (m_toast_service = engine::create_toast_service(); !m_toast_service) {
+        qWarning() << "Failed to create toast service, got nullptr";
     }
 
     if (m_settings = std::make_unique<io::Settings>(); !m_settings) {
@@ -131,10 +103,6 @@ void Launcher::init() {
 
     if (m_deck_storage = std::make_unique<io::SqlDeckStorage>(*m_db, m_db_context); !m_deck_storage) {
         qWarning() << "Failed to create sql deck storage, got nullptr";
-    }
-
-    if (m_toast_service = engine::create_toast_service(); !m_toast_service) {
-        qWarning() << "Failed to create toast service, got nullptr";
     }
 
     engine::StudyEngineDeps study_engine_deps{.algorithm = *m_algorithm, .deck_storage = *m_deck_storage};
@@ -309,10 +277,13 @@ void Launcher::connect_signals() {
 
 
 void Launcher::post_launch() {
-    qDebug() << "Qt launched";
+    m_loading_screen.set_visible(true);
 
-    m_router.navigate(ui::Page{"home"});
+    QtWebView::initialize();
 
+    connect_signals();
+
+    m_router.push_page("home", m_ui.create_page(QUrl("qrc:/qml/pages/Home.qml")));
     m_router.push_page("settings", m_ui.create_page(QUrl("qrc:/qml/pages/Settings.qml")));
     m_router.push_page("deckEditor", m_ui.create_page(QUrl("qrc:/qml/pages/DeckEditor.qml")));
     m_router.push_page("training", m_ui.create_page(QUrl("qrc:/qml/pages/Training.qml")));
@@ -320,43 +291,47 @@ void Launcher::post_launch() {
     m_router.push_page("cardPreview", m_ui.create_page(QUrl("qrc:/qml/pages/CardPreview.qml")));
     m_router.push_page("createDeck", m_ui.create_page(QUrl("qrc:/qml/pages/CreateDeck.qml")));
 
-    extract_web_bundle_async();
-
-    auto _ = QtConcurrent::run([this]() {
-        if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
-            qDebug() << "Requesting POST_NOTIFICATIONS";
-            m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
-        }
-
-        if (!m_permission_service->check(core::Permission::SCHEDULE_EXACT_ALARM)) {
-            qDebug() << "Requesting SCHEDULE_EXACT_ALARM";
-            m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
-        }
-
-        schedule_notifications();
-    });
+    if (auto res = m_streak_storage->migrate(); !res) {
+        qWarning() << "Failed to apply streak storage migrations:" << res.error();
+    }
 
     if (auto res = m_streak_service->reset_if_overdue(); !res) {
         qWarning() << "Failed to reset streak:" << res.error();
     }
+
+    extract_web_bundle();
+
+    if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
+        qDebug() << "Requesting POST_NOTIFICATIONS";
+        m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
+    }
+
+    if (!m_permission_service->check(core::Permission::SCHEDULE_EXACT_ALARM)) {
+        qDebug() << "Requesting SCHEDULE_EXACT_ALARM";
+        m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
+    }
+
+    schedule_notifications();
+
+    m_router.navigate(ui::Page{"home"});
+
+    m_loading_screen.set_visible(false);
 }
 
 
-void Launcher::extract_web_bundle_async() {
-    auto _ = QtConcurrent::run([this]() {
-        auto copy_res = utils::Directory::copy_recursively(
-            ":/res/html", QString("%1/web").arg(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)));
+void Launcher::extract_web_bundle() {
+    auto copy_res = utils::Directory::copy_recursively(
+        ":/res/html", QString("%1/web").arg(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)));
 
-        if (!copy_res) {
-            m_toast_service->request(core::Toast{
-                .header = QCoreApplication::translate("application events", "Ошибка распаковки ресурсов"),
-                .message = QString(QCoreApplication::translate(
-                                       "application events",
-                                       "Не удалось распаковать web bundle: %1. Приложение может работать некорректно!"))
-                               .arg(copy_res.error().description),
-                .type = core::ToastType::ERROR});
-        }
-    });
+    if (!copy_res) {
+        m_toast_service->request(core::Toast{
+            .header = QCoreApplication::translate("application events", "Ошибка распаковки ресурсов"),
+            .message = QString(QCoreApplication::translate(
+                                   "application events",
+                                   "Не удалось распаковать web bundle: %1. Приложение может работать некорректно!"))
+                           .arg(copy_res.error().description),
+            .type = core::ToastType::ERROR});
+    }
 }
 
 
