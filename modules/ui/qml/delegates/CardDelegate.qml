@@ -26,7 +26,7 @@ Item {
     signal editClicked
     signal removeClicked
 
-    implicitHeight: 110
+    implicitHeight: 100
 
     Item {
         id: content
@@ -113,17 +113,19 @@ Item {
             }
 
             Column {
-                spacing: 4
+                spacing: 6
                 width: parent.width
 
-                property int optionsWidth: 160
+                property int optionsWidth: 140
 
                 Revise.KeyValue {
                     width: parent.width
                     keyWidth: parent.optionsWidth
                     key.text: qsTr("Статус:")
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
 
                     value.horizontalAlignment: Text.AlignLeft
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
 
                     value.text: {
                         if (root.status === 0)
@@ -148,9 +150,11 @@ Item {
                     width: parent.width
                     keyWidth: parent.optionsWidth
                     key.text: qsTr("Следующий повтор:")
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
 
                     value.text: Qt.formatDateTime(root.nextReview, "dd.MM.yyyy")
                     value.horizontalAlignment: Text.AlignLeft
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
 
                     value.color: {
                         let date = new Date()
@@ -167,9 +171,11 @@ Item {
                     width: parent.width
                     keyWidth: parent.optionsWidth
                     key.text: qsTr("Сложность:")
+                    key.font.pixelSize: Revise.Theme.fontSizeSmall
 
                     value.horizontalAlignment: Text.AlignLeft
                     value.text: root.difficulty.toFixed(1)
+                    value.font.pixelSize: Revise.Theme.fontSizeSmall
                     value.color: Revise.ColorUtils.colorForRange(
                                      root.difficulty, 0, 5, Revise.Theme.green,
                                      Revise.Theme.red)
