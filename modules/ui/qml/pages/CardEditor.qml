@@ -57,40 +57,47 @@ Item {
 
             Revise.AcceptButton {
                 text: pageParams && pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
-                onClicked: {
-                    let frontHtml = ""
-                    let backHtml = ""
-                    let received = 0
+                onClicked: root.save()
+            }
+        }
+    }
 
-                    function saveIfReady() {
-                        if (received === 2) {
-                            root.pageParams.card.front = frontHtml
-                            root.pageParams.card.back = backHtml
+    Shortcut {
+        sequence: "Ctrl+S"
+        onActivated: root.save()
+    }
 
-                            if (root.pageParams.editMode === true) {
-                                deckService.update_card(root.pageParams.card)
-                            } else {
-                                deckService.create_card(root.pageParams.card)
-                                frontEditor.clear()
-                                backEditor.clear()
-                            }
-                        }
-                    }
+    function save() {
+        let frontHtml = ""
+        let backHtml = ""
+        let received = 0
 
-                    frontEditor.getHtml(function (html) {
-                        frontHtml = html
-                        received++
-                        saveIfReady()
-                    })
+        function saveIfReady() {
+            if (received === 2) {
+                root.pageParams.card.front = frontHtml
+                root.pageParams.card.back = backHtml
 
-                    backEditor.getHtml(function (html) {
-                        backHtml = html
-                        received++
-                        saveIfReady()
-                    })
+                if (root.pageParams.editMode === true) {
+                    deckService.update_card(root.pageParams.card)
+                } else {
+                    deckService.create_card(root.pageParams.card)
+                    frontEditor.clear()
+                    backEditor.clear()
                 }
             }
         }
+
+        frontEditor.getHtml(function (html) {
+            frontHtml = html
+            received++
+            saveIfReady()
+        })
+
+        backEditor.getHtml(function (html) {
+            backHtml = html
+            received++
+            saveIfReady()
+        })
     }
 
     onPageParamsChanged: {
