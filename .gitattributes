@@ -5,3 +5,4 @@ pull_db.sh linguist-vendored
 push_db.sh linguist-vendored
 modules/ui/res/** linguist-vendored
 scripts/** linguist-vendored
+doxygen-awesome-css/** linguist-vendored
