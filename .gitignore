@@ -1,7 +1,7 @@
 build
 ./build
 build/*
-CMakeLists.txt.user
+CMakeLists.txt.user.*
 revise.db
 docs/html
 ./CMakeLists.txt.user
