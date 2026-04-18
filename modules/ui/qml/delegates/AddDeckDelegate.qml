@@ -63,6 +63,7 @@ Item {
         id: content
         visible: opacity > 0
         opacity: root.loading ? 0.0 : 1.0
+        spacing: 4
 
         Behavior on opacity {
             NumberAnimation {
@@ -73,43 +74,29 @@ Item {
 
         anchors {
             fill: parent
-            margins: 5
+            margins: 8
         }
-
-        Revise.VerticalSpacer {}
 
         // Header
-        Item {
+        Revise.Text {
             Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            Revise.Text {
-                anchors.fill: parent
-                text: root.header
-                elide: Text.ElideRight
-                color: Revise.Theme.textColor
-                verticalAlignment: Revise.Text.AlignVCenter
-                horizontalAlignment: Revise.Text.AlignHCenter
-                maximumLineCount: 2
-                font.bold: true
-            }
+            text: root.header
+            elide: Text.ElideRight
+            color: Revise.Theme.textColor
+            font.bold: true
         }
 
+        Revise.Spacer {}
+
         // Description
-        Item {
+        Revise.Text {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.margins: 4
-
-            Revise.Text {
-                anchors.fill: parent
-                text: root.description
-                elide: Text.ElideRight
-                verticalAlignment: Revise.Text.AlignVCenter
-                color: Revise.Theme.textColorDark
-                font.pixelSize: Revise.Theme.fontSizeSmall
-                wrapMode: Text.WordWrap
-            }
+            text: root.description
+            elide: Text.ElideRight
+            color: Revise.Theme.textColorDark
+            font.pixelSize: Revise.Theme.fontSizeSmall
+            wrapMode: Text.WordWrap
         }
 
         // Create
