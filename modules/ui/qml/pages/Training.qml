@@ -85,6 +85,7 @@ Item {
 
     function onEnter() {
         studyService.reloadCurrentCard()
+        studyService.resume()
     }
 
     function onExit() {}
