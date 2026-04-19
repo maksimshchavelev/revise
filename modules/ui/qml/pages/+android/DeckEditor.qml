@@ -12,13 +12,8 @@ Item {
     property bool openedAsWindow: false
     property string windowTitle: `${deck.name.length > 0 ? deck.name : "Unknown deck"} - Revise`
 
-    property Revise.Deck deck: pageParams ? pageParams.deck : Revise.Deck
-    property int deckId: deck.id
-
-    onDeckIdChanged: {
-        root.deck = deckService.deck(deckId)
-        cardsModel.setDeck(deckId)
-    }
+    property Revise.Deck deck
+    property int deckId: 0
 
     Rectangle {
         anchors.fill: parent
@@ -340,7 +335,13 @@ Item {
         deckService.update_deck(root.deck)
     }
 
-    Component.onCompleted: cardsModel.searchFront = ""
+    function onEnter() {
+        root.deck = deckService.deck(deckId)
+        cardsModel.searchFront = ""
+        cardsModel.setDeck(deckId)
+    }
+
+    function onExit() {}
 
     Connections {
         target: cardsModel
