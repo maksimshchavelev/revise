@@ -293,6 +293,10 @@ std::expected<core::Deck, QString> DeckService::deck(int deck_id) {
         return std::unexpected(res.error());
     }
 
+    if (res->empty()) {
+        return std::unexpected(QString("DeckService::deck() fetched empty deck with id %1").arg(deck_id));
+    }
+
     return res->first();
 }
 
