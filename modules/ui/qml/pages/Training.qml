@@ -77,7 +77,7 @@ Item {
             Layout.alignment: Qt.AlignBottom
             Layout.topMargin: 8
             onEasyClicked: studyService.answer(0.0)
-            onNormalClicked: studyService.answer(1.35)
+            onNormalClicked: studyService.answer(1.4)
             onHardClicked: studyService.answer(3.0)
             onBadClicked: studyService.answer(5.0)
         }
