@@ -13,13 +13,8 @@ Item {
     property bool openedAsWindow: false
     property string windowTitle: `${deck.name.length > 0 ? deck.name : "Unknown deck"} - Revise`
 
-    property Revise.Deck deck: pageParams ? pageParams.deck : Revise.Deck
-    property int deckId: deck.id
-
-    onDeckIdChanged: {
-        root.deck = deckService.deck(deckId)
-        cardsModel.setDeck(deckId)
-    }
+    property int deckId: pageParams ? pageParams.deckId : 0
+    property Revise.Deck deck
 
     Rectangle {
         anchors.fill: parent
@@ -339,7 +334,9 @@ Item {
     }
 
     function onEnter() {
+        root.deck = deckService.deck(deckId)
         cardsModel.searchFront = ""
+        cardsModel.setDeck(deckId)
     }
 
     function onExit() {}
