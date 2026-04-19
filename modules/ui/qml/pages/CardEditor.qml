@@ -44,20 +44,33 @@ Item {
             Layout.fillHeight: true
         }
 
-        RowLayout {
-            Layout.alignment: Qt.AlignRight | Qt.AlignBottom
-            Layout.margins: 5
-            Layout.preferredHeight: 40
+        Item {
+            Layout.alignment: Qt.AlignBottom
+            Layout.fillWidth: true
+            Layout.preferredHeight: 60
 
-            Revise.Button {
-                visible: !root.openedAsWindow
-                text: qsTr("Назад")
-                onClicked: router.back()
+            Rectangle {
+                anchors.fill: parent
+                color: Revise.Theme.backgroundLight
+                radius: 8
             }
 
-            Revise.AcceptButton {
-                text: pageParams && pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
-                onClicked: root.save()
+            Row {
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 8
+                spacing: 4
+
+                Revise.Button {
+                    visible: !root.openedAsWindow
+                    text: qsTr("Назад")
+                    onClicked: router.back()
+                }
+
+                Revise.AcceptButton {
+                    text: pageParams && pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
+                    onClicked: root.save()
+                }
             }
         }
     }
