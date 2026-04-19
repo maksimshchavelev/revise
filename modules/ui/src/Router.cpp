@@ -94,10 +94,14 @@ void Router::back() {
             return;
         }
 
-        current->setVisible(true);
-        current->setParentItem(nullptr);
+        if (current->metaObject()->indexOfProperty("pageParams") >= 0) {
+            current->setProperty("pageParams", current_page().params);
+        } else {
+            qWarning() << "Page" << current_page().name << "hasn't 'pageParams' property";
+        }
 
-        QMetaObject::invokeMethod(previous, "onEnter", Qt::DirectConnection);
+        current->setVisible(true);
+        QMetaObject::invokeMethod(current, "onEnter", Qt::DirectConnection);
 
         emit pageChanged();
     }
