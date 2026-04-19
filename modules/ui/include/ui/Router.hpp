@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "UIExport.hpp"  // for UI_EXPORT macro
-#include <QHash>         // for QHash
-#include <QObject>       // for QObject
-#include <QQmlComponent> // for QQmlComponent
-#include <QQmlIncubator> // for QQmlIncubator
-#include <QQuickItem>    // for QQuickItem
-#include <QVector>       // for QVector
-#include <memory>        // for std::shared_ptr
+#include "QmlIncubator.hpp" // for QmlIncubator
+#include "UIExport.hpp"     // for UI_EXPORT macro
+#include <QHash>            // for QHash
+#include <QObject>          // for QObject
+#include <QQmlComponent>    // for QQmlComponent
+#include <QQuickItem>       // for QQuickItem
+#include <QVector>          // for QVector
+#include <memory>           // for std::shared_ptr
 
 namespace ui {
 
@@ -144,8 +144,8 @@ class UI_EXPORT Router final : public QObject {
     void pageChanged();
 
   private:
-    QVector<Page>                                                  m_history; ///< Navigation history
-    QHash<QString /* page name */, std::shared_ptr<QQmlIncubator>> m_pages;   ///< Pages
+    QVector<Page>                                                 m_history; ///< Navigation history
+    QHash<QString /* page name */, std::shared_ptr<QmlIncubator>> m_pages;   ///< Pages
 
     /// @brief Creates the page if it does not yet exist. If it exists, returns it
     QQuickItem* page(const QString& name);

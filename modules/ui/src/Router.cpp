@@ -16,7 +16,7 @@ void Router::push_page(const QString& name, QQmlComponent* page) {
         return;
     }
 
-    auto incubator = std::make_shared<QQmlIncubator>();
+    auto incubator = std::make_shared<QmlIncubator>();
     m_pages.insert(name, incubator);
     page->create(*m_pages[name]);
 }
