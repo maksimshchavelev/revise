@@ -96,8 +96,8 @@ Item {
                     }
                     onEditClicked: {
                         router.navigate("deckEditor", {
-                                            "deck": deckService.deck(deckId)
-                                        }, Revise.page.Page)
+                                            "deckId": deckId
+                                        })
                     }
                     onRemoveClicked: deckService.remove_deck(deckId)
                     onExportClicked: {
