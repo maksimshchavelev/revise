@@ -13,7 +13,7 @@ Item {
     property string windowTitle: `${deck.name.length > 0 ? deck.name : "Unknown deck"} - Revise`
 
     property Revise.Deck deck
-    property int deckId: 0
+    property int deckId: pageParams ? pageParams.deckId : 0
 
     Rectangle {
         anchors.fill: parent
