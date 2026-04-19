@@ -100,7 +100,7 @@ Item {
         })
     }
 
-    onPageParamsChanged: {
+    function onEnter() {
         if (!root.pageParams) {
             return
         }
@@ -109,7 +109,6 @@ Item {
         backEditor.setHtml(root.pageParams.card.back)
     }
 
-    function onEnter() {}
     function onExit() {
         frontEditor.clear()
         backEditor.clear()
