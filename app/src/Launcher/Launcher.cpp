@@ -4,7 +4,6 @@
 
 #include <QtConcurrent>           // for QtConcurrent
 #include <QtEnvironmentVariables> // for env variables
-#include <QtWebView>              // for QtWebView::initialize()
 
 #include <engine/AlgorithmFactory.hpp>             // for engine::create_study_algorithm
 #include <engine/CardEditSessionFactory.hpp>       // for engine:create_card_edit_session
@@ -28,10 +27,6 @@ Launcher::Launcher(QGuiApplication& app) : m_app(app) {}
 
 
 int Launcher::run() {
-#ifndef Q_OS_ANDROID
-    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
-#endif
-
     init();
 
     bool ok{false};
@@ -280,8 +275,6 @@ void Launcher::post_launch() {
     m_loading_screen.set_visible(true);
 
     extract_web_bundle();
-
-    QtWebView::initialize();
 
     connect_signals();
 
