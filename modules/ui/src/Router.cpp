@@ -53,6 +53,12 @@ void Router::navigate(Page page) {
         return;
     }
 
+    if (current_page->metaObject()->indexOfProperty("pageParams") >= 0) {
+        current_page->setProperty("pageParams", page.params);
+    } else {
+        qWarning() << "Page" << page.name << "hasn't 'pageParams' property";
+    }
+
     QMetaObject::invokeMethod(current_page, "onEnter", Qt::DirectConnection);
     current_page->setVisible(true);
     m_history.push_back(std::move(page));
