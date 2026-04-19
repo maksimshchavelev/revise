@@ -12,8 +12,8 @@ Item {
     property bool openedAsWindow: false
     property var windowTitle: qsTr("Просмотр карточки - Revise")
 
-    property string front : cardEditSession.front
-    property string back : cardEditSession.back
+    property string front
+    property string back
     property bool flipped: false
 
     Rectangle {
@@ -52,6 +52,10 @@ Item {
         root.flipped = !root.flipped
     }
 
-    function onEnter() {}
+    function onEnter() {
+        root.front = cardEditSession.front
+        root.back = cardEditSession.back
+    }
+
     function onExit() {}
 }
