@@ -93,9 +93,9 @@ endif()
 if(UNIX AND NOT APPLE AND NOT ANDROID)
     install(TARGETS apprevise RUNTIME DESTINATION usr/bin)
 
-    install(FILES deploy/linux/revise.desktop DESTINATION usr/share/applications)
-    install(FILES deploy/linux/revise.png DESTINATION usr/share/icons/hicolor/256x256/apps)
-    install(FILES deploy/linux/copyright DESTINATION usr/share/doc/libc6)
+    install(FILES ${CMAKE_SOURCE_DIR}/deploy/linux/revise.desktop DESTINATION usr/share/applications)
+    install(FILES ${CMAKE_SOURCE_DIR}/deploy/linux/revise.png DESTINATION usr/share/icons/hicolor/256x256/apps)
+    install(FILES ${CMAKE_SOURCE_DIR}/deploy/linux/copyright DESTINATION usr/share/doc/libc6)
 
     install(DIRECTORY ${CMAKE_PREFIX_PATH}/resources/ DESTINATION usr/resources)
     install(DIRECTORY ${CMAKE_PREFIX_PATH}/translations/qtwebengine_locales/ DESTINATION usr/translations/qtwebengine_locales)
