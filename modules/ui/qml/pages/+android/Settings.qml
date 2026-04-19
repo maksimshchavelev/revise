@@ -115,4 +115,7 @@ Item {
             }
         }
     }
+
+    function onEnter() {}
+    function onExit() {}
 }
