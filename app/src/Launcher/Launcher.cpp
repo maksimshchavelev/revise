@@ -361,18 +361,22 @@ void Launcher::extract_web_bundle() {
 
 
 void Launcher::schedule_notifications() {
-    auto current = QDateTime::currentDateTime();
-    current.setTime(QTime(10, 30, 0));
+    m_notification_service->clear_all_scheduled_notifications();
+
+    const auto now = QDateTime::currentDateTime();
+
+    QDateTime base = now;
+    base.setTime(QTime(10, 30, 0));
 
     for (int i = 0; i < 14; ++i) {
-        current = current.addDays(i);
+        const auto when = base.addDays(i);
 
-        if (current <= QDateTime::currentDateTime()) {
+        if (when <= now) {
             continue;
         }
 
         m_notification_service->schedule_notification(
-            QCoreApplication::translate("notification", "Пора что-нибудь повторить!"), current);
+            QCoreApplication::translate("notification", "Пора что-нибудь повторить!"), when);
     }
 }
 
