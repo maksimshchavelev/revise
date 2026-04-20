@@ -273,6 +273,13 @@ void Launcher::connect_signals() {
 
         m_toast_service->request(std::move(toast));
     });
+
+    // Router
+    QObject::connect(&m_router, &ui::Router::pageChanged, [this]() {
+        if (m_router.current_page().name == "home") {
+            m_router.clear_history();
+        }
+    });
 }
 
 
