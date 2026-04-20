@@ -8,6 +8,7 @@ Item {
     property int thresholdTime: 60 // The time period during which you can cancel the loading
     property int fadeOutDuration: 200
     property double startTime: 0
+    property string description
 
     visible: root.opacity > 0
     opacity: 0
@@ -20,6 +21,20 @@ Item {
     Revise.Spinner {
         anchors.centerIn: parent
         size: 64
+    }
+
+    Revise.Text {
+        text: root.description
+        maximumLineCount: 8
+        wrapMode: Text.WordWrap
+        elide: Text.ElideRight
+
+        anchors {
+            horizontalCenter: root.horizontalCenter
+            bottom: root.bottom
+            margins: 10
+            bottomMargin: 20
+        }
     }
 
     Timer {
