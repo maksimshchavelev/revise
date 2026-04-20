@@ -310,20 +310,33 @@ void Launcher::post_launch() {
     m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Проверка Android разрешений..."));
 #endif
 
-    if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
-        qDebug() << "Requesting POST_NOTIFICATIONS";
-        m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
+    auto android_sdk_version = platform::Platform::android_sdk_version();
+
+    if (android_sdk_version && android_sdk_version.value() <= 31 /* android 12 */) {
+        m_toast_service->request(core::Toast{
+            .header = QCoreApplication::translate("launch events", "Слишком старый Android"),
+            .message = QString(QCoreApplication::translate("application events",
+                                                           "Похоже, вы используете Android 12 или ниже. Приложение "
+                                                           "может работать некорректно. Уведомления отключены.")),
+            .type = core::ToastType::INFO});
     }
 
-    if (!m_permission_service->check(core::Permission::SCHEDULE_EXACT_ALARM)) {
-        qDebug() << "Requesting SCHEDULE_EXACT_ALARM";
-        m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
-    }
+    if (android_sdk_version && android_sdk_version.value() > 31 /* android 13+ */) {
+        if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
+            qDebug() << "Requesting POST_NOTIFICATIONS";
+            m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
+        }
+
+        if (!m_permission_service->check(core::Permission::SCHEDULE_EXACT_ALARM)) {
+            qDebug() << "Requesting SCHEDULE_EXACT_ALARM";
+            m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
+        }
 
 #ifdef Q_OS_ANDROID
-    m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Планирование уведомлений..."));
-    schedule_notifications();
+        m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Планирование уведомлений..."));
+        schedule_notifications();
 #endif
+    }
 
     m_router.navigate(ui::Page{"home"});
 
