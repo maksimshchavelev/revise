@@ -93,13 +93,4 @@ ApplicationWindow {
 
         onClosed: toastService.closed()
     }
-
-    Item {
-        focus: true
-
-        Keys.onBackPressed: function (event) {
-            event.accepted = true
-            router.back()
-        }
-    }
 }
