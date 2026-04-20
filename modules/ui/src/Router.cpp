@@ -126,6 +126,15 @@ Page Router::current_page() const {
 }
 
 
+void Router::clear_history() {
+    if (m_history.empty()) {
+        return;
+    }
+
+    m_history.remove(0, m_history.size() - 1);
+}
+
+
 QQuickItem* Router::page(const QString& name) {
     if (m_pages[name]->isError()) {
         qWarning() << "Failed to create page via incubator:" << m_pages[name]->errors();

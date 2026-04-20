@@ -140,6 +140,9 @@ class UI_EXPORT Router final : public QObject {
      */
     Page current_page() const;
 
+    /// @brief Clear all history
+    void clear_history();
+
   signals:
     void pageChanged();
 
