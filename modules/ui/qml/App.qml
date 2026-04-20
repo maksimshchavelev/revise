@@ -22,6 +22,7 @@ ApplicationWindow {
     Revise.LoadingScreen {
         id: screen
         anchors.fill: parent
+        description: loadingScreen.description
     }
 
     Connections {
