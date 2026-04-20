@@ -19,7 +19,8 @@
 #include <platform/NotificationServiceFactory.hpp> // for notification service factory
 #include <platform/PermissionServiceFactory.hpp>   // for permission service factory
 
-#include <utils/Directory.hpp> // for directory tools
+#include <platform/Platform.hpp> // for Platform tools
+#include <utils/Directory.hpp>   // for directory tools
 
 namespace revise {
 
@@ -27,6 +28,10 @@ Launcher::Launcher(QGuiApplication& app) : m_app(app) {}
 
 
 int Launcher::run() {
+    if (auto sdk_version = platform::Platform::android_sdk_version(); sdk_version) {
+        qDebug() << "Running on Android with SDK version" << sdk_version.value();
+    }
+
     init();
 
     bool ok{false};
