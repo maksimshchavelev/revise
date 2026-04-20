@@ -53,6 +53,7 @@ Item {
     }
 
     function onEnter() {
+        root.flipped = false
         root.front = cardEditSession.front
         root.back = cardEditSession.back
     }
