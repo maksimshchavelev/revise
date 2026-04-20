@@ -278,10 +278,15 @@ void Launcher::connect_signals() {
 
 void Launcher::post_launch() {
     m_loading_screen.set_visible(true);
+    m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Распаковка web bundle..."));
 
     extract_web_bundle();
 
+    m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Подключение сигналов..."));
+
     connect_signals();
+
+    m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Настройка страниц..."));
 
     m_router.push_page("home", m_ui.create_page(QUrl("qrc:/qml/pages/Home.qml")));
     m_router.push_page("settings", m_ui.create_page(QUrl("qrc:/qml/pages/Settings.qml")));
@@ -291,6 +296,8 @@ void Launcher::post_launch() {
     m_router.push_page("cardPreview", m_ui.create_page(QUrl("qrc:/qml/pages/CardPreview.qml")));
     m_router.push_page("createDeck", m_ui.create_page(QUrl("qrc:/qml/pages/CreateDeck.qml")));
 
+    m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Настройка базы данных..."));
+
     if (auto res = m_streak_storage->migrate(); !res) {
         qWarning() << "Failed to apply streak storage migrations:" << res.error();
     }
@@ -298,6 +305,10 @@ void Launcher::post_launch() {
     if (auto res = m_streak_service->reset_if_overdue(); !res) {
         qWarning() << "Failed to reset streak:" << res.error();
     }
+
+#ifdef Q_OS_ANDROID
+    m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Проверка Android разрешений..."));
+#endif
 
     if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
         qDebug() << "Requesting POST_NOTIFICATIONS";
@@ -309,7 +320,10 @@ void Launcher::post_launch() {
         m_permission_service->request(core::Permission::SCHEDULE_EXACT_ALARM);
     }
 
+#ifdef Q_OS_ANDROID
+    m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Планирование уведомлений..."));
     schedule_notifications();
+#endif
 
     m_router.navigate(ui::Page{"home"});
 
