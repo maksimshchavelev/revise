@@ -13,13 +13,14 @@ class Settings final : public QObject {
   public:
     Q_PROPERTY(int maxInterval READ max_interval WRITE set_max_interval NOTIFY maxIntervalChanged FINAL)
     Q_PROPERTY(float learningRate READ learning_rate WRITE set_learning_rate NOTIFY learningRateChanged FINAL)
-    Q_PROPERTY(QString applicationVersion READ application_version FINAL)
+    Q_PROPERTY(QString applicationVersion READ application_version NOTIFY applicationVersionChanged FINAL)
 
     Settings(core::ISettings& settings, QObject* parent = nullptr);
 
   signals:
     void maxIntervalChanged();
     void learningRateChanged();
+    void applicationVersionChanged();
 
   private:
     int  max_interval() const;
