@@ -9,8 +9,8 @@ namespace io {
 SqlStreakStorage::SqlStreakStorage(Database& db, DatabaseExecutionContext& context) : m_db(db), m_context(context) {}
 
 
-std::expected<void, QString> SqlStreakStorage::save(const core::Streak streak) {
-    return m_context.exec([this, &streak]() -> std::expected<void, QString> {
+core::IStreakStorage::Result<void> SqlStreakStorage::save(const core::Streak streak) {
+    return m_context.exec([this, &streak]() -> core::IStreakStorage::Result<void> {
         QSqlQuery q(m_db.raw_db());
 
         q.prepare(R"(
@@ -24,9 +24,7 @@ std::expected<void, QString> SqlStreakStorage::save(const core::Streak streak) {
         q.bindValue(":last_updated", streak.updated_at);
 
         if (!q.exec()) {
-            return std::unexpected(QString("Failed to update value in 'streak' table. Query: %1, cause: %2")
-                                       .arg(q.lastQuery())
-                                       .arg(q.lastError().text()));
+            return std::unexpected(from_sql(q.lastError(), q.lastError().text()));
         }
 
         return {};
@@ -34,21 +32,17 @@ std::expected<void, QString> SqlStreakStorage::save(const core::Streak streak) {
 }
 
 
-std::expected<core::Streak, QString> SqlStreakStorage::read() {
-    return m_context.exec([this]() -> std::expected<core::Streak, QString> {
+core::IStreakStorage::Result<core::Streak> SqlStreakStorage::read() const {
+    return m_context.exec([this]() -> core::IStreakStorage::Result<core::Streak> {
         QSqlQuery q(m_db.raw_db());
 
         if (!q.exec("SELECT * FROM streak WHERE id = 1 LIMIT 1")) {
-            return std::unexpected(QString("Failed to fetch value from 'streak' table. Query: %1, cause: %2")
-                                       .arg(q.lastQuery())
-                                       .arg(q.lastError().text()));
+            return std::unexpected(from_sql(q.lastError(), q.lastError().text()));
         }
 
         if (!q.next()) {
-            return std::unexpected(QString("Failed to fetch value from 'streak' table (the database did not return "
-                                           "anything). Query: %1, cause: %2")
-                                       .arg(q.lastQuery())
-                                       .arg(q.lastError().text()));
+            return std::unexpected(
+                core::IStreakStorage::Error::missing_value("There are no records in the ‘streak’ SQL table"));
         }
 
         return core::Streak{.value = q.value("value").toInt(), .updated_at = q.value("last_updated").toDateTime()};
@@ -91,6 +85,21 @@ std::expected<void, QString> SqlStreakStorage::create_streak_table() {
 
         return {};
     });
+}
+
+
+core::IStreakStorage::Error SqlStreakStorage::from_sql(const QSqlError& error, QString context) {
+    switch (error.type()) {
+    case QSqlError::ConnectionError:
+        return Error::unavailable(std::move(context));
+
+    case QSqlError::StatementError:
+    case QSqlError::TransactionError:
+        return Error::internal_error(std::move(context));
+
+    default:
+        return Error::internal_error(std::move(context));
+    }
 }
 
 } // namespace io

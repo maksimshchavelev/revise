@@ -18,11 +18,11 @@ class SqlStreakStorage final : public core::IStreakStorage {
      */
     SqlStreakStorage(Database& db, DatabaseExecutionContext& context);
 
-    /// @see `core::IStreakStorage` for details
-    std::expected<void, QString> save(const core::Streak streak) override;
+    /// @copydoc core::IStreakStorage::save
+    Result<void> save(const core::Streak streak) override;
 
-    /// @see `core::IStreakStorage` for details
-    std::expected<core::Streak, QString> read() override;
+    /// @copydoc core::IStreakStorage::read
+    Result<core::Streak> read() const override;
 
     /**
      * @brief Method for database migration. Called by external code.
@@ -36,6 +36,9 @@ class SqlStreakStorage final : public core::IStreakStorage {
 
     /// @brief Creates streak table if not exists
     std::expected<void, QString> create_streak_table();
+
+    /// @brief Make error from sql error
+    static Error from_sql(const QSqlError& error, QString context = {});
 };
 
 } // namespace io
