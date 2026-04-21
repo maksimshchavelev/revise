@@ -31,6 +31,11 @@ Rectangle {
         color: "#80000000"
     }
 
+    // Block clicks through toasts
+    MouseArea {
+        anchors.fill: parent
+    }
+
     RowLayout {
         id: rowLayout
         spacing: 10
