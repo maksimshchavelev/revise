@@ -12,7 +12,7 @@ class VersionSettings {
     virtual ~VersionSettings() = default;
 
     /// @brief Get application version in `VERSION_MAJOR.VERSION_MINOR.VERSION_PATCH` format
-    virtual QString application_version() const noexcept = 0;
+    virtual QString application_version() const = 0;
 };
 
 } // namespace core
