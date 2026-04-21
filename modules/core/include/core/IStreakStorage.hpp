@@ -51,7 +51,7 @@ class IStreakStorage {
     /**
      * @brief Reads the current streak
      */
-    virtual Result<Streak> read() = 0;
+    virtual Result<Streak> read() const = 0;
 };
 
 } // namespace core
