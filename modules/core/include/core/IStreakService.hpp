@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "IStreakStorage.hpp" // for IStreakStorage
-#include "Notifiable.hpp"     // for Notifiable
-#include <expected>           // for std::expected
+#include "Notifiable.hpp" // for Notifiable
+#include <QFuture>        // for QFuture
+#include <expected>       // for std::expected
 
 namespace core {
 
@@ -14,53 +14,51 @@ namespace core {
  */
 class IStreakService : public Notifiable {
   public:
-    EVENT(updated, int value /* new value */) /// streak updated
-    EVENT(reset)                              /// streak reset
+    EVENT(updated, int value) /// streak updated. Stores new streak value
+    EVENT(reset)              /// streak reset
 
-    IStreakService(std::shared_ptr<IStreakStorage> storage) : m_storage(storage) {}
+    /// @brief Streak service error
+    struct Error {
+        enum class Kind {
+            InvalidValue, ///< Invalid streak value
+            InternalError ///< Internal error
+        };
+
+        Kind    kind;
+        QString message;
+
+        static Error invalid_value(QString message) {
+            return Error{.kind = Kind::InvalidValue, .message = std::move(message)};
+        }
+
+        static Error internal_error(QString message) {
+            return Error{.kind = Kind::InternalError, .message = std::move(message)};
+        }
+    };
+
+    using ErrorKind = Error::Kind;
+    template <typename T> using Result = std::expected<T, Error>;
 
     virtual ~IStreakService() = default;
 
-    /**
-     * @brief Get the current streak
-     * @return `std::expected<int, QString>` with streak value if success, otherwise error description
-     */
-    virtual std::expected<int, QString> get() = 0;
+    /// @brief Get the current streak
+    virtual QFuture<Result<int>> get() const = 0;
 
-    /**
-     * @brief Set the streak
-     * @param streak Streak
-     * @return `std::expected<void, QString>` with `void` if success, otherwise error description
-     */
-    virtual std::expected<void, QString> set(int streak) = 0;
+    /// Set the streak
+    virtual QFuture<Result<void>> set(int streak) = 0;
 
-    /**
-     * @brief Resets the streak if it is overdue. How exactly the overdue criterion is determined is determined by the
-     * implementation.
-     * @return `std::expected<int, QString>` with `void` if success, otherwise error description
-     */
-    virtual std::expected<void, QString> reset_if_overdue() = 0;
+    /// @brief Resets the streak if it is overdue. How exactly the overdue criterion is determined is determined by the
+    /// implementation.
+    virtual QFuture<Result<void>> reset_if_overdue() = 0;
 
-    /**
-     * @brief Check if your streak has expired
-     * @return `true` if yes
-     */
-    virtual std::expected<bool, QString> overdue() const = 0;
+    /// @brief Check if your streak has expired
+    virtual QFuture<Result<bool>> overdue() const = 0;
 
-    /**
-     * @brief Updates the streak. If the strike has already been updated today, it does nothing.
-     * @return `std::expected<void, QString>` with `void` if success, otherwise error description
-     */
-    virtual std::expected<void, QString> update() = 0;
+    /// @brief Updates the streak (increase by 1). If the strike has already been updated today, it does nothing.
+    virtual QFuture<Result<void>> update() = 0;
 
-    /**
-     * @brief Check if the streak has been updated today
-     * @return `std::expected<bool, QString>` with `true` if yes (or `false` if no), otherwise error description
-     */
-    virtual std::expected<bool, QString> updated_today() const = 0;
-
-  protected:
-    std::shared_ptr<IStreakStorage> m_storage;
+    /// @brief @brief Check if the streak has been updated today
+    virtual QFuture<Result<bool>> updated_today() const = 0;
 };
 
 } // namespace core
