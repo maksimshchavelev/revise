@@ -24,6 +24,9 @@ class Settings : public core::ISettings {
     /// @copydoc core::ISettings::set_max_interval
     virtual std::expected<void, core::SettingsError> set_max_interval(int interval) override;
 
+    /// @copydoc core::ISettings::application_version
+    QString application_version() const override;
+
   private:
     QSettings m_settings;
 };

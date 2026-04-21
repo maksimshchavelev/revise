@@ -1,6 +1,7 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "io/Settings.hpp" // for header
+#include "io/Settings.hpp"  // for header
+#include <core/Version.hpp> // for application version
 
 namespace io {
 
@@ -34,6 +35,13 @@ std::expected<void, core::SettingsError> Settings::set_max_interval(int interval
     m_settings.setValue("algorithm_max_interval", interval);
     m_settings.sync();
     return {};
+}
+
+QString Settings::application_version() const {
+    return QString("%1.%2.%3")
+        .arg(core::REVISE_VERSION_MAJOR)
+        .arg(core::REVISE_VERSION_MINOR)
+        .arg(core::REVISE_VERSION_PATCH);
 }
 
 } // namespace io
