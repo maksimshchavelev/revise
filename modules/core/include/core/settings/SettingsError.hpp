@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include <QString>
-#include <system_error>
+#include <QString> // for QString
 
 namespace core {
 
@@ -17,7 +16,6 @@ struct SettingsError {
     };
 
     Kind            kind{Kind::Unknown};
-    std::error_code cause;
     QString         message;
 };
 
