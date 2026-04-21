@@ -31,4 +31,8 @@ void Settings::set_learning_rate(float rate) {
     }
 }
 
+QString Settings::application_version() const {
+    return m_settings.application_version();
+}
+
 } // namespace ui
