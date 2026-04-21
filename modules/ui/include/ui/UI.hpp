@@ -8,7 +8,6 @@
 
 #include <core/ICardEditSession.hpp>   // for core::ICardEditSession
 #include <core/IDeckService.hpp>       // for core::IDeckService
-#include <core/IPopupService.hpp>      // for core::IPopupService
 #include <core/IStreakService.hpp>     // for core::IStreakService
 #include <core/IStudyService.hpp>      // for core::IStudyService
 #include <core/IToastService.hpp>      // for core::IToastService
@@ -53,9 +52,6 @@ class UI_EXPORT UI {
 
     /// Make StudyService accessible from qml
     void bind_study_service(core::IStudyService& study_service);
-
-    /// Make PopupService accessible from qml
-    void bind_popup_service(core::IPopupService& popup_service);
 
     /// Make ToastService accessible from qml
     void bind_toast_service(core::IToastService& toast_service);

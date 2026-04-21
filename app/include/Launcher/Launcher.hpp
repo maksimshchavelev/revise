@@ -31,9 +31,6 @@
 #include <engine/StudyEngine.hpp>  // for engine::StudyEngine
 #include <engine/StudyService.hpp> // for engine::StudyService
 
-// Popup service
-#include <core/IPopupService.hpp> // for core::IPopupService
-
 // Toast service
 #include <core/IToastService.hpp> // for core::IToastService
 
@@ -87,8 +84,6 @@ class Launcher {
 
     std::unique_ptr<engine::StudyEngine>  m_study_engine;  ///< Study engine
     std::unique_ptr<engine::StudyService> m_study_service; ///< Study service
-
-    std::unique_ptr<core::IPopupService> m_popup_service; ///< Popup service
 
     std::unique_ptr<core::IToastService> m_toast_service; ///< Toast service
 

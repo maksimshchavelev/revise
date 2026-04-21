@@ -8,7 +8,6 @@
 #include <engine/AlgorithmFactory.hpp>             // for engine::create_study_algorithm
 #include <engine/CardEditSessionFactory.hpp>       // for engine:create_card_edit_session
 #include <engine/DeckService.hpp>                  // for engine::DeckService
-#include <engine/PopupServiceFactory.hpp>          // for engine::create_popup_service
 #include <engine/SearchEngine.hpp>                 // for engine::SearchEngine
 #include <engine/StreakServiceFactory.hpp>         // for engine::create_streak_service
 #include <engine/ToastServiceFactory.hpp>          // for engine:create_toast_service
@@ -42,7 +41,6 @@ int Launcher::run() {
     m_ui.bind_decks_model(*m_deck_service, *m_study_service);
     m_ui.bind_cards_model(*m_deck_service);
     m_ui.bind_study_service(*m_study_service);
-    m_ui.bind_popup_service(*m_popup_service);
     m_ui.bind_card_edit_session(*m_card_edit_session);
     m_ui.bind_settings(*m_settings);
     m_ui.enable_debug_bounds(ok ? debug_bounds : false);
@@ -129,10 +127,6 @@ void Launcher::init() {
 
     if (m_study_service = std::make_unique<engine::StudyService>(*m_study_engine); !m_study_service) {
         qWarning() << "Failed to create study service, got nullptr";
-    }
-
-    if (m_popup_service = engine::create_popup_service(); !m_popup_service) {
-        qWarning() << "Failed to create popup service, got nullptr";
     }
 
     if (m_card_edit_session = engine::create_card_edit_session(engine::CardEditSessionType::Local);
