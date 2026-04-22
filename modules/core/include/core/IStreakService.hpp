@@ -21,6 +21,7 @@ class IStreakService : public Notifiable {
     struct Error {
         enum class Kind {
             InvalidValue, ///< Invalid streak value
+            Unavailable,  ///< Service is unavailable
             InternalError ///< Internal error
         };
 
@@ -29,6 +30,10 @@ class IStreakService : public Notifiable {
 
         static Error invalid_value(QString message) {
             return Error{.kind = Kind::InvalidValue, .message = std::move(message)};
+        }
+
+        static Error unavailable(QString message) {
+            return Error{.kind = Kind::Unavailable, .message = std::move(message)};
         }
 
         static Error internal_error(QString message) {
