@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Notifiable.hpp" // for Notifiable
+#include "Streak.hpp"     // for Streak
 #include <QFuture>        // for QFuture
 #include <expected>       // for std::expected
 
@@ -47,10 +48,10 @@ class IStreakService : public Notifiable {
     virtual ~IStreakService() = default;
 
     /// @brief Get the current streak
-    virtual QFuture<Result<int>> get() const = 0;
+    virtual QFuture<Result<Streak::value_type>> get() const = 0;
 
     /// Set the streak
-    virtual QFuture<Result<void>> set(int streak) = 0;
+    virtual QFuture<Result<void>> set(Streak::value_type streak) = 0;
 
     /// @brief Resets the streak if it is overdue. How exactly the overdue criterion is determined is determined by the
     /// implementation.
