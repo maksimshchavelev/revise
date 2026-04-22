@@ -9,7 +9,7 @@
 #include <engine/CardEditSessionFactory.hpp>       // for engine:create_card_edit_session
 #include <engine/DeckService.hpp>                  // for engine::DeckService
 #include <engine/SearchEngine.hpp>                 // for engine::SearchEngine
-#include <engine/StreakServiceFactory.hpp>         // for engine::create_streak_service
+#include <engine/StreakService.hpp>                // for engine::StreakService
 #include <engine/ToastServiceFactory.hpp>          // for engine:create_toast_service
 #include <io/DeckExporterFactory.hpp>              // for io::create_deck_exporter
 #include <io/DeckImporterFactory.hpp>              // for io::create_deck_importer
@@ -75,7 +75,7 @@ void Launcher::init() {
         qWarning() << "Failed to create streak storage, got nullptr";
     }
 
-    if (m_streak_service = engine::create_streak_service(m_streak_storage); !m_streak_service) {
+    if (m_streak_service = std::make_unique<engine::StreakService>(*m_streak_storage); !m_streak_service) {
         qWarning() << "Failed to create streak service, got nullptr";
     }
 
@@ -303,8 +303,8 @@ void Launcher::post_launch() {
         qWarning() << "Failed to apply streak storage migrations:" << res.error();
     }
 
-    if (auto res = m_streak_service->reset_if_overdue(); !res) {
-        qWarning() << "Failed to reset streak:" << res.error();
+    if (auto res = m_streak_service->reset_if_overdue(); !res.result()) {
+        qWarning() << "failed to reset streak:" << res.result().error().message;
     }
 
 #ifdef Q_OS_ANDROID
