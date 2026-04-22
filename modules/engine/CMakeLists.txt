@@ -21,6 +21,7 @@ target_link_libraries(engine
         core
         utils
         Qt6::Core
+        Qt6::Concurrent
 )
 
 set_target_properties(engine PROPERTIES
