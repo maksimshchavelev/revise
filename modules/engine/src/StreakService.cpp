@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "StreakService.hpp" // for StreakService header
-#include <QtConcurrentRun>   // for QtConcurrent::run
+#include "engine/StreakService.hpp" // for StreakService header
+#include <QtConcurrentRun>          // for QtConcurrent::run
 
 namespace engine {
 
