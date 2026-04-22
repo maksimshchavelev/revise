@@ -14,7 +14,7 @@ class StreakService final : public QObject {
     Q_OBJECT
 
   public:
-    Q_PROPERTY(int streak READ get NOTIFY streakChanged FINAL)
+    Q_PROPERTY(int streak READ streak NOTIFY streakChanged FINAL)
     Q_PROPERTY(bool updatedToday READ updated_today NOTIFY updatedTodayChanged FINAL)
 
     StreakService(core::IStreakService& streak_service, QObject* parent = nullptr);
@@ -25,12 +25,17 @@ class StreakService final : public QObject {
 
   private:
     /// Get current streak
-    int get();
+    int streak() const noexcept;
 
     /// Find out if the streak has been updated today (true if yes)
-    bool updated_today();
+    bool updated_today() const noexcept;
+
+    /// Loads streak async
+    void load();
 
     core::IStreakService& m_streak_service;
+    int                   m_streak{0};
+    bool                  m_updated_today{false};
 };
 
 } // namespace ui
