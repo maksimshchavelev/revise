@@ -21,7 +21,7 @@ StreakService::StreakService(core::IStreakService& streak_service, QObject* pare
 
 
 int StreakService::streak() const noexcept {
-    return m_streak;
+    return static_cast<int>(m_streak);
 }
 
 

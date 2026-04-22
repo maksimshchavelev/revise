@@ -33,9 +33,9 @@ class StreakService final : public QObject {
     /// Loads streak async
     void load();
 
-    core::IStreakService& m_streak_service;
-    int                   m_streak{0};
-    bool                  m_updated_today{false};
+    core::IStreakService&    m_streak_service;
+    core::Streak::value_type m_streak{0};
+    bool                     m_updated_today{false};
 };
 
 } // namespace ui
