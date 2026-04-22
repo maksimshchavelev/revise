@@ -48,7 +48,7 @@ core::IStreakService::Error StreakService::from_streak_storage(const core::IStre
 }
 
 
-QFuture<StreakService::Result<int>> StreakService::get() const {
+QFuture<StreakService::Result<core::Streak::value_type>> StreakService::get() const {
     return QtConcurrent::run([this]() -> StreakService::Result<int> {
         auto res = m_storage.read();
 
@@ -61,7 +61,7 @@ QFuture<StreakService::Result<int>> StreakService::get() const {
 }
 
 
-QFuture<StreakService::Result<void>> StreakService::set(int streak) {
+QFuture<StreakService::Result<void>> StreakService::set(core::Streak::value_type streak) {
     return QtConcurrent::run([this, streak]() -> StreakService::Result<void> {
         if (streak < 0) {
             return std::unexpected(Error::invalid_value("streak must be positive or 0"));

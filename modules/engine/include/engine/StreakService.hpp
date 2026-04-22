@@ -15,10 +15,10 @@ class StreakService final : public core::IStreakService {
     StreakService(core::IStreakStorage& storage);
 
     /// @copydoc core::IStreakService::get
-    QFuture<Result<int>> get() const override;
+    QFuture<Result<core::Streak::value_type>> get() const override;
 
     /// @copydoc core::IStreakService::set for details
-    QFuture<Result<void>> set(int streak) override;
+    QFuture<Result<void>> set(core::Streak::value_type streak) override;
 
     /// @brief Resets the streak if it was last updated two or more days ago.
     /// @see `core::IStreakService` for details
