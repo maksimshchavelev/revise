@@ -39,6 +39,8 @@ class StreakService final : public core::IStreakService {
     bool is_updated_today(const core::Streak& streak) const;
 
     bool is_overdue(const core::Streak& streak) const;
+
+    Error from_streak_storage(const core::IStreakStorage::Error& error, const QString& what) const;
 };
 
 } // namespace engine

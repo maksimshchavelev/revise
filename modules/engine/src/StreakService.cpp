@@ -35,13 +35,25 @@ bool StreakService::is_overdue(const core::Streak& streak) const {
 }
 
 
+core::IStreakService::Error StreakService::from_streak_storage(const core::IStreakStorage::Error& error,
+                                                               const QString&                     what) const {
+    switch (error.kind) {
+    case core::IStreakStorage::ErrorKind::InternalError:
+    case core::IStreakStorage::ErrorKind::MissingValue:
+        return Error::internal_error(QString("%1: %2").arg(what).arg(error.message));
+
+    case core::IStreakStorage::ErrorKind::Unavailable:
+        return Error::unavailable(QString("%1: %2").arg(what).arg(error.message));
+    }
+}
+
+
 QFuture<StreakService::Result<int>> StreakService::get() const {
     return QtConcurrent::run([this]() -> StreakService::Result<int> {
         auto res = m_storage.read();
 
         if (!res) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::get(): failed to read streak: %1").arg(res.error().message)));
+            return std::unexpected(from_streak_storage(res.error(), "StreakService::get(): failed to read streak"));
         }
 
         return res->value;
@@ -58,15 +70,15 @@ QFuture<StreakService::Result<void>> StreakService::set(int streak) {
         auto read_res = m_storage.read();
 
         if (!read_res) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::set(): failed to read streak: %1").arg(read_res.error().message)));
+            return std::unexpected(
+                from_streak_storage(read_res.error(), "StreakService::set(): failed to read streak"));
         }
 
-        auto res = m_storage.save(core::Streak{.value = streak, .updated_at = read_res->updated_at});
+        auto save_res = m_storage.save(core::Streak{.value = streak, .updated_at = read_res->updated_at});
 
-        if (!res) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::set(): failed to save streak: %1").arg(res.error().message)));
+        if (!save_res) {
+            return std::unexpected(
+                from_streak_storage(save_res.error(), "StreakService::set(): failed to save streak"));
         }
 
         dispatch(updated{streak});
@@ -77,27 +89,27 @@ QFuture<StreakService::Result<void>> StreakService::set(int streak) {
 
 QFuture<StreakService::Result<void>> StreakService::reset_if_overdue() {
     return QtConcurrent::run([this]() -> StreakService::Result<void> {
-        auto streak = m_storage.read();
+        auto read_res = m_storage.read();
 
-        if (!streak) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::reset_if_overdue(): failed to read streak: %1").arg(streak.error().message)));
+        if (!read_res) {
+            return std::unexpected(
+                from_streak_storage(read_res.error(), "StreakService::reset_if_overdue(): failed to read streak"));
         }
 
-        if (!is_overdue(*streak)) {
+        if (!is_overdue(*read_res)) {
             return {};
         }
 
-        if (streak->value == 0) {
+        if (read_res->value == 0) {
             return {};
         }
 
-        streak->value = 0;
-        auto save_res = m_storage.save(*streak);
+        read_res->value = 0;
+        auto save_res = m_storage.save(*read_res);
 
         if (!save_res) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::reset_if_overdue(): failed to set streak: %1").arg(streak.error().message)));
+            return std::unexpected(
+                from_streak_storage(read_res.error(), "StreakService::reset_if_overdue(): failed to reset streak"));
         }
 
         dispatch(reset{});
@@ -108,37 +120,37 @@ QFuture<StreakService::Result<void>> StreakService::reset_if_overdue() {
 
 QFuture<StreakService::Result<bool>> StreakService::overdue() const {
     return QtConcurrent::run([this]() -> StreakService::Result<bool> {
-        auto streak = m_storage.read();
+        auto read_res = m_storage.read();
 
-        if (!streak) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::overdue(): failed to read streak: %1").arg(streak.error().message)));
+        if (!read_res) {
+            return std::unexpected(
+                from_streak_storage(read_res.error(), "StreakService::overdue(): failed to read streak"));
         }
 
-        return is_overdue(*streak);
+        return is_overdue(*read_res);
     });
 }
 
 
 QFuture<StreakService::Result<void>> StreakService::update() {
     return QtConcurrent::run([this]() -> StreakService::Result<void> {
-        auto streak = m_storage.read();
+        auto read_res = m_storage.read();
 
-        if (!streak) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::update(): failed to read streak: %1").arg(streak.error().message)));
+        if (!read_res) {
+            return std::unexpected(
+                from_streak_storage(read_res.error(), "StreakService::update(): failed to read streak"));
         }
 
-        if (is_updated_today(*streak)) {
+        if (is_updated_today(*read_res)) {
             return {};
         }
 
-        int  new_value = streak->value + 1;
+        int  new_value = read_res->value + 1;
         auto res = m_storage.save(core::Streak{.value = new_value, .updated_at = QDateTime::currentDateTime()});
 
         if (!res) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::update(): failed to save streak: %1").arg(streak.error().message)));
+            return std::unexpected(
+                from_streak_storage(read_res.error(), "StreakService::update(): failed to save updated streak"));
         }
 
         dispatch(updated{new_value});
@@ -149,14 +161,14 @@ QFuture<StreakService::Result<void>> StreakService::update() {
 
 QFuture<StreakService::Result<bool>> StreakService::updated_today() const {
     return QtConcurrent::run([this]() -> StreakService::Result<bool> {
-        auto streak = m_storage.read();
+        auto read_res = m_storage.read();
 
-        if (!streak) {
-            return std::unexpected(Error::internal_error(
-                QString("StreakService::updated_today(): failed to read streak: %1").arg(streak.error().message)));
+        if (!read_res) {
+            return std::unexpected(
+                from_streak_storage(read_res.error(), "StreakService::updated_today(): failed to read streak"));
         }
 
-        return is_updated_today(*streak);
+        return is_updated_today(*read_res);
     });
 }
 
