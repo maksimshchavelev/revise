@@ -273,7 +273,7 @@ std::expected<void, QString> SqlDeckStorage::update_cards(const QVector<core::Ca
         for (const core::Card& card : cards) {
             q.bindValue(":front", card.front);
             q.bindValue(":back", card.back);
-            q.bindValue(":state", card.state);
+            q.bindValue(":state", static_cast<int>(card.state));
             q.bindValue(":incorrect_streak", card.incorrect_streak);
             q.bindValue(":interval", card.interval);
             q.bindValue(":difficulty", card.difficulty);
@@ -323,7 +323,7 @@ std::expected<void, QString> SqlDeckStorage::insert_cards(const QVector<core::Ca
             q.bindValue(":deck_id", card.deck_id);
             q.bindValue(":front", card.front);
             q.bindValue(":back", card.back);
-            q.bindValue(":state", card.state);
+            q.bindValue(":state", static_cast<int>(card.state));
             q.bindValue(":difficulty", card.difficulty);
             q.bindValue(":interval", card.interval);
             q.bindValue(":next_review", card.next_review);
@@ -367,7 +367,7 @@ std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards(int deck
             core::Card card{.id = q.value("id").toInt(),
                             .deck_id = q.value("deck_id").toInt(),
                             .difficulty = q.value("difficulty").toFloat(),
-                            .state = q.value("state").toInt(),
+                            .state = static_cast<core::Card::State>(q.value("state").toInt()),
                             .incorrect_streak = q.value("incorrect_streak").toInt(),
                             .interval = q.value("interval").toInt(),
                             .next_review = q.value("next_review").toDateTime(),
@@ -402,7 +402,7 @@ std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards(const QV
                 core::Card card{.id = q.value("id").toInt(),
                                 .deck_id = q.value("deck_id").toInt(),
                                 .difficulty = q.value("difficulty").toFloat(),
-                                .state = q.value("state").toInt(),
+                                .state = static_cast<core::Card::State>(q.value("state").toInt()),
                                 .incorrect_streak = q.value("incorrect_streak").toInt(),
                                 .interval = q.value("interval").toInt(),
                                 .next_review = q.value("next_review").toDateTime(),
@@ -435,7 +435,7 @@ std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards() {
             core::Card card{.id = q.value("id").toInt(),
                             .deck_id = q.value("deck_id").toInt(),
                             .difficulty = q.value("difficulty").toFloat(),
-                            .state = q.value("state").toInt(),
+                            .state = static_cast<core::Card::State>(q.value("state").toInt()),
                             .incorrect_streak = q.value("incorrect_streak").toInt(),
                             .interval = q.value("interval").toInt(),
                             .next_review = q.value("next_review").toDateTime(),
