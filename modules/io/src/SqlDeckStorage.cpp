@@ -32,7 +32,7 @@ std::expected<void, QString> SqlDeckStorage::create_decks(const QVector<core::De
             q.bindValue(":description", deck.description);
             q.bindValue(":time_limit", deck.time_limit);
             q.bindValue(":new_limit", deck.new_limit);
-            q.bindValue(":consolidate_limit", deck.consolidate_limit);
+            q.bindValue(":consolidate_limit", deck.review_limit);
             q.bindValue(":incorrect_limit", deck.incorrect_limit);
 
             if (!q.exec()) {
@@ -84,7 +84,7 @@ std::expected<void, QString> SqlDeckStorage::update_decks(const QVector<core::De
             q.bindValue(":description", deck.description);
             q.bindValue(":time_limit", deck.time_limit);
             q.bindValue(":new_limit", deck.new_limit);
-            q.bindValue(":consolidate_limit", deck.consolidate_limit);
+            q.bindValue(":consolidate_limit", deck.review_limit);
             q.bindValue(":incorrect_limit", deck.incorrect_limit);
             q.bindValue(":id", deck.id);
 
@@ -166,7 +166,7 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks(const QV
                                 .description = q.value("description").toString(),
                                 .time_limit = q.value("time_limit").toInt(),
                                 .new_limit = q.value("new_limit").toInt(),
-                                .consolidate_limit = q.value("consolidate_limit").toInt(),
+                                .review_limit = q.value("consolidate_limit").toInt(),
                                 .incorrect_limit = q.value("incorrect_limit").toInt(),
                                 .id = q.value("id").toInt(),
                                 .global_id = q.value("global_id").toInt()};
@@ -199,7 +199,7 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks(const QV
                                 .description = q.value("description").toString(),
                                 .time_limit = q.value("time_limit").toInt(),
                                 .new_limit = q.value("new_limit").toInt(),
-                                .consolidate_limit = q.value("consolidate_limit").toInt(),
+                                .review_limit = q.value("consolidate_limit").toInt(),
                                 .incorrect_limit = q.value("incorrect_limit").toInt(),
                                 .id = q.value("id").toInt(),
                                 .global_id = q.value("global_id").toInt()};
@@ -231,7 +231,7 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks() {
                             .description = q.value("description").toString(),
                             .time_limit = q.value("time_limit").toInt(),
                             .new_limit = q.value("new_limit").toInt(),
-                            .consolidate_limit = q.value("consolidate_limit").toInt(),
+                            .review_limit = q.value("consolidate_limit").toInt(),
                             .incorrect_limit = q.value("incorrect_limit").toInt(),
                             .id = q.value("id").toInt(),
                             .global_id = q.value("global_id").toInt()};

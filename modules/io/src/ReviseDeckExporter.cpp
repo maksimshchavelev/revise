@@ -79,7 +79,7 @@ std::expected<void, QString> ReviseDeckExporter::export_to_file(const core::Expo
     q.bindValue(":description", data.deck.description);
     q.bindValue(":time_limit", data.deck.time_limit);
     q.bindValue(":new_limit", data.deck.new_limit);
-    q.bindValue(":consolidate_limit", data.deck.consolidate_limit);
+    q.bindValue(":consolidate_limit", data.deck.review_limit);
     q.bindValue(":incorrect_limit", data.deck.incorrect_limit);
 
     if (!q.exec()) {

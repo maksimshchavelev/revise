@@ -112,7 +112,7 @@ void DeckService::import_deck_async(const QString& path) {
                                                                         .description = import_res->deck_description,
                                                                         .time_limit = 0,
                                                                         .new_limit = 30,
-                                                                        .consolidate_limit = 30,
+                                                                        .review_limit = 30,
                                                                         .incorrect_limit = 30}});
                 !res) {
                 dispatch(import_failed{QString("Could not create deck with name: %1").arg(import_res->deck_name)});
@@ -135,7 +135,7 @@ void DeckService::import_deck_async(const QString& path) {
                                                                     .description = import_res->deck_description,
                                                                     .time_limit = import_res->time_limit,
                                                                     .new_limit = import_res->new_limit,
-                                                                    .consolidate_limit = import_res->consolidate_limit,
+                                                                    .review_limit = import_res->consolidate_limit,
                                                                     .incorrect_limit = import_res->incorrect_limit,
                                                                     .id = deck_id}});
             !res) {
@@ -378,7 +378,7 @@ std::expected<QVector<core::DeckSummary>, QString> DeckService::deck_summaries()
 
         core::DeckSummary s{.deck = deck,
                             .new_cards = qMin(deck.new_limit, study_info->new_cards),
-                            .consolidate_cards = qMin(deck.consolidate_limit, study_info->consolidate_cards),
+                            .consolidate_cards = qMin(deck.review_limit, study_info->consolidate_cards),
                             .incorrect_cards = qMin(deck.incorrect_limit, study_info->incorrect_cards)};
 
         summaries.push_back(std::move(s));

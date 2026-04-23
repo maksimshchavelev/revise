@@ -42,7 +42,7 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
 
     auto consolidate_cards = filtered_cards                                                         //
                              | std::views::filter([](const auto& card) { return card.state == 1; }) //
-                             | std::views::take(deck_info->first().consolidate_limit);              //
+                             | std::views::take(deck_info->first().review_limit);              //
 
     auto incorrect_cards = filtered_cards                                                         //
                            | std::views::filter([](const auto& card) { return card.state == 2; }) //

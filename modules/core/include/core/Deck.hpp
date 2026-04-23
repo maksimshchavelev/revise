@@ -16,7 +16,7 @@ struct Deck {
     id_type global_id{0};         ///< Global ID
     int     time_limit{0};        ///< Time limit for response
     int     new_limit{0};         ///< Limit on the number of new cards during training
-    int     consolidate_limit{0}; ///< Limit on the number of reviewed cards during training
+    int     review_limit{0}; ///< Limit on the number of reviewed cards during training
     int     incorrect_limit{0};   ///< Limit on the number of incorrect cards during training
 
     bool operator==(const Deck& other) const noexcept = default;
