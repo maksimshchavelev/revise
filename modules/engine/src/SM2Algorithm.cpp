@@ -19,7 +19,7 @@ core::AlgorithmResult SM2Algorithm::process_answer(const core::Card& old_card, f
 
     if (user_difficulty >= FAILURE_THRESHOLD) {
         // The user made a mistake
-        r.updated_card.state = 2; // incorrect
+        r.updated_card.state = core::Card::State::Incorrent;
         r.updated_card.incorrect_streak += 1;
 
         r.updated_card.difficulty =
@@ -29,9 +29,9 @@ core::AlgorithmResult SM2Algorithm::process_answer(const core::Card& old_card, f
     } else {
         // The answer is considered successful
         if (r.updated_card.incorrect_streak > 0 && r.updated_card.difficulty > 2.5) {
-            r.updated_card.state = 2; // still difficult
+            r.updated_card.state = core::Card::State::Incorrent;
         } else {
-            r.updated_card.state = 1;
+            r.updated_card.state = core::Card::State::Review;
             r.updated_card.incorrect_streak = 0;
         }
 
