@@ -378,7 +378,7 @@ std::expected<QVector<core::DeckSummary>, QString> DeckService::deck_summaries()
 
         core::DeckSummary s{.deck = deck,
                             .new_cards = qMin(deck.new_limit, study_info->new_cards),
-                            .consolidate_cards = qMin(deck.review_limit, study_info->consolidate_cards),
+                            .review_cards = qMin(deck.review_limit, study_info->consolidate_cards),
                             .incorrect_cards = qMin(deck.incorrect_limit, study_info->incorrect_cards)};
 
         summaries.push_back(std::move(s));

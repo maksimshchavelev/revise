@@ -43,11 +43,11 @@ QVariant DecksModel::data(const QModelIndex& index, int role) const {
     case NewCardsRole:
         return deck.new_cards;
     case ConsolidateCardsRole:
-        return deck.consolidate_cards;
+        return deck.review_cards;
     case IncorrectCardsRole:
         return deck.incorrect_cards;
     case RepeatableToday:
-        return deck.new_cards > 0 || deck.consolidate_cards > 0 || deck.incorrect_cards > 0;
+        return deck.new_cards > 0 || deck.review_cards > 0 || deck.incorrect_cards > 0;
     case IsSpecialRole:
         return index.row() == 0;
     default:
@@ -78,8 +78,8 @@ void DecksModel::update() {
 
     if (res) {
         std::sort(res->begin(), res->end(), [](const core::DeckSummary& deck1, const core::DeckSummary& deck2) {
-            return deck1.new_cards + deck1.consolidate_cards + deck1.incorrect_cards >
-                   deck2.new_cards + deck2.consolidate_cards + deck2.incorrect_cards;
+            return deck1.new_cards + deck1.review_cards + deck1.incorrect_cards >
+                   deck2.new_cards + deck2.review_cards + deck2.incorrect_cards;
         });
 
         m_decks.clear();
