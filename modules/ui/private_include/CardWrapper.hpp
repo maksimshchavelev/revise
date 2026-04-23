@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include <QObject>                            // for Q_GADGET
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT
 #include <core/Card.hpp>                      // for core::Card
 #include <core/Property.hpp>                  // for PROPERTY macro for getters and setters
