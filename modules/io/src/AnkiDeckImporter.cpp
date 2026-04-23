@@ -123,11 +123,11 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
 
         res.cards.push_back(core::Card{.id = 0,      // not taken into account
                                        .deck_id = 0, // not taken into account
-                                       .state = 0,   // new
+                                       .difficulty = 2.5f,
+                                       .state = core::Card::State::New, // new
                                        .incorrect_streak = 0,
                                        .interval = 0,
                                        .time_limit = 0, // not taken into account
-                                       .difficulty = 2.5f,
                                        .next_review = QDateTime::currentDateTime(),
                                        .created_at = QDateTime::currentDateTime(),
                                        .updated_at = QDateTime::currentDateTime(),
