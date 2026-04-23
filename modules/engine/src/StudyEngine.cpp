@@ -36,17 +36,19 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
         fetched_cards.value() //
         | std::views::filter([](const auto& card) { return card.next_review <= QDateTime::currentDateTime(); });
 
-    auto new_cards = filtered_cards                                                         //
-                     | std::views::filter([](const auto& card) { return card.state == 0; }) //
-                     | std::views::take(deck_info->first().new_limit);                      //
+    auto new_cards = filtered_cards                                                                              //
+                     | std::views::filter([](const auto& card) { return card.state == core::Card::State::New; }) //
+                     | std::views::take(deck_info->first().new_limit);                                           //
 
-    auto consolidate_cards = filtered_cards                                                         //
-                             | std::views::filter([](const auto& card) { return card.state == 1; }) //
-                             | std::views::take(deck_info->first().review_limit);              //
+    auto consolidate_cards =
+        filtered_cards                                                                                 //
+        | std::views::filter([](const auto& card) { return card.state == core::Card::State::Review; }) //
+        | std::views::take(deck_info->first().review_limit);                                           //
 
-    auto incorrect_cards = filtered_cards                                                         //
-                           | std::views::filter([](const auto& card) { return card.state == 2; }) //
-                           | std::views::take(deck_info->first().incorrect_limit);                //
+    auto incorrect_cards =
+        filtered_cards                                                                                    //
+        | std::views::filter([](const auto& card) { return card.state == core::Card::State::Incorrent; }) //
+        | std::views::take(deck_info->first().incorrect_limit);                                           //
 
     for (const auto& card : new_cards) {
         m_cards.emplaceBack(std::move(card));
@@ -154,15 +156,15 @@ std::expected<core::IStudyEngine::StudyInfo, QString> StudyEngine::get_study_inf
 
     // Count
     int new_cards = std::count_if(filtered_cards.begin(), filtered_cards.end(), [](const auto& card) {
-        return card.state == 0; //
+        return card.state == core::Card::State::New; //
     });
 
     int consolidate_cards = std::count_if(filtered_cards.begin(), filtered_cards.end(), [](const auto& card) {
-        return card.state == 1; //
+        return card.state == core::Card::State::Review; //
     });
 
     int incorrect_cards = std::count_if(filtered_cards.begin(), filtered_cards.end(), [](const auto& card) {
-        return card.state == 2; //
+        return card.state == core::Card::State::Incorrent; //
     });
 
     return core::IStudyEngine::StudyInfo{
