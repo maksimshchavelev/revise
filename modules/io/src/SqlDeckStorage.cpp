@@ -164,12 +164,12 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks(const QV
             while (q.next()) {
                 core::Deck deck{.name = q.value("name").toString(),
                                 .description = q.value("description").toString(),
+                                .id = q.value("id").toInt(),
+                                .global_id = q.value("global_id").toInt(),
                                 .time_limit = q.value("time_limit").toInt(),
                                 .new_limit = q.value("new_limit").toInt(),
                                 .review_limit = q.value("consolidate_limit").toInt(),
-                                .incorrect_limit = q.value("incorrect_limit").toInt(),
-                                .id = q.value("id").toInt(),
-                                .global_id = q.value("global_id").toInt()};
+                                .incorrect_limit = q.value("incorrect_limit").toInt()};
 
                 result.push_back(std::move(deck));
             }
@@ -197,12 +197,12 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks(const QV
             while (q.next()) {
                 core::Deck deck{.name = q.value("name").toString(),
                                 .description = q.value("description").toString(),
+                                .id = q.value("id").toInt(),
+                                .global_id = q.value("global_id").toInt(),
                                 .time_limit = q.value("time_limit").toInt(),
                                 .new_limit = q.value("new_limit").toInt(),
                                 .review_limit = q.value("consolidate_limit").toInt(),
-                                .incorrect_limit = q.value("incorrect_limit").toInt(),
-                                .id = q.value("id").toInt(),
-                                .global_id = q.value("global_id").toInt()};
+                                .incorrect_limit = q.value("incorrect_limit").toInt()};
 
                 result.push_back(std::move(deck));
             }
@@ -229,12 +229,12 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks() {
         while (q.next()) {
             core::Deck deck{.name = q.value("name").toString(),
                             .description = q.value("description").toString(),
+                            .id = q.value("id").toInt(),
+                            .global_id = q.value("global_id").toInt(),
                             .time_limit = q.value("time_limit").toInt(),
                             .new_limit = q.value("new_limit").toInt(),
                             .review_limit = q.value("consolidate_limit").toInt(),
-                            .incorrect_limit = q.value("incorrect_limit").toInt(),
-                            .id = q.value("id").toInt(),
-                            .global_id = q.value("global_id").toInt()};
+                            .incorrect_limit = q.value("incorrect_limit").toInt()};
 
             result.push_back(std::move(deck));
         }
@@ -366,10 +366,10 @@ std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards(int deck
         while (q.next()) {
             core::Card card{.id = q.value("id").toInt(),
                             .deck_id = q.value("deck_id").toInt(),
+                            .difficulty = q.value("difficulty").toFloat(),
                             .state = q.value("state").toInt(),
                             .incorrect_streak = q.value("incorrect_streak").toInt(),
                             .interval = q.value("interval").toInt(),
-                            .difficulty = q.value("difficulty").toFloat(),
                             .next_review = q.value("next_review").toDateTime(),
                             .created_at = q.value("created_at").toDateTime(),
                             .updated_at = q.value("updated_at").toDateTime(),
@@ -401,10 +401,10 @@ std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards(const QV
             while (q.next()) {
                 core::Card card{.id = q.value("id").toInt(),
                                 .deck_id = q.value("deck_id").toInt(),
+                                .difficulty = q.value("difficulty").toFloat(),
                                 .state = q.value("state").toInt(),
                                 .incorrect_streak = q.value("incorrect_streak").toInt(),
                                 .interval = q.value("interval").toInt(),
-                                .difficulty = q.value("difficulty").toFloat(),
                                 .next_review = q.value("next_review").toDateTime(),
                                 .created_at = q.value("created_at").toDateTime(),
                                 .updated_at = q.value("updated_at").toDateTime(),
@@ -434,10 +434,10 @@ std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards() {
         while (q.next()) {
             core::Card card{.id = q.value("id").toInt(),
                             .deck_id = q.value("deck_id").toInt(),
+                            .difficulty = q.value("difficulty").toFloat(),
                             .state = q.value("state").toInt(),
                             .incorrect_streak = q.value("incorrect_streak").toInt(),
                             .interval = q.value("interval").toInt(),
-                            .difficulty = q.value("difficulty").toFloat(),
                             .next_review = q.value("next_review").toDateTime(),
                             .created_at = q.value("created_at").toDateTime(),
                             .updated_at = q.value("updated_at").toDateTime(),
