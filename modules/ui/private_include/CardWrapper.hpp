@@ -26,6 +26,14 @@ struct CardWrapper {
     Q_PROPERTY(QString front READ front WRITE set_front NOTIFY updated)
     Q_PROPERTY(QString back READ back WRITE set_back NOTIFY updated)
 
+    enum class State {
+        New = static_cast<int>(core::Card::State::New),
+        Review = static_cast<int>(core::Card::State::Review),
+        Incorrect = static_cast<int>(core::Card::State::Incorrent)
+    };
+
+    Q_ENUM(State)
+
   public:
     CardWrapper() = default;
 
@@ -47,11 +55,18 @@ struct CardWrapper {
         return *this;
     }
 
+    State state() const noexcept {
+        return static_cast<State>(m_card.state);
+    }
+
+    void set_state(State state) noexcept {
+        m_card.state = static_cast<core::Card::State>(state);
+    }
+
     PROPERTY(id, m_card.id);
     PROPERTY(global_id, m_card.global_id)
     PROPERTY(deck_id, m_card.deck_id)
     PROPERTY(difficulty, m_card.difficulty)
-    PROPERTY(state, m_card.state)
     PROPERTY(incorrect_streak, m_card.incorrect_streak)
     PROPERTY(interval, m_card.interval)
     PROPERTY(time_limit, m_card.time_limit)
