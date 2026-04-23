@@ -133,11 +133,11 @@ void DeckService::import_deck_async(const QString& path) {
         // Update deck parameters
         if (auto res = m_deps.deck_storage.update_decks({core::Deck{.name = import_res->deck_name,
                                                                     .description = import_res->deck_description,
+                                                                    .id = deck_id,
                                                                     .time_limit = import_res->time_limit,
                                                                     .new_limit = import_res->new_limit,
                                                                     .review_limit = import_res->consolidate_limit,
-                                                                    .incorrect_limit = import_res->incorrect_limit,
-                                                                    .id = deck_id}});
+                                                                    .incorrect_limit = import_res->incorrect_limit}});
             !res) {
             dispatch(import_failed{QString("Failed to update deck, cause: %1").arg(res.error())});
         }
