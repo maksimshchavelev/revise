@@ -92,7 +92,7 @@ class IDeckService : public Notifiable {
         int     new_limit{0};
         int     review_limit{0};
         int     incorrect_limit{0};
-        float   time_limit{0.0f};
+        int     time_limit{0};
     };
 
     /// @brief Used as a draft for the card to be created
