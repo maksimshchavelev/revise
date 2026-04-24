@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include <core/IStreakService.hpp> // for core::IStreakService
-#include <core/IStreakStorage.hpp> // for core::IStreakStorage
+#include <core/IStreakService.hpp>         // for core::IStreakService
+#include <core/storage/IStreakStorage.hpp> // for core::IStreakStorage
 
 namespace engine {
 

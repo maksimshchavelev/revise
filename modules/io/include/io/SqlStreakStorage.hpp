@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "Database.hpp"                 // for Database
-#include "DatabaseExecutionContext.hpp" // for DatabaseExecutionContext
-#include <core/IStreakStorage.hpp>      // for core::IStreakStorage
+#include "Database.hpp"                    // for Database
+#include "DatabaseExecutionContext.hpp"    // for DatabaseExecutionContext
+#include <core/storage/IStreakStorage.hpp> // for core::IStreakStorage
 
 namespace io {
 
