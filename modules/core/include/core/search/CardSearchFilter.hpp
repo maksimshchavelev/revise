@@ -23,20 +23,20 @@ struct CardSearchFilter {
 
 /// @brief Card filter chain (helper struct)
 struct CardFilterChain final : public CardSearchFilter {
-    std::vector<std::unique_ptr<CardSearchFilter>> chain;
+    std::vector<std::shared_ptr<CardSearchFilter>> chain;
 
     CardFilterChain() = default;
 
     template <typename Filter>
         requires(!std::is_same_v<CardFilterChain, std::decay_t<Filter>>)
     CardFilterChain(Filter&& filter) {
-        chain.push_back(std::make_unique<std::decay_t<Filter>>(std::forward<Filter>(filter)));
+        chain.push_back(std::make_shared<std::decay_t<Filter>>(std::forward<Filter>(filter)));
     }
 
     template <typename Filter>
         requires std::is_base_of_v<CardSearchFilter, std::decay_t<Filter>>
     CardFilterChain& add(Filter&& filter) {
-        chain.push_back(std::make_unique<std::decay_t<Filter>>(std::forward<Filter>(filter)));
+        chain.push_back(std::make_shared<std::decay_t<Filter>>(std::forward<Filter>(filter)));
         return *this;
     }
 };
