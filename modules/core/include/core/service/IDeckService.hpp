@@ -110,10 +110,12 @@ class IDeckService : public Notifiable {
     EVENT(deck_create_failed, Error error) ///< Failed to create deck
     EVENT(deck_update_failed, Error error) ///< Failed to update deck
     EVENT(deck_remove_failed, Error error) ///< Failed to remove deck
+    EVENT(deck_fetch_failed, Error error)  ///< Failed to fetch deck
 
     EVENT(card_create_failed, Error error) ///< Failed to create card
     EVENT(card_update_failed, Error error) ///< Failed to update card
     EVENT(card_remove_failed, Error error) ///< Failed to remove card
+    EVENT(card_fetch_failed, Error error)  ///< Failed to fetch card
 
     EVENT(import_finished) ///< Import finished with success or failure
     EVENT(export_finished) ///< Export finished with success or failure
