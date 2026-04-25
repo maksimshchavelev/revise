@@ -168,10 +168,11 @@ class IDeckService : public Notifiable {
 
     /**
      * @brief Create a card
+     * @param deck_id Deck ID
      * @param card Card
      * @note Emits `card_created` event if success
      */
-    virtual QFuture<Result<void>> create_card(const CreateCardDraft& card) = 0;
+    virtual QFuture<Result<void>> create_card(Deck::id_type deck_id, const CreateCardDraft& card) = 0;
 
     /**
      * @brief Fetch card
@@ -189,10 +190,11 @@ class IDeckService : public Notifiable {
 
     /**
      * @brief Update card
+     * @param deck_id Deck ID
      * @param card Card
      * @note Emits `card_updated` event if success
      */
-    virtual QFuture<Result<void>> update_card(const UpdateCardDraft& card) = 0;
+    virtual QFuture<Result<void>> update_card(Deck::id_type deck_id, const UpdateCardDraft& card) = 0;
 
     /**
      * @brief Get information about each deck
