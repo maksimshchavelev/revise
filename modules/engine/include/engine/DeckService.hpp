@@ -2,16 +2,18 @@
 
 #pragma once
 
-#include <atomic>                     // for std::atomic_bool
-#include <core/IDeckExporter.hpp>     // for core::IDeckExporter
-#include <core/IDeckImporter.hpp>     // for core::IDeckImporter
-#include <core/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
-#include <core/IDeckService.hpp>      // for core::IDeckService
-#include <core/IDeckStorage.hpp>      // for core::IDeckStorage
-#include <core/IStudyEngine.hpp>      // for core::IStudyEngine
+#include <atomic>                        // for std::atomic_bool
+#include <core/IDeckExporter.hpp>        // for core::IDeckExporter
+#include <core/IDeckImporter.hpp>        // for core::IDeckImporter
+#include <core/IDeckMediaStorage.hpp>    // for core::IDeckMediaStorage
+#include <core/IStudyEngine.hpp>         // for core::IStudyEngine
+#include <core/search/ISearchEngine.hpp> // for core::ISearchEngine
+#include <core/service/IDeckService.hpp> // for core::IDeckService
+#include <core/storage/IDeckStorage.hpp> // for core::IDeckStorage
 
 namespace engine {
 
+/// @brief `DeckService` dependencies
 struct DeckServiceDeps {
     core::IDeckStorage&      deck_storage;
     core::IDeckMediaStorage& deck_media_storage;
@@ -30,47 +32,47 @@ class DeckService final : public core::IDeckService {
     DeckService(DeckServiceDeps deps);
 
     /// @copydoc core::IDeckService::create_deck
-    std::expected<void, QString> create_deck(const core::Deck& deck) override;
+    QFuture<Result<void>> create_deck(const DeckDraft& deck) override;
 
     /// @copydoc core::IDeckService::remove_deck
-    std::expected<void, QString> remove_deck(int deck_id) override;
+    QFuture<Result<void>> remove_deck(core::Deck::id_type deck_id) override;
 
-    /// @copydoc core::IDeckService::import_deck_async
-    void import_deck_async(const QString& path) override;
+    /// @copydoc core::IDeckService::import_deck
+    QFuture<Result<void>> import_deck(const QString& path) override;
 
-    /// @copydoc core::IDeckService::export_deck_async
-    void export_deck_async(int deck_id, const QString& path) override;
+    /// @copydoc core::IDeckService::export_deck
+    QFuture<Result<void>> export_deck(core::Deck::id_type deck_id, const QString& path) override;
 
     /// @copydoc core::IDeckService::deck
-    std::expected<core::Deck, QString> deck(int deck_id) override;
+    QFuture<Result<core::Deck>> deck(core::Deck::id_type deck_id) const override;
 
     /// @copydoc core::IDeckService::update_deck
-    std::expected<void, QString> update_deck(const core::Deck& deck) override;
+    QFuture<Result<void>> update_deck(core::Deck::id_type deck_id, const DeckDraft& deck) override;
 
     /// @copydoc core::IDeckService::create_card
-    std::expected<void, QString> create_card(const core::Card& card) override;
+    QFuture<Result<void>> create_card(core::Deck::id_type deck_id, const CreateCardDraft& card) override;
 
     /// @copydoc core::IDeckService::card
-    std::expected<core::Card, QString> card(int id) override;
+    QFuture<Result<core::Card>> card(core::Card::id_type id) const override;
 
     /// @copydoc core::IDeckService::remove_card
-    std::expected<void, QString> remove_card(int id) override;
+    QFuture<core::IDeckService::Result<void>> remove_card(core::Card::id_type id) override;
 
     /// @copydoc core::IDeckService::update_card
-    std::expected<void, QString> update_card(const core::Card& card) override;
+    QFuture<Result<void>> update_card(core::Deck::id_type deck_id, const UpdateCardDraft& card) override;
 
     /// @copydoc core::IDeckService::deck_summaries
-    std::expected<QVector<core::DeckSummary>, QString> deck_summaries() override;
+    QFuture<Result<QVector<core::DeckSummary>>> deck_summaries() const override;
 
     /// @copydoc core::IDeckService::cards
-    std::expected<QVector<core::Card>, QString> cards(int deck_id) override;
+    QFuture<Result<QVector<core::Card>>> cards(core::Deck::id_type deck_id) const override;
 
     /// @copydoc core::IDeckService::search_cards
-    std::expected<QVector<core::Card>, core::SearchError> search_cards(const core::CardFilterChain& filters) override;
+    QFuture<Result<QVector<core::Card>>> search_cards(const core::CardFilterChain& filters) const override;
 
   private:
-    /// @brief Adjusts the card's parameters to the desired range (for example, normalizes the difficulty on a scale from 0 to 5)
-    core::Card normalize_card(const core::Card& card);
+    /// @brief Map storage error to service error
+    Error from_storage_error(const core::IDeckStorage::Error& error, QString message) const;
 
     DeckServiceDeps m_deps;
 
