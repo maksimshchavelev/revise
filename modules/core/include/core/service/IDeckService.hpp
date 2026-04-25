@@ -186,7 +186,7 @@ class IDeckService : public Notifiable {
      * @param id ID of the card
      * @note Emits `card_removed` event if success
      */
-    virtual std::expected<void, QString> remove_card(Card::id_type id) = 0;
+    virtual QFuture<Result<void>> remove_card(Card::id_type id) = 0;
 
     /**
      * @brief Update card
