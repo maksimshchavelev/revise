@@ -17,18 +17,6 @@ namespace core {
  */
 class IDeckService : public Notifiable {
   public:
-    EVENT(deck_created, Deck deck)      ///< Deck created. Stores created deck
-    EVENT(deck_removed, Deck deck)      ///< Deck removed. Stores removed deck
-    EVENT(deck_updated, Deck deck)      ///< Deck updated
-    EVENT(import_finished)              ///< Import finished with success or failure
-    EVENT(deck_imported, Deck deck)     ///< Deck imported (upon successful import). Stores imported deck
-    EVENT(export_finished)              ///< Export finished with success or failure
-    EVENT(deck_exported, Deck deck)     ///< Deck exported (upon successful export). Stores exported deck
-    EVENT(card_created, Card card)      ///< Card created. Stores created card
-    EVENT(card_removed, Card card)      ///< Card removed. Stores removed card
-    EVENT(import_failed, QString error) ///< Import failed
-    EVENT(export_failed, QString error) ///< Export failed
-
     /// @brief Stores IDeckService error
     struct Error {
         enum class Kind {
@@ -106,6 +94,29 @@ class IDeckService : public Notifiable {
         float difficulty{0.0f};
     };
 
+    EVENT(deck_created, Deck deck)  ///< Deck created. Stores created deck
+    EVENT(deck_removed, Deck deck)  ///< Deck removed. Stores removed deck
+    EVENT(deck_updated, Deck deck)  ///< Deck updated
+    EVENT(deck_imported, Deck deck) ///< Deck imported (upon successful import). Stores imported deck
+    EVENT(deck_exported, Deck deck) ///< Deck exported (upon successful export). Stores exported deck
+
+    EVENT(card_created, Card card) ///< Card created. Stores created card
+    EVENT(card_removed, Card card) ///< Card removed. Stores removed card
+    EVENT(card_updated, Card card) ///< Card updated. Stores updated card
+
+    EVENT(import_failed, Error error) ///< Import failed
+    EVENT(export_failed, Error error) ///< Export failed
+
+    EVENT(deck_create_failed, Error error) ///< Failed to create deck
+    EVENT(deck_update_failed, Error error) ///< Failed to update deck
+    EVENT(deck_remove_failed, Error error) ///< Failed to remove deck
+
+    EVENT(card_create_failed, Error error) ///< Failed to create card
+    EVENT(card_update_failed, Error error) ///< Failed to update card
+    EVENT(card_remove_failed, Error error) ///< Failed to remove card
+
+    EVENT(import_finished) ///< Import finished with success or failure
+    EVENT(export_finished) ///< Export finished with success or failure
 
     virtual ~IDeckService() = default;
 
