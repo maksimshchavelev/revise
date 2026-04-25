@@ -202,7 +202,7 @@ class Notifiable {
      * @tparam Event Event type
      * @param event The event instance to dispatch
      */
-    template <typename Event> void dispatch(Event&& event) {
+    template <typename Event> void dispatch(Event&& event) const {
         using CleanEvent = std::remove_cvref_t<Event>;
         for (const auto& slot : m_slots[key<CleanEvent>()]) {
             slot(&event);
