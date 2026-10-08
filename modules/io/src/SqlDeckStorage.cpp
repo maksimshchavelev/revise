@@ -1,178 +1,340 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "io/SqlDeckStorage.hpp" // for SqlDeckStorage
+#include "SqlCodes.hpp"          // for SQL error codes
 #include <QSqlError>             // for QSqlError
 #include <QSqlQuery>             // for QSqlQuery
+#include <QStringList>           // for QStringList
 
 namespace io {
 
 SqlDeckStorage::SqlDeckStorage(Database& db, DatabaseExecutionContext& context) : m_db(db), m_context(context) {}
 
 
-std::expected<void, QString> SqlDeckStorage::create_decks(const QVector<core::Deck>& decks) {
-    return m_context.exec([this, &decks]() -> std::expected<void, QString> {
-        const bool need_transaction = decks.size() > 1;
-
-        if (need_transaction) {
-            if (!m_db.begin_transaction()) {
-                return std::unexpected(
-                    QString("Failed to begin decks insertion transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::create_decks(const QVector<core::Deck>& decks) {
+    return m_context.exec([this, &decks]() -> Result<QVector<core::Deck>> {
+        if (decks.isEmpty()) {
+            return {};
         }
+
+        QString query_string = R"(
+            INSERT INTO decks (
+                name,
+                description,
+                time_limit,
+                new_limit,
+                consolidate_limit,
+                incorrect_limit
+            )
+            VALUES
+        )";
+
+        QStringList values;
+        values.reserve(decks.size());
+
+        for (qsizetype i = 0; i < decks.size(); ++i) {
+            values.push_back(QString("(%1, %2, %3, %4, %5, %6)")
+                                 .arg(QString(":name_%1").arg(i),
+                                      QString(":description_%1").arg(i),
+                                      QString(":time_limit_%1").arg(i),
+                                      QString(":new_limit_%1").arg(i),
+                                      QString(":consolidate_limit_%1").arg(i),
+                                      QString(":incorrect_limit_%1").arg(i)));
+        }
+
+        query_string += values.join(",\n");
+        query_string += R"(
+            RETURNING
+                id,
+                name,
+                description,
+                time_limit,
+                new_limit,
+                consolidate_limit,
+                incorrect_limit
+        )";
 
         QSqlQuery q(m_db.raw_db());
 
-        q.prepare(R"(
-            INSERT INTO decks (name, description, time_limit, new_limit, consolidate_limit, incorrect_limit)
-            VALUES (:name, :description, :time_limit, :new_limit, :consolidate_limit, :incorrect_limit)
-        )");
-
-        for (const auto& deck : decks) {
-            q.bindValue(":name", deck.name);
-            q.bindValue(":description", deck.description);
-            q.bindValue(":time_limit", deck.time_limit);
-            q.bindValue(":new_limit", deck.new_limit);
-            q.bindValue(":consolidate_limit", deck.review_limit);
-            q.bindValue(":incorrect_limit", deck.incorrect_limit);
-
-            if (!q.exec()) {
-                if (need_transaction) {
-                    m_db.rollback_transaction();
-                }
-                return std::unexpected(q.lastError().text());
-            }
+        if (!q.prepare(query_string)) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::create_decks(): failed to prepare query");
+            return std::unexpected(error);
         }
 
-        if (need_transaction) {
-            if (!m_db.commit_transaction()) {
-                return std::unexpected(
-                    QString("Failed to commit decks insertion transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+        for (qsizetype i = 0; i < decks.size(); ++i) {
+            const auto& deck = decks[i];
+
+            q.bindValue(QString(":name_%1").arg(i), deck.name);
+            q.bindValue(QString(":description_%1").arg(i), deck.description);
+            q.bindValue(QString(":time_limit_%1").arg(i), deck.time_limit);
+            q.bindValue(QString(":new_limit_%1").arg(i), deck.new_limit);
+            q.bindValue(QString(":consolidate_limit_%1").arg(i), deck.review_limit);
+            q.bindValue(QString(":incorrect_limit_%1").arg(i), deck.incorrect_limit);
         }
 
-        return {};
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::create_decks(): failed to insert decks");
+            return std::unexpected(error);
+        }
+
+        QVector<core::Deck> created_decks;
+        created_decks.reserve(decks.size());
+
+        while (q.next()) {
+            core::Deck created_deck;
+
+            created_deck.id = q.value("id").toInt();
+            created_deck.name = q.value("name").toString();
+            created_deck.description = q.value("description").toString();
+            created_deck.time_limit = q.value("time_limit").toInt();
+            created_deck.new_limit = q.value("new_limit").toInt();
+            created_deck.review_limit = q.value("consolidate_limit").toInt();
+            created_deck.incorrect_limit = q.value("incorrect_limit").toInt();
+
+            created_decks.push_back(std::move(created_deck));
+        }
+
+        return created_decks;
     });
 }
 
 
-std::expected<void, QString> SqlDeckStorage::update_decks(const QVector<core::Deck>& decks) {
-    return m_context.exec([this, &decks]() -> std::expected<void, QString> {
-        const bool need_transaction = decks.size() > 1;
-
-        if (need_transaction) {
-            if (!m_db.begin_transaction()) {
-                return std::unexpected(
-                    QString("Failed to begin decks updating transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::update_decks(const QVector<core::Deck>& decks) {
+    return m_context.exec([this, &decks]() -> Result<QVector<core::Deck>> {
+        if (decks.isEmpty()) {
+            return {};
         }
+
+        QString query_string = R"(
+            WITH input (
+                id,
+                name,
+                description,
+                time_limit,
+                new_limit,
+                consolidate_limit,
+                incorrect_limit
+            ) AS (
+                VALUES
+        )";
+
+        QStringList values;
+        values.reserve(decks.size());
+
+        for (qsizetype i = 0; i < decks.size(); ++i) {
+            values.push_back(QString("(%1, %2, %3, %4, %5, %6, %7)")
+                                 .arg(QString(":id_%1").arg(i),
+                                      QString(":name_%1").arg(i),
+                                      QString(":description_%1").arg(i),
+                                      QString(":time_limit_%1").arg(i),
+                                      QString(":new_limit_%1").arg(i),
+                                      QString(":consolidate_limit_%1").arg(i),
+                                      QString(":incorrect_limit_%1").arg(i)));
+        }
+
+        query_string += values.join(",\n");
+        query_string += R"(
+            )
+            UPDATE decks
+            SET
+                name = (SELECT input.name
+                        FROM input
+                        WHERE input.id = decks.id),
+                description = (SELECT input.description
+                               FROM input
+                               WHERE input.id = decks.id),
+                time_limit = (SELECT input.time_limit
+                              FROM input
+                              WHERE input.id = decks.id),
+                new_limit = (SELECT input.new_limit
+                             FROM input
+                             WHERE input.id = decks.id),
+                consolidate_limit = (SELECT input.consolidate_limit
+                                     FROM input
+                                     WHERE input.id = decks.id),
+                incorrect_limit = (SELECT input.incorrect_limit
+                                   FROM input
+                                   WHERE input.id = decks.id)
+            WHERE id IN (SELECT id FROM input)
+            RETURNING
+                id,
+                name,
+                description,
+                time_limit,
+                new_limit,
+                consolidate_limit,
+                incorrect_limit
+        )";
 
         QSqlQuery q(m_db.raw_db());
 
-        q.prepare(R"(
-            UPDATE decks SET
-                name = :name,
-                description = :description,
-                time_limit = :time_limit,
-                new_limit = :new_limit,
-                consolidate_limit = :consolidate_limit,
-                incorrect_limit = :incorrect_limit
-            WHERE id = :id
-        )");
-
-        for (const auto& deck : decks) {
-            q.bindValue(":name", deck.name);
-            q.bindValue(":description", deck.description);
-            q.bindValue(":time_limit", deck.time_limit);
-            q.bindValue(":new_limit", deck.new_limit);
-            q.bindValue(":consolidate_limit", deck.review_limit);
-            q.bindValue(":incorrect_limit", deck.incorrect_limit);
-            q.bindValue(":id", deck.id);
-
-            if (!q.exec()) {
-                if (need_transaction) {
-                    m_db.rollback_transaction();
-                }
-                return std::unexpected(q.lastError().text());
-            }
+        if (!q.prepare(query_string)) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::update_decks(): failed to prepare query");
+            return std::unexpected(error);
         }
 
+        for (qsizetype i = 0; i < decks.size(); ++i) {
+            const auto& deck = decks[i];
 
-        if (need_transaction) {
-            if (!m_db.commit_transaction()) {
-                return std::unexpected(
-                    QString("Failed to commit decks updating transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+            q.bindValue(QString(":id_%1").arg(i), deck.id);
+            q.bindValue(QString(":name_%1").arg(i), deck.name);
+            q.bindValue(QString(":description_%1").arg(i), deck.description);
+            q.bindValue(QString(":time_limit_%1").arg(i), deck.time_limit);
+            q.bindValue(QString(":new_limit_%1").arg(i), deck.new_limit);
+            q.bindValue(QString(":consolidate_limit_%1").arg(i), deck.review_limit);
+            q.bindValue(QString(":incorrect_limit_%1").arg(i), deck.incorrect_limit);
         }
 
-        return {};
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::update_decks(): failed to update decks");
+            return std::unexpected(error);
+        }
+
+        QVector<core::Deck> updated_decks;
+        updated_decks.reserve(decks.size());
+
+        while (q.next()) {
+            core::Deck updated_deck;
+
+            updated_deck.id = q.value("id").toInt();
+            updated_deck.name = q.value("name").toString();
+            updated_deck.description = q.value("description").toString();
+            updated_deck.time_limit = q.value("time_limit").toInt();
+            updated_deck.new_limit = q.value("new_limit").toInt();
+            updated_deck.review_limit = q.value("consolidate_limit").toInt();
+            updated_deck.incorrect_limit = q.value("incorrect_limit").toInt();
+
+            updated_decks.push_back(std::move(updated_deck));
+        }
+
+        return updated_decks;
     });
 }
 
 
-std::expected<void, QString> SqlDeckStorage::delete_decks(const QVector<int>& ids) {
-    return m_context.exec([this, &ids]() -> std::expected<void, QString> {
-        const bool need_transaction = ids.size() > 1;
-
-        if (need_transaction) {
-            if (!m_db.begin_transaction()) {
-                return std::unexpected(
-                    QString("Failed to begin decks deletion transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::remove_decks(const QVector<core::Deck::id_type>& ids) {
+    return m_context.exec([this, &ids]() -> Result<QVector<core::Deck>> {
+        if (ids.isEmpty()) {
+            return {};
         }
+
+        QStringList placeholders;
+        placeholders.reserve(ids.size());
+
+        for (qsizetype i = 0; i < ids.size(); ++i) {
+            placeholders.push_back(QString(":id_%1").arg(i));
+        }
+
+        const QString query_string = QString(R"(
+            DELETE FROM decks
+            WHERE id IN (%1)
+            RETURNING
+                id,
+                name,
+                description,
+                time_limit,
+                new_limit,
+                consolidate_limit,
+                incorrect_limit
+        )")
+                                         .arg(placeholders.join(", "));
 
         QSqlQuery q(m_db.raw_db());
 
-        q.prepare("DELETE FROM decks WHERE id = :id");
-
-        for (const int id : ids) {
-            q.bindValue(":id", id);
-
-            if (!q.exec()) {
-                if (need_transaction) {
-                    m_db.rollback_transaction();
-                }
-                return std::unexpected(q.lastError().text());
-            }
+        if (!q.prepare(query_string)) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::remove_decks(): failed to prepare query");
+            return std::unexpected(error);
         }
 
-        if (need_transaction) {
-            if (!m_db.commit_transaction()) {
-                return std::unexpected(
-                    QString("Failed to commit decks deletion transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+        for (qsizetype i = 0; i < ids.size(); ++i) {
+            q.bindValue(QString(":id_%1").arg(i), ids[i]);
         }
 
-        return {};
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::remove_decks(): failed to remove decks");
+            return std::unexpected(error);
+        }
+
+        QVector<core::Deck> removed_decks;
+        removed_decks.reserve(ids.size());
+
+        while (q.next()) {
+            core::Deck removed_deck;
+
+            removed_deck.id = q.value("id").toInt();
+            removed_deck.name = q.value("name").toString();
+            removed_deck.description = q.value("description").toString();
+            removed_deck.time_limit = q.value("time_limit").toInt();
+            removed_deck.new_limit = q.value("new_limit").toInt();
+            removed_deck.review_limit = q.value("consolidate_limit").toInt();
+            removed_deck.incorrect_limit = q.value("incorrect_limit").toInt();
+
+            removed_decks.push_back(std::move(removed_deck));
+        }
+
+        return removed_decks;
     });
 }
 
 
-std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks(const QVector<int>& ids) {
-    return m_context.exec([this, &ids]() -> std::expected<QVector<core::Deck>, QString> {
+core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::fetch_decks(const QVector<core::Deck::id_type>& ids) const {
+    return m_context.exec([this, &ids]() -> Result<QVector<core::Deck>> {
+        if (ids.isEmpty()) {
+            return {};
+        }
+
+        QStringList placeholders;
+        placeholders.reserve(ids.size());
+
+        for (qsizetype i = 0; i < ids.size(); ++i) {
+            placeholders.push_back(QString(":id_%1").arg(i));
+        }
+
+        const QString query_string = QString(R"(
+            SELECT
+                id,
+                global_id,
+                name,
+                description,
+                time_limit,
+                new_limit,
+                consolidate_limit,
+                incorrect_limit
+            FROM decks
+            WHERE id IN (%1)
+        )")
+                                         .arg(placeholders.join(", "));
+
+        QSqlQuery q(m_db.raw_db());
+
+        if (!q.prepare(query_string)) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_decks(): failed to prepare query");
+            return std::unexpected(error);
+        }
+
+        for (qsizetype i = 0; i < ids.size(); ++i) {
+            q.bindValue(QString(":id_%1").arg(i), ids[i]);
+        }
+
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_decks(): failed to fetch decks");
+            return std::unexpected(error);
+        }
+
         QVector<core::Deck> result;
-        QSqlQuery           q(m_db.raw_db());
+        result.reserve(ids.size());
 
-        q.prepare("SELECT * FROM decks WHERE id = :id");
+        while (q.next()) {
+            core::Deck deck{.name = q.value("name").toString(),
+                            .description = q.value("description").toString(),
+                            .id = q.value("id").toInt(),
+                            .global_id = q.value("global_id").toInt(),
+                            .time_limit = q.value("time_limit").toInt(),
+                            .new_limit = q.value("new_limit").toInt(),
+                            .review_limit = q.value("consolidate_limit").toInt(),
+                            .incorrect_limit = q.value("incorrect_limit").toInt()};
 
-        for (const int id : ids) {
-            q.bindValue(":id", id);
-
-            if (!q.exec()) {
-                return std::unexpected(QString("Failed to fetch decks by id's, cause: %1").arg(q.lastError().text()));
-            }
-
-            while (q.next()) {
-                core::Deck deck{.name = q.value("name").toString(),
-                                .description = q.value("description").toString(),
-                                .id = q.value("id").toInt(),
-                                .global_id = q.value("global_id").toInt(),
-                                .time_limit = q.value("time_limit").toInt(),
-                                .new_limit = q.value("new_limit").toInt(),
-                                .review_limit = q.value("consolidate_limit").toInt(),
-                                .incorrect_limit = q.value("incorrect_limit").toInt()};
-
-                result.push_back(std::move(deck));
-            }
+            result.push_back(std::move(deck));
         }
 
         return result;
@@ -180,50 +342,32 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks(const QV
 }
 
 
-std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks(const QVector<QString>& names) {
-    return m_context.exec([this, &names]() -> std::expected<QVector<core::Deck>, QString> {
-        QVector<core::Deck> result;
-        QSqlQuery           q(m_db.raw_db());
-
-        q.prepare("SELECT * FROM decks WHERE name = :name");
-
-        for (const auto& name : names) {
-            q.bindValue(":name", name);
-
-            if (!q.exec()) {
-                return std::unexpected(QString("Failed to fetch decks by names, cause: %1").arg(q.lastError().text()));
-            }
-
-            while (q.next()) {
-                core::Deck deck{.name = q.value("name").toString(),
-                                .description = q.value("description").toString(),
-                                .id = q.value("id").toInt(),
-                                .global_id = q.value("global_id").toInt(),
-                                .time_limit = q.value("time_limit").toInt(),
-                                .new_limit = q.value("new_limit").toInt(),
-                                .review_limit = q.value("consolidate_limit").toInt(),
-                                .incorrect_limit = q.value("incorrect_limit").toInt()};
-
-                result.push_back(std::move(deck));
-            }
-        }
-
-        return result;
-    });
-}
-
-
-std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks() {
-    return m_context.exec([this]() -> std::expected<QVector<core::Deck>, QString> {
+core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::fetch_decks() const {
+    return m_context.exec([this]() -> Result<QVector<core::Deck>> {
         QVector<core::Deck> result;
         QSqlQuery           q(m_db.raw_db());
 
         result.reserve(256);
 
-        q.prepare("SELECT * FROM decks");
+        if (!q.prepare(R"(
+            SELECT
+                id,
+                global_id,
+                name,
+                description,
+                time_limit,
+                new_limit,
+                consolidate_limit,
+                incorrect_limit
+            FROM decks
+        )")) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_decks(): failed to prepare query");
+            return std::unexpected(error);
+        }
 
         if (!q.exec()) {
-            return std::unexpected(QString("Failed to fetch decks by names, cause: %1").arg(q.lastError().text()));
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_decks(): failed to fetch decks");
+            return std::unexpected(error);
         }
 
         while (q.next()) {
@@ -244,123 +388,273 @@ std::expected<QVector<core::Deck>, QString> SqlDeckStorage::fetch_decks() {
 }
 
 
-std::expected<void, QString> SqlDeckStorage::update_cards(const QVector<core::Card>& cards) {
-    return m_context.exec([this, &cards]() -> std::expected<void, QString> {
-        const bool need_transaction = cards.size() > 1;
-
-        if (need_transaction) {
-            if (!m_db.begin_transaction()) {
-                return std::unexpected(
-                    QString("Failed to begin cards updating transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+core::IDeckStorage::Result<QVector<core::Card>> SqlDeckStorage::update_cards(const QVector<core::Card>& cards) {
+    return m_context.exec([this, &cards]() -> Result<QVector<core::Card>> {
+        if (cards.isEmpty()) {
+            return {};
         }
+
+        QString query_string = R"(
+            WITH input (
+                id,
+                front,
+                back,
+                state,
+                incorrect_streak,
+                interval,
+                difficulty,
+                next_review,
+                updated_at
+            ) AS (
+                VALUES
+        )";
+
+        QStringList values;
+        values.reserve(cards.size());
+
+        for (qsizetype i = 0; i < cards.size(); ++i) {
+            values.push_back(QString("(%1, %2, %3, %4, %5, %6, %7, %8, %9)")
+                                 .arg(QString(":id_%1").arg(i),
+                                      QString(":front_%1").arg(i),
+                                      QString(":back_%1").arg(i),
+                                      QString(":state_%1").arg(i),
+                                      QString(":incorrect_streak_%1").arg(i),
+                                      QString(":interval_%1").arg(i),
+                                      QString(":difficulty_%1").arg(i),
+                                      QString(":next_review_%1").arg(i),
+                                      QString(":updated_at_%1").arg(i)));
+        }
+
+        query_string += values.join(",\n");
+        query_string += R"(
+            )
+            UPDATE cards
+            SET
+                front = (SELECT input.front
+                         FROM input
+                         WHERE input.id = cards.id),
+                back = (SELECT input.back
+                        FROM input
+                        WHERE input.id = cards.id),
+                state = (SELECT input.state
+                         FROM input
+                         WHERE input.id = cards.id),
+                incorrect_streak = (SELECT input.incorrect_streak
+                                    FROM input
+                                    WHERE input.id = cards.id),
+                interval = (SELECT input.interval
+                            FROM input
+                            WHERE input.id = cards.id),
+                difficulty = (SELECT input.difficulty
+                              FROM input
+                              WHERE input.id = cards.id),
+                next_review = (SELECT input.next_review
+                               FROM input
+                               WHERE input.id = cards.id),
+                updated_at = (SELECT input.updated_at
+                              FROM input
+                              WHERE input.id = cards.id)
+            WHERE id IN (SELECT id FROM input)
+            RETURNING
+                id,
+                deck_id,
+                front,
+                back,
+                state,
+                difficulty,
+                interval,
+                next_review,
+                incorrect_streak,
+                created_at,
+                updated_at
+        )";
 
         QSqlQuery q(m_db.raw_db());
 
-        q.prepare(R"(
-            UPDATE cards SET
-                front = :front,
-                back = :back,
-                state = :state,
-                incorrect_streak = :incorrect_streak,
-                interval = :interval,
-                difficulty = :difficulty,
-                next_review = :next_review,
-                updated_at = :updated_at
-            WHERE id = :id
-        )");
-
-        for (const core::Card& card : cards) {
-            q.bindValue(":front", card.front);
-            q.bindValue(":back", card.back);
-            q.bindValue(":state", static_cast<int>(card.state));
-            q.bindValue(":incorrect_streak", card.incorrect_streak);
-            q.bindValue(":interval", card.interval);
-            q.bindValue(":difficulty", card.difficulty);
-            q.bindValue(":next_review", card.next_review);
-            q.bindValue(":updated_at", card.updated_at);
-            q.bindValue(":id", card.id);
-
-            if (!q.exec()) {
-                if (need_transaction) {
-                    m_db.rollback_transaction();
-                }
-                return std::unexpected(q.lastError().text());
-            }
+        if (!q.prepare(query_string)) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::update_cards(): failed to prepare query");
+            return std::unexpected(error);
         }
 
-        if (need_transaction) {
-            if (!m_db.commit_transaction()) {
-                return std::unexpected(
-                    QString("Failed to commit cards updating transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+        for (qsizetype i = 0; i < cards.size(); ++i) {
+            const auto& card = cards[i];
+
+            q.bindValue(QString(":id_%1").arg(i), card.id);
+            q.bindValue(QString(":front_%1").arg(i), card.front);
+            q.bindValue(QString(":back_%1").arg(i), card.back);
+            q.bindValue(QString(":state_%1").arg(i), static_cast<int>(card.state));
+            q.bindValue(QString(":incorrect_streak_%1").arg(i), card.incorrect_streak);
+            q.bindValue(QString(":interval_%1").arg(i), card.interval);
+            q.bindValue(QString(":difficulty_%1").arg(i), card.difficulty);
+            q.bindValue(QString(":next_review_%1").arg(i), card.next_review);
+            q.bindValue(QString(":updated_at_%1").arg(i), card.updated_at);
         }
 
-        return {};
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::update_cards(): failed to update cards");
+            return std::unexpected(error);
+        }
+
+        QVector<core::Card> updated_cards;
+        updated_cards.reserve(cards.size());
+
+        while (q.next()) {
+            core::Card updated_card{.id = q.value("id").toInt(),
+                                    .deck_id = q.value("deck_id").toInt(),
+                                    .difficulty = q.value("difficulty").toFloat(),
+                                    .state = static_cast<core::Card::State>(q.value("state").toInt()),
+                                    .incorrect_streak = q.value("incorrect_streak").toInt(),
+                                    .interval = q.value("interval").toInt(),
+                                    .next_review = q.value("next_review").toDateTime(),
+                                    .created_at = q.value("created_at").toDateTime(),
+                                    .updated_at = q.value("updated_at").toDateTime(),
+                                    .front = q.value("front").toString(),
+                                    .back = q.value("back").toString()};
+
+            updated_cards.push_back(std::move(updated_card));
+        }
+
+        return updated_cards;
     });
 }
 
 
-std::expected<void, QString> SqlDeckStorage::insert_cards(const QVector<core::Card>& cards) {
-    return m_context.exec([this, &cards]() -> std::expected<void, QString> {
-        const bool need_transaction = cards.size() > 1;
-
-        if (need_transaction) {
-            if (!m_db.begin_transaction()) {
-                return std::unexpected(
-                    QString("Failed to begin cards insertion transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+core::IDeckStorage::Result<QVector<core::Card>> SqlDeckStorage::create_cards(const QVector<core::Card>& cards) {
+    return m_context.exec([this, &cards]() -> Result<QVector<core::Card>> {
+        if (cards.isEmpty()) {
+            return {};
         }
+
+        QString query_string = R"(
+            INSERT INTO cards (
+                deck_id,
+                front,
+                back,
+                state,
+                difficulty,
+                interval,
+                next_review,
+                incorrect_streak,
+                created_at,
+                updated_at
+            )
+            VALUES
+        )";
+
+        QStringList values;
+        values.reserve(cards.size());
+
+        for (qsizetype i = 0; i < cards.size(); ++i) {
+            values.push_back(QString("(%1, %2, %3, %4, %5, %6, %7, %8, %9, %10)")
+                                 .arg(QString(":deck_id_%1").arg(i),
+                                      QString(":front_%1").arg(i),
+                                      QString(":back_%1").arg(i),
+                                      QString(":state_%1").arg(i),
+                                      QString(":difficulty_%1").arg(i),
+                                      QString(":interval_%1").arg(i),
+                                      QString(":next_review_%1").arg(i),
+                                      QString(":incorrect_streak_%1").arg(i),
+                                      QString(":created_at_%1").arg(i),
+                                      QString(":updated_at_%1").arg(i)));
+        }
+
+        query_string += values.join(",\n");
+        query_string += R"(
+            RETURNING
+                id,
+                deck_id,
+                front,
+                back,
+                state,
+                difficulty,
+                interval,
+                next_review,
+                incorrect_streak,
+                created_at,
+                updated_at
+        )";
 
         QSqlQuery q(m_db.raw_db());
 
-        q.prepare(R"(
-            INSERT INTO cards (deck_id, front, back, state, difficulty, interval, next_review, incorrect_streak, created_at, updated_at)
-            VALUES (:deck_id, :front, :back, :state, :difficulty, :interval, :next_review, :incorrect_streak, :created_at, :updated_at)
-        )");
-
-        for (const core::Card& card : cards) {
-            q.bindValue(":deck_id", card.deck_id);
-            q.bindValue(":front", card.front);
-            q.bindValue(":back", card.back);
-            q.bindValue(":state", static_cast<int>(card.state));
-            q.bindValue(":difficulty", card.difficulty);
-            q.bindValue(":interval", card.interval);
-            q.bindValue(":next_review", card.next_review);
-            q.bindValue(":incorrect_streak", card.incorrect_streak);
-            q.bindValue(":created_at", card.created_at);
-            q.bindValue(":updated_at", card.updated_at);
-
-            if (!q.exec()) {
-                if (need_transaction) {
-                    m_db.rollback_transaction();
-                }
-                return std::unexpected(q.lastError().text());
-            }
+        if (!q.prepare(query_string)) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::create_cards(): failed to prepare query");
+            return std::unexpected(error);
         }
 
-        if (need_transaction) {
-            if (!m_db.commit_transaction()) {
-                return std::unexpected(
-                    QString("Failed to commit cards insertion transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+        for (qsizetype i = 0; i < cards.size(); ++i) {
+            const auto& card = cards[i];
+
+            q.bindValue(QString(":deck_id_%1").arg(i), card.deck_id);
+            q.bindValue(QString(":front_%1").arg(i), card.front);
+            q.bindValue(QString(":back_%1").arg(i), card.back);
+            q.bindValue(QString(":state_%1").arg(i), static_cast<int>(card.state));
+            q.bindValue(QString(":difficulty_%1").arg(i), card.difficulty);
+            q.bindValue(QString(":interval_%1").arg(i), card.interval);
+            q.bindValue(QString(":next_review_%1").arg(i), card.next_review);
+            q.bindValue(QString(":incorrect_streak_%1").arg(i), card.incorrect_streak);
+            q.bindValue(QString(":created_at_%1").arg(i), card.created_at);
+            q.bindValue(QString(":updated_at_%1").arg(i), card.updated_at);
         }
 
-        return {};
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::create_cards(): failed to insert cards");
+            return std::unexpected(error);
+        }
+
+        QVector<core::Card> created_cards;
+        created_cards.reserve(cards.size());
+
+        while (q.next()) {
+            core::Card created_card{.id = q.value("id").toInt(),
+                                    .deck_id = q.value("deck_id").toInt(),
+                                    .difficulty = q.value("difficulty").toFloat(),
+                                    .state = static_cast<core::Card::State>(q.value("state").toInt()),
+                                    .incorrect_streak = q.value("incorrect_streak").toInt(),
+                                    .interval = q.value("interval").toInt(),
+                                    .next_review = q.value("next_review").toDateTime(),
+                                    .created_at = q.value("created_at").toDateTime(),
+                                    .updated_at = q.value("updated_at").toDateTime(),
+                                    .front = q.value("front").toString(),
+                                    .back = q.value("back").toString()};
+
+            created_cards.push_back(std::move(created_card));
+        }
+
+        return created_cards;
     });
 }
 
 
-std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards(int deck_id) {
-    return m_context.exec([this, deck_id]() -> std::expected<QVector<core::Card>, QString> {
+core::IDeckStorage::Result<QVector<core::Card>> SqlDeckStorage::fetch_cards(core::Deck::id_type deck_id) const {
+    return m_context.exec([this, deck_id]() -> Result<QVector<core::Card>> {
         QVector<core::Card> result;
         QSqlQuery           q(m_db.raw_db());
 
-        q.prepare("SELECT * FROM cards WHERE deck_id = :deck_id");
+        if (!q.prepare(R"(
+            SELECT
+                id,
+                deck_id,
+                front,
+                back,
+                state,
+                difficulty,
+                interval,
+                next_review,
+                incorrect_streak,
+                created_at,
+                updated_at
+            FROM cards
+            WHERE deck_id = :deck_id
+        )")) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_cards(): failed to prepare query");
+            return std::unexpected(error);
+        }
+
         q.bindValue(":deck_id", deck_id);
 
         if (!q.exec()) {
-            return std::unexpected(QString("Failed to fetch cards by deck ids, cause: %1").arg(q.lastError().text()));
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_cards(): failed to fetch cards");
+            return std::unexpected(error);
         }
 
         while (q.next()) {
@@ -384,109 +678,233 @@ std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards(int deck
 }
 
 
-std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards(const QVector<int>& ids) {
-    return m_context.exec([this, &ids]() -> std::expected<QVector<core::Card>, QString> {
-        QVector<core::Card> result;
-        QSqlQuery           q(m_db.raw_db());
-
-        q.prepare("SELECT * FROM cards WHERE id = :id");
-
-        for (const int id : ids) {
-            q.bindValue(":id", id);
-
-            if (!q.exec()) {
-                return std::unexpected(QString("Failed to fetch cards by ids, cause: %1").arg(q.lastError().text()));
-            }
-
-            while (q.next()) {
-                core::Card card{.id = q.value("id").toInt(),
-                                .deck_id = q.value("deck_id").toInt(),
-                                .difficulty = q.value("difficulty").toFloat(),
-                                .state = static_cast<core::Card::State>(q.value("state").toInt()),
-                                .incorrect_streak = q.value("incorrect_streak").toInt(),
-                                .interval = q.value("interval").toInt(),
-                                .next_review = q.value("next_review").toDateTime(),
-                                .created_at = q.value("created_at").toDateTime(),
-                                .updated_at = q.value("updated_at").toDateTime(),
-                                .front = q.value("front").toString(),
-                                .back = q.value("back").toString()};
-
-                result.push_back(std::move(card));
-            }
+core::IDeckStorage::Result<QVector<core::Card>> SqlDeckStorage::fetch_cards(const QVector<core::Card::id_type>& ids) const {
+    return m_context.exec([this, &ids]() -> Result<QVector<core::Card>> {
+        if (ids.isEmpty()) {
+            return {};
         }
 
-        return result;
-    });
-}
+        QStringList placeholders;
+        placeholders.reserve(ids.size());
 
-
-std::expected<QVector<core::Card>, QString> SqlDeckStorage::fetch_cards() {
-    return m_context.exec([this]() -> std::expected<QVector<core::Card>, QString> {
-        QVector<core::Card> result;
-        QSqlQuery           q(m_db.raw_db());
-
-        q.prepare("SELECT * FROM cards");
-
-        if (!q.exec()) {
-            return std::unexpected(QString("Failed to fetch all cards, cause: %1").arg(q.lastError().text()));
+        for (qsizetype i = 0; i < ids.size(); ++i) {
+            placeholders.push_back(QString(":id_%1").arg(i));
         }
 
-        while (q.next()) {
-            core::Card card{.id = q.value("id").toInt(),
-                            .deck_id = q.value("deck_id").toInt(),
-                            .difficulty = q.value("difficulty").toFloat(),
-                            .state = static_cast<core::Card::State>(q.value("state").toInt()),
-                            .incorrect_streak = q.value("incorrect_streak").toInt(),
-                            .interval = q.value("interval").toInt(),
-                            .next_review = q.value("next_review").toDateTime(),
-                            .created_at = q.value("created_at").toDateTime(),
-                            .updated_at = q.value("updated_at").toDateTime(),
-                            .front = q.value("front").toString(),
-                            .back = q.value("back").toString()};
-
-            result.push_back(std::move(card));
-        }
-
-        return result;
-    });
-}
-
-
-std::expected<void, QString> SqlDeckStorage::remove_cards(const QVector<int>& ids) {
-    return m_context.exec([this, &ids]() -> std::expected<void, QString> {
-        const bool need_transaction = ids.size() > 1;
-
-        if (need_transaction) {
-            if (!m_db.begin_transaction()) {
-                return std::unexpected(
-                    QString("Failed to begin cards deletion transaction, cause: %1").arg(m_db.last_error_text()));
-            }
-        }
+        const QString query_string = QString(R"(
+            SELECT
+                id,
+                deck_id,
+                front,
+                back,
+                state,
+                difficulty,
+                interval,
+                next_review,
+                incorrect_streak,
+                created_at,
+                updated_at
+            FROM cards
+            WHERE id IN (%1)
+        )")
+                                         .arg(placeholders.join(", "));
 
         QSqlQuery q(m_db.raw_db());
 
-        q.prepare("DELETE FROM cards WHERE id = :id");
-
-        for (const int id : ids) {
-            q.bindValue(":id", id);
-
-            if (!q.exec()) {
-                if (need_transaction) {
-                    m_db.rollback_transaction();
-                }
-                return std::unexpected(q.lastError().text());
-            }
+        if (!q.prepare(query_string)) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_cards(): failed to prepare query");
+            return std::unexpected(error);
         }
 
-        if (need_transaction) {
-            if (!m_db.commit_transaction()) {
-                return std::unexpected(
-                    QString("Failed to commit cards deletion transaction, cause: %1").arg(m_db.last_error_text()));
-            }
+        for (qsizetype i = 0; i < ids.size(); ++i) {
+            q.bindValue(QString(":id_%1").arg(i), ids[i]);
         }
 
-        return {};
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_cards(): failed to fetch cards");
+            return std::unexpected(error);
+        }
+
+        QVector<core::Card> result;
+        result.reserve(ids.size());
+
+        while (q.next()) {
+            core::Card card{.id = q.value("id").toInt(),
+                            .deck_id = q.value("deck_id").toInt(),
+                            .difficulty = q.value("difficulty").toFloat(),
+                            .state = static_cast<core::Card::State>(q.value("state").toInt()),
+                            .incorrect_streak = q.value("incorrect_streak").toInt(),
+                            .interval = q.value("interval").toInt(),
+                            .next_review = q.value("next_review").toDateTime(),
+                            .created_at = q.value("created_at").toDateTime(),
+                            .updated_at = q.value("updated_at").toDateTime(),
+                            .front = q.value("front").toString(),
+                            .back = q.value("back").toString()};
+
+            result.push_back(std::move(card));
+        }
+
+        return result;
     });
+}
+
+
+core::IDeckStorage::Result<QVector<core::Card>> SqlDeckStorage::fetch_cards() const {
+    return m_context.exec([this]() -> Result<QVector<core::Card>> {
+        QVector<core::Card> result;
+        QSqlQuery           q(m_db.raw_db());
+
+        if (!q.prepare(R"(
+            SELECT
+                id,
+                deck_id,
+                front,
+                back,
+                state,
+                difficulty,
+                interval,
+                next_review,
+                incorrect_streak,
+                created_at,
+                updated_at
+            FROM cards
+        )")) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_cards(): failed to prepare query");
+            return std::unexpected(error);
+        }
+
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::fetch_cards(): failed to fetch all cards");
+            return std::unexpected(error);
+        }
+
+        while (q.next()) {
+            core::Card card{.id = q.value("id").toInt(),
+                            .deck_id = q.value("deck_id").toInt(),
+                            .difficulty = q.value("difficulty").toFloat(),
+                            .state = static_cast<core::Card::State>(q.value("state").toInt()),
+                            .incorrect_streak = q.value("incorrect_streak").toInt(),
+                            .interval = q.value("interval").toInt(),
+                            .next_review = q.value("next_review").toDateTime(),
+                            .created_at = q.value("created_at").toDateTime(),
+                            .updated_at = q.value("updated_at").toDateTime(),
+                            .front = q.value("front").toString(),
+                            .back = q.value("back").toString()};
+
+            result.push_back(std::move(card));
+        }
+
+        return result;
+    });
+}
+
+
+core::IDeckStorage::Result<QVector<core::Card>> SqlDeckStorage::remove_cards(const QVector<core::Card::id_type>& ids) {
+    return m_context.exec([this, &ids]() -> Result<QVector<core::Card>> {
+        if (ids.isEmpty()) {
+            return {};
+        }
+
+        QStringList placeholders;
+        placeholders.reserve(ids.size());
+
+        for (qsizetype i = 0; i < ids.size(); ++i) {
+            placeholders.push_back(QString(":id_%1").arg(i));
+        }
+
+        const QString query_string = QString(R"(
+            DELETE FROM cards
+            WHERE id IN (%1)
+            RETURNING
+                id,
+                deck_id,
+                front,
+                back,
+                state,
+                difficulty,
+                interval,
+                next_review,
+                incorrect_streak,
+                created_at,
+                updated_at
+        )")
+                                         .arg(placeholders.join(", "));
+
+        QSqlQuery q(m_db.raw_db());
+
+        if (!q.prepare(query_string)) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::remove_cards(): failed to prepare query");
+            return std::unexpected(error);
+        }
+
+        for (qsizetype i = 0; i < ids.size(); ++i) {
+            q.bindValue(QString(":id_%1").arg(i), ids[i]);
+        }
+
+        if (!q.exec()) {
+            auto error = from_sql_error(q.lastError(), "SqlDeckStorage::remove_cards(): failed to remove cards");
+            return std::unexpected(error);
+        }
+
+        QVector<core::Card> removed_cards;
+        removed_cards.reserve(ids.size());
+
+        while (q.next()) {
+            core::Card removed_card{.id = q.value("id").toInt(),
+                                    .deck_id = q.value("deck_id").toInt(),
+                                    .difficulty = q.value("difficulty").toFloat(),
+                                    .state = static_cast<core::Card::State>(q.value("state").toInt()),
+                                    .incorrect_streak = q.value("incorrect_streak").toInt(),
+                                    .interval = q.value("interval").toInt(),
+                                    .next_review = q.value("next_review").toDateTime(),
+                                    .created_at = q.value("created_at").toDateTime(),
+                                    .updated_at = q.value("updated_at").toDateTime(),
+                                    .front = q.value("front").toString(),
+                                    .back = q.value("back").toString()};
+
+            removed_cards.push_back(std::move(removed_card));
+        }
+
+        return removed_cards;
+    });
+}
+
+
+core::IDeckStorage::Error SqlDeckStorage::from_sql_error(const QSqlError& error, const QString& message) {
+    bool      ok;
+    const int code = error.nativeErrorCode().toInt(&ok);
+
+    if (!ok) {
+        return Error{.kind = Error::Kind::Unknown, .message = QString("%1: %2").arg(message, error.text())};
+    }
+
+    switch (code) {
+    case SQLITE_CONSTRAINT_UNIQUE:
+    case SQLITE_CONSTRAINT_PRIMARYKEY:
+        return Error{.kind = Error::Kind::AlreadyExists, .message = QString("%1: %2").arg(message, error.text())};
+
+    case SQLITE_CONSTRAINT_FOREIGNKEY:
+    case SQLITE_CONSTRAINT_NOTNULL:
+    case SQLITE_CONSTRAINT_CHECK:
+    case SQLITE_MISMATCH:
+    case SQLITE_RANGE:
+        return Error{.kind = Error::Kind::InvalidArgument, .message = QString("%1: %2").arg(message, error.text())};
+
+    case SQLITE_PERM:
+    case SQLITE_READONLY:
+        return Error{.kind = Error::Kind::PermissionDenied, .message = QString("%1: %2").arg(message, error.text())};
+
+    case SQLITE_BUSY:
+    case SQLITE_BUSY_TIMEOUT:
+    case SQLITE_LOCKED:
+    case SQLITE_IOERR:
+    case SQLITE_FULL:
+    case SQLITE_CANTOPEN:
+        return Error{.kind = Error::Kind::Unavailable, .message = QString("%1: %2").arg(message, error.text())};
+
+    default:
+        return Error{.kind = Error::Kind::Unknown, .message = QString("%1: %2").arg(message, error.text())};
+    }
 }
 
 } // namespace io
