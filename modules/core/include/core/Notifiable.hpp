@@ -204,8 +204,11 @@ class Notifiable {
      */
     template <typename Event> void dispatch(Event&& event) const {
         using CleanEvent = std::remove_cvref_t<Event>;
-        for (const auto& slot : m_slots[key<CleanEvent>()]) {
-            slot(&event);
+
+        if (const auto it = m_slots.find(key<CleanEvent>())) {
+            for (const auto& slot : it) {
+                slot(&event);
+            }
         }
     }
 
@@ -216,8 +219,7 @@ class Notifiable {
     /// Map of signal types to connected slots
     std::unordered_map<QString /* event name */, QVector<ErasedSlot> /* slots */> m_slots;
 
-    template <typename T>
-    static QString key() {
+    template <typename T> static QString key() {
         return typeid(T).name();
     }
 };
@@ -230,8 +232,8 @@ class Notifiable {
  * @param name Event name
  * @param ... optional fields (types + names) for the signal
  */
-#define EVENT(name, ...)                                                                                               \
-  public:                                                                                                              \
-    struct name {                                                                                                      \
-        __VA_ARGS__;                                                                                                   \
+#define EVENT(name, ...)                                                                                                         \
+  public:                                                                                                                        \
+    struct name {                                                                                                                \
+        __VA_ARGS__;                                                                                                             \
     };\
