@@ -1,4 +1,4 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
@@ -9,10 +9,8 @@
 
 namespace ui {
 
-/**
- * @brief Wrapper over core::Deck, visible from QML
- */
-struct Deck final : core::Deck {
+/// @brief Wrapper over core::Deck, visible from QML
+struct DeckWrapper final : core::Deck {
     Q_GADGET
     QML_ELEMENT
 
@@ -26,31 +24,31 @@ struct Deck final : core::Deck {
     Q_PROPERTY(int globalId MEMBER global_id FINAL)
 
   public:
-    Q_INVOKABLE Deck() = default;
+    Q_INVOKABLE DeckWrapper() = default;
 
-    Q_INVOKABLE Deck(const QString& name,
+    Q_INVOKABLE DeckWrapper(const QString& name,
                      const QString& description,
-                     int            timeLimit,
-                     int            newLimit,
-                     int            consolidateLimit,
-                     int            incorrectLimit) :
-        core::Deck{name, description, timeLimit, newLimit, consolidateLimit, incorrectLimit, 0, 0} {}
+                            const int            timeLimit,
+                            const int            newLimit,
+                            const int            consolidateLimit,
+                            const int            incorrectLimit) :
+        Deck{name, description, timeLimit, newLimit, consolidateLimit, incorrectLimit, 0, 0} {}
 
-    Deck(const core::Deck& other) {
+    DeckWrapper(const Deck& other) {
         *this = other;
     }
 
     template <typename OtherDeck>
-        requires std::is_base_of_v<core::Deck, std::remove_reference_t<OtherDeck>>
-    Deck& operator=(OtherDeck&& other) {
-        core::Deck::operator=(std::forward<OtherDeck>(other));
+        requires std::is_base_of_v<Deck, std::remove_reference_t<OtherDeck>>
+    DeckWrapper& operator=(OtherDeck&& other) {
+        Deck::operator=(std::forward<OtherDeck>(other));
         return *this;
     }
 
     template <typename OtherDeck>
-        requires std::is_base_of_v<core::Deck, std::remove_reference_t<OtherDeck>>
+        requires std::is_base_of_v<Deck, std::remove_reference_t<OtherDeck>>
     bool operator==(const OtherDeck& other) const noexcept {
-        return core::Deck::operator==(other);
+        return Deck::operator==(other);
     }
 };
 
