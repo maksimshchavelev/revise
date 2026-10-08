@@ -205,8 +205,8 @@ class Notifiable {
     template <typename Event> void dispatch(Event&& event) const {
         using CleanEvent = std::remove_cvref_t<Event>;
 
-        if (const auto it = m_slots.find(key<CleanEvent>())) {
-            for (const auto& slot : it) {
+        if (const auto it = m_slots.find(key<CleanEvent>()); it != m_slots.end()) {
+            for (const auto& slot : it->second) {
                 slot(&event);
             }
         }
