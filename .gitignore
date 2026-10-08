@@ -1,6 +1,7 @@
 build
 ./build
 build/*
+.idea
 .qtcreator/
 CMakeLists.txt.user*
 revise.db
