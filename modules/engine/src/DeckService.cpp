@@ -8,56 +8,19 @@
 #include <QtConcurrentRun>        // for QtConcurrent::run
 #include <QtGlobal>               // for math
 #include <QtMinMax>               // for min / max
-#include <utils/Html.hpp>         // for html utils
+#include <utils/Html.hpp>         // for HTML utils
 #include <utils/ScopeGuard.hpp>   // for ScopeGuard
 
 namespace engine {
 
-DeckService::DeckService(DeckServiceDeps deps) : m_deps(deps) {}
+DeckService::DeckService(DeckServiceDeps deps) : m_deps{std::move(deps)} {}
 
 
 QFuture<core::IDeckService::Result<void>> DeckService::create_deck(const DeckDraft& deck) {
-    return QtConcurrent::run([this, deck]() -> core::IDeckService::Result<void> {
-        if (deck.name.isEmpty()) {
-            auto error = Error::validation_failed("DeckService::create_deck(): deck name is empty");
-
-            dispatch(deck_create_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.description.isEmpty()) {
-            auto error = Error::validation_failed("DeckService::create_deck(): deck description is empty");
-
-            dispatch(deck_create_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.new_limit < 0) {
-            auto error = Error::validation_failed("DeckService::create_deck(): deck new limit is less than 0");
-
-            dispatch(deck_create_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.review_limit < 0) {
-            auto error = Error::validation_failed("DeckService::create_deck(): deck review limit is less than 0");
-
-            dispatch(deck_create_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.incorrect_limit < 0) {
-            auto error = Error::validation_failed("DeckService::create_deck(): deck incorrect limit is less than 0");
-
-            dispatch(deck_create_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.time_limit < 0) {
-            auto error = Error::validation_failed("DeckService::create_deck(): deck time limit is less than 0");
-
-            dispatch(deck_create_failed{error});
-            return std::unexpected(error);
+    return QtConcurrent::run([this, deck]() -> Result<void> {
+        if (auto res = validate_deck_parameters(deck, "create_deck"); !res) {
+            dispatch(deck_create_failed{res.error()});
+            return res;
         }
 
         core::Deck new_deck{.name = deck.name,
@@ -91,7 +54,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::create_deck(const DeckDra
 
 
 QFuture<core::IDeckService::Result<void>> DeckService::remove_deck(core::Deck::id_type deck_id) {
-    return QtConcurrent::run([this, deck_id]() -> core::IDeckService::Result<void> {
+    return QtConcurrent::run([this, deck_id]() -> Result<void> {
         auto remove_res = m_deps.deck_storage.remove_decks({deck_id});
 
         if (!remove_res) {
@@ -103,13 +66,19 @@ QFuture<core::IDeckService::Result<void>> DeckService::remove_deck(core::Deck::i
 
         if (!remove_res->empty()) {
             auto error =
-                Error::internal_error("DeckService::create_deck(): after removing, deck storage did not return the removed deck");
+                Error::internal_error("DeckService::remove_deck(): after removing, deck storage did not return the removed deck");
 
             dispatch(deck_remove_failed{error});
             return std::unexpected(error);
         }
 
-        m_deps.deck_media_storage.remove_deck_media(deck_id);
+        if (auto res = m_deps.deck_media_storage.remove_deck_media(deck_id); !res) {
+            auto error =
+                Error::internal_error(QString("DeckService::remove_deck(): failed to remove deck media: %1").arg(res.error()));
+
+            dispatch(deck_remove_failed{error});
+            return std::unexpected(error);
+        }
 
         dispatch(deck_removed{remove_res->first()});
         return {};
@@ -118,17 +87,17 @@ QFuture<core::IDeckService::Result<void>> DeckService::remove_deck(core::Deck::i
 
 
 QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString& path) {
-    return QtConcurrent::run([this, path]() -> core::IDeckService::Result<void> {
-        if (m_import_in_progress.load()) {
+    return QtConcurrent::run([this, path]() -> Result<void> {
+        if (m_import_in_progress.load(std::memory_order_relaxed)) {
             return {};
         }
 
         utils::ScopeGuard guard(
             [this]() { // on enter
-                m_import_in_progress.store(true);
+                m_import_in_progress.store(true, std::memory_order_relaxed);
             },
             [this]() { // on exit
-                m_import_in_progress.store(false);
+                m_import_in_progress.store(false, std::memory_order_relaxed);
                 dispatch(import_finished{});
             });
 
@@ -139,7 +108,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
             // Matches ".apkg", ".zip", ".anki" etc. before optional " (n)"
             static const QRegularExpression re(R"(\.([A-Za-z0-9]+)(?:\s*\(\d+\))?$)");
 
-            auto match = re.match(filename);
+            const auto match = re.match(filename);
             if (!match.hasMatch()) {
                 return {};
             }
@@ -157,8 +126,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
         } else {
             auto error = Error::unsupported_format(
                 QString("DeckService::import_deck(): Unknown file extension: %1 (cannot select importer for file %2)")
-                    .arg(suffix)
-                    .arg(local_path));
+                    .arg(suffix, local_path));
 
             dispatch(import_failed{error});
             return std::unexpected(error);
@@ -192,7 +160,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
 
         QVector<core::Deck> exists_decks(exists_decks_filter.begin(), exists_decks_filter.end());
 
-        bool deck_exists = exists_decks.size() > 0;
+        bool deck_exists = !exists_decks.empty();
         int  deck_id{0};
 
         core::Deck deck;
@@ -237,7 +205,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
         }
 
         // Save all images
-        QMap<QString, QByteArray> images = import_res->user_data.value<QMap<QString, QByteArray>>();
+        auto images = import_res->user_data.value<QMap<QString, QByteArray>>();
         QMap<QString /* image name */, QString /* path to image */> mapped_images;
 
         for (const auto& [name, data] : images.toStdMap()) {
@@ -274,8 +242,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
 
             // update cards
             for (const auto& card : import_res->cards) {
-                auto iter = std::find_if(
-                    cards.value().begin(), cards.value().end(), [&card](const core::Card& i) { return card.front == i.front; });
+                auto iter = std::ranges::find_if(cards.value(), [&card](const core::Card& i) { return card.front == i.front; });
 
                 // if card found in database
                 if (iter != cards.value().end()) {
@@ -289,7 +256,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
                     cards_to_update.push_back(std::move(card_found));
                 } else {
                     // insert card to db
-                    core::Card new_card = std::move(card);
+                    core::Card new_card = card;
 
                     new_card.deck_id = deck_id;
 
@@ -321,22 +288,23 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
         }
 
         dispatch(deck_imported{deck});
+        return {};
     });
 }
 
 
 QFuture<core::IDeckService::Result<void>> DeckService::export_deck(core::Deck::id_type deck_id, const QString& path) {
-    return QtConcurrent::run([this, deck_id, path]() -> core::IDeckService::Result<void> {
-        if (m_export_in_progress.load()) {
+    return QtConcurrent::run([this, deck_id, path]() -> Result<void> {
+        if (m_export_in_progress.load(std::memory_order_relaxed)) {
             return {};
         }
 
         utils::ScopeGuard guard(
             [this]() { // on enter
-                m_export_in_progress.store(true);
+                m_export_in_progress.store(true, std::memory_order_relaxed);
             },
             [this]() { // on exit
-                m_export_in_progress.store(false);
+                m_export_in_progress.store(false, std::memory_order_relaxed);
                 dispatch(export_finished{});
             });
 
@@ -384,12 +352,13 @@ QFuture<core::IDeckService::Result<void>> DeckService::export_deck(core::Deck::i
         }
 
         dispatch(deck_exported{deck});
+        return {};
     });
 }
 
 
 QFuture<core::IDeckService::Result<core::Deck>> DeckService::deck(core::Deck::id_type deck_id) const {
-    return QtConcurrent::run([this, deck_id]() -> core::IDeckService::Result<core::Deck> {
+    return QtConcurrent::run([this, deck_id]() -> Result<core::Deck> {
         auto res = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id});
 
         if (!res) {
@@ -412,47 +381,10 @@ QFuture<core::IDeckService::Result<core::Deck>> DeckService::deck(core::Deck::id
 
 
 QFuture<core::IDeckService::Result<void>> DeckService::update_deck(core::Deck::id_type deck_id, const DeckDraft& deck) {
-    return QtConcurrent::run([this, deck_id, deck]() -> core::IDeckService::Result<void> {
-        if (deck.name.isEmpty()) {
-            auto error = Error::validation_failed("DeckService::update_deck(): deck name is empty");
-
-            dispatch(deck_update_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.description.isEmpty()) {
-            auto error = Error::validation_failed("DeckService::update_deck(): deck description is empty");
-
-            dispatch(deck_update_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.new_limit < 0) {
-            auto error = Error::validation_failed("DeckService::update_deck(): deck new limit is less than 0");
-
-            dispatch(deck_update_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.review_limit < 0) {
-            auto error = Error::validation_failed("DeckService::update_deck(): deck review limit is less than 0");
-
-            dispatch(deck_update_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.incorrect_limit < 0) {
-            auto error = Error::validation_failed("DeckService::update_deck(): deck incorrect limit is less than 0");
-
-            dispatch(deck_update_failed{error});
-            return std::unexpected(error);
-        }
-
-        if (deck.time_limit < 0) {
-            auto error = Error::validation_failed("DeckService::update_deck(): deck time limit is less than 0");
-
-            dispatch(deck_update_failed{error});
-            return std::unexpected(error);
+    return QtConcurrent::run([this, deck_id, deck]() -> Result<void> {
+        if (auto res = validate_deck_parameters(deck, "update_deck"); !res) {
+            dispatch(deck_update_failed{res.error()});
+            return res;
         }
 
         auto fetch_res = m_deps.deck_storage.fetch_decks({deck_id});
@@ -504,7 +436,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_deck(core::Deck::i
 
 
 QFuture<core::IDeckService::Result<void>> DeckService::create_card(core::Deck::id_type deck_id, const CreateCardDraft& card) {
-    return QtConcurrent::run([this, deck_id, card]() -> core::IDeckService::Result<void> {
+    return QtConcurrent::run([this, deck_id, card]() -> Result<void> {
         if (card.front.isEmpty()) {
             auto error = Error::validation_failed("DeckService::create_card(): card front is empty");
 
@@ -512,8 +444,22 @@ QFuture<core::IDeckService::Result<void>> DeckService::create_card(core::Deck::i
             return std::unexpected(error);
         }
 
+        if (card.front.length() > 4096) {
+            auto error = Error::validation_failed("DeckService::create_card(): card front is too long");
+
+            dispatch(card_create_failed{error});
+            return std::unexpected(error);
+        }
+
         if (card.back.isEmpty()) {
             auto error = Error::validation_failed("DeckService::create_card(): card back is empty");
+
+            dispatch(card_create_failed{error});
+            return std::unexpected(error);
+        }
+
+        if (card.back.length() > 16384) {
+            auto error = Error::validation_failed("DeckService::create_card(): card back is too long");
 
             dispatch(card_create_failed{error});
             return std::unexpected(error);
@@ -557,8 +503,8 @@ QFuture<core::IDeckService::Result<void>> DeckService::create_card(core::Deck::i
 
 
 QFuture<core::IDeckService::Result<core::Card>> DeckService::card(core::Card::id_type id) const {
-    return QtConcurrent::run([this, id]() -> core::IDeckService::Result<core::Card> {
-        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector<core::Card::id_type>{id});
+    return QtConcurrent::run([this, id]() -> Result<core::Card> {
+        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector{id});
 
         if (!fetch_res) {
             auto error = from_storage_error(fetch_res.error(), "DeckService::card(): failed to fetch card");
@@ -580,7 +526,7 @@ QFuture<core::IDeckService::Result<core::Card>> DeckService::card(core::Card::id
 
 
 QFuture<core::IDeckService::Result<void>> DeckService::remove_card(core::Card::id_type id) {
-    return QtConcurrent::run([this, id]() -> core::IDeckService::Result<void> {
+    return QtConcurrent::run([this, id]() -> Result<void> {
         auto remove_res = m_deps.deck_storage.remove_cards({id});
 
         if (!remove_res) {
@@ -605,9 +551,16 @@ QFuture<core::IDeckService::Result<void>> DeckService::remove_card(core::Card::i
 
 
 QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::id_type id, const UpdateCardDraft& card) {
-    return QtConcurrent::run([this, id, card]() -> core::IDeckService::Result<void> {
+    return QtConcurrent::run([this, id, card]() -> Result<void> {
         if (card.front.isEmpty()) {
             auto error = Error::validation_failed("DeckService::update_card(): card front is empty");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        if (card.front.length() > 4096) {
+            auto error = Error::validation_failed("DeckService::update_card(): card front is too long");
 
             dispatch(card_update_failed{error});
             return std::unexpected(error);
@@ -620,6 +573,13 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::i
             return std::unexpected(error);
         }
 
+        if (card.back.length() > 16384) {
+            auto error = Error::validation_failed("DeckService::update_card(): card back is too long");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
         if (card.difficulty < 0.0f || card.difficulty > 5.0f) {
             auto error = Error::validation_failed("DeckService::update_card(): card difficulty is out of range");
 
@@ -627,7 +587,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::i
             return std::unexpected(error);
         }
 
-        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector<core::Card::id_type>({id}));
+        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector{id});
 
         if (!fetch_res) {
             auto error = from_storage_error(fetch_res.error(), "DeckService::update_card(): failed to fetch card");
@@ -674,7 +634,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::i
 
 
 QFuture<core::IDeckService::Result<QVector<core::DeckSummary>>> DeckService::deck_summaries() const {
-    return QtConcurrent::run([this]() -> core::IDeckService::Result<QVector<core::DeckSummary>> {
+    return QtConcurrent::run([this]() -> Result<QVector<core::DeckSummary>> {
         auto decks_res = m_deps.deck_storage.fetch_decks();
 
         if (!decks_res) {
@@ -707,7 +667,7 @@ QFuture<core::IDeckService::Result<QVector<core::DeckSummary>>> DeckService::dec
 
 
 QFuture<core::IDeckService::Result<QVector<core::Card>>> DeckService::cards(core::Deck::id_type deck_id) const {
-    return QtConcurrent::run([this, deck_id]() -> core::IDeckService::Result<QVector<core::Card>> {
+    return QtConcurrent::run([this, deck_id]() -> Result<QVector<core::Card>> {
         auto fetch_res = m_deps.deck_storage.fetch_cards(deck_id);
 
         if (!fetch_res) {
@@ -723,11 +683,11 @@ QFuture<core::IDeckService::Result<QVector<core::Card>>> DeckService::cards(core
 
 
 QFuture<core::IDeckService::Result<QVector<core::Card>>> DeckService::search_cards(const core::CardFilterChain& filters) const {
-    return QtConcurrent::run([this, filters]() -> core::IDeckService::Result<QVector<core::Card>> {
+    return QtConcurrent::run([this, filters]() -> Result<QVector<core::Card>> {
         auto search_res = m_deps.search_engine.search_cards(filters);
 
         if (!search_res) {
-            auto msg = QString("DeckService::search_cards(): failed to search cards: %1").arg(search_res.error().message);
+            const auto msg = QString("DeckService::search_cards(): failed to search cards: %1").arg(search_res.error().message);
             return std::unexpected(Error::internal_error(msg));
         }
 
@@ -736,7 +696,7 @@ QFuture<core::IDeckService::Result<QVector<core::Card>>> DeckService::search_car
 }
 
 
-core::IDeckService::Error DeckService::from_storage_error(const core::IDeckStorage::Error& error, QString message) const {
+core::IDeckService::Error DeckService::from_storage_error(const core::IDeckStorage::Error& error, const QString& message) {
     switch (error.kind) {
     case core::IDeckStorage::ErrorKind::AlreadyExists:
         return Error::already_exists(QString("%1: %2").arg(message).arg(error.message));
@@ -747,6 +707,48 @@ core::IDeckService::Error DeckService::from_storage_error(const core::IDeckStora
     default:
         return Error::internal_error(QString("%1: %2").arg(message).arg(error.message));
     }
+}
+
+
+core::IDeckService::Result<void> DeckService::validate_deck_parameters(const DeckDraft& deck, const std::string_view caller) {
+    if (deck.name.isEmpty()) {
+        auto error = Error::validation_failed(QString("DeckService::%1(): deck name is empty").arg(caller));
+        return std::unexpected(error);
+    }
+
+    if (deck.name.length() > 256) {
+        auto error = Error::validation_failed(QString("DeckService::%1(): deck name is too long").arg(caller));
+        return std::unexpected(error);
+    }
+
+    if (deck.description.length() > 512) {
+        auto error = Error::validation_failed(QString("DeckService::%1(): deck description is too long").arg(caller));
+        return std::unexpected(error);
+    }
+
+    if (deck.new_limit <= 0) {
+        auto error = Error::validation_failed(QString("DeckService::%1(): deck new limit is less than 0 or equal 0").arg(caller));
+        return std::unexpected(error);
+    }
+
+    if (deck.review_limit <= 0) {
+        auto error =
+            Error::validation_failed(QString("DeckService::%1(): deck review limit is less than 0 or equal 0").arg(caller));
+        return std::unexpected(error);
+    }
+
+    if (deck.incorrect_limit <= 0) {
+        auto error =
+            Error::validation_failed(QString("DeckService::%1(): deck incorrect limit is less than 0 or equal 0").arg(caller));
+        return std::unexpected(error);
+    }
+
+    if (deck.time_limit < 0) {
+        auto error = Error::validation_failed(QString("DeckService::%1(): deck time limit is less than 0").arg(caller));
+        return std::unexpected(error);
+    }
+
+    return {};
 }
 
 } // namespace engine

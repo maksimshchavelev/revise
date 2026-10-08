@@ -24,12 +24,10 @@ struct DeckServiceDeps {
     core::ISearchEngine&     search_engine;
 };
 
-/**
- * @brief Service for managing decks and cards
- */
+/// @brief Service for managing decks and cards
 class DeckService final : public core::IDeckService {
   public:
-    DeckService(DeckServiceDeps deps);
+    explicit DeckService(DeckServiceDeps deps);
 
     /// @copydoc core::IDeckService::create_deck
     QFuture<Result<void>> create_deck(const DeckDraft& deck) override;
@@ -72,9 +70,14 @@ class DeckService final : public core::IDeckService {
 
   private:
     /// @brief Map storage error to service error
-    Error from_storage_error(const core::IDeckStorage::Error& error, QString message) const;
+    static Error from_storage_error(const core::IDeckStorage::Error& error, const QString& message);
 
-    DeckServiceDeps m_deps;
+    /// @brief Validates deck update or creation input data
+    /// @param deck Deck to validate
+    /// @param caller Caller method name (for example, `create_deck`)
+    static Result<void> validate_deck_parameters(const DeckDraft& deck, std::string_view caller);
+
+    DeckServiceDeps m_deps; ///< Service dependencies
 
     std::atomic_bool m_import_in_progress{false}; ///< Is import in progress now
     std::atomic_bool m_export_in_progress{false}; ///< Is export in progress now
