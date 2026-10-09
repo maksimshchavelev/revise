@@ -81,17 +81,23 @@ class IDeckService : public Notifiable {
         int     review_limit{0};
         int     incorrect_limit{0};
         int     time_limit{0};
+
+        bool operator==(const DeckDraft& other) const noexcept = default;
     };
 
     /// @brief Used as a draft for the card to be created
     struct CreateCardDraft {
         QString front;
         QString back;
+
+        bool operator==(const CreateCardDraft& other) const noexcept = default;
     };
 
     /// @brief Used as a draft for the card to be updated
     struct UpdateCardDraft : CreateCardDraft {
         float difficulty{0.0f};
+
+        bool operator==(const UpdateCardDraft& other) const noexcept = default;
     };
 
     EVENT(deck_created, Deck deck)  ///< Deck created. Stores created deck
