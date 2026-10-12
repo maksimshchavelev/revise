@@ -22,7 +22,7 @@ struct StudyEngineDeps {
  */
 class StudyEngine final : public core::IStudyEngine {
   public:
-    StudyEngine(StudyEngineDeps deps);
+    explicit StudyEngine(StudyEngineDeps deps);
 
     /// @copydoc core::IStudyEngine::start
     std::expected<void, QString> start(int deck_id) override;

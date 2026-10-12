@@ -22,33 +22,29 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
     auto fetched_cards = m_deps.deck_storage.fetch_cards(deck_id);
 
     if (!fetched_cards) {
-        return std::unexpected(
-            QString("Failed to fetch cards to start training, cause: %1").arg(fetched_cards.error()));
+        return std::unexpected(QString("Failed to fetch cards to start training, cause: %1").arg(fetched_cards.error().message));
     }
 
     auto deck_info = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id});
 
     if (!deck_info) {
-        return std::unexpected(QString("Failed to fetch deck info, cause: %1").arg(deck_info.error()));
+        return std::unexpected(QString("Failed to fetch deck info, cause: %1").arg(deck_info.error().message));
     }
 
-    auto filtered_cards =
-        fetched_cards.value() //
-        | std::views::filter([](const auto& card) { return card.next_review <= QDateTime::currentDateTime(); });
+    auto filtered_cards = fetched_cards.value() //
+                          | std::views::filter([](const auto& card) { return card.next_review <= QDateTime::currentDateTime(); });
 
     auto new_cards = filtered_cards                                                                              //
                      | std::views::filter([](const auto& card) { return card.state == core::Card::State::New; }) //
                      | std::views::take(deck_info->first().new_limit);                                           //
 
-    auto consolidate_cards =
-        filtered_cards                                                                                 //
-        | std::views::filter([](const auto& card) { return card.state == core::Card::State::Review; }) //
-        | std::views::take(deck_info->first().review_limit);                                           //
+    auto consolidate_cards = filtered_cards                                                                                 //
+                             | std::views::filter([](const auto& card) { return card.state == core::Card::State::Review; }) //
+                             | std::views::take(deck_info->first().review_limit);                                           //
 
-    auto incorrect_cards =
-        filtered_cards                                                                                    //
-        | std::views::filter([](const auto& card) { return card.state == core::Card::State::Incorrent; }) //
-        | std::views::take(deck_info->first().incorrect_limit);                                           //
+    auto incorrect_cards = filtered_cards                                                                                    //
+                           | std::views::filter([](const auto& card) { return card.state == core::Card::State::Incorrent; }) //
+                           | std::views::take(deck_info->first().incorrect_limit);                                           //
 
     for (const auto& card : new_cards) {
         m_cards.emplaceBack(std::move(card));
@@ -105,12 +101,12 @@ std::expected<void, QString> StudyEngine::reload_state() {
 
     if (!card) {
         return std::unexpected(
-            QString("Failed to reload study engine state: failed to fetch card: %1").arg(card.error()));
+            QString("Failed to reload study engine state: failed to fetch card: %1").arg(card.error().message));
     }
 
     if (card->isEmpty()) {
         return std::unexpected(
-            QString("Failed to reload study engine state: deck storage returned empty vector").arg(card.error()));
+            QString("Failed to reload study engine state: deck storage returned empty vector").arg(card.error().message));
     }
 
     state().current_card = std::move(card->first());
@@ -130,7 +126,7 @@ std::expected<void, QString> StudyEngine::save_trained() {
     auto res = m_deps.deck_storage.update_cards(m_trained_cards);
 
     if (!res) {
-        return std::unexpected(QString("Failed to update cards, cause: %1").arg(res.error()));
+        return std::unexpected(QString("Failed to update cards, cause: %1").arg(res.error().message));
     }
 
     return {};
@@ -141,17 +137,16 @@ std::expected<core::IStudyEngine::StudyInfo, QString> StudyEngine::get_study_inf
     auto fetched_cards = m_deps.deck_storage.fetch_cards(deck_id);
 
     if (!fetched_cards) {
-        return std::unexpected(QString("Failed to fetch cards, cause: %1").arg(fetched_cards.error()));
+        return std::unexpected(QString("Failed to fetch cards, cause: %1").arg(fetched_cards.error().message));
     }
 
-    auto filtered_cards =
-        fetched_cards.value() //
-        | std::views::filter([](const auto& card) { return card.next_review <= QDateTime::currentDateTime(); });
+    auto filtered_cards = fetched_cards.value() //
+                          | std::views::filter([](const auto& card) { return card.next_review <= QDateTime::currentDateTime(); });
 
     auto deck_info = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id});
 
     if (!deck_info) {
-        return std::unexpected(QString("Failed to fetch deck info, cause: %1").arg(deck_info.error()));
+        return std::unexpected(QString("Failed to fetch deck info, cause: %1").arg(deck_info.error().message));
     }
 
     // Count
