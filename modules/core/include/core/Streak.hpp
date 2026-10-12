@@ -14,6 +14,9 @@ struct Streak {
 
     value_type value{0};     ///< Number of days of streak
     QDateTime  updated_at{}; ///< Last date and time streak was updated
+
+    bool    operator==(const Streak& other) const = default;
+    Streak& operator=(const Streak& other) = default;
 };
 
 } // namespace core
