@@ -29,32 +29,32 @@ StudyService::StudyService(core::IStudyService& study_service, QObject* parent) 
 }
 
 
-void StudyService::start(int deck_id) {
+void StudyService::start(const int deck_id) const {
     m_study_service.start(deck_id);
 }
 
 
-void StudyService::answer(float difficulty) {
+void StudyService::answer(const float difficulty) const {
     m_study_service.answer(difficulty);
 }
 
 
-void StudyService::abort() {
+void StudyService::abort() const {
     m_study_service.abort();
 }
 
 
-void StudyService::flip() {
+void StudyService::flip() const {
     m_study_service.flip();
 }
 
 
-void StudyService::pause() {
+void StudyService::pause() const {
     m_study_service.pause();
 }
 
 
-void StudyService::resume() {
+void StudyService::resume() const {
     m_study_service.resume();
 }
 
@@ -118,15 +118,15 @@ bool StudyService::flipped() const {
 }
 
 
-Card StudyService::card() {
-    auto res = m_study_service.current_card();
+Card StudyService::card() const {
+    const auto res = m_study_service.current_card();
 
     if (!res) {
         qWarning() << "Failed to get card in ui::StudyService (got nullopt)";
         return Card{};
     }
 
-    return *res;
+    return Card{*res};
 }
 
 } // namespace ui
