@@ -5,10 +5,9 @@
 
 namespace ui {
 
-CardsModel::CardsModel(core::IDeckService& service, QObject* parent) :
-    QAbstractListModel(parent), m_deck_service(service) {
+CardsModel::CardsModel(core::IDeckService& service, QObject* parent) : QAbstractListModel(parent), m_deck_service(service) {
 
-    m_deck_service.connect<core::IDeckService::cards_updated>([this](auto& e) { setDeck(m_last_deck_id); });
+    m_deck_service.connect<core::IDeckService::card_updated>([this](auto& e) { setDeck(m_last_deck_id); });
 
     m_deck_service.connect<core::IDeckService::card_removed>([this](auto& e) { setDeck(m_last_deck_id); });
 
@@ -64,31 +63,36 @@ void CardsModel::setDeck(int deckId) {
     ++m_last_request_id;
 
     auto _ = QtConcurrent::run([this, deckId, search = m_search_front]() {
-        int current_request_id = m_last_request_id;
+        const int current_request_id = m_last_request_id;
 
         emit loadingStarted();
 
         if (m_search_front.trimmed().isEmpty()) {
-            auto res = m_deck_service.cards(m_last_deck_id);
+            auto res = m_deck_service.cards(m_last_deck_id).result<>();
 
             if (!res) {
-                qWarning() << "Failed to fetch cards in cards model:" << res.error();
+                qWarning() << "Failed to fetch cards in cards model:" << res.error().message;
                 emit loadingFinished();
                 return;
             }
 
             if (current_request_id == m_last_request_id) {
-                QMetaObject::invokeMethod(this, [this, cards = std::move(*res)]() {
-                    beginResetModel();
-                    m_cards = std::move(cards);
-                    emit updated();
-                    endResetModel();
-                    emit loadingFinished();
-                }, Qt::QueuedConnection);
+                QMetaObject::invokeMethod(
+                    this,
+                    [this, cards = std::move(*res)]() {
+                        beginResetModel();
+                        m_cards = std::move(cards);
+                        emit updated();
+                        endResetModel();
+                        emit loadingFinished();
+                    },
+                    Qt::QueuedConnection);
             }
         } else {
-            auto res = m_deck_service.search_cards(core::CardDeckIdSearchFilter{m_last_deck_id} |
-                                                   core::CardFrontSearchFilter{m_search_front});
+            auto res =
+                m_deck_service
+                    .search_cards(core::CardDeckIdSearchFilter{m_last_deck_id} | core::CardFrontSearchFilter{m_search_front})
+                    .result<>();
 
             if (!res) {
                 qWarning() << "Failed to fetch searched cards in cards model:" << res.error().message;
@@ -97,13 +101,16 @@ void CardsModel::setDeck(int deckId) {
             }
 
             if (current_request_id == m_last_request_id) {
-                QMetaObject::invokeMethod(this, [this, cards = std::move(*res)]() {
-                    beginResetModel();
-                    m_cards = std::move(cards);
-                    emit updated();
-                    endResetModel();
-                    emit loadingFinished();
-                }, Qt::QueuedConnection);
+                QMetaObject::invokeMethod(
+                    this,
+                    [this, cards = std::move(*res)]() {
+                        beginResetModel();
+                        m_cards = std::move(cards);
+                        emit updated();
+                        endResetModel();
+                        emit loadingFinished();
+                    },
+                    Qt::QueuedConnection);
             }
         }
     });

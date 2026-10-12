@@ -7,7 +7,7 @@ namespace ui {
 DecksModel::DecksModel(core::IDeckService& deck_service, core::IStudyService& study_service, QObject* parent) :
     QAbstractListModel(parent), m_deck_service(deck_service), m_study_service(study_service) {
 
-    m_deck_service.connect<core::IDeckService::decks_updated>([this](auto& e) { update(); });
+    m_deck_service.connect<core::IDeckService::deck_updated>([this](auto& e) { update(); });
 
     m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) { update(); });
 
@@ -74,10 +74,8 @@ QHash<int, QByteArray> DecksModel::roleNames() const {
 void DecksModel::update() {
     beginResetModel();
 
-    auto res = m_deck_service.deck_summaries();
-
-    if (res) {
-        std::sort(res->begin(), res->end(), [](const core::DeckSummary& deck1, const core::DeckSummary& deck2) {
+    if (auto res = m_deck_service.deck_summaries().result<>()) {
+        std::ranges::sort(*res, [](const core::DeckSummary& deck1, const core::DeckSummary& deck2) {
             return deck1.new_cards + deck1.review_cards + deck1.incorrect_cards >
                    deck2.new_cards + deck2.review_cards + deck2.incorrect_cards;
         });
