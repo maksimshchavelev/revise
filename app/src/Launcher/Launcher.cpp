@@ -180,7 +180,7 @@ void Launcher::connect_signals() {
     m_deck_service->connect<core::IDeckService::export_failed>([this](auto& e) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("deck events", "Экспорт не удался"),
-                        .message = QCoreApplication::translate("deck events", "Причина: ") + e.error,
+                        .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
                         .type = core::ToastType::ERROR});
     });
 
@@ -194,7 +194,7 @@ void Launcher::connect_signals() {
     m_deck_service->connect<core::IDeckService::import_failed>([this](auto& e) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("deck events", "Импорт не удался"),
-                        .message = QCoreApplication::translate("deck events", "Причина: ") + e.error,
+                        .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
                         .type = core::ToastType::ERROR});
     });
 
@@ -206,7 +206,7 @@ void Launcher::connect_signals() {
                         .type = core::ToastType::SUCCESS});
     });
 
-    m_deck_service->connect<core::IDeckService::cards_updated>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::card_updated>([this](auto& e) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("deck events", "Карточка обновлена"),
                         .message = QCoreApplication::translate("deck events", "Карточка была обновлена"),
