@@ -9,7 +9,7 @@ namespace engine {
 
 class SearchEngine final : public core::ISearchEngine {
   public:
-    SearchEngine(core::IDeckStorage& storage);
+    explicit SearchEngine(core::IDeckStorage& storage);
 
     /**
      * @brief Searching for records in an SQL database
@@ -22,7 +22,7 @@ class SearchEngine final : public core::ISearchEngine {
     core::IDeckStorage& m_storage;
 
     /// @brief Returns true if the card matches at least one type
-    bool card_matches(const core::Card& card, const std::unique_ptr<core::CardSearchFilter>& filter) const;
+    static bool card_matches(const core::Card& card, const std::unique_ptr<core::CardSearchFilter>& filter);
 };
 
 } // namespace engine

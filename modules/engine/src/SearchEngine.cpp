@@ -8,14 +8,13 @@ namespace engine {
 
 SearchEngine::SearchEngine(core::IDeckStorage& storage) : m_storage(storage) {}
 
-std::expected<QVector<core::Card>, core::SearchError> SearchEngine::search_cards(
-    const core::CardFilterChain& filters) const {
+std::expected<QVector<core::Card>, core::SearchError> SearchEngine::search_cards(const core::CardFilterChain& filters) const {
 
     auto cards = m_storage.fetch_cards();
 
     if (!cards) {
         return std::unexpected(
-            core::SearchError{.kind = core::SearchError::Kind::BackendFailure, .cause = {}, .message = cards.error()});
+            core::SearchError{.kind = core::SearchError::Kind::BackendFailure, .cause = {}, .message = cards.error().message});
     }
 
     auto filtered = cards.value() | std::ranges::views::filter([&](const core::Card& card) {
@@ -31,7 +30,7 @@ std::expected<QVector<core::Card>, core::SearchError> SearchEngine::search_cards
 }
 
 
-bool SearchEngine::card_matches(const core::Card& card, const std::unique_ptr<core::CardSearchFilter>& filter) const {
+bool SearchEngine::card_matches(const core::Card& card, const std::unique_ptr<core::CardSearchFilter>& filter) {
     switch (filter->kind()) {
     // By deck id
     case core::CardFilterKind::DeckId: {
@@ -47,7 +46,7 @@ bool SearchEngine::card_matches(const core::Card& card, const std::unique_ptr<co
     }
 
     // Unknown
-    case core::CardFilterKind::Unknown: {
+    default: {
         qWarning() << "Unknown card filter type";
         return false;
     }
