@@ -4,7 +4,7 @@
 
 #include <QQueue>                // for QQueue
 #include <core/IAlgorithm.hpp>   // for core::IAlgorithm
-#include <core/IDeckStorage.hpp> // for core::IDeckStorage
+#include <core/storage/IDeckStorage.hpp> // for core::IDeckStorage
 #include <core/IStudyEngine.hpp> // for core::IStudyEngine
 
 namespace engine {

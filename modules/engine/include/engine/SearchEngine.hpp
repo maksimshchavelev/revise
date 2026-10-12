@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include <core/IDeckStorage.hpp>         // for core::IDeckStorage
 #include <core/search/ISearchEngine.hpp> // for core::ISearchEngine
+#include <core/storage/IDeckStorage.hpp> // for core::IDeckStorage
 
 namespace engine {
 
@@ -16,8 +16,7 @@ class SearchEngine final : public core::ISearchEngine {
      * @param filters Filters
      * @note When searching using “front/back,” the search is performed using fuzzy matching
      */
-    std::expected<QVector<core::Card>, core::SearchError> search_cards(
-        const core::CardFilterChain& filters) const override;
+    std::expected<QVector<core::Card>, core::SearchError> search_cards(const core::CardFilterChain& filters) const override;
 
   private:
     core::IDeckStorage& m_storage;
