@@ -128,7 +128,7 @@ Item {
                     bottom: 1
                     top: 500
                 }
-                text: root.deck.consolidateLimit
+                text: root.deck.reviewLimit
             }
 
             Revise.Text {
@@ -314,7 +314,7 @@ Item {
         root.deck.name = deckName.text
         root.deck.description = deckDescription.text
         root.deck.newLimit = parseInt(deckNewLimit.text)
-        root.deck.consolidateLimit = parseInt(
+        root.deck.reviewLimit = parseInt(
                     deckConsolidateLimit.text)
         root.deck.incorrectLimit = parseInt(deckIncorrectLimit.text)
         root.deck.timeLimit = limitTime.checked ? parseInt(
