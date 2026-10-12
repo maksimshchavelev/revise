@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include <QObject>                 // for QObject
 #include <core/IStreakService.hpp> // for core::IStreakService
 
 namespace ui {
