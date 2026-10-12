@@ -22,7 +22,7 @@ struct CardSearchFilter {
 };
 
 /// @brief Card filter chain (helper struct)
-struct CardFilterChain final : public CardSearchFilter {
+struct CardFilterChain final : CardSearchFilter {
     std::vector<std::unique_ptr<CardSearchFilter>> chain;
 
     CardFilterChain() = default;
@@ -60,7 +60,7 @@ template <CardFilter Filter> CardFilterChain operator|(CardFilterChain lhs, Filt
 }
 
 /// @brief Filter search results by deck ID
-struct CardDeckIdSearchFilter final : public CardSearchFilter {
+struct CardDeckIdSearchFilter final : CardSearchFilter {
     CardDeckIdSearchFilter(int deck_id) : deck_id{deck_id} {}
 
     CardFilterKind kind() const noexcept override {
@@ -71,7 +71,7 @@ struct CardDeckIdSearchFilter final : public CardSearchFilter {
 };
 
 /// @brief Filter search results by the front side of the card
-struct CardFrontSearchFilter final : public CardSearchFilter {
+struct CardFrontSearchFilter final : CardSearchFilter {
     CardFrontSearchFilter(QString front) : front{std::move(front)} {}
 
     CardFilterKind kind() const noexcept override {
