@@ -69,6 +69,8 @@ target_include_directories(ui
         ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/private_include
+        # QML wrappers for types should be accessible without a path prefix
+        ${CMAKE_CURRENT_LIST_DIR}/private_include/wrappers
         ${CMAKE_CURRENT_LIST_DIR}/include/ui
 )
 
