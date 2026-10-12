@@ -25,7 +25,7 @@
 #include <io/SqlDeckStorage.hpp>      // for io::SqlDeckStorage
 
 // Deck service
-#include <core/IDeckService.hpp> // for core::IDeckService
+#include <core/service/IDeckService.hpp> // for core::IDeckService
 
 // Study service and engine
 #include <engine/StudyEngine.hpp>  // for engine::StudyEngine
