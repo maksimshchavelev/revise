@@ -15,12 +15,12 @@ struct Deck final : core::Deck {
 
     Q_PROPERTY(QString name MEMBER name FINAL)
     Q_PROPERTY(QString description MEMBER description FINAL)
-    Q_PROPERTY(int time_limit MEMBER time_limit FINAL)
-    Q_PROPERTY(int new_limit MEMBER new_limit FINAL)
-    Q_PROPERTY(int review_limit MEMBER review_limit FINAL)
-    Q_PROPERTY(int incorrect_limit MEMBER incorrect_limit FINAL)
+    Q_PROPERTY(int timeLimit MEMBER time_limit FINAL)
+    Q_PROPERTY(int newLimit MEMBER new_limit FINAL)
+    Q_PROPERTY(int reviewLimit MEMBER review_limit FINAL)
+    Q_PROPERTY(int incorrectLimit MEMBER incorrect_limit FINAL)
     Q_PROPERTY(int id MEMBER id FINAL)
-    Q_PROPERTY(int global_id MEMBER global_id FINAL)
+    Q_PROPERTY(int globalId MEMBER global_id FINAL)
 
   public:
     Q_INVOKABLE Deck() = default;
