@@ -30,7 +30,7 @@ std::expected<QVector<core::Card>, core::SearchError> SearchEngine::search_cards
 }
 
 
-bool SearchEngine::card_matches(const core::Card& card, const std::unique_ptr<core::CardSearchFilter>& filter) {
+bool SearchEngine::card_matches(const core::Card& card, const std::shared_ptr<core::CardSearchFilter>& filter) {
     switch (filter->kind()) {
     // By deck id
     case core::CardFilterKind::DeckId: {

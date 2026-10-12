@@ -22,7 +22,7 @@ class SearchEngine final : public core::ISearchEngine {
     core::IDeckStorage& m_storage;
 
     /// @brief Returns true if the card matches at least one type
-    static bool card_matches(const core::Card& card, const std::unique_ptr<core::CardSearchFilter>& filter);
+    static bool card_matches(const core::Card& card, const std::shared_ptr<core::CardSearchFilter>& filter);
 };
 
 } // namespace engine
