@@ -1,0 +1,84 @@
+// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+
+#pragma once
+
+#include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT
+#include <core/Card.hpp>                      // for core::Card
+#include <core/Property.hpp>                  // for PROPERTY macro for getters and setters
+
+namespace ui {
+
+/// @brief Wrapper over core::Card, visible from QML
+struct Card {
+    Q_GADGET
+    QML_ELEMENT
+
+    Q_PROPERTY(int id READ id WRITE set_id NOTIFY updated)
+    Q_PROPERTY(int global_id READ global_id WRITE set_global_id NOTIFY updated)
+    Q_PROPERTY(int deck_id READ deck_id WRITE set_deck_id NOTIFY updated)
+    Q_PROPERTY(int incorrect_streak READ incorrect_streak WRITE set_incorrect_streak NOTIFY updated)
+    Q_PROPERTY(int interval READ interval WRITE set_interval NOTIFY updated)
+    Q_PROPERTY(float difficulty READ difficulty WRITE set_difficulty NOTIFY updated)
+    Q_PROPERTY(float time_limit READ time_limit WRITE set_time_limit NOTIFY updated)
+    Q_PROPERTY(QDateTime next_review READ next_review WRITE set_next_review NOTIFY updated)
+    Q_PROPERTY(QDateTime created_at READ created_at WRITE set_created_at NOTIFY updated)
+    Q_PROPERTY(QDateTime updated_at READ updated_at WRITE set_updated_at NOTIFY updated)
+    Q_PROPERTY(QString front READ front WRITE set_front NOTIFY updated)
+    Q_PROPERTY(QString back READ back WRITE set_back NOTIFY updated)
+
+  public:
+    /// Card state
+    enum class State {
+        New = static_cast<int>(core::Card::State::New),
+        Review = static_cast<int>(core::Card::State::Review),
+        Incorrect = static_cast<int>(core::Card::State::Incorrent)
+    };
+
+    Q_ENUM(State)
+
+    Card() = default;
+
+    explicit Card(const core::Card& card) : m_card{card} {}
+    explicit Card(core::Card&& card) : m_card{std::move(card)} {}
+
+    Card(const Card&) = default;
+    Card(Card&&) = default;
+    Card& operator=(const Card&) = default;
+    Card& operator=(Card&&) = default;
+
+    Card& operator=(const core::Card& card) {
+        m_card = card;
+        return *this;
+    }
+
+    Card& operator=(core::Card&& card) {
+        m_card = std::move(card);
+        return *this;
+    }
+
+    [[nodiscard]] State state() const noexcept {
+        return static_cast<State>(m_card.state);
+    }
+
+    void set_state(State state) noexcept {
+        m_card.state = static_cast<core::Card::State>(state);
+    }
+
+    PROPERTY(id, m_card.id);
+    PROPERTY(global_id, m_card.global_id)
+    PROPERTY(deck_id, m_card.deck_id)
+    PROPERTY(difficulty, m_card.difficulty)
+    PROPERTY(incorrect_streak, m_card.incorrect_streak)
+    PROPERTY(interval, m_card.interval)
+    PROPERTY(time_limit, m_card.time_limit)
+    PROPERTY(next_review, m_card.next_review)
+    PROPERTY(created_at, m_card.created_at)
+    PROPERTY(updated_at, m_card.updated_at)
+    PROPERTY(front, m_card.front)
+    PROPERTY(back, m_card.back)
+
+  private:
+    core::Card m_card;
+};
+
+} // namespace ui
