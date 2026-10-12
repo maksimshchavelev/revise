@@ -1,82 +1,139 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "DeckService.hpp" // for header
+#include <QFutureWatcher>  // for QFutureWatcher
 
 namespace ui {
 
-DeckService::DeckService(core::IDeckService& deck_service, QObject* parent) :
-    QObject(parent), m_deck_service(deck_service) {}
+DeckService::DeckService(core::IDeckService& deck_service, QObject* parent) : QObject(parent), m_deck_service(deck_service) {}
 
-void DeckService::create_deck(const Deck& deck) {
-    auto res = m_deck_service.create_deck(deck);
-    if (!res) {
-        qWarning() << "ui::DeckService::create_deck() failed to create deck, cause:" << res.error();
+
+void DeckService::create_deck(const DeckDraft& deck) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::create_deck() failed to create deck, cause:" << result.error().message;
+        }
+
+        watcher->deleteLater();
+    });
+
+    watcher->setFuture(m_deck_service.create_deck(deck));
+}
+
+
+void DeckService::remove_deck(const int deck_id) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::remove_deck() failed to remove deck, cause:" << result.error().message;
+        }
+    });
+
+    watcher->setFuture(m_deck_service.remove_deck(deck_id));
+}
+
+
+void DeckService::import_deck(const QString& path) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::import_deck() failed to import deck, cause:" << result.error().message;
+        }
+    });
+
+    watcher->setFuture(m_deck_service.import_deck(path));
+}
+
+
+void DeckService::export_deck(const int deck_id, const QString& path) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::export_deck() failed to export deck, cause:" << result.error().message;
+        }
+    });
+
+    watcher->setFuture(m_deck_service.export_deck(deck_id, path));
+}
+
+
+void DeckService::update_deck(const int deck_id, const DeckDraft& deck) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::update_deck() failed to update deck, cause:" << result.error().message;
+        }
+    });
+
+    watcher->setFuture(m_deck_service.update_deck(deck_id, deck));
+}
+
+
+void DeckService::create_card(const int deck_id, const CreateCardDraft& card) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::create_card() failed to create card, cause:" << result.error().message;
+        }
+    });
+
+    watcher->setFuture(m_deck_service.create_card(deck_id, card));
+}
+
+
+void DeckService::remove_card(const int card_id) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::remove_card() failed to remove card, cause:" << result.error().message;
+        }
+    });
+
+    watcher->setFuture(m_deck_service.remove_card(card_id));
+}
+
+
+void DeckService::update_card(const int deck_id, const UpdateCardDraft& card) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::update_card() failed to update card, cause:" << result.error().message;
+        }
+    });
+
+    watcher->setFuture(m_deck_service.update_card(deck_id, card));
+}
+
+
+Deck DeckService::deck(const int deck_id) const {
+    const auto result = m_deck_service.deck(deck_id).result<core::IDeckService::Result<Deck>>();
+
+    if (!result) {
+        qWarning() << "ui::DeckService::deck() failed to fetch deck, cause:" << result.error().message;
+        return Deck{};
     }
+
+    return Deck{*result};
 }
 
-void DeckService::remove_deck(int deckId) {
-    auto res = m_deck_service.remove_deck(deckId);
-    if (!res) {
-        qWarning() << "ui::DeckService::remove_deck() failed to remove deck, cause:" << res.error();
-    }
-}
+Card DeckService::card(const int card_id) const {
+    const auto result = m_deck_service.card(card_id).result<core::IDeckService::Result<Card>>();
 
-void DeckService::import_deck_async(const QString& path) {
-    m_deck_service.import_deck_async(path);
-}
-
-void DeckService::export_deck_async(int deckId, const QString& path) {
-    m_deck_service.export_deck_async(deckId, path);
-}
-
-void DeckService::update_deck(const Deck& deck) {
-    auto res = m_deck_service.update_deck(deck);
-    if (!res) {
-        qWarning() << "ui::DeckService::update_deck() failed to update deck, cause:" << res.error();
-    }
-}
-
-void DeckService::create_card(const Card& card) {
-    auto res = m_deck_service.create_card(card);
-    if (!res) {
-        qWarning() << "ui::DeckService::create_card() failed to create card, cause:" << res.error();
-    }
-}
-
-void DeckService::remove_card(int id) {
-    auto res = m_deck_service.remove_card(id);
-    if (!res) {
-        qWarning() << "ui::DeckService::remove_card() failed to remove card, cause:" << res.error();
-    }
-}
-
-void DeckService::update_card(const Card& card) {
-    auto res = m_deck_service.update_card(card);
-    if (!res) {
-        qWarning() << "ui::DeckService::update_card() failed to update card, cause:" << res.error();
-    }
-}
-
-Deck DeckService::deck(int deckId)
-{
-    auto res = m_deck_service.deck(deckId);
-    if (!res) {
-        qWarning() << "ui::DeckService::deck() failed to fetch deck info with id" << deckId << "cause:" << res.error();
-        return {};
+    if (!result) {
+        qWarning() << "ui::DeckService::deck() failed to fetch deck, cause:" << result.error().message;
+        return Card{};
     }
 
-    return *res;
-}
-
-Card DeckService::card(int cardId)
-{
-    auto res = m_deck_service.card(cardId);
-    if (!res) {
-        qWarning() << "ui::DeckService::card() failed to fetch card with id" << cardId << "cause:" << res.error();
-        return {};
-    }
-
-    return *res;
+    return Card{*result};
 }
 
 } // namespace ui
