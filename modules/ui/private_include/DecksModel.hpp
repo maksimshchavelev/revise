@@ -3,8 +3,8 @@
 #pragma once
 
 #include <QAbstractListModel>
-#include <core/IDeckService.hpp>  // for core::IDeckService
-#include <core/IStudyService.hpp> // for core::IStudyService
+#include <core/IStudyService.hpp>        // for core::IStudyService
+#include <core/service/IDeckService.hpp> // for core::IDeckService
 
 namespace ui {
 
