@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include <QAbstractListModel>    // for QAbstractListModel
-#include <atomic>                // for std::atomic
-#include <core/IDeckService.hpp> // for core::IDeckService
+#include <QAbstractListModel>            // for QAbstractListModel
+#include <atomic>                        // for std::atomic
+#include <core/service/IDeckService.hpp> // for core::IDeckService
 
 namespace ui {
 
