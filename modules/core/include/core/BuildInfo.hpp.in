@@ -1,0 +1,25 @@
+// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+
+#pragma once
+
+namespace core {
+
+constexpr int REVISE_DB_SCHEMA_VERSION = @REVISE_DB_SCHEMA_VERSION@;
+
+// Version
+constexpr int REVISE_VERSION_MAJOR = @PROJECT_VERSION_MAJOR@;
+constexpr int REVISE_VERSION_MINOR = @PROJECT_VERSION_MINOR@;
+constexpr int REVISE_VERSION_PATCH = @PROJECT_VERSION_PATCH@;
+
+// Build info
+inline const auto REVISE_BUILD_COMPILER_ID = "@CMAKE_CXX_COMPILER_ID@";
+inline const auto REVISE_BUILD_COMPILER_VERSION = "@CMAKE_CXX_COMPILER_VERSION@";
+inline const auto REVISE_BUILD_TARGET_ARCH = "@CMAKE_SYSTEM_PROCESSOR@";
+inline const auto REVISE_BUILD_HOST_ARCH = "@CMAKE_HOST_SYSTEM_PROCESSOR@";
+inline const auto REVISE_BUILD_TYPE = "@CMAKE_BUILD_TYPE@";
+inline const auto REVISE_BUILD_FLAGS = "@CMAKE_CXX_FLAGS_RELEASE@ @CMAKE_CXX_FLAGS_DEBUG@";
+
+// Qt info
+inline const auto REVISE_QT_VERSION = "@Qt6_VERSION@";
+
+}
