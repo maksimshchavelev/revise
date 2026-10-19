@@ -1,7 +1,7 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "io/Settings.hpp"  // for header
-#include <core/Version.hpp> // for application version
+#include <core/BuildInfo.hpp> // for application version
 
 namespace io {
 

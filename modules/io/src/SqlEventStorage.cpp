@@ -5,7 +5,7 @@
 #include <QJsonObject>            // for QJsonObject
 #include <QSqlError>              // for QSqlError
 #include <QSqlQuery>              // for QSqlQuery
-#include <core/Version.hpp>       // for db schema version
+#include <core/BuildInfo.hpp>       // for db schema version
 
 namespace io {
 
