@@ -84,7 +84,7 @@ Item {
                         backgroundItem: blurOverlay.blurredItem
 
                         onStudyClicked: {
-                            studyService.start(deckId)
+                            Revise.StudyService.start(deckId)
                             Revise.Router.navigate("training", {})
                         }
 

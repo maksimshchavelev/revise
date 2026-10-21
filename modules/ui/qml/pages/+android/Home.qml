@@ -91,7 +91,7 @@ Item {
                     repeatableToday: model.repeatableToday
 
                     onStudyClicked: {
-                        studyService.start(deckId)
+                        Revise.StudyService.start(deckId)
                         Revise.Router.navigate("training", {})
                     }
                     onEditClicked: {

@@ -31,9 +31,9 @@ Item {
                 id: progressBar
                 Layout.fillWidth: true
                 Layout.preferredHeight: 20
-                visible: studyService.timeLimit > 0 && !studyService.flipped
-                progress: studyService.timeLimit > 0 ? studyService.timeRemaining
-                                                       / studyService.timeLimit : 0
+                visible: Revise.StudyService.timeLimit > 0 && !Revise.StudyService.flipped
+                progress: Revise.StudyService.timeLimit > 0 ? Revise.StudyService.timeRemaining
+                                                       / Revise.StudyService.timeLimit : 0
             }
 
             Revise.IconButton {
@@ -42,10 +42,10 @@ Item {
                 color: Revise.Theme.textColor
                 size: 24
                 onClicked: {
-                    studyService.pause()
+                    Revise.StudyService.pause()
                     Revise.Router.navigate("cardEditor", {
                                         "editMode": true,
-                                        "card": studyService.card
+                                        "card": Revise.StudyService.card
                                     }, Revise.page.Page)
                 }
             }
@@ -61,12 +61,12 @@ Item {
             id: htmlCard
             Layout.fillWidth: true
             Layout.fillHeight: true
-            html: studyService.flipped ? studyService.back : studyService.front
+            html: Revise.StudyService.flipped ? Revise.StudyService.back : Revise.StudyService.front
             onLoadingChanged: {
                 if (loading) {
-                    studyService.pause()
+                    Revise.StudyService.pause()
                 } else {
-                    studyService.resume()
+                    Revise.StudyService.resume()
                 }
             }
         }
@@ -76,16 +76,16 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignBottom
             Layout.topMargin: 8
-            onEasyClicked: studyService.answer(0.0)
-            onNormalClicked: studyService.answer(1.4)
-            onHardClicked: studyService.answer(3.0)
-            onBadClicked: studyService.answer(5.0)
+            onEasyClicked: Revise.StudyService.answer(0.0)
+            onNormalClicked: Revise.StudyService.answer(1.4)
+            onHardClicked: Revise.StudyService.answer(3.0)
+            onBadClicked: Revise.StudyService.answer(5.0)
         }
     }
 
     function onEnter() {
-        studyService.reloadCurrentCard()
-        studyService.resume()
+        Revise.StudyService.reloadCurrentCard()
+        Revise.StudyService.resume()
     }
 
     function onExit() {}

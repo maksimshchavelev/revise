@@ -1,10 +1,11 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "wrappers/CardWrapper.hpp" // for Card
-#include <QObject>                  // for QObject
-#include <core/IStudyService.hpp>   // for core::IStudyService
+#include "wrappers/CardWrapper.hpp"           // for Card
+#include <QObject>                            // for QObject
+#include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
+#include <core/IStudyService.hpp>             // for core::IStudyService
 
 namespace ui {
 
@@ -12,9 +13,13 @@ namespace ui {
 class StudyService : public QObject {
     Q_OBJECT
 
+    QML_ELEMENT
+    QML_SINGLETON
+    QML_UNCREATABLE("StudyService is provided by C++")
+
   public:
-    Q_PROPERTY(int time_limit READ time_limit NOTIFY time_limit_changed FINAL)
-    Q_PROPERTY(float time_remaining READ time_remaining NOTIFY time_remaining_changed FINAL)
+    Q_PROPERTY(int timeLimit READ time_limit NOTIFY time_limit_changed FINAL)
+    Q_PROPERTY(float timeRemaining READ time_remaining NOTIFY time_remaining_changed FINAL)
     Q_PROPERTY(QString front READ front NOTIFY front_changed FINAL)
     Q_PROPERTY(QString back READ back NOTIFY back_changed FINAL)
     Q_PROPERTY(bool flipped READ flipped NOTIFY flipped_changed FINAL)

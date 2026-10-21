@@ -68,8 +68,10 @@ void UI::bind_cards_model(core::IDeckService& deck_service) {
 
 
 void UI::bind_study_service(core::IStudyService& study_service) {
-    auto* service = new StudyService(study_service, &m_engine);
-    m_engine.rootContext()->setContextProperty("studyService", service);
+    if (auto* service = new StudyService(study_service, &m_engine);
+        !m_engine.setExternalSingletonInstance("Revise", "StudyService", service)) {
+        qFatal("Failed to register external Revise.StudyService singleton");
+    }
 }
 
 

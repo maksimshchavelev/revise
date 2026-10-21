@@ -17,7 +17,7 @@ Item {
 
     // Flipped
     RowLayout {
-        visible: studyService.flipped
+        visible: Revise.StudyService.flipped
         anchors.margins: 12
         anchors.fill: parent
         clip: true
@@ -57,7 +57,7 @@ Item {
 
     // Not reversed
     RowLayout {
-        visible: !studyService.flipped
+        visible: !Revise.StudyService.flipped
         anchors.margins: 12
         anchors.fill: parent
         clip: true
@@ -66,7 +66,7 @@ Item {
             text: qsTr("Перевернуть")
             Layout.alignment: Qt.AlignCenter
             Layout.fillWidth: true
-            onClicked: studyService.flip()
+            onClicked: Revise.StudyService.flip()
             font.bold: true
         }
     }
