@@ -52,8 +52,10 @@ void UI::bind_deck_service(core::IDeckService& deck_service) {
 
 
 void UI::bind_decks_model(core::IDeckService& deck_service, core::IStudyService& study_service) {
-    auto* model = new DecksModel(deck_service, study_service, &m_engine);
-    m_engine.rootContext()->setContextProperty("decksModel", model);
+    if (auto* model = new DecksModel(deck_service, study_service, &m_engine);
+        !m_engine.setExternalSingletonInstance("Revise", "DecksModel", model)) {
+        qFatal("Failed to register external Revise.DecksModel singleton");
+    }
 }
 
 

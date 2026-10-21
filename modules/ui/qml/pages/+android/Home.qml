@@ -37,7 +37,7 @@ Item {
         ListView {
             id: listView
 
-            model: decksModel
+            model: Revise.DecksModel
             boundsBehavior: Flickable.StopAtBounds
             clip: true
 

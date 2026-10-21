@@ -3,12 +3,19 @@
 #pragma once
 
 #include <QAbstractListModel>
-#include <core/IStudyService.hpp>        // for core::IStudyService
-#include <core/service/IDeckService.hpp> // for core::IDeckService
+#include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
+#include <core/IStudyService.hpp>             // for core::IStudyService
+#include <core/service/IDeckService.hpp>      // for core::IDeckService
 
 namespace ui {
 
 class DecksModel final : public QAbstractListModel {
+    Q_OBJECT
+
+    QML_ELEMENT
+    QML_SINGLETON
+    QML_UNCREATABLE("DecksModel is provided by C++")
+
   public:
     DecksModel(core::IDeckService& deck_service, core::IStudyService& study_service, QObject* parent = nullptr);
 
@@ -35,7 +42,7 @@ class DecksModel final : public QAbstractListModel {
     core::IStudyService&       m_study_service;
     QVector<core::DeckSummary> m_decks;
 
-    /// Reload data
+    /// @brief Reload data
     void update();
 };
 

@@ -44,7 +44,7 @@ Item {
         GridView {
             id: gridView
 
-            model: decksModel
+            model: Revise.DecksModel
             boundsBehavior: Flickable.StopAtBounds
             clip: true
 
