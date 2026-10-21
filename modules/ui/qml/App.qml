@@ -55,7 +55,7 @@ ApplicationWindow {
 
     Connections {
         id: toastServiceConnection
-        target: toastService
+        target: Revise.ToastService
 
         function onRequested(msg) {
             toast.header = msg.header
@@ -91,6 +91,6 @@ ApplicationWindow {
         x: appWindow.width - toast.width - 5
         y: 10
 
-        onClosed: toastService.closed()
+        onClosed: Revise.ToastService.closed()
     }
 }

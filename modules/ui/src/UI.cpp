@@ -76,9 +76,10 @@ void UI::bind_study_service(core::IStudyService& study_service) {
 
 
 void UI::bind_toast_service(core::IToastService& toast_service) {
-    auto* service = new ToastService(toast_service, &m_engine);
-    m_engine.rootContext()->setContextProperty("toastService", service);
-    qRegisterMetaType<ToastRequest>("ToastRequest");
+    if (auto* service = new ToastService(toast_service, &m_engine);
+        !m_engine.setExternalSingletonInstance("Revise", "ToastService", service)) {
+        qFatal("Failed to register external Revise.ToastService singleton");
+    }
 }
 
 

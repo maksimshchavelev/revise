@@ -1,11 +1,10 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <QtQml>                  // for QML_VALUE_TYPE, Q_GADGET
-#include <QObject>                // for QObject
-#include <QQueue>                 // for QQueue
-#include <core/IToastService.hpp> // for IToastService
+#include <QObject>                            // for QObject
+#include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
+#include <core/IToastService.hpp>             // for IToastService
 
 namespace ui {
 
@@ -16,7 +15,8 @@ struct ToastRequest {
     Q_GADGET
     QML_VALUE_TYPE(toastRequest)
 
-public:
+  public:
+    /// @brief Type of toast message
     enum class ToastType {
         INFO,    ///< Info toast
         SUCCESS, ///< Success toast
@@ -38,11 +38,15 @@ public:
 class ToastService final : public QObject {
     Q_OBJECT
 
+    QML_ELEMENT
+    QML_SINGLETON
+    QML_UNCREATABLE("ToastService is provided by C++")
+
   public:
-    ToastService(core::IToastService& toast_service, QObject* parent = nullptr);
+    explicit ToastService(core::IToastService& toast_service, QObject* parent = nullptr);
 
     /// @brief Called when a toast message is closed to display a new one (if available)
-    Q_INVOKABLE void closed();
+    Q_INVOKABLE void closed() const;
 
   signals:
     void requested(ToastRequest toast);
@@ -52,5 +56,3 @@ class ToastService final : public QObject {
 };
 
 } // namespace ui
-
-Q_DECLARE_METATYPE(ui::ToastRequest)

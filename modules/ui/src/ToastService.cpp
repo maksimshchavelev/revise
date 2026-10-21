@@ -8,13 +8,14 @@ ToastService::ToastService(core::IToastService& toast_service, QObject* parent) 
     QObject(parent), m_toast_service(toast_service) {
     m_toast_service.connect<core::IToastService::requested>([this](auto e) {
         ToastRequest toast{.header = std::move(e.toast.header),
-                    .message = std::move(e.toast.message),
-                    .type = static_cast<ToastRequest::ToastType>(e.toast.type)};
-        emit  requested(std::move(toast));
+                           .message = std::move(e.toast.message),
+                           .type = static_cast<ToastRequest::ToastType>(e.toast.type)};
+
+        emit requested(std::move(toast));
     });
 }
 
-void ToastService::closed() {
+void ToastService::closed() const {
     m_toast_service.close_last();
 }
 
