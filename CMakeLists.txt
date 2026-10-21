@@ -23,7 +23,7 @@ if(MSVC)
 endif()
 
 
-if (LINUX OR UNIX AND NOT APPL)
+if (LINUX OR UNIX AND NOT APPLE)
     set(CMAKE_INSTALL_PREFIX ./AppDir)
 endif()
 
