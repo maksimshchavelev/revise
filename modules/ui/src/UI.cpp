@@ -92,8 +92,9 @@ void UI::bind_card_edit_session(core::ICardEditSession& session) {
 
 
 void UI::bind_settings(core::ISettings& settings) {
-    auto* s = new Settings(settings, &m_engine);
-    m_engine.rootContext()->setContextProperty(QStringLiteral("settings"), s);
+    if (auto* s = new Settings(settings, &m_engine); !m_engine.setExternalSingletonInstance("Revise", "Settings", s)) {
+        qFatal("Failed to register external Revise.Settings singleton");
+    }
 }
 
 

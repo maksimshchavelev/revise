@@ -1,7 +1,7 @@
 /**
  * A single setting row with a label on the left and a value on the right.
  *
- * This element represents one configurable option in a settings panel.
+ * This element represents one configurable option in a Revise.Settings panel.
  * The left side typically shows a descriptive text (label), while the right side
  * displays the current value / status
  */

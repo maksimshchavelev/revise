@@ -57,7 +57,7 @@ Item {
                     Revise.TextField {
                         Layout.fillWidth: true
                         placeholder.text: qsTr("От 1 до 365")
-                        text: settings.maxInterval
+                        text: Revise.Settings.maxInterval
                         inputMethodHints: Qt.ImhDigitsOnly
                         border.color: valid ? Revise.Theme.textFieldBorder : Revise.Theme.red
 
@@ -75,7 +75,7 @@ Item {
                             if (!valid)
                                 return
 
-                            settings.maxInterval = parseInt(text)
+                            Revise.Settings.maxInterval = parseInt(text)
                         }
                     }
                 }
@@ -87,7 +87,7 @@ Item {
                     Revise.TextField {
                         Layout.fillWidth: true
                         placeholder.text: qsTr("От 1 до 5")
-                        text: settings.learningRate.toFixed(1)
+                        text: Revise.Settings.learningRate.toFixed(1)
                         inputMethodHints: Qt.ImhDigitsOnly
                         border.color: valid ? Revise.Theme.textFieldBorder : Revise.Theme.red
 
@@ -108,7 +108,7 @@ Item {
                                 return
 
                             text = text.replace(",", ".")
-                            settings.learningRate = parseFloat(text)
+                            Revise.Settings.learningRate = parseFloat(text)
                         }
                     }
                 }

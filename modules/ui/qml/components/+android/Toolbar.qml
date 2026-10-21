@@ -54,10 +54,10 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.IconButton {
-                    source: "qrc:/res/img/settings.svg"
+                    source: "qrc:/res/img/Revise.Settings.svg"
                     size: 32
-                    color: Revise.Router.currentPage.name === "settings" ? Revise.Theme.red : Revise.Theme.textColorDark
-                    onClicked: Revise.Router.navigate("settings", {})
+                    color: Revise.Router.currentPage.name === "Revise.Settings" ? Revise.Theme.red : Revise.Theme.textColorDark
+                    onClicked: Revise.Router.navigate("Revise.Settings", {})
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 }
 

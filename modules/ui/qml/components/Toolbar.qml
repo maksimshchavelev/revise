@@ -51,9 +51,9 @@ Item {
 
         Revise.MenuButton {
             text: qsTr("Настройки")
-            selected: Revise.Router.currentPage.name === "settings"
+            selected: Revise.Router.currentPage.name === "Revise.Settings"
             Layout.fillWidth: true
-            onClicked: Revise.Router.navigate("settings", {})
+            onClicked: Revise.Router.navigate("Revise.Settings", {})
         }
 
         Revise.VerticalSpacer {}
