@@ -33,10 +33,10 @@ class UI_EXPORT UI {
     /**
      * @brief Inits the QML engine
      */
-    void init_engine(QGuiApplication& app);
+    void init_engine(const QGuiApplication& app);
 
     /// Enables debug bounds
-    void enable_debug_bounds(bool enable);
+    void enable_debug_bounds(bool enable) const;
 
     /// Make StreakService accessible from qml
     void bind_streak_service(core::IStreakService& streak_service);
@@ -63,7 +63,7 @@ class UI_EXPORT UI {
     void bind_settings(core::ISettings& settings);
 
     /// Make LoadingScreen accessible from qml
-    void bind_loading_screen(LoadingScreen& screen);
+    void bind_loading_screen(LoadingScreen& screen) const;
 
     /// Make Router accessible from qml
     void bind_router(Router& router);
@@ -74,7 +74,7 @@ class UI_EXPORT UI {
      * @return Pointer to `QQmlComponent`
      * @note This method is thread-affinity
      */
-    QQmlComponent* create_page(QUrl source);
+    QQmlComponent* create_page(const QUrl& source);
 
   private:
     QQmlApplicationEngine m_engine;

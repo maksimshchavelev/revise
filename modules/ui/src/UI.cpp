@@ -1,4 +1,4 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "ui/UI.hpp"           // for UI header
 #include "CardEditSession.hpp" // for CardEditSession
@@ -18,7 +18,7 @@ UI::UI() {
 }
 
 
-void UI::init_engine(QGuiApplication& app) {
+void UI::init_engine(const QGuiApplication& app) {
     QObject::connect(
         &m_engine,
         &QQmlApplicationEngine::objectCreationFailed,
@@ -30,7 +30,7 @@ void UI::init_engine(QGuiApplication& app) {
 }
 
 
-void UI::enable_debug_bounds(bool enable) {
+void UI::enable_debug_bounds(const bool enable) const {
     m_engine.rootContext()->setContextProperty("uiShowBounds", enable);
 }
 
@@ -84,7 +84,7 @@ void UI::bind_settings(core::ISettings& settings) {
 }
 
 
-void UI::bind_loading_screen(LoadingScreen& screen) {
+void UI::bind_loading_screen(LoadingScreen& screen) const {
     m_engine.rootContext()->setContextProperty("loadingScreen", &screen);
 }
 
@@ -96,13 +96,13 @@ void UI::bind_router(Router& router) {
 }
 
 
-QQmlComponent* UI::create_page(QUrl source) {
+QQmlComponent* UI::create_page(const QUrl& source) {
     QQmlComponent* component{nullptr};
 
     QMetaObject::invokeMethod(
         &m_engine,
         [&]() {
-            component = new QQmlComponent(&m_engine, std::move(source), &m_engine);
+            component = new QQmlComponent(&m_engine, source, &m_engine);
 
             if (component->isError()) {
                 for (const auto& error : component->errors()) {
