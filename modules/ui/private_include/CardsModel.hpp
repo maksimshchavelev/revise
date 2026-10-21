@@ -1,21 +1,26 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <QAbstractListModel>            // for QAbstractListModel
-#include <atomic>                        // for std::atomic
-#include <core/service/IDeckService.hpp> // for core::IDeckService
+#include <QAbstractListModel>                 // for QAbstractListModel
+#include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
+#include <atomic>                             // for std::atomic
+#include <core/service/IDeckService.hpp>      // for core::IDeckService
 
 namespace ui {
 
 class CardsModel final : public QAbstractListModel {
     Q_OBJECT
 
+    QML_ELEMENT
+    QML_SINGLETON
+    QML_UNCREATABLE("CardsModel is provided by C++")
+
   public:
     Q_PROPERTY(int cardsCount READ cards_count NOTIFY updated FINAL);
     Q_PROPERTY(QString searchFront READ search_front WRITE set_search_front NOTIFY searchFrontChanged)
 
-    CardsModel(core::IDeckService& service, QObject* parent = nullptr);
+    explicit CardsModel(core::IDeckService& service, QObject* parent = nullptr);
 
     enum CardRoles { FrontRole = Qt::UserRole + 1, BackRole, IdRole, NextReviewRole, DifficultyRole, StatusRole };
 

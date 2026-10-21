@@ -153,10 +153,10 @@ Item {
                 Revise.Text {
                     text: {
                         if (searchField.text.trim().length === 0) {
-                            return qsTr("Список карточек (всего " + cardsModel.cardsCount + "):")
+                            return qsTr("Список карточек (всего " + Revise.CardsModel.cardsCount + "):")
                         }
 
-                        return qsTr("Список карточек (найдено " + cardsModel.cardsCount + "):")
+                        return qsTr("Список карточек (найдено " + Revise.CardsModel.cardsCount + "):")
                     }
                 }
 
@@ -170,7 +170,7 @@ Item {
                         id: searchDebounce
                         interval: 300
                         repeat: false
-                        onTriggered: cardsModel.searchFront = searchField.text
+                        onTriggered: Revise.CardsModel.searchFront = searchField.text
                     }
                 }
 
@@ -193,7 +193,7 @@ Item {
             // List of the cards
             ListView {
                 id: listView
-                model: cardsModel
+                model: Revise.CardsModel
                 spacing: 10
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
@@ -335,14 +335,14 @@ Item {
 
     function onEnter() {
         root.deck = Revise.DeckService.deck(deckId)
-        cardsModel.searchFront = ""
-        cardsModel.setDeck(deckId)
+        Revise.CardsModel.searchFront = ""
+        Revise.CardsModel.setDeck(deckId)
     }
 
     function onExit() {}
 
     Connections {
-        target: cardsModel
+        target: Revise.CardsModel
 
         function onLoadingStarted() {
             cardsLoadingScreen.startLoading()

@@ -62,7 +62,7 @@ void CardsModel::setDeck(int deckId) {
     m_last_deck_id = deckId;
     ++m_last_request_id;
 
-    auto _ = QtConcurrent::run([this, deckId, search = m_search_front]() {
+    auto _ = QtConcurrent::run([this]() {
         const int current_request_id = m_last_request_id;
 
         emit loadingStarted();
