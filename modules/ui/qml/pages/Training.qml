@@ -43,7 +43,7 @@ Item {
                 size: 24
                 onClicked: {
                     studyService.pause()
-                    router.navigate("cardEditor", {
+                    Revise.Router.navigate("cardEditor", {
                                         "editMode": true,
                                         "card": studyService.card
                                     }, Revise.page.Page)

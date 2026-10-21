@@ -182,7 +182,7 @@ Item {
                         card.deck_id = deckId
                         card.difficulty = 2.5
                         card.next_review = new Date()
-                        router.navigate("cardEditor", {
+                        Revise.Router.navigate("cardEditor", {
                                             "editMode": false,
                                             "card": card
                                         }, Revise.page.Page)
@@ -228,11 +228,11 @@ Item {
                             cardEditSession.front = card.front
                             cardEditSession.back = card.back
 
-                            router.navigate("cardPreview", {}, Revise.page.Page)
+                            Revise.Router.navigate("cardPreview", {}, Revise.page.Page)
                         }
 
                         onEditClicked: {
-                            router.navigate("cardEditor", {
+                            Revise.Router.navigate("cardEditor", {
                                                 "card": deckService.card(cardId),
                                                 "editMode": true
                                             }, Revise.page.Page)
@@ -281,7 +281,7 @@ Item {
                     visible: !root.openedAsWindow
                     Layout.fillHeight: true
                     text: qsTr("Назад")
-                    onClicked: router.back()
+                    onClicked: Revise.Router.back()
                 }
 
                 Revise.AcceptButton {

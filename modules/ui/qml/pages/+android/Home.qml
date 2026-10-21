@@ -92,10 +92,10 @@ Item {
 
                     onStudyClicked: {
                         studyService.start(deckId)
-                        router.navigate("training", {})
+                        Revise.Router.navigate("training", {})
                     }
                     onEditClicked: {
-                        router.navigate("deckEditor", {
+                        Revise.Router.navigate("deckEditor", {
                                             "deckId": deckId
                                         })
                     }
@@ -110,7 +110,7 @@ Item {
     }
 
     function createDeckPage() {
-        router.navigate("createDeck", {}, Revise.page.Page)
+        Revise.Router.navigate("createDeck", {}, Revise.page.Page)
     }
 
     function onEnter() {}

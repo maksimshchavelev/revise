@@ -38,7 +38,7 @@ Item {
                 source: "qrc:/res/img/back.svg"
                 size: 24
                 color: Revise.Theme.textColorDark
-                onClicked: router.back()
+                onClicked: Revise.Router.back()
             }
 
             Revise.HorizontalSpacer {}

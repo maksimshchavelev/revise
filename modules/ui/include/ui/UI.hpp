@@ -28,7 +28,7 @@ class UI_EXPORT UI {
      * @brief Constructor
      * @note To register QML types, call `UI::init_qml`; to initialize the QML engine, call `UI::init_engine`.
      */
-    UI() = default;
+    UI();
 
     /**
      * @brief Inits the QML engine

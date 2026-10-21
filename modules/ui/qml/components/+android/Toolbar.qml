@@ -46,8 +46,8 @@ Item {
                 Revise.IconButton {
                     source: "qrc:/res/img/home.svg"
                     size: 32
-                    color: router.currentPage.name === "home" ? Revise.Theme.red : Revise.Theme.textColorDark
-                    onClicked: router.navigate("home", {})
+                    color: Revise.Router.currentPage.name === "home" ? Revise.Theme.red : Revise.Theme.textColorDark
+                    onClicked: Revise.Router.navigate("home", {})
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 }
 
@@ -56,8 +56,8 @@ Item {
                 Revise.IconButton {
                     source: "qrc:/res/img/settings.svg"
                     size: 32
-                    color: router.currentPage.name === "settings" ? Revise.Theme.red : Revise.Theme.textColorDark
-                    onClicked: router.navigate("settings", {})
+                    color: Revise.Router.currentPage.name === "settings" ? Revise.Theme.red : Revise.Theme.textColorDark
+                    onClicked: Revise.Router.navigate("settings", {})
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 }
 

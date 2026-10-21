@@ -13,10 +13,12 @@
 
 namespace ui {
 
+UI::UI() {
+    m_engine.addImportPath("qrc:/");
+}
+
 
 void UI::init_engine(QGuiApplication& app) {
-    m_engine.addImportPath("qrc:/");
-
     QObject::connect(
         &m_engine,
         &QQmlApplicationEngine::objectCreationFailed,
@@ -88,7 +90,9 @@ void UI::bind_loading_screen(LoadingScreen& screen) {
 
 
 void UI::bind_router(Router& router) {
-    m_engine.rootContext()->setContextProperty("router", &router);
+    if (!m_engine.setExternalSingletonInstance("Revise", "Router", &router)) {
+        qFatal("Failed to register external Revise.Router singleton");
+    }
 }
 
 
@@ -102,8 +106,7 @@ QQmlComponent* UI::create_page(QUrl source) {
 
             if (component->isError()) {
                 for (const auto& error : component->errors()) {
-                    qWarning() << "ui::UI::create_page(): Failed to create component from file" << source
-                               << "cause:" << error;
+                    qWarning() << "ui::UI::create_page(): Failed to create component from file" << source << "cause:" << error;
                 }
             }
         },

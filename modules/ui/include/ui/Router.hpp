@@ -1,11 +1,9 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
 #include "QmlIncubator.hpp" // for QmlIncubator
 #include "UIExport.hpp"     // for UI_EXPORT macro
-#include <QHash>            // for QHash
-#include <QObject>          // for QObject
 #include <QQmlComponent>    // for QQmlComponent
 #include <QQuickItem>       // for QQuickItem
 #include <QVector>          // for QVector
@@ -43,7 +41,7 @@ struct UI_EXPORT Page {
     QVariantMap params; ///< Parameters of page
     OpenMode    mode;   ///< Open mode
 
-    inline bool operator==(const Page& other) const {
+    bool operator==(const Page& other) const {
         return name == other.name && params == other.params && mode == other.mode;
     }
 };
@@ -61,7 +59,11 @@ struct UI_EXPORT Page {
 class UI_EXPORT Router final : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(Page currentPage READ current_page NOTIFY pageChanged FINAL)
+    QML_ELEMENT
+    QML_SINGLETON
+    QML_UNCREATABLE("Router is provided by C++")
+
+    Q_PROPERTY(ui::Page currentPage READ current_page NOTIFY pageChanged FINAL)
     Q_PROPERTY(QQuickItem* currentPageItem READ current_page_item NOTIFY pageChanged FINAL)
 
   public:
@@ -138,7 +140,7 @@ class UI_EXPORT Router final : public QObject {
      *
      * @return `Page`
      */
-    Page current_page() const;
+    [[nodiscard]] Page current_page() const;
 
     /// @brief Clear all history
     void clear_history();

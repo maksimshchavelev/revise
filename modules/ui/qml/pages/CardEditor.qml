@@ -64,7 +64,7 @@ Item {
                 Revise.Button {
                     visible: !root.openedAsWindow
                     text: qsTr("Назад")
-                    onClicked: router.back()
+                    onClicked: Revise.Router.back()
                 }
 
                 Revise.AcceptButton {

@@ -37,10 +37,10 @@ ApplicationWindow {
     }
 
     Connections {
-        target: router
+        target: Revise.Router
 
         function onPageChanged() {
-            let newPage = router.currentPageItem
+            let newPage = Revise.Router.currentPageItem
 
             newPage.parent = pageHost
             newPage.anchors.fill = pageHost
@@ -48,7 +48,7 @@ ApplicationWindow {
             if (newPage.hasOwnProperty("windowTitle")) {
                 appWindow.title = newPage.windowTitle
             } else {
-                console.warn(`Page ${router.currentPage.name} hasn't 'windowTitle' property`)
+                console.warn(`Page ${Revise.Router.currentPage.name} hasn't 'windowTitle' property`)
             }
         }
     }

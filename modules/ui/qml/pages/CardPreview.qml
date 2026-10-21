@@ -44,7 +44,7 @@ Item {
         Revise.Button {
             Layout.fillWidth: true
             text: qsTr("Назад")
-            onClicked: router.back()
+            onClicked: Revise.Router.back()
         }
     }
 
