@@ -44,8 +44,10 @@ void UI::bind_streak_service(core::IStreakService& streak_service) {
 
 
 void UI::bind_deck_service(core::IDeckService& deck_service) {
-    auto* service = new DeckService(deck_service, &m_engine);
-    m_engine.rootContext()->setContextProperty("deckService", service);
+    if (auto* service = new DeckService(deck_service, &m_engine);
+        !m_engine.setExternalSingletonInstance("Revise", "DeckService", service)) {
+        qFatal("Failed to register external Revise.DeckService singleton");
+    }
 }
 
 

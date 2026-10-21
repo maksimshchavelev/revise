@@ -95,7 +95,7 @@ Item {
                         }
 
                         onRemoveClicked: {
-                            deckService.remove_deck(deckId)
+                            Revise.DeckService.remove_deck(deckId)
                         }
 
                         onExportClicked: {
@@ -132,7 +132,7 @@ Item {
         id: importDialog
 
         title: qsTr("Выберите файл")
-        onAccepted: deckService.import_deck_async(selectedFile)
+        onAccepted: Revise.DeckService.import_deck_async(selectedFile)
 
         nameFilters: [qsTr("Колода Revise (*.rpkg)"), qsTr(
                 "Колода Anki (*.apkg)")]
@@ -144,7 +144,7 @@ Item {
         property int deckId: 0
 
         title: qsTr("Экспортировать как .rpkg")
-        onAccepted: deckService.export_deck_async(deckId, selectedFolder)
+        onAccepted: Revise.DeckService.export_deck_async(deckId, selectedFolder)
     }
 
     Shortcut {

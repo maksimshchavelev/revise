@@ -223,7 +223,7 @@ Item {
                         backgroundItem: blurOverlay.blurredItem
 
                         onPreviewClicked: {
-                            let card = deckService.card(cardId)
+                            let card = Revise.DeckService.card(cardId)
 
                             cardEditSession.front = card.front
                             cardEditSession.back = card.back
@@ -233,25 +233,25 @@ Item {
 
                         onEditClicked: {
                             Revise.Router.navigate("cardEditor", {
-                                                "card": deckService.card(cardId),
+                                                "card": Revise.DeckService.card(cardId),
                                                 "editMode": true
                                             }, Revise.page.Page)
                         }
 
                         onIncreaseDifficultyClicked: {
-                            let card = deckService.card(cardId)
+                            let card = Revise.DeckService.card(cardId)
                             card.difficulty += 0.5
-                            deckService.update_card(card)
+                            Revise.DeckService.update_card(card)
                         }
 
                         onDecreaseDifficultyClicked: {
-                            let card = deckService.card(cardId)
+                            let card = Revise.DeckService.card(cardId)
                             card.difficulty -= 0.5
-                            deckService.update_card(card)
+                            Revise.DeckService.update_card(card)
                         }
 
                         onRemoveClicked: {
-                            deckService.remove_card(cardId)
+                            Revise.DeckService.remove_card(cardId)
                         }
                     }
 
@@ -320,7 +320,7 @@ Item {
         root.deck.timeLimit = limitTime.checked ? parseInt(
                                                       deckTimeLimit.text) : 0
 
-        deckService.update_deck(root.deck)
+        Revise.DeckService.update_deck(root.deck)
     }
 
     Shortcut {
@@ -334,7 +334,7 @@ Item {
     }
 
     function onEnter() {
-        root.deck = deckService.deck(deckId)
+        root.deck = Revise.DeckService.deck(deckId)
         cardsModel.searchFront = ""
         cardsModel.setDeck(deckId)
     }

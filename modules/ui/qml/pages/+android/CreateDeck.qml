@@ -65,7 +65,7 @@ Item {
                                                parseInt(
                                                    deckIncorrectLimit.text))
 
-                    deckService.create_deck(deck)
+                    Revise.DeckService.create_deck(deck)
 
                     deckName.text = ""
                     deckDescription.text = ""
@@ -106,7 +106,7 @@ Item {
                 Layout.fillWidth: true
                 placeholder.text: qsTr("Имя колоды")
                 // onTextChanged: {
-                //     valid = !deckService.is_deck_exists(deckName.text)
+                //     valid = !Revise.DeckService.is_deck_exists(deckName.text)
                 // }
             }
 

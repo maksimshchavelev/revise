@@ -91,9 +91,9 @@ Item {
                 root.pageParams.card.back = backHtml
 
                 if (root.pageParams.editMode === true) {
-                    deckService.update_card(root.pageParams.card)
+                    Revise.DeckService.update_card(root.pageParams.card)
                 } else {
-                    deckService.create_card(root.pageParams.card)
+                    Revise.DeckService.create_card(root.pageParams.card)
                     frontEditor.clear()
                     backEditor.clear()
                 }

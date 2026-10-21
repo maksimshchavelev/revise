@@ -8,13 +8,18 @@
 #include "wrappers/DeckWrapper.hpp"            // for ui::Deck
 #include "wrappers/UpdateCardDraftWrapper.hpp" // for ui::UpdateCardDraft
 #include <QObject>                             // for QObject
+#include <QtQmlIntegration/qqmlintegration.h>  // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
 #include <core/service/IDeckService.hpp>       // for core::IDeckService
 
 namespace ui {
 
-/// UI wrapper for `core::IDeckService`
+/// @brief UI wrapper for `core::IDeckService`
 class DeckService final : public QObject {
     Q_OBJECT
+
+    QML_ELEMENT
+    QML_SINGLETON
+    QML_UNCREATABLE("DeckService is provided by C++")
 
   public:
     /**
