@@ -8,8 +8,8 @@ constexpr int REVISE_DB_SCHEMA_VERSION = 2;
 
 // Version
 constexpr int REVISE_VERSION_MAJOR = 1;
-constexpr int REVISE_VERSION_MINOR = 3;
-constexpr int REVISE_VERSION_PATCH = 3;
+constexpr int REVISE_VERSION_MINOR = 4;
+constexpr int REVISE_VERSION_PATCH = 0;
 
 // Build info
 inline const auto REVISE_BUILD_COMPILER_ID = "GNU";
@@ -23,4 +23,3 @@ inline const auto REVISE_BUILD_FLAGS = "-O2 -g -O0";
 inline const auto REVISE_QT_VERSION = "6.12.0";
 
 }
-
