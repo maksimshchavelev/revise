@@ -61,7 +61,7 @@ Item {
         Revise.Text {
             color: Revise.Theme.textColorDark
             font.pixelSize: Revise.Theme.fontSizeSmall
-            text: qsTr(`Revise ${settings.applicationVersion}`)
+            text: qsTr(`Revise ${Revise.BuildInfo.version}`)
             Layout.alignment: Qt.AlignHCenter
         }
     }
