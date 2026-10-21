@@ -54,8 +54,8 @@ Item {
 
     function onEnter() {
         root.flipped = false
-        root.front = cardEditSession.front
-        root.back = cardEditSession.back
+        root.front = Revise.CardEditSession.front
+        root.back = Revise.CardEditSession.back
     }
 
     function onExit() {}

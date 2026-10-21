@@ -84,8 +84,10 @@ void UI::bind_toast_service(core::IToastService& toast_service) {
 
 
 void UI::bind_card_edit_session(core::ICardEditSession& session) {
-    auto* service = new CardEditSession(session, &m_engine);
-    m_engine.rootContext()->setContextProperty("cardEditSession", service);
+    if (auto* service = new CardEditSession(session, &m_engine);
+        !m_engine.setExternalSingletonInstance("Revise", "CardEditSession", service)) {
+        qFatal("Failed to register external Revise.CardEditSession singleton");
+    }
 }
 
 

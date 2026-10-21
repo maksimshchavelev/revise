@@ -279,8 +279,8 @@ Item {
                         onPreviewClicked: {
                             let card = Revise.DeckService.card(cardId)
 
-                            cardEditSession.front = card.front
-                            cardEditSession.back = card.back
+                            Revise.CardEditSession.front = card.front
+                            Revise.CardEditSession.back = card.back
 
                             Revise.Router.navigate("cardPreview", {}, Revise.page.Page)
                         }
