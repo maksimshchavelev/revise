@@ -63,7 +63,7 @@ class UI_EXPORT UI {
     void bind_settings(core::ISettings& settings);
 
     /// Make LoadingScreen accessible from qml
-    void bind_loading_screen(LoadingScreen& screen) const;
+    void bind_loading_screen(LoadingScreen& screen);
 
     /// Make Router accessible from qml
     void bind_router(Router& router);

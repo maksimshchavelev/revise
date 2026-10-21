@@ -22,14 +22,14 @@ ApplicationWindow {
     Revise.LoadingScreen {
         id: screen
         anchors.fill: parent
-        description: loadingScreen.description
+        description: Revise.LoadingScreenService.description
     }
 
     Connections {
-        target: loadingScreen
+        target: Revise.LoadingScreenService
 
         function onVisibleChanged() {
-            if (loadingScreen.visible)
+            if (Revise.LoadingScreenService.visible)
                 screen.startLoading()
             else
                 screen.endLoading()

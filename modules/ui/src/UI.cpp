@@ -98,8 +98,10 @@ void UI::bind_settings(core::ISettings& settings) {
 }
 
 
-void UI::bind_loading_screen(LoadingScreen& screen) const {
-    m_engine.rootContext()->setContextProperty("loadingScreen", &screen);
+void UI::bind_loading_screen(LoadingScreen& screen) {
+    if (!m_engine.setExternalSingletonInstance("Revise", "LoadingScreenService", &screen)) {
+        qFatal("Failed to register external Revise.LoadingScreenService singleton");
+    }
 }
 
 
