@@ -15,8 +15,8 @@ Item {
     }
 
     Revise.StreakIndicator {
-        streak: streakService.streak
-        updatedToday: streakService.updatedToday
+        streak: Revise.StreakService.streak
+        updatedToday: Revise.StreakService.updatedToday
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.margins: 15

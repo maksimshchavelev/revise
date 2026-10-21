@@ -28,8 +28,8 @@ Item {
         spacing: 0
 
         Revise.StreakIndicator {
-            streak: streakService.streak
-            updatedToday: streakService.updatedToday
+            streak: Revise.StreakService.streak
+            updatedToday: Revise.StreakService.updatedToday
             Layout.alignment: Qt.AlignHCenter | Qt.AlignLeft
         }
 

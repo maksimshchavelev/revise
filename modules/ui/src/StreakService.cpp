@@ -9,17 +9,17 @@ StreakService::StreakService(core::IStreakService& streak_service, QObject* pare
     QObject(parent), m_streak_service(streak_service) {
 
     m_streak_service.connect<core::IStreakService::reset>(
-        [this](const core::IStreakService::reset& e) { QMetaObject::invokeMethod(this, [this]() { load(); }); });
+        [this](const core::IStreakService::reset&) { QMetaObject::invokeMethod(this, [this]() { load(); }); });
 
     m_streak_service.connect<core::IStreakService::updated>(
-        [this](const core::IStreakService::updated& e) { QMetaObject::invokeMethod(this, [this]() { load(); }); });
+        [this](const core::IStreakService::updated&) { QMetaObject::invokeMethod(this, [this]() { load(); }); });
 
     load();
 }
 
 
 int StreakService::streak() const noexcept {
-    return static_cast<int>(m_streak);
+    return m_streak;
 }
 
 

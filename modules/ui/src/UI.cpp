@@ -36,8 +36,10 @@ void UI::enable_debug_bounds(const bool enable) const {
 
 
 void UI::bind_streak_service(core::IStreakService& streak_service) {
-    auto* service = new StreakService(streak_service, &m_engine);
-    m_engine.rootContext()->setContextProperty("streakService", service);
+    if (auto* service = new StreakService(streak_service, &m_engine);
+        !m_engine.setExternalSingletonInstance("Revise", "StreakService", service)) {
+        qFatal("Failed to register external Revise.StreakService singleton");
+    }
 }
 
 
