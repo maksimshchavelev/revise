@@ -1,21 +1,19 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "../Notifiable.hpp"
-#include <QString>        // for QString
+#include <core/Notifiable.hpp> // for core::Notifiable
 
 namespace core {
 
+/// @brief Type of toast message
 enum class ToastType {
-    INFO,    ///< Info toast
+    INFO,    ///< Informational toast
     SUCCESS, ///< Success toast
     ERROR    ///< Error toast
 };
 
-/**
- * @brief A structure describing a single toast message
- */
+/// @brief A structure describing a single toast message
 struct Toast {
     QString   header;  ///< Toast header
     QString   message; ///< Toast message
@@ -26,12 +24,10 @@ struct Toast {
     }
 };
 
-/**
- * @brief The IToastService class
- */
+/// @brief A service that manages toast messages
 class IToastService : public Notifiable {
   public:
-    EVENT(requested, Toast toast) ///< Toast requested
+    EVENT(requested, Toast toast) ///< Toast was requested
 
     IToastService() = default;
     virtual ~IToastService() = default;
