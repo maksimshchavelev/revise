@@ -2,6 +2,23 @@ pragma Singleton
 import QtQuick
 
 QtObject {
+    // App Background
+    readonly property color backgroundColor: Qt.color("#0b1320")
+
+    // Card decks, settings panels, dialog boxes, sidebar. This is the primary color of the elements displayed on top of the background
+    readonly property color surfaceColor: Qt.color("#12192b")
+
+    // Search areas, input fields, secondary panels.
+    readonly property color surfaceContainerColor: Qt.color("#141f35")
+
+    // Main buttons, active switches, highlighted elements, and selection indicators
+    readonly property color primaryColor: Qt.color("#424bda")
+
+    // Main text that is easy to read against a background
+    readonly property color onSurfaceColor: Qt.color("#aab3f9")
+
+    // ---------
+
     readonly property color tintColor: "#060606"
     readonly property color textColor: "#D8D8D8"
     readonly property color textColorDark: "#929292"
