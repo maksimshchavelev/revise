@@ -1,8 +1,6 @@
 // Single-line text input field. You can set a validator. Multicolored border is present.
 
 import QtQuick
-import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Rectangle {
@@ -18,25 +16,19 @@ Rectangle {
     property bool editable: true
 
     property font font: Qt.font({
-                                    "family": Revise.Fonts.regular.name,
-                                    "pixelSize": Revise.Theme.fontSizeDefault
-                                })
+        "family": Revise.Fonts.regular.name,
+        "pixelSize": Revise.Theme.fontSizeDefault
+    })
 
     implicitHeight: 35
-    radius: 10
-    color: Revise.Theme.textFieldBackground
+    radius: 6
+    color: Color.lighter(Revise.Theme.surfaceColor, 1.2)
     border.width: 1
-    border.color: Revise.Theme.textFieldBorder
+    border.color: Color.lighter(Revise.Theme.surfaceColor, 1.5)
     clip: true
 
     layer.enabled: true
-    layer.effect: DropShadow {
-        horizontalOffset: 5
-        verticalOffset: 5
-        radius: 8
-        samples: 32
-        color: "#80000000"
-    }
+    layer.effect: Revise.Shadow {}
 
     Revise.Text {
         id: placeholder
@@ -47,8 +39,7 @@ Rectangle {
         verticalAlignment: Revise.Text.AlignVCenter
         horizontalAlignment: Revise.Text.AlignLeft
         font: root.font
-        color: Revise.Theme.textColorDark
-        opacity: 0.45
+        color: Color.darker(Revise.Theme.foregroundColor, 2)
         visible: root.text.length === 0
         elide: Revise.Text.ElideRight
     }
@@ -85,7 +76,7 @@ Rectangle {
             input.enabled = true
             input.forceActiveFocus()
             input.cursorPosition = input.positionAt(point.position.x,
-                                                    point.position.y)
+                point.position.y)
             Qt.inputMethod.show()
         }
     }
