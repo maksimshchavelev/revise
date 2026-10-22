@@ -8,8 +8,6 @@ import Revise as Revise
 Item {
     id: root
 
-    property alias background: background
-
     width: 150
     height: layout.implicitHeight
 
@@ -24,7 +22,7 @@ Item {
 
     Rectangle {
         id: background
-        color: Revise.Theme.backgroundLight
+        color: Revise.Theme.surfaceColor
         anchors.fill: parent
     }
 
