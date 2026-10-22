@@ -1,14 +1,13 @@
 // A regular button with text
 
 import QtQuick
-import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
     id: root
 
-    property real radius: root.height * 0.35
+    property real radius: 6
     property bool pressed: tapHandler.pressed && clickable
     property bool hovered: hoverHandler.hovered && clickable
     property bool clickable: true
@@ -20,18 +19,26 @@ Item {
     property alias horizontalAlignment: txt.horizontalAlignment
     property alias verticalAlignment: txt.verticalAlignment
 
-    signal clicked()
+    signal clicked
 
     implicitWidth: txt.implicitWidth + 40
-    implicitHeight: Math.max(40, txt.implicitHeight + 10)
-    scale: root.pressed ? 0.96 : 1
+    implicitHeight: Math.max(35, txt.implicitHeight + 10)
+    scale: {
+        if (root.pressed) {
+            return 0.96
+        } else if (root.hovered) {
+            return 0.98
+        }
+        return 1.0
+    }
 
     layer.enabled: true
+
     layer.effect: DropShadow {
         horizontalOffset: 4
         verticalOffset: 4
         radius: 8
-        samples: 32
+        samples: 16
         color: "#80000000"
     }
 
@@ -39,15 +46,11 @@ Item {
         id: background
         anchors.fill: parent
         radius: root.radius
-        color: hovered ? Revise.Theme.grey : "transparent"
-        opacity: 0.2
-        border.width: 1
-        border.color: Revise.Theme.buttonBorder
+        color: Revise.Theme.primaryColor
     }
 
     Revise.Text {
         id: txt
-        color: Revise.Theme.textColor
         font.pixelSize: Revise.Theme.fontSizeDefault
         anchors.fill: parent
         anchors.margins: 8
@@ -59,7 +62,7 @@ Item {
         visible: !root.clickable
         anchors.fill: parent
         radius: root.radius
-        color: "black"
+        color: "grey"
         opacity: 0.3
     }
 
