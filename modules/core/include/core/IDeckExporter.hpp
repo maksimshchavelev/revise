@@ -1,18 +1,15 @@
-// Copyright 2025 Maksim Shchavelev
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "structs/Card.hpp"
-#include "structs/Deck.hpp"
-#include <QString>  // for QString
-#include <QVector>  // for QVector
-#include <expected> // for std::expected
+#include <QString>               // for QString
+#include <core/structs/Card.hpp> // for core::Card
+#include <core/structs/Deck.hpp> // for core::Deck
+#include <expected>              // for std::expected
 
 namespace core {
 
-/**
- * @brief Data for export operation
- */
+/// @brief Data for export operation
 struct ExportData {
     Deck          deck;            ///< Deck
     QString       media_directory; ///< Media directory path. Empty by default
@@ -36,7 +33,7 @@ class IDeckExporter {
 
     /**
      * @brief Import deck from the provided file path.
-     * @param ExportData export dataa
+     * @param data export data
      * @param path Path to export
      * @return std::expected containing ImportResult on success or QString error message on failure.
      *
