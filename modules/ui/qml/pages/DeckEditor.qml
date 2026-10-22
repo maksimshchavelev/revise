@@ -21,7 +21,7 @@ Item {
         color: Revise.Theme.background
     }
 
-    Revise.SolidBackground {
+    Revise.Background {
         id: background
         anchors.fill: parent
     }
