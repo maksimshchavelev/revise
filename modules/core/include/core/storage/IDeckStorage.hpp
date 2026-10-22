@@ -2,19 +2,19 @@
 
 #pragma once
 
-#include "../structs/Card.hpp"
-#include "../structs/Deck.hpp"
-#include <QString>       // for QString
-#include <QVector>       // for QVector
-#include <expected>      // for std::expected
+#include <QString>               // for QString
+#include <core/structs/Card.hpp> // for core::Card
+#include <core/structs/Deck.hpp> // for core::Deck
+#include <expected>              // for std::expected
 
 namespace core {
 
-/// @brief Deck and Card Storage
+/// @brief Deck and Card Storage interface
 class IDeckStorage {
   public:
     /// @brief Describes a deck storage error
     struct Error {
+        /// @brief Kind of IDeckStorage error
         enum class Kind {
             Unavailable,      ///< Storage backend is unavailable
             NotFound,         ///< Requested entity was not found
