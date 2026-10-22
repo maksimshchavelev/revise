@@ -3,16 +3,16 @@ import QtQuick
 
 QtObject {
     // App Background
-    readonly property color backgroundColor: Qt.color("#0b1320")
+    readonly property color backgroundColor: Qt.color("#0a101e")
 
     // Card decks, settings panels, dialog boxes, sidebar. This is the primary color of the elements displayed on top of the background
-    readonly property color surfaceColor: Qt.color("#12192b")
+    readonly property color surfaceColor: Qt.color("#111828")
 
     // Search areas, input fields, secondary panels.
-    readonly property color surfaceContainerColor: Qt.color("#141f35")
+    readonly property color surfaceContainerColor: Qt.color("#1a284a")
 
     // Main buttons, active switches, highlighted elements, and selection indicators
-    readonly property color primaryColor: Qt.color("#424bda")
+    readonly property color primaryColor: Qt.color("#464edb")
 
     // Main text that is easy to read against a background
     readonly property color onSurfaceColor: Qt.color("#aab3f9")
