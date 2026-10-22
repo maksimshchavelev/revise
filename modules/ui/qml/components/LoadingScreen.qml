@@ -1,3 +1,5 @@
+// Loading screen
+
 import QtQuick
 import Revise as Revise
 
@@ -15,7 +17,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: Revise.Theme.background
+        color: Revise.Theme.backgroundColor
     }
 
     Revise.Spinner {
@@ -48,7 +50,7 @@ Item {
         interval: root.thresholdTime
         onTriggered: {
             hideTimer.stop()
-            startTime = new Date()
+            root.startTime = new Date()
             root.opacity = 1.0
         }
     }
@@ -68,9 +70,7 @@ Item {
 
     function endLoading() {
         const elapsed = new Date() - root.startTime
-        const delay = Math.max(0, root.minVisibleTime - elapsed)
-
-        hideTimer.interval = delay
+        hideTimer.interval = Math.max(0, root.minVisibleTime - elapsed)
         hideTimer.start()
         thresholdTimer.stop()
     }
