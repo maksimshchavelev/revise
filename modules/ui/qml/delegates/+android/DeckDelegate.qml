@@ -181,8 +181,6 @@ Rectangle {
                     text: "Учить"
                     font.bold: true
                     clickable: root.repeatableToday
-                    background.color: hovered ? Revise.Theme.grey : "transparent"
-                    background.opacity: 0.2
 
                     onClicked: root.studyClicked()
                 }
