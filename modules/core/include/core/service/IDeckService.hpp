@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "../structs/Card.hpp"
-#include "../structs/Deck.hpp"
-#include "core/Notifiable.hpp"              // for Notifiable
-#include "core/search/CardSearchFilter.hpp" // for CardFilterChain
 #include <QFuture>                          // for QFuture
+#include <core/Notifiable.hpp>              // for Notifiable
+#include <core/search/CardSearchFilter.hpp> // for CardFilterChain
+#include <core/structs/Card.hpp>            // for core::Card
+#include <core/structs/Deck.hpp>            // for core::Deck
 #include <expected>                         // for std::expected
 
 namespace core {
@@ -19,6 +19,7 @@ class IDeckService : public Notifiable {
   public:
     /// @brief Stores IDeckService error
     struct Error {
+        /// @brief Kind of error
         enum class Kind {
             NotFound,          ///< Requested entity does not exist
             AlreadyExists,     ///< Entity already exists
