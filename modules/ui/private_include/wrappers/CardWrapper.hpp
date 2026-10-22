@@ -2,8 +2,8 @@
 
 #pragma once
 
+#include <../../../core/include/core/structs/Card.hpp>
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT
-#include <core/Card.hpp>                      // for core::Card
 #include <core/Property.hpp>                  // for PROPERTY macro for getters and setters
 
 namespace ui {

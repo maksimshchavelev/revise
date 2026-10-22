@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Card.hpp" // for Card
+#include "structs/Card.hpp"
 #include <expected> // for std::expected
 #include <optional> // for std::optional
 

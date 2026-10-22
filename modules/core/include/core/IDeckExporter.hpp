@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Card.hpp" // for Card
-#include "Deck.hpp" // for Deck
+#include "structs/Card.hpp"
+#include "structs/Deck.hpp"
 #include <QString>  // for QString
 #include <QVector>  // for QVector
 #include <expected> // for std::expected

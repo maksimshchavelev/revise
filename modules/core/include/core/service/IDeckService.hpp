@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "core/Card.hpp"                    // for Card
-#include "core/Deck.hpp"                    // for Deck
+#include "../structs/Card.hpp"
+#include "../structs/Deck.hpp"
 #include "core/Notifiable.hpp"              // for Notifiable
 #include "core/search/CardSearchFilter.hpp" // for CardFilterChain
 #include <QFuture>                          // for QFuture

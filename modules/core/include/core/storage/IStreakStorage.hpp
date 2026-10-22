@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "core/Streak.hpp" // for Streak
+#include "../structs/Streak.hpp"
 #include <expected>        // for std::expected
 
 namespace core {

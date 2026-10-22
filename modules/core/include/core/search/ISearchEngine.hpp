@@ -2,8 +2,8 @@
 
 #pragma once
 
+#include "../structs/Card.hpp"
 #include "CardSearchFilter.hpp" // for card filters
-#include "core/Card.hpp"        // for Card
 #include <expected>             // for std::expected
 #include <system_error>         // for std::error_code
 

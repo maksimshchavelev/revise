@@ -3,7 +3,7 @@
 #pragma once
 
 #include "../Notifiable.hpp"
-#include "../Streak.hpp"
+#include "../structs/Streak.hpp"
 #include <QFuture>        // for QFuture
 #include <expected>       // for std::expected
 

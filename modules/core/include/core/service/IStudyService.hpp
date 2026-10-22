@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "../Card.hpp"
 #include "../Notifiable.hpp"
-#include <expected>       // for std::expected
-#include <optional>       // for std::optional
+#include "../structs/Card.hpp"
+#include <expected> // for std::expected
+#include <optional> // for std::optional
 
 namespace core {
 

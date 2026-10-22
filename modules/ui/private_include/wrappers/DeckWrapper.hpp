@@ -2,8 +2,8 @@
 
 #pragma once
 
+#include <../../../core/include/core/structs/Deck.hpp>
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT
-#include <core/Deck.hpp>                      // for core::Deck and core::DeckWrapper
 #include <type_traits>                        // for std::is_base_of, std::remove_reference
 
 namespace ui {

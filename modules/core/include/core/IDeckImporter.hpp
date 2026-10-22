@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Card.hpp" // for Card
+#include "structs/Card.hpp"
 #include <QString>  // for QString
 #include <QVector>  // for QVector
 #include <expected> // for std::expected
