@@ -1,7 +1,7 @@
 // A deck that will be displayed on the main page
+
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Rectangle {
@@ -21,7 +21,7 @@ Rectangle {
     signal removeClicked
 
     implicitHeight: 90
-    color: Revise.Theme.backgroundLight
+    color: Revise.Theme.surfaceColor
     radius: 10
     clip: true
 

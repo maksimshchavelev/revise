@@ -1,9 +1,8 @@
 // Edit deck page
+
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -22,14 +21,7 @@ Item {
     }
 
     Revise.Background {
-        id: background
         anchors.fill: parent
-    }
-
-    Revise.BlurOverlay {
-        id: blurOverlay
-        anchors.fill: parent
-        sourceItem: background
     }
 
     Flickable {
@@ -40,9 +32,6 @@ Item {
         contentHeight: layout.implicitHeight
         clip: true
         boundsBehavior: Flickable.StopAtBounds
-
-        onContentXChanged: iterateDelegates()
-        onContentYChanged: iterateDelegates()
 
         ColumnLayout {
             id: layout
@@ -220,7 +209,6 @@ Item {
                         nextReview: model.nextReview
                         difficulty: model.difficulty
                         status: model.status
-                        backgroundItem: blurOverlay.blurredItem
 
                         onPreviewClicked: {
                             let card = Revise.DeckService.card(cardId)
@@ -254,16 +242,9 @@ Item {
                             Revise.DeckService.remove_card(cardId)
                         }
                     }
-
-                    function remapPosition() {
-                        card.remapPosition()
-                    }
                 }
 
                 ScrollBar.vertical: Revise.Scrollbar {}
-
-                onContentXChanged: iterateDelegates()
-                onContentYChanged: iterateDelegates()
 
                 Revise.LoadingScreen {
                     id: cardsLoadingScreen
@@ -350,15 +331,6 @@ Item {
 
         function onLoadingFinished() {
             cardsLoadingScreen.endLoading()
-        }
-    }
-
-    function iterateDelegates() {
-        for (var i = 0; i < listView.contentItem.children.length; i++) {
-            var child = listView.contentItem.children[i]
-            if (child && typeof child.remapPosition === "function") {
-                child.remapPosition()
-            }
         }
     }
 }

@@ -1,6 +1,6 @@
 // A deck that will be displayed on the main page
+
 import QtQuick
-import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
@@ -17,9 +17,6 @@ Item {
     property int cardId: 0
     property int status: 0
 
-    property Item backgroundItem: null // for blurring
-    property var mappedPos: root.mapToItem(root.backgroundItem, 0, 0)
-
     signal previewClicked
     signal increaseDifficultyClicked
     signal decreaseDifficultyClicked
@@ -35,12 +32,12 @@ Item {
         scale: root.hovered ? 1.01 : 1.0
 
         Rectangle {
-            id: background
-
+            id: tint
             anchors.fill: parent
+            color: Revise.Theme.surfaceColor
             radius: 10
-            color: "black"
             layer.enabled: true
+
             layer.effect: DropShadow {
                 horizontalOffset: 4
                 verticalOffset: 4
@@ -48,26 +45,6 @@ Item {
                 samples: 32
                 color: "#80000000"
             }
-
-            ShaderEffectSource {
-                id: croppedBackground
-                anchors.fill: parent
-                sourceItem: root.backgroundItem
-                live: true
-                hideSource: true
-                visible: true
-
-                sourceRect: Qt.rect(root.mappedPos.x, root.mappedPos.y,
-                                    root.width, root.height)
-            }
-        }
-
-        Rectangle {
-            id: tint
-            anchors.fill: parent
-            color: Revise.Theme.cardTint
-            opacity: 0.3
-            radius: 10
         }
 
         Column {
@@ -189,13 +166,6 @@ Item {
                 duration: 60
             }
         }
-    }
-
-    onXChanged: remapPosition()
-    onYChanged: remapPosition()
-
-    function remapPosition() {
-        mappedPos = root.mapToItem(root.backgroundItem, 0, 0)
     }
 
     Revise.KekabMenu {
