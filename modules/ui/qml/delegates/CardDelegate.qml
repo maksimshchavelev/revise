@@ -1,10 +1,9 @@
 // A deck that will be displayed on the main page
 
 import QtQuick
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
-Item {
+Rectangle {
     id: root
 
     property bool pressed: tapHandler.pressed
@@ -25,26 +24,27 @@ Item {
 
     implicitHeight: 100
 
+    color: root.status_color()
+    radius: 12
+    scale: root.hovered ? 1.01 : 1.0
+
     Item {
         id: content
 
         anchors.fill: parent
-        scale: root.hovered ? 1.01 : 1.0
+        anchors.leftMargin: 8
 
         Rectangle {
             id: tint
-            anchors.fill: parent
+            // Note: Indents are needed to avoid a visual glitch where the card's background slightly overlaps the edges.
+            width: parent.width + 2
+            height: parent.height + 2
+            anchors.centerIn: parent
             color: Revise.Theme.surfaceColor
-            radius: 10
+            radius: 12
             layer.enabled: true
 
-            layer.effect: DropShadow {
-                horizontalOffset: 4
-                verticalOffset: 4
-                radius: 8
-                samples: 32
-                color: "#80000000"
-            }
+            layer.effect: Revise.Shadow {}
         }
 
         Column {
@@ -65,6 +65,7 @@ Item {
                     text: root.front
                     font.bold: true
                     font.pixelSize: Revise.Theme.fontSizeMedium
+                    maximumLineCount: 1
                     elide: Revise.Text.ElideRight
                     width: parent.width - menuButton.width - parent.spacing
 
@@ -113,14 +114,7 @@ Item {
                             return qsTr("ошибочная")
                     }
 
-                    value.color: {
-                        if (root.status === 0)
-                            return Revise.Theme.green
-                        if (root.status === 1)
-                            return Revise.Theme.blue
-                        if (root.status === 2)
-                            return Revise.Theme.red
-                    }
+                    value.color: root.status_color()
                 }
 
                 Revise.KeyValue {
@@ -221,5 +215,13 @@ Item {
 
     HoverHandler {
         id: hoverHandler
+    }
+
+    function status_color() {
+        switch (root.status) {
+            case 0:  return Revise.Theme.green
+            case 1:  return Revise.Theme.blue
+            default: return Revise.Theme.red
+        }
     }
 }
