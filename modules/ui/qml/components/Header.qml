@@ -1,4 +1,4 @@
-# Header with streak and add deck button
+// Header with streak and add deck button
 
 import QtQuick
 import Revise as Revise
