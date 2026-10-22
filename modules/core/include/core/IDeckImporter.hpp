@@ -1,11 +1,10 @@
-// Copyright 2025 Maksim Shchavelev
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "structs/Card.hpp"
-#include <QString>  // for QString
-#include <QVector>  // for QVector
-#include <expected> // for std::expected
+#include <QString>               // for QString
+#include <core/structs/Card.hpp> // for core::Card
+#include <expected>              // for std::expected
 
 namespace core {
 
@@ -15,8 +14,8 @@ namespace core {
  * Contains logical deck name and the list of cards parsed from the source file.
  */
 struct ImportResult {
-    QString       deck_name;             ///< human-readable deck name
-    QString       deck_description;      ///< descriotion
+    QString       deck_name;             ///< Deck name
+    QString       deck_description;      ///< Deck description
     int           time_limit{0};         ///< Time limit
     int           new_limit{30};         ///< Limit of new cards
     int           consolidate_limit{30}; ///< Limit of consolidate cards
@@ -26,7 +25,7 @@ struct ImportResult {
 };
 
 /**
- * @brief Interface for importing decks from external formats (apkg, json, csv, ...).
+ * @brief Interface for importing decks from external formats (apkg, JSON, csv, ...).
  *
  * Implementations MUST be thread-safe in the sense that they can be executed from a worker thread.
  * The method import_from_file() is synchronous: it parses the file and returns the parsed result
