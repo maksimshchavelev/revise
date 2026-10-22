@@ -3,6 +3,7 @@
 #pragma once
 
 #include <core/structs/Card.hpp> // for core::Card
+#include <core/structs/Deck.hpp> // for core::Deck
 #include <expected>              // for std::expected
 #include <optional>              // for std::optional
 
