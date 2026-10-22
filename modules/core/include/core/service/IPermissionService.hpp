@@ -1,9 +1,10 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
 namespace core {
 
+/// @brief Permission type
 enum class Permission {
     POST_NOTIFICATIONS,
     INTERNET,
@@ -27,7 +28,7 @@ class IPermissionService {
 
     /**
      * @brief Checks whether permission has been granted
-     * @param Permit name
+     * @param permission Permission name
      * @return `true` if permission is granted
      * @note Implement this method yourself
      */
