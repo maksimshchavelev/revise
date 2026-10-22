@@ -21,7 +21,8 @@ class SM2Algorithm final : public core::IAlgorithm {
     SM2Algorithm(const core::AlgorithmSettings& settings);
     ~SM2Algorithm() override = default;
 
-    core::AlgorithmResult process_answer(const core::Card& old_card, float user_difficulty) noexcept override;
+    core::AlgorithmResult process_answer(const core::Card&           old_card,
+                                         core::Card::difficulty_type user_difficulty) noexcept override;
 
   private:
     const core::AlgorithmSettings& m_settings;

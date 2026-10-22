@@ -6,7 +6,8 @@ namespace engine {
 
 SM2Algorithm::SM2Algorithm(const core::AlgorithmSettings& settings) : m_settings(settings) {}
 
-core::AlgorithmResult SM2Algorithm::process_answer(const core::Card& old_card, float user_difficulty) noexcept {
+core::AlgorithmResult SM2Algorithm::process_answer(const core::Card&           old_card,
+                                                   core::Card::difficulty_type user_difficulty) noexcept {
     core::AlgorithmResult r;
     r.updated_card = old_card; // copy
 

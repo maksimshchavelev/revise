@@ -1,9 +1,8 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "structs/Card.hpp"
-#include <QString>  // for QString
+#include <core/structs/Card.hpp> // for core::Card
 
 namespace core {
 
@@ -31,7 +30,7 @@ class IAlgorithm {
      * @param user_difficulty User selection from UI: float in [0..5], where 5.0 means "I failed".
      * @return AlgorithmResult with updated card and whether to requeue it immediately.
      */
-    virtual AlgorithmResult process_answer(const Card& old_card, float user_difficulty) noexcept = 0;
+    virtual AlgorithmResult process_answer(const Card& old_card, Card::difficulty_type user_difficulty) noexcept = 0;
 };
 
 } // namespace core
