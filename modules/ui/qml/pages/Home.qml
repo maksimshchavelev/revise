@@ -1,8 +1,8 @@
 // Home page
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Dialogs
-import QtQuick.Effects
 import Revise as Revise
 
 Item {
@@ -15,13 +15,6 @@ Item {
     Revise.Background {
         id: background
         anchors.fill: parent
-    }
-
-    Revise.BlurOverlay {
-        id: blurOverlay
-        anchors.fill: parent
-        sourceItem: background
-        blur: 1.4
     }
 
     Revise.Toolbar {
@@ -79,7 +72,6 @@ Item {
                         incorrectCards: model.incorrectCards
                         deckId: model.deckId
                         repeatableToday: model.repeatableToday
-                        backgroundItem: blurOverlay.blurredItem
 
                         onStudyClicked: {
                             Revise.StudyService.start(deckId)
@@ -103,18 +95,6 @@ Item {
                     }
                 }
             }
-
-            function iterateDelegates() {
-                for (var i = 0; i < gridView.contentItem.children.length; i++) {
-                    var child = gridView.contentItem.children[i]
-                    if (child && typeof child.remapPosition === "function") {
-                        child.remapPosition()
-                    }
-                }
-            }
-
-            onContentXChanged: iterateDelegates()
-            onContentYChanged: iterateDelegates()
         }
     }
 

@@ -9,7 +9,7 @@ Rectangle {
 
     width: parent.width
     height: 140
-    color: Revise.Theme.backgroundLight
+    color: Revise.Theme.surfaceColor
     radius: 10
     clip: true
 
