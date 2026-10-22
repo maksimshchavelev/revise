@@ -39,14 +39,14 @@ Item {
         verticalOffset: 4
         radius: 8
         samples: 16
-        color: "#80000000"
+        color: "#20000000"
     }
 
     Rectangle {
         id: background
         anchors.fill: parent
         radius: root.radius
-        color: Revise.Theme.primaryColor
+        color: Revise.Theme.surfaceContainerColor
     }
 
     Revise.Text {
@@ -62,7 +62,7 @@ Item {
         visible: !root.clickable
         anchors.fill: parent
         radius: root.radius
-        color: "grey"
+        color: "black"
         opacity: 0.3
     }
 
