@@ -36,11 +36,11 @@ class StreakService final : public core::IStreakService {
   private:
     core::IStreakStorage& m_storage;
 
-    bool is_updated_today(const core::Streak& streak) const;
+    static bool is_updated_today(const core::Streak& streak);
 
-    bool is_overdue(const core::Streak& streak) const;
+    static bool is_overdue(const core::Streak& streak);
 
-    Error from_streak_storage(const core::IStreakStorage::Error& error, const QString& what) const;
+    static Error from_streak_storage(const core::IStreakStorage::Error& error, const QString& what);
 };
 
 } // namespace engine
