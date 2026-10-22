@@ -1,10 +1,8 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <QGuiApplication>       // for QGuiApplication
 #include <QQmlApplicationEngine> // for QQmlApplicationEngine
-#include <QQmlComponent>         // for QQmlComponent
 
 #include <core/ICardEditSession.hpp>       // for core::ICardEditSession
 #include <core/service/IDeckService.hpp>   // for core::IDeckService
