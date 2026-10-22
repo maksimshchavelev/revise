@@ -1,13 +1,12 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "IDeckStorage.hpp" // for IDeckStorage
-#include "structs/Card.hpp"
-#include "structs/Deck.hpp"
-#include <QString>  // for QString
-#include <QVector>  // for QVector
-#include <expected> // for std::expected
+#include <QVector>                       // for QVector
+#include <core/storage/IDeckStorage.hpp> // for core::IDeckStorage
+#include <core/structs/Card.hpp>         // for core::Card
+#include <core/structs/Deck.hpp>         // for core::Deck
+#include <expected>                      // for std::expected
 
 namespace core {
 
@@ -18,7 +17,7 @@ namespace core {
  */
 class IDeckRepository {
   public:
-    IDeckRepository(std::shared_ptr<IDeckStorage> deck_storage) : m_deck_storage(deck_storage) {}
+    explicit IDeckRepository(std::shared_ptr<IDeckStorage> deck_storage) : m_deck_storage{std::move(deck_storage)} {}
 
     virtual ~IDeckRepository() = default;
 
@@ -48,7 +47,7 @@ class IDeckRepository {
      * @param ids Vector of deck IDs to be deleted
      * @return `std::expected<void, QString>` empty on success, or with error description on failure
      */
-    virtual std::expected<void, QString> delete_decks(const QVector<int>& ids) = 0;
+    virtual std::expected<void, QString> delete_decks(const QVector<Deck::id_type>& ids) = 0;
 
     /**
      * @brief Fetch decks by specific IDs
@@ -56,7 +55,7 @@ class IDeckRepository {
      * @return `std::expected<QVector<Deck>, QString>` containing fetched decks on success,
      *         or an error description on failure
      */
-    virtual std::expected<QVector<Deck>, QString> fetch_decks(const QVector<int>& ids) = 0;
+    virtual std::expected<QVector<Deck>, QString> fetch_decks(const QVector<Deck::id_type>& ids) = 0;
 
     /**
      * @brief Fetch decks by specific names
@@ -86,7 +85,7 @@ class IDeckRepository {
      * @return `std::expected<QVector<Card>, QString>` containing cards on success,
      *         or an error description on failure
      */
-    virtual std::expected<QVector<Card>, QString> fetch_cards(int deck_id) = 0;
+    virtual std::expected<QVector<Card>, QString> fetch_cards(Deck::id_type deck_id) = 0;
 
     /**
      * @brief Fetch cards by specific IDs
@@ -94,17 +93,17 @@ class IDeckRepository {
      * @return `std::expected<QVector<Card>, QString>` containing cards on success,
      *         or an error description on failure
      */
-    virtual std::expected<QVector<Card>, QString> fetch_cards(const QVector<int>& ids) = 0;
+    virtual std::expected<QVector<Card>, QString> fetch_cards(const QVector<Card::id_type>& ids) = 0;
 
     /**
      * @brief Remove cards with the specified IDs
      * @param ids Vector of card IDs to remove
      * @return `std::expected<void, QString>` empty on success, or with error description on failure
      */
-    virtual std::expected<void, QString> remove_cards(const QVector<int>& ids) = 0;
+    virtual std::expected<void, QString> remove_cards(const QVector<Card::id_type>& ids) = 0;
 
   protected:
-    std::shared_ptr<IDeckStorage> m_deck_storage; ///< Most operations are performed through the deck storage.
+    std::shared_ptr<IDeckStorage> m_deck_storage; ///< Deck storage
 };
 
 } // namespace core
