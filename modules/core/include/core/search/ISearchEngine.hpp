@@ -1,17 +1,22 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "../structs/Card.hpp"
-#include "CardSearchFilter.hpp" // for card filters
-#include <expected>             // for std::expected
-#include <system_error>         // for std::error_code
+#include "CardSearchFilter.hpp"  // for card filters
+#include <core/structs/Card.hpp> // for core::Card
+#include <expected>              // for std::expected
+#include <system_error>          // for std::error_code
 
 namespace core {
 
 /// @brief A structure describing a search error for the `ISearchEngine` class
 struct SearchError {
-    enum class Kind { InvalidFilter, BackendFailure, Unknown };
+    /// @brief Kind of search error
+    enum class Kind {
+        InvalidFilter,  ///< Invalid search filter
+        BackendFailure, ///< Search backend internal error
+        Unknown         ///< Unknown error
+    };
 
     Kind            kind{Kind::Unknown};
     std::error_code cause;
