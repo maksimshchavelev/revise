@@ -1,8 +1,8 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <core/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
+#include <core/storage/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
 
 namespace io {
 

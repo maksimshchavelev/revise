@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "IEventStorage.hpp" // for IEventStorage
+#include "storage/IEventStorage.hpp"
 
 namespace core {
 

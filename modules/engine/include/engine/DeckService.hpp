@@ -1,15 +1,15 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <atomic>                        // for std::atomic_bool
-#include <core/IDeckExporter.hpp>        // for core::IDeckExporter
-#include <core/IDeckImporter.hpp>        // for core::IDeckImporter
-#include <core/IDeckMediaStorage.hpp>    // for core::IDeckMediaStorage
-#include <core/IStudyEngine.hpp>         // for core::IStudyEngine
-#include <core/search/ISearchEngine.hpp> // for core::ISearchEngine
-#include <core/service/IDeckService.hpp> // for core::IDeckService
-#include <core/storage/IDeckStorage.hpp> // for core::IDeckStorage
+#include <atomic>                             // for std::atomic_bool
+#include <core/IDeckExporter.hpp>             // for core::IDeckExporter
+#include <core/IDeckImporter.hpp>             // for core::IDeckImporter
+#include <core/IStudyEngine.hpp>              // for core::IStudyEngine
+#include <core/search/ISearchEngine.hpp>      // for core::ISearchEngine
+#include <core/service/IDeckService.hpp>      // for core::IDeckService
+#include <core/storage/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
+#include <core/storage/IDeckStorage.hpp>      // for core::IDeckStorage
 
 namespace engine {
 

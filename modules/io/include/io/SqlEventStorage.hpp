@@ -1,10 +1,10 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "Database.hpp"                 // for Database
-#include "DatabaseExecutionContext.hpp" // for DatabaseExecutionContext
-#include <core/IEventStorage.hpp>       // for IEventStorage
+#include "Database.hpp"                   // for Database
+#include "DatabaseExecutionContext.hpp"   // for DatabaseExecutionContext
+#include <core/storage/IEventStorage.hpp> // fore core::IEventStorage
 
 namespace io {
 
@@ -60,8 +60,8 @@ class SqlEventStorage final : public core::IEventStorage {
      * function that performs the migration.
      */
     struct MigrationNode {
-        int target_version;                                    ///< The version to which migration is taking place
-        std::function<std::expected<void, QString>()> migrate; ///< The function that will be called for migration
+        int                                           target_version; ///< The version to which migration is taking place
+        std::function<std::expected<void, QString>()> migrate;        ///< The function that will be called for migration
     };
 
     QVector<MigrationNode> m_migration_chain; ///< Migration chain to migrate a table correctly

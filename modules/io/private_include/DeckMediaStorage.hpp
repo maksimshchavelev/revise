@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <core/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
+#include <../../core/include/core/storage/IDeckMediaStorage.hpp>
 
 namespace io {
 

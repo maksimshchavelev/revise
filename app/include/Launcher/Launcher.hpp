@@ -18,7 +18,7 @@
 #include <core/IDeckImporter.hpp> // for core::IDeckImporter
 
 // Deck storages
-#include <core/IDeckMediaStorage.hpp> // for core::IDeckMediaStorage
+#include <../../../modules/core/include/core/storage/IDeckMediaStorage.hpp>
 #include <io/SqlDeckStorage.hpp>      // for io::SqlDeckStorage
 
 // Deck service
