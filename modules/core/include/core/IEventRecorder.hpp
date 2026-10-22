@@ -1,8 +1,8 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "storage/IEventStorage.hpp"
+#include <core/storage/IEventStorage.hpp> // for core::IEventStorage
 
 namespace core {
 
