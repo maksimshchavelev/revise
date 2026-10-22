@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "wrappers/CardWrapper.hpp"           // for Card
+#include "wrappers/CardWrapper.hpp" // for Card
+#include <../../core/include/core/service/IStudyService.hpp>
 #include <QObject>                            // for QObject
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
-#include <core/IStudyService.hpp>             // for core::IStudyService
 
 namespace ui {
 

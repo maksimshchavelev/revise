@@ -2,9 +2,9 @@
 
 #pragma once
 
+#include <../../core/include/core/service/IStudyService.hpp>
 #include <QAbstractListModel>
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
-#include <core/IStudyService.hpp>             // for core::IStudyService
 #include <core/service/IDeckService.hpp>      // for core::IDeckService
 
 namespace ui {

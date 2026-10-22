@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <core/IStreakService.hpp> // for core::IStreakService
+#include <../../core/include/core/service/IStreakService.hpp>
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
 
 namespace ui {

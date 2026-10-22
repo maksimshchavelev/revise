@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Card.hpp"       // for Card
-#include "Notifiable.hpp" // for Notifiable
+#include "../Card.hpp"
+#include "../Notifiable.hpp"
 #include <expected>       // for std::expected
 #include <optional>       // for std::optional
 

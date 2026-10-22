@@ -2,9 +2,9 @@
 
 #pragma once
 
+#include <../../core/include/core/service/INotificationService.hpp>
 #include <QDateTime>
 #include <QString>
-#include <core/INotificationService.hpp>
 
 namespace platform::internals {
 

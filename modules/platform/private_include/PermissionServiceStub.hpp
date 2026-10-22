@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <core/IPermissionService.hpp> // for IPermissionService
+#include <../../core/include/core/service/IPermissionService.hpp>
 
 namespace platform::internals {
 

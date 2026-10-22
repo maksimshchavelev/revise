@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Notifiable.hpp" // for Notifiable
+#include "../Notifiable.hpp"
 #include <QString>        // for QString
 
 namespace core {

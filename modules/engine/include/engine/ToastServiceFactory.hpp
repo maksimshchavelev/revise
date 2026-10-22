@@ -1,9 +1,9 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <core/IToastService.hpp> // for core::IToastService
-#include <memory>                 // for std::unique_ptr
+#include <core/service/IToastService.hpp> // for core::IToastService
+#include <memory>                         // for std::unique_ptr
 
 namespace engine {
 

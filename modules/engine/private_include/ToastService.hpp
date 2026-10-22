@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include <QQueue>                 // for QQueue
-#include <core/IToastService.hpp> // for core::IToastService
+#include <../../core/include/core/service/IToastService.hpp>
+#include <QQueue> // for QQueue
 
 namespace engine {
 

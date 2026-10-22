@@ -6,12 +6,12 @@
 #include <QQmlApplicationEngine> // for QQmlApplicationEngine
 #include <QQmlComponent>         // for QQmlComponent
 
-#include <core/ICardEditSession.hpp>     // for core::ICardEditSession
-#include <core/IStreakService.hpp>       // for core::IStreakService
-#include <core/IStudyService.hpp>        // for core::IStudyService
-#include <core/IToastService.hpp>        // for core::IToastService
-#include <core/service/IDeckService.hpp> // for core::IDeckService
-#include <core/settings/ISettings.hpp>   // for core::ISettings
+#include <core/ICardEditSession.hpp>       // for core::ICardEditSession
+#include <core/service/IDeckService.hpp>   // for core::IDeckService
+#include <core/service/IStreakService.hpp> // for core::IStreakService
+#include <core/service/IStudyService.hpp>  // for core::IStudyService
+#include <core/service/IToastService.hpp>  // for core::IToastService
+#include <core/settings/ISettings.hpp>     // for core::ISettings
 
 #include "LoadingScreen.hpp" // for LoadingScreen
 #include "Router.hpp"        // for Router

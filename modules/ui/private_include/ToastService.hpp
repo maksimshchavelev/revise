@@ -2,9 +2,9 @@
 
 #pragma once
 
+#include <../../core/include/core/service/IToastService.hpp>
 #include <QObject>                            // for QObject
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
-#include <core/IToastService.hpp>             // for IToastService
 
 namespace ui {
 

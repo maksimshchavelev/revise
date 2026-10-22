@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Notifiable.hpp" // for Notifiable
-#include "Streak.hpp"     // for Streak
+#include "../Notifiable.hpp"
+#include "../Streak.hpp"
 #include <QFuture>        // for QFuture
 #include <expected>       // for std::expected
 

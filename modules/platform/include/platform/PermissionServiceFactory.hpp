@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include <core/IPermissionService.hpp> // for IPermissionService
-#include <memory>                      // for std::unique_ptr
+#include <core/service/IPermissionService.hpp> // for IPermissionService
+#include <memory>                              // for std::unique_ptr
 
 namespace platform {
 

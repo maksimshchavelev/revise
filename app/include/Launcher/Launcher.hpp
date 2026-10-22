@@ -2,16 +2,13 @@
 
 #pragma once
 
-#include <QGuiApplication> // for QGuiApplication
-#include <QStandardPaths>  // for QStandardPaths
-
 // Database
 #include <io/Database.hpp>                 // for io::Database
 #include <io/DatabaseExecutionContext.hpp> // for io::DatabaseExecutionContext
 
 // Streak
-#include <core/IStreakService.hpp> // for core::IStreakService
-#include <io/SqlStreakStorage.hpp> // for io::SqlStreakStorage
+#include <core/service/IStreakService.hpp> // for core::IStreakService
+#include <io/SqlStreakStorage.hpp>         // for io::SqlStreakStorage
 
 // Algorithms
 #include <core/IAlgorithm.hpp> // for core::IAlgorithm
@@ -32,7 +29,7 @@
 #include <engine/StudyService.hpp> // for engine::StudyService
 
 // Toast service
-#include <core/IToastService.hpp> // for core::IToastService
+#include <core/service/IToastService.hpp> // for core::IToastService
 
 // Card edit session
 #include <core/ICardEditSession.hpp> // for core::ICardEditSession
@@ -44,8 +41,8 @@
 #include <core/settings/ISettings.hpp> // for core::ISettings
 
 // Platform
-#include <core/INotificationService.hpp> // for core::INotificationService
-#include <core/IPermissionService.hpp>   // for core::IPermissionService
+#include <core/service/INotificationService.hpp> // for core::INotificationService
+#include <core/service/IPermissionService.hpp>   // for core::IPermissionService
 
 // UI
 #include <ui/LoadingScreen.hpp> // for LoadingScreen

@@ -1,8 +1,8 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <core/IStreakService.hpp>         // for core::IStreakService
+#include <core/service/IStreakService.hpp> // for core::IStreakService
 #include <core/storage/IStreakStorage.hpp> // for core::IStreakStorage
 
 namespace engine {

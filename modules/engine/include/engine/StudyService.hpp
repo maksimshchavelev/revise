@@ -2,10 +2,9 @@
 
 #pragma once
 
-#include <QQueue>                 // for QQueue
-#include <QTimer>                 // for QTimer
-#include <core/IStudyEngine.hpp>  // for core::IStudyEngine
-#include <core/IStudyService.hpp> // for core::IStudyService
+#include <QTimer>                         // for QTimer
+#include <core/IStudyEngine.hpp>          // for core::IStudyEngine
+#include <core/service/IStudyService.hpp> // for core::IStudyService
 
 namespace engine {
 
