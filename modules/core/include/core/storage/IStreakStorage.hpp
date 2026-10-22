@@ -1,20 +1,19 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "../structs/Streak.hpp"
-#include <expected>        // for std::expected
+#include <core/structs/Streak.hpp> // for core::Streak
+#include <expected>                // for std::expected
 
 namespace core {
 
-/**
- * @brief An interface that abstracts working with streak storage. Through this class, you can get the current streak
- * and save it.
- */
+/// @brief An interface that abstracts working with streak storage. Through this class, you can get the current streak and save
+/// it.
 class IStreakStorage {
   public:
     /// @brief Describes streak storage errors
     struct Error {
+        /// @brief Kind of IStreakStorage error
         enum class Kind {
             Unavailable,  ///< Storage unavailable
             MissingValue, ///< Value doesn't exist
