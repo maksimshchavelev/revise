@@ -236,4 +236,5 @@ class Notifiable {
   public:                                                                                                                        \
     struct name {                                                                                                                \
         __VA_ARGS__;                                                                                                             \
-    };\
+    };
+
