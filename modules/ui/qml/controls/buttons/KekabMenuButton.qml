@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Revise as Revise
 
 Revise.Button {
-    background.border.width: 0
+    background.color: "transparent"
     Layout.fillWidth: true
     Layout.preferredHeight: 25
     horizontalAlignment: Revise.Text.AlignLeft
