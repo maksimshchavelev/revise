@@ -15,13 +15,6 @@ Item {
         anchors.fill: parent
     }
 
-    Revise.BlurOverlay {
-        id: blurOverlay
-        anchors.fill: parent
-        sourceItem: background
-        blur: 1.4
-    }
-
     Revise.Toolbar {
         id: toolbar
         height: parent.height
