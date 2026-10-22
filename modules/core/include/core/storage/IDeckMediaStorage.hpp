@@ -1,10 +1,9 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <QByteArray> // for QByteArray
-#include <QString>    // for QString
-#include <expected>   // for std::expected
+#include <QString>  // for QString
+#include <expected> // for std::expected
 
 namespace core {
 
@@ -25,9 +24,7 @@ class IDeckMediaStorage {
      * @return `std::expected<QString, QString>` with an **absolute** path to the
      * image if successful, otherwise an error description
      */
-    virtual std::expected<QString, QString> save_image(int               deck_id,
-                                                       const QString&    image_name,
-                                                       const QByteArray& binary_data) = 0;
+    virtual std::expected<QString, QString> save_image(int deck_id, const QString& image_name, const QByteArray& binary_data) = 0;
 
     /**
      * @brief Remove image by absolute path.
@@ -69,7 +66,7 @@ class IDeckMediaStorage {
     /**
      * @brief Checks whether the deck has a media directory
      * @param deck_id Deck ID
-     * @return true if has
+     * @return true if a deck has a media directory
      */
     virtual bool has_media_directory(int deck_id) const = 0;
 };
