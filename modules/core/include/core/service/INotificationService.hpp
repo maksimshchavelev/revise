@@ -1,15 +1,12 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include <QString>
 #include <QDateTime>
 
 namespace core {
 
-/**
- * @brief The NotificationManager class
- */
+/// @brief A service that manages system notifications of application
 class INotificationService {
 public:
     virtual ~INotificationService() = default;
@@ -27,9 +24,7 @@ public:
      */
     virtual void show_notification(const QString& text) const = 0;
 
-    /**
-     * @brief Cancel all scheduled notifications created by the app.
-     */
+    /// @brief Cancel all scheduled notifications created by the app
     virtual void clear_all_scheduled_notifications() const = 0;
 };
 
