@@ -1,18 +1,16 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "../Notifiable.hpp"
-#include "../structs/Streak.hpp"
-#include <QFuture>        // for QFuture
-#include <expected>       // for std::expected
+#include <QFuture>                 // for QFuture
+#include <core/Notifiable.hpp>     // for core::Notifiable
+#include <core/structs/Streak.hpp> // for core::Streak
+#include <expected>                // for std::expected
 
 namespace core {
 
-/**
- * @brief An interface that abstracts working with streak storage. Through this class, you can get the current streak
- * and save it.
- */
+/// @brief An interface that abstracts working with streak storage. Through this class, you can get the current streak and save
+/// it.
 class IStreakService : public Notifiable {
   public:
     EVENT(updated, int value) /// streak updated. Stores new streak value
@@ -20,6 +18,7 @@ class IStreakService : public Notifiable {
 
     /// @brief Streak service error
     struct Error {
+        /// @brief Kind of error
         enum class Kind {
             InvalidValue, ///< Invalid streak value
             Unavailable,  ///< Service is unavailable
