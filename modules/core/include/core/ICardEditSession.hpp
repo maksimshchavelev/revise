@@ -1,15 +1,16 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "Notifiable.hpp" // for Notifiable
-#include <QString>        // for QString
-#include <expected>       // for std::expected
+#include <QString>             // for QString
+#include <core/Notifiable.hpp> // for core::Notifiable
+#include <expected>            // for std::expected
 
 namespace core {
 
 /// @brief Describes `ICardEditSession` errors
 struct CardEditSessionError {
+    /// @brief Type of error
     enum class Error {
         BeginFailed, ///< Failed to begin session
         EndFailed,   ///< Failed to end session
