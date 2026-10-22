@@ -10,7 +10,7 @@ namespace engine {
 StudyEngine::StudyEngine(StudyEngineDeps deps) : m_deps(deps) {}
 
 
-std::expected<void, QString> StudyEngine::start(int deck_id) {
+std::expected<void, QString> StudyEngine::start(core::Deck::id_type deck_id) {
     m_cards.clear();
     m_trained_cards.clear();
 
@@ -133,7 +133,7 @@ std::expected<void, QString> StudyEngine::save_trained() {
 }
 
 
-std::expected<core::IStudyEngine::StudyInfo, QString> StudyEngine::get_study_info(int deck_id) const {
+std::expected<core::IStudyEngine::StudyInfo, QString> StudyEngine::get_study_info(core::Deck::id_type deck_id) const {
     auto fetched_cards = m_deps.deck_storage.fetch_cards(deck_id);
 
     if (!fetched_cards) {
@@ -176,7 +176,7 @@ StudyEngine::SessionState& StudyEngine::state() {
 }
 
 
-std::expected<StudyEngine::StepResult, QString> StudyEngine::answer(float difficulty) {
+std::expected<StudyEngine::StepResult, QString> StudyEngine::answer(core::Card::difficulty_type difficulty) {
     core::Card card = m_cards.dequeue();
 
     core::AlgorithmResult alg_res = m_deps.algorithm.process_answer(card, difficulty);

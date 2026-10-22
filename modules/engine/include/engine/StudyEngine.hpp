@@ -25,10 +25,10 @@ class StudyEngine final : public core::IStudyEngine {
     explicit StudyEngine(StudyEngineDeps deps);
 
     /// @copydoc core::IStudyEngine::start
-    std::expected<void, QString> start(int deck_id) override;
+    std::expected<void, QString> start(core::Deck::id_type deck_id) override;
 
     /// @copydoc core::IStudyEngine::answer
-    std::expected<StepResult, QString> answer(float difficulty) override;
+    std::expected<StepResult, QString> answer(core::Card::difficulty_type difficulty) override;
 
     /// @copydoc core::IStudyEngine::flip
     std::expected<void, QString> flip() override;
@@ -46,7 +46,7 @@ class StudyEngine final : public core::IStudyEngine {
     std::expected<void, QString> save_trained() override;
 
     /// @copydoc core::IStudyEngine::get_study_info
-    std::expected<StudyInfo, QString> get_study_info(int deck_id) const override;
+    std::expected<StudyInfo, QString> get_study_info(core::Deck::id_type deck_id) const override;
 
   private:
     QQueue<core::Card>               m_cards;

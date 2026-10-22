@@ -1,23 +1,19 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
-#include "structs/Card.hpp"
-#include <expected> // for std::expected
-#include <optional> // for std::optional
+#include <core/structs/Card.hpp> // for core::Card
+#include <expected>              // for std::expected
+#include <optional>              // for std::optional
 
 namespace core {
 
-/**
- * @brief The engine that drives the training process
- */
+/// @brief The engine that controls the training process
 class IStudyEngine {
   public:
     virtual ~IStudyEngine() = default;
 
-    /**
-     * @brief Current training session parameters
-     */
+    /// @brief Current study session parameters
     struct SessionState {
         std::optional<Card> current_card;   ///< Current card
         int                 time_limit;     ///< Time limit
@@ -25,17 +21,13 @@ class IStudyEngine {
         bool                flipped;        ///< Is card flipped
     };
 
-    /**
-     * @brief Result of response to card
-     */
+    /// @brief Result of response to card
     struct StepResult {
         bool                finished;  ///< Is this the last card?
         std::optional<Card> next_card; ///< Next card. May not contain a value if `finished` is `true`.
     };
 
-    /**
-     * @brief Information about deck that engine can compute (counts and limits).
-     */
+    /// @brief Information about deck that engine can compute (counts and limits).
     struct StudyInfo {
         int new_cards{0};
         int consolidate_cards{0};
@@ -49,7 +41,7 @@ class IStudyEngine {
      * @return `std::expected<void, QString>` with `void` in case of success or with an error description in case of
      * failure
      */
-    virtual std::expected<void, QString> start(int deck_id) = 0;
+    virtual std::expected<void, QString> start(Deck::id_type deck_id) = 0;
 
     /**
      * @brief Reply to card
@@ -57,7 +49,7 @@ class IStudyEngine {
      * @return `std::expected<StepResult, QString>` with `StepResult` in case of success or with an error description in
      * case of failure
      */
-    virtual std::expected<StepResult, QString> answer(float difficulty) = 0;
+    virtual std::expected<StepResult, QString> answer(Card::difficulty_type difficulty) = 0;
 
     /**
      * @brief Flip current card
@@ -100,7 +92,7 @@ class IStudyEngine {
      * @return `std::expected<StudyInfo, QString>` with `StudyInfo` in case of success or with an error description in
      * case of failure
      */
-    virtual std::expected<StudyInfo, QString> get_study_info(int deck_id) const = 0;
+    virtual std::expected<StudyInfo, QString> get_study_info(Deck::id_type deck_id) const = 0;
 };
 
 } // namespace core
