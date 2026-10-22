@@ -62,8 +62,6 @@ Item {
                     roleValue: true
 
                     delegate: Revise.AddDeckDelegate {
-                        backgroundItem: blurOverlay.blurredItem
-
                         onImportClicked: importDialog.open()
                         onCreateClicked: root.createDeckPage()
                     }

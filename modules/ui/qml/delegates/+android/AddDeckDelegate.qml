@@ -1,7 +1,8 @@
 // A deck that will be displayed on the main page
+
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -20,8 +21,17 @@ Item {
     Rectangle {
         id: tint
         anchors.fill: parent
-        color: Revise.Theme.backgroundLight
+        color: Revise.Theme.surfaceColor
         radius: 10
+        layer.enabled: true
+
+        layer.effect: DropShadow {
+            horizontalOffset: 4
+            verticalOffset: 4
+            radius: 8
+            samples: 32
+            color: "#80000000"
+        }
     }
 
     ColumnLayout {

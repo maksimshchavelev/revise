@@ -1,7 +1,6 @@
 // A deck that will be displayed on the main page
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
@@ -15,21 +14,18 @@ Item {
     property string header: qsTr("Добавить колоду")
     property string description: qsTr("Вы можете либо создать новую колоду, либо импортировать существующую в формате Anki или Revise")
 
-    property Item backgroundItem: null // for blurring
-    property var mappedPos: root.mapToItem(root.backgroundItem, 0, 0)
-
     signal importClicked
     signal createClicked
 
     scale: hoverHandler.hovered ? 1.02 : 1.0
 
     Rectangle {
-        id: background
-
+        id: tint
         anchors.fill: parent
+        color: Revise.Theme.surfaceColor
         radius: 10
-        color: "black"
         layer.enabled: true
+
         layer.effect: DropShadow {
             horizontalOffset: 4
             verticalOffset: 4
@@ -37,26 +33,6 @@ Item {
             samples: 32
             color: "#80000000"
         }
-
-        ShaderEffectSource {
-            id: croppedBackground
-            anchors.fill: parent
-            sourceItem: root.backgroundItem
-            live: true
-            hideSource: true
-            visible: true
-
-            sourceRect: Qt.rect(root.mappedPos.x, root.mappedPos.y, root.width,
-                                root.height)
-        }
-    }
-
-    Rectangle {
-        id: tint
-        anchors.fill: parent
-        color: Revise.Theme.deckTint
-        opacity: 0.2
-        radius: 10
     }
 
     ColumnLayout {
@@ -149,13 +125,6 @@ Item {
             easing.type: Easing.InOutQuad
             duration: 60
         }
-    }
-
-    onXChanged: remapPosition()
-    onYChanged: remapPosition()
-
-    function remapPosition() {
-        mappedPos = root.mapToItem(root.backgroundItem, 0, 0)
     }
 
     HoverHandler {
