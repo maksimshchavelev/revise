@@ -2,16 +2,14 @@
 
 #pragma once
 
-#include "../Notifiable.hpp"
-#include "../structs/Card.hpp"
-#include <expected> // for std::expected
-#include <optional> // for std::optional
+#include <core/Notifiable.hpp>   // for core::Notifiable
+#include <core/structs/Card.hpp> // for core::Card
+#include <expected>              // for std::expected
+#include <optional>              // for std::optional
 
 namespace core {
 
-/**
- * @brief Service that manages the learning process
- */
+/// @brief Service that manages the learning process
 class IStudyService : public Notifiable {
   public:
     EVENT(training_started)                          ///< Training started
