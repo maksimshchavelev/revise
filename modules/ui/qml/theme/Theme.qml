@@ -15,7 +15,7 @@ QtObject {
     readonly property color primaryColor: Qt.color("#464edb")
 
     // Main text that is easy to read against a background
-    readonly property color onSurfaceColor: Qt.color("#aab3f9")
+    readonly property color foregroundColor: Qt.color("#c4c6dd")
 
     // ---------
 
