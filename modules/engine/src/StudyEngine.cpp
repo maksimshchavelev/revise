@@ -43,7 +43,7 @@ std::expected<void, QString> StudyEngine::start(int deck_id) {
                              | std::views::take(deck_info->first().review_limit);                                           //
 
     auto incorrect_cards = filtered_cards                                                                                    //
-                           | std::views::filter([](const auto& card) { return card.state == core::Card::State::Incorrent; }) //
+                           | std::views::filter([](const auto& card) { return card.state == core::Card::State::Incorrect; }) //
                            | std::views::take(deck_info->first().incorrect_limit);                                           //
 
     for (const auto& card : new_cards) {
@@ -159,7 +159,7 @@ std::expected<core::IStudyEngine::StudyInfo, QString> StudyEngine::get_study_inf
     });
 
     int incorrect_cards = std::count_if(filtered_cards.begin(), filtered_cards.end(), [](const auto& card) {
-        return card.state == core::Card::State::Incorrent; //
+        return card.state == core::Card::State::Incorrect; //
     });
 
     return core::IStudyEngine::StudyInfo{

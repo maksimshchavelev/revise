@@ -31,7 +31,7 @@ struct Card {
     enum class State {
         New = static_cast<int>(core::Card::State::New),
         Review = static_cast<int>(core::Card::State::Review),
-        Incorrect = static_cast<int>(core::Card::State::Incorrent)
+        Incorrect = static_cast<int>(core::Card::State::Incorrect)
     };
 
     Q_ENUM(State)

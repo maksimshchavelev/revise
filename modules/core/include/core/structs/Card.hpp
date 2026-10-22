@@ -1,4 +1,4 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
@@ -13,10 +13,11 @@ struct Card {
     using deck_id_type = int;
     using difficulty_type = float;
 
+    /// @brief State of a card
     enum class State {
         New,      ///< New card
         Review,   ///< Need to review
-        Incorrent ///< Incorrect card
+        Incorrect ///< Incorrect card
     };
 
     id_type         id{0};               ///< ID of card
@@ -30,8 +31,8 @@ struct Card {
     QDateTime       next_review;         ///< Date and time of next card viewing
     QDateTime       created_at;          ///< Date of creation of the card
     QDateTime       updated_at;          ///< Card update date
-    QString         front;               ///< Front of the card
-    QString         back;                ///< Back of the card
+    QString         front;               ///< Front side of the card
+    QString         back;                ///< Back side of the card
 
     bool operator==(const Card& other) const noexcept = default;
 };
