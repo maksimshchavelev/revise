@@ -92,8 +92,8 @@ void UI::bind_card_edit_session(core::ICardEditSession& session) {
 
 
 void UI::bind_settings(core::ISettings& settings) {
-    if (auto* s = new Settings(settings, &m_engine); !m_engine.setExternalSingletonInstance("Revise", "Settings", s)) {
-        qFatal("Failed to register external Revise.Settings singleton");
+    if (auto* s = new Settings(settings, &m_engine); !m_engine.setExternalSingletonInstance("Revise", "SettingsService", s)) {
+        qFatal("Failed to register external Revise.SettingsService singleton");
     }
 }
 

@@ -11,9 +11,9 @@ namespace ui {
 class Settings final : public QObject {
     Q_OBJECT
 
-    QML_ELEMENT
+    QML_NAMED_ELEMENT(SettingsService)
     QML_SINGLETON
-    QML_UNCREATABLE("Settings is provided by C++")
+    QML_UNCREATABLE("SettingsService is provided by C++")
 
   public:
     Q_PROPERTY(int maxInterval READ max_interval WRITE set_max_interval NOTIFY maxIntervalChanged FINAL)
