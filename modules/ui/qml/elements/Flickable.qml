@@ -23,10 +23,15 @@ import Revise as Revise
     \sa QtQuick::Flickable, Revise::Scrollbar
 */
 Flickable {
+    id: root
+
     clip: true
     boundsBehavior: Flickable.StopAtBounds
     flickableDirection: Flickable.VerticalFlick
+
     ScrollBar.vertical: Revise.Scrollbar {
-        policy: Revise.Scrollbar.AsNeeded
+        policy: root.contentHeight > root.height
+            ? ScrollBar.AsNeeded
+            : ScrollBar.AlwaysOff
     }
 }
