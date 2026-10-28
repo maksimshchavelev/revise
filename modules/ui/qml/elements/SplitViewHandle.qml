@@ -26,7 +26,7 @@ import Revise as Revise
 Rectangle {
     id: root
 
-    implicitWidth: 12
+    implicitWidth: 24
     implicitHeight: 12
 
     color: "transparent"
