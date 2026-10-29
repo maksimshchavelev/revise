@@ -2,11 +2,11 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="16"
-   height="16"
-   viewBox="0 0 16 16"
+   width="48.0px"
+   height="48.0px"
+   viewBox="0 0 48.0 48.0"
    version="1.1"
-   id="svg5"
+   id="SVGRoot"
    sodipodi:docname="menu.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -14,7 +14,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
-     id="namedview7"
+     id="namedview5482"
      pagecolor="#505050"
      bordercolor="#eeeeee"
      borderopacity="1"
@@ -23,33 +23,43 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#505050"
      inkscape:document-units="px"
-     showgrid="false"
-     inkscape:zoom="64.1875"
-     inkscape:cx="7.6105161"
-     inkscape:cy="8.0155794"
+     showgrid="true"
+     inkscape:zoom="21.22606"
+     inkscape:cx="26.476888"
+     inkscape:cy="24.42752"
      inkscape:window-width="2494"
      inkscape:window-height="1371"
      inkscape:window-x="66"
      inkscape:window-y="32"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid5605" />
+  </sodipodi:namedview>
   <defs
-     id="defs2" />
+     id="defs5477" />
   <g
      inkscape:label="Слой 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:1.698;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none"
-       d="M 0.843178,0.88777057 H 15.156822"
-       id="path186" />
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:1.698;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none"
-       d="M 0.843178,10.382892 H 15.156822"
-       id="path186-3" />
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:1.698;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none"
-       d="M 0.843178,5.3791007 H 15.156822"
-       id="path186-3-6" />
+    <circle
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.88976;stroke-linejoin:bevel;stroke-dasharray:none"
+       id="path6083"
+       cx="25.090853"
+       cy="6.4237709"
+       r="5.3811893" />
+    <circle
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.88976378;stroke-linejoin:bevel;stroke-dasharray:none"
+       id="path6083-2"
+       cx="24.985565"
+       cy="24.076109"
+       r="5.3811893" />
+    <circle
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.88976;stroke-linejoin:bevel;stroke-dasharray:none"
+       id="path6083-1"
+       cx="24.952084"
+       cy="41.582283"
+       r="5.3811893" />
   </g>
 </svg>
