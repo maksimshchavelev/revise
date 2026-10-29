@@ -11,7 +11,7 @@ Item {
     property bool clickable: true
     property int size: 36
     property alias source: icon.source
-    property alias color: background.color
+    property alias background: background
 
     signal clicked()
 
@@ -24,13 +24,13 @@ Item {
         radius: 4
         color: Color.lighter(Revise.Theme.surfaceColor, 1.2)
         anchors.fill: parent
-        // opacity: 0.4
     }
 
     Revise.Icon {
         id: icon
         anchors.fill: parent
         anchors.margins: 4
+        color: Revise.Theme.secondaryForegroundColor
     }
 
     TapHandler {
