@@ -10,7 +10,7 @@ Item {
     property bool hovered: hoverHandler.hovered && root.clickable
     property bool clickable: true
     property int size: 36
-    property alias source: icon.source
+    property alias icon: icon
     property alias background: background
 
     signal clicked()
