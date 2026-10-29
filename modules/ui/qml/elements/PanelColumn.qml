@@ -83,7 +83,6 @@ Revise.Panel {
             width: parent.width - (root.padding * 2)
         }
 
-        // Attach custom Revise scrollbar to the right edge
         ScrollBar.vertical: Revise.Scrollbar
         {
             id: verticalScrollBar
