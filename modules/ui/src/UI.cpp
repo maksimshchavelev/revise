@@ -14,6 +14,7 @@
 namespace ui {
 
 UI::UI() {
+    qRegisterMetaType<ToastRequest>("ToastRequest");
     m_engine.addImportPath("qrc:/");
 }
 
