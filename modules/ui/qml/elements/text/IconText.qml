@@ -40,6 +40,8 @@ Item {
     Revise.Icon {
         id: iconImage
 
+        size: source.toString().length > 0 ? 16: 0
+
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
 
@@ -50,7 +52,7 @@ Item {
         id: textLabel
 
         anchors.left: iconImage.right
-        anchors.leftMargin: 8
+        anchors.leftMargin: iconImage.size > 0 ? 8 : 0
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
 
