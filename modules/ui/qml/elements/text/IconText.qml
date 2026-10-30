@@ -34,6 +34,11 @@ Item {
      */
     property alias icon: iconImage
 
+    /*!
+        The font used to display the text label.
+    */
+    property alias font: textLabel.font
+
     width: parent ? parent.width : 0
     height: Math.max(iconImage.height, textLabel.implicitHeight)
 
