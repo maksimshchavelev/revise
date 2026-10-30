@@ -39,6 +39,22 @@ Item {
     */
     property alias font: textLabel.font
 
+    implicitWidth: {
+        let width = textLabel.implicitWidth
+
+        if (iconImage.size > 0)
+            return width + iconImage.implicitWidth + textLabel.anchors.leftMargin
+
+        return width
+    }
+
+    implicitHeight: {
+        if (iconImage.size > 0)
+            return Math.max(height, iconImage.implicitHeight)
+
+        return textLabel.implicitHeight
+    }
+
     width: parent ? parent.width : 0
     height: Math.max(iconImage.height, textLabel.implicitHeight)
 
