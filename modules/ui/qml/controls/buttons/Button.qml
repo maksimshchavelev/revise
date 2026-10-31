@@ -1,14 +1,14 @@
 // Button.qml
 
-
 import QtQuick
+import QtQuick.Templates as T
 import Revise as Revise
 
 /*!
     \qmltype Button
     \brief A button with optional text, icon, and loading indicator.
     \inqmlmodule Revise
-    \inherits Item
+    \inherits T.Button
 
     Button provides an interactive control that can display text, an optional
     icon, or a loading indicator.
@@ -20,6 +20,10 @@ import Revise as Revise
     semi-transparent overlay. Setting \l loading to \c true replaces the
     button content with a loading indicator and suppresses click events.
 
+    The \l pressed and \l hovered properties are inherited from \l T.Button
+    and automatically respect \l clickable and \l loading through the
+    \c enabled binding.
+
     \section1 Example Usage
 
     A button with text and an icon:
@@ -27,7 +31,7 @@ import Revise as Revise
     \qml
     Revise.Button {
         text: qsTr("Save")
-        icon: "save"
+        icon.source: "save"
         onClicked: saveChanges()
     }
     \endqml
@@ -56,7 +60,7 @@ import Revise as Revise
     }
     \endqml
 */
-Item {
+T.Button {
     id: root
 
     /*!
@@ -65,22 +69,6 @@ Item {
         The default value is \c 6.
     */
     property int radius: 6
-
-    /*!
-        Whether the button is currently pressed.
-
-        This property is \c true while the pointer is pressing the button
-        and \l clickable is \c true and \l loading is \c false.
-    */
-    property bool pressed: tapHandler.pressed && clickable && !loading
-
-    /*!
-        Whether the pointer is hovering over the button.
-
-        This property is \c true while the pointer is over the button
-        and \l clickable is \c true and \l loading is \c false.
-    */
-    property bool hovered: hoverHandler.hovered && clickable && !loading
 
     /*!
         Whether the button responds to pointer interactions.
@@ -103,23 +91,6 @@ Item {
     property bool loading: false
 
     /*!
-        \qmlproperty Rectangle Button::background
-
-        The background rectangle of the button.
-
-        Use this property to customize the background appearance,
-        for example, by changing its color or corner radius.
-    */
-    property alias background: background
-
-    /*!
-        \qmlproperty string Button::text
-
-        The text displayed by the button.
-    */
-    property alias text: txt.label.text
-
-    /*!
         \qmlproperty color Button::color
 
         The color of the button text.
@@ -127,18 +98,11 @@ Item {
     property alias color: txt.label.color
 
     /*!
-        The font used to display the button text.
+        \qmlproperty color Button::backgroundItem
+
+        The background of button.
     */
-    property alias font: txt.font
-
-    /*!
-        \qmlproperty var Button::icon
-
-        The icon displayed by the button.
-
-        The accepted value is determined by the \l Revise::IconText component.
-    */
-    property alias icon: txt.icon
+    property alias backgroundItem: bg
 
     /*!
         \qmlproperty enumeration Button::horizontalAlignment
@@ -160,14 +124,14 @@ Item {
     */
     property alias verticalAlignment: txt.label.verticalAlignment
 
-    /*!
-        This signal is emitted when the button is clicked while
-        \l clickable is \c true and \l loading is \c false.
+    font: Qt.font({
+        "family": Revise.Fonts.regular.name,
+        "pixelSize": Revise.Theme.fontSizeDefault
+    })
 
-        The corresponding handler is \c onClicked.
-    */
-        signal
-    clicked
+    enabled: root.clickable && !root.loading
+
+    padding: 8
 
     implicitWidth: txt.implicitWidth + 40
     implicitHeight: Math.max(35, txt.implicitHeight + 10)
@@ -184,18 +148,19 @@ Item {
     layer.enabled: true
     layer.effect: Revise.Shadow {}
 
-    Rectangle {
-        id: background
+    background: Rectangle {
+        id: bg
         anchors.fill: parent
         radius: root.radius
         color: Revise.Theme.surfaceContainerColor
     }
 
-    Revise.IconText {
+    contentItem: Revise.IconText {
         id: txt
         visible: root.clickable && !root.loading
-        anchors.fill: parent
-        anchors.margins: 8
+        label.text: root.text
+        font: root.font
+        icon.source: root.icon.source
         label.horizontalAlignment: Qt.AlignHCenter
         label.verticalAlignment: Qt.AlignVCenter
     }
@@ -215,17 +180,7 @@ Item {
     }
 
     HoverHandler {
-        id: hoverHandler
         cursorShape: root.hovered ? Qt.PointingHandCursor : Qt.ArrowCursor
-    }
-
-    TapHandler {
-        id: tapHandler
-        onTapped: {
-            if (root.clickable && !root.loading) {
-                root.clicked()
-            }
-        }
     }
 
     Behavior on scale {
@@ -235,4 +190,3 @@ Item {
         }
     }
 }
-
