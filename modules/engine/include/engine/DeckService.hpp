@@ -57,7 +57,7 @@ class DeckService final : public core::IDeckService {
     QFuture<core::IDeckService::Result<void>> remove_card(core::Card::id_type id) override;
 
     /// @copydoc core::IDeckService::update_card
-    QFuture<Result<void>> update_card(core::Deck::id_type deck_id, const UpdateCardDraft& card) override;
+    QFuture<Result<void>> update_card(core::Card::id_type card_id, const UpdateCardDraft& card) override;
 
     /// @copydoc core::IDeckService::deck_summaries
     QFuture<Result<QVector<core::DeckSummary>>> deck_summaries() const override;

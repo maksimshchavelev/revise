@@ -550,8 +550,8 @@ QFuture<core::IDeckService::Result<void>> DeckService::remove_card(core::Card::i
 }
 
 
-QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::id_type id, const UpdateCardDraft& card) {
-    return QtConcurrent::run([this, id, card]() -> Result<void> {
+QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::id_type card_id, const UpdateCardDraft& card) {
+    return QtConcurrent::run([this, card_id, card]() -> Result<void> {
         if (card.front && card.front->isEmpty()) {
             auto error = Error::validation_failed("DeckService::update_card(): card front is empty");
 
@@ -587,7 +587,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::i
             return std::unexpected(error);
         }
 
-        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector{id});
+        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector{card_id});
 
         if (!fetch_res) {
             auto error = from_storage_error(fetch_res.error(), "DeckService::update_card(): failed to fetch card");
