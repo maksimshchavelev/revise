@@ -235,6 +235,13 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 12
             anchors.verticalCenter: parent.verticalCenter
+
+            onChanged: (value) => {
+                if (value)
+                    Revise.CardsModel.selectCard(root.cardId)
+                else
+                    Revise.CardsModel.deselectCard(root.cardId)
+            }
         }
 
         // Card Information
