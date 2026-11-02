@@ -126,9 +126,8 @@ Rectangle {
 
     TapHandler {
         onTapped: {
-            root.checked = !root.checked
             popAnimation.restart()
-            root.changed(root.checked)
+            root.changed(!root.checked)
         }
     }
 
