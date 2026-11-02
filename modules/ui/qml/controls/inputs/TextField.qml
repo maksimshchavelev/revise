@@ -20,6 +20,8 @@ Rectangle {
         "pixelSize": Revise.Theme.fontSizeDefault
     })
 
+    signal editingFinished()
+
     implicitHeight: 35
     radius: 6
     color: Color.lighter(Revise.Theme.surfaceColor, 1.2)
@@ -75,9 +77,8 @@ Rectangle {
         onTapped: function (point) {
             input.enabled = true
             input.forceActiveFocus()
-            input.cursorPosition = input.positionAt(point.position.x,
-                point.position.y)
-            Qt.inputMethod.show()
+            input.cursorPosition = input.positionAt(point.position.x, point.position.y)
+            InputMethod.show()
         }
     }
 
