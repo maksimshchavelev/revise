@@ -6,7 +6,7 @@ Revise.Button {
 
     property bool selected: false
 
-    background.color: Qt.lighter(Revise.Theme.backgroundLight)
-    background.opacity: root.selected ? 0.3 : 0.0
+    backgroundItem.color: Qt.lighter(Revise.Theme.backgroundLight)
+    backgroundItem.opacity: root.selected ? 0.3 : 0.0
     radius: 10
 }
