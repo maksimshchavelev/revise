@@ -13,19 +13,19 @@ struct Card {
     Q_GADGET
     QML_ELEMENT
 
-    Q_PROPERTY(int id READ id WRITE set_id NOTIFY updated)
-    Q_PROPERTY(int globalId READ global_id WRITE set_global_id NOTIFY updated)
-    Q_PROPERTY(int deckId READ deck_id WRITE set_deck_id NOTIFY updated)
-    Q_PROPERTY(int incorrectStreak READ incorrect_streak WRITE set_incorrect_streak NOTIFY updated)
-    Q_PROPERTY(int interval READ interval WRITE set_interval NOTIFY updated)
-    Q_PROPERTY(float difficulty READ difficulty WRITE set_difficulty NOTIFY updated)
-    Q_PROPERTY(float timeLimit READ time_limit WRITE set_time_limit NOTIFY updated)
-    Q_PROPERTY(QDateTime nextReview READ next_review WRITE set_next_review NOTIFY updated)
-    Q_PROPERTY(QDateTime createdAt READ created_at WRITE set_created_at NOTIFY updated)
-    Q_PROPERTY(QDateTime updatedAt READ updated_at WRITE set_updated_at NOTIFY updated)
-    Q_PROPERTY(QString front READ front WRITE set_front NOTIFY updated)
-    Q_PROPERTY(QString back READ back WRITE set_back NOTIFY updated)
-    Q_PROPERTY(bool selected READ selected WRITE set_selected NOTIFY updated)
+    Q_PROPERTY(int id READ id WRITE set_id)
+    Q_PROPERTY(int globalId READ global_id WRITE set_global_id)
+    Q_PROPERTY(int deckId READ deck_id WRITE set_deck_id)
+    Q_PROPERTY(int incorrectStreak READ incorrect_streak WRITE set_incorrect_streak)
+    Q_PROPERTY(int interval READ interval WRITE set_interval)
+    Q_PROPERTY(float difficulty READ difficulty WRITE set_difficulty)
+    Q_PROPERTY(float timeLimit READ time_limit WRITE set_time_limit)
+    Q_PROPERTY(QDateTime nextReview READ next_review WRITE set_next_review)
+    Q_PROPERTY(QDateTime createdAt READ created_at WRITE set_created_at)
+    Q_PROPERTY(QDateTime updatedAt READ updated_at WRITE set_updated_at)
+    Q_PROPERTY(QString front READ front WRITE set_front)
+    Q_PROPERTY(QString back READ back WRITE set_back)
+    Q_PROPERTY(bool selected READ selected WRITE set_selected)
 
   public:
     /// Card state
