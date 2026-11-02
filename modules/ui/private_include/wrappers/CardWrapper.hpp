@@ -25,6 +25,7 @@ struct Card {
     Q_PROPERTY(QDateTime updatedAt READ updated_at WRITE set_updated_at NOTIFY updated)
     Q_PROPERTY(QString front READ front WRITE set_front NOTIFY updated)
     Q_PROPERTY(QString back READ back WRITE set_back NOTIFY updated)
+    Q_PROPERTY(bool selected READ selected WRITE set_selected NOTIFY updated)
 
   public:
     /// Card state
@@ -76,9 +77,11 @@ struct Card {
     PROPERTY(updated_at, m_card.updated_at)
     PROPERTY(front, m_card.front)
     PROPERTY(back, m_card.back)
+    PROPERTY(selected, m_selected)
 
   private:
-    core::Card m_card;
+    core::Card m_card;            ///< Card
+    bool       m_selected{false}; ///< Is a card selected in UI
 };
 
 } // namespace ui
