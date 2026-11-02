@@ -552,35 +552,35 @@ QFuture<core::IDeckService::Result<void>> DeckService::remove_card(core::Card::i
 
 QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::id_type id, const UpdateCardDraft& card) {
     return QtConcurrent::run([this, id, card]() -> Result<void> {
-        if (card.front.isEmpty()) {
+        if (card.front && card.front->isEmpty()) {
             auto error = Error::validation_failed("DeckService::update_card(): card front is empty");
 
             dispatch(card_update_failed{error});
             return std::unexpected(error);
         }
 
-        if (card.front.length() > 4096) {
+        if (card.front && card.front->length() > 4096) {
             auto error = Error::validation_failed("DeckService::update_card(): card front is too long");
 
             dispatch(card_update_failed{error});
             return std::unexpected(error);
         }
 
-        if (card.back.isEmpty()) {
+        if (card.back && card.back->isEmpty()) {
             auto error = Error::validation_failed("DeckService::update_card(): card back is empty");
 
             dispatch(card_update_failed{error});
             return std::unexpected(error);
         }
 
-        if (card.back.length() > 16384) {
+        if (card.back && card.back->length() > 16384) {
             auto error = Error::validation_failed("DeckService::update_card(): card back is too long");
 
             dispatch(card_update_failed{error});
             return std::unexpected(error);
         }
 
-        if (card.difficulty < 0.0f || card.difficulty > 5.0f) {
+        if (card.difficulty && (*card.difficulty < 0.0f || *card.difficulty > 5.0f)) {
             auto error = Error::validation_failed("DeckService::update_card(): card difficulty is out of range");
 
             dispatch(card_update_failed{error});
@@ -605,9 +605,9 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_card(core::Card::i
 
         core::Card fetched_card = fetch_res->first();
 
-        fetched_card.front = card.front;
-        fetched_card.back = card.back;
-        fetched_card.difficulty = card.difficulty;
+        fetched_card.front = card.front.value_or(fetched_card.front);
+        fetched_card.back = card.back.value_or(fetched_card.back);
+        fetched_card.difficulty = card.difficulty.value_or(fetched_card.difficulty);
         fetched_card.updated_at = QDateTime::currentDateTime();
 
         auto update_res = m_deps.deck_storage.update_cards({fetched_card});
