@@ -119,6 +119,7 @@ void CardsModel::selectCard(const int cardId) noexcept {
         if (card.id() == cardId && !card.selected()) {
             card.set_selected(true);
 
+            ++m_selected_count;
             const QModelIndex idx = index(static_cast<int>(i));
             emit              dataChanged(idx, idx, {SelectedRole});
             emit              cardSelectionChanged(cardId, true);
@@ -133,6 +134,7 @@ void CardsModel::deselectCard(int cardId) noexcept {
         if (card.id() == cardId && card.selected()) {
             card.set_selected(false);
 
+            --m_selected_count;
             const QModelIndex idx = index(static_cast<int>(i));
             emit              dataChanged(idx, idx, {SelectedRole});
             emit              cardSelectionChanged(cardId, false);
@@ -147,6 +149,8 @@ void CardsModel::selectAll() {
         return;
     }
 
+    m_selected_count = m_cards.size();
+
     std::ranges::for_each(m_cards, [this](auto& card) {
         card.set_selected(true);
         emit cardSelectionChanged(card.id(), true);
@@ -160,6 +164,8 @@ void CardsModel::deselectAll() {
     if (m_cards.isEmpty()) {
         return;
     }
+
+    m_selected_count = 0;
 
     std::ranges::for_each(m_cards, [this](auto& card) {
         card.set_selected(false);
@@ -177,6 +183,11 @@ int CardsModel::deck_id() const noexcept {
 
 int CardsModel::cards_count() const noexcept {
     return m_cards.size();
+}
+
+
+int CardsModel::selected_count() const noexcept {
+    return m_selected_count;
 }
 
 

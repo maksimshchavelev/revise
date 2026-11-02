@@ -27,6 +27,9 @@ class CardsModel final : public QAbstractListModel {
     // How many cards are there in the deck in total?
     Q_PROPERTY(int cardsCount READ cards_count NOTIFY updated FINAL);
 
+    // Count of selected cards
+    Q_PROPERTY(int selectedCount READ selected_count NOTIFY cardSelectionChanged FINAL)
+
     /// @brief Construct the model and subscribe to deck service events
     /// @param service Deck service used to fetch cards
     /// @param parent Parent object
@@ -65,8 +68,8 @@ class CardsModel final : public QAbstractListModel {
     /// @return Deck ID
     [[nodiscard]] int deck_id() const noexcept;
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    int                    rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    QVariant               data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
   signals:
@@ -98,15 +101,20 @@ class CardsModel final : public QAbstractListModel {
     /// @brief Handle card_updated event
     void on_card_updated(const core::Card& card);
 
-    core::IDeckService& m_deck_service;   ///< Deck service
-    QVector<Card> m_cards;                ///< All cards
-    std::atomic_int m_last_deck_id{0};    ///< ID of the most recently loaded deck
-    std::atomic_int m_last_request_id{0}; ///< Last deck load request ID
+    core::IDeckService& m_deck_service;       ///< Deck service
+    QVector<Card>       m_cards;              ///< All cards
+    int                 m_selected_count{0};  ///< Count of selected cards
+    std::atomic_int     m_last_deck_id{0};    ///< ID of the most recently loaded deck
+    std::atomic_int     m_last_request_id{0}; ///< Last deck load request ID
 
     /// @brief Get cards count
     /// @return Count of the cards
     /// @note First, call the `setDeck` method to load the cards.
     [[nodiscard]] int cards_count() const noexcept;
+
+    /// @brief Get selected cards count
+    /// @return Count of the selected cards
+    [[nodiscard]] int selected_count() const noexcept;
 };
 
 } // namespace ui
