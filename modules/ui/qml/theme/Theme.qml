@@ -55,6 +55,7 @@ QtObject {
     readonly property int fontSizeDefault: 16
     readonly property int fontSizeMedium: 20
     readonly property int fontSizeBig: 28
+    readonly property int fontSizeGiant: 40
 
     readonly property color debugBounds: "#e30000"
 
