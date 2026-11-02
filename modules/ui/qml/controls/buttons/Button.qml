@@ -155,14 +155,16 @@ T.Button {
         color: Revise.Theme.surfaceContainerColor
     }
 
-    contentItem: Revise.IconText {
-        id: txt
-        visible: root.clickable && !root.loading
-        label.text: root.text
-        font: root.font
-        icon.source: root.icon.source
-        label.horizontalAlignment: Qt.AlignHCenter
-        label.verticalAlignment: Qt.AlignVCenter
+    contentItem: Item {
+        Revise.IconText {
+            id: txt
+            anchors.centerIn: parent
+            width: Math.min(implicitWidth, parent.width)
+            visible: root.clickable && !root.loading
+            label.text: root.text
+            font: root.font
+            icon.source: root.icon.source
+        }
     }
 
     Rectangle {
