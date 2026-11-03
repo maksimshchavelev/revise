@@ -27,7 +27,7 @@ int CardsModel::rowCount(const QModelIndex& parent) const {
 
 QVariant CardsModel::data(const QModelIndex& index, int role) const {
     if (!index.isValid() || index.row() < 0 || index.row() >= m_cards.size()) {
-        return QVariant();
+        return QVariant{};
     }
 
     const auto& card = m_cards.at(index.row());
@@ -48,7 +48,7 @@ QVariant CardsModel::data(const QModelIndex& index, int role) const {
     case SelectedRole:
         return card.selected();
     default:
-        return QVariant();
+        return QVariant{};
     }
 }
 
