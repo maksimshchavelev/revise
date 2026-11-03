@@ -42,7 +42,7 @@ Revise.Button {
     backgroundItem.opacity: 0.05
 
     backgroundItem.color: {
-        if (root.hovered)
+        if (root.hovered && root.clickable)
             return "white"
         return "transparent"
     }
