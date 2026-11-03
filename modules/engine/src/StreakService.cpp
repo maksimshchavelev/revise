@@ -1,7 +1,5 @@
 // Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#pragma once
-
 #include "engine/StreakService.hpp" // for StreakService header
 #include <QtConcurrentRun>          // for QtConcurrent::run
 
