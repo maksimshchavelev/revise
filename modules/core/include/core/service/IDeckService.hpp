@@ -110,9 +110,10 @@ class IDeckService : public Notifiable {
     EVENT(deck_imported, Deck deck) ///< Deck imported (upon successful import). Stores imported deck
     EVENT(deck_exported, Deck deck) ///< Deck exported (upon successful export). Stores exported deck
 
-    EVENT(card_created, Card card) ///< Card created. Stores created card
-    EVENT(card_removed, Card card) ///< Card removed. Stores removed card
-    EVENT(card_updated, Card card) ///< Card updated. Stores updated card
+    EVENT(card_created, Card card)            ///< Card created. Stores created card
+    EVENT(card_removed, Card card)            ///< Card removed. Stores removed card
+    EVENT(card_updated, Card card)            ///< Card updated. Stores updated card
+    EVENT(cards_updated, QVector<Card> cards) ///< Many cards updated. Stores updated cards
 
     EVENT(import_failed, Error error) ///< Import failed
     EVENT(export_failed, Error error) ///< Export failed
@@ -204,6 +205,13 @@ class IDeckService : public Notifiable {
      * @note Emits `card_updated` event if success
      */
     virtual QFuture<Result<void>> update_card(const UpdateCardDraft& card) = 0;
+
+    /**
+     * @brief Bulk update all cards
+     * @param cards Card Drafts
+     * @note Emits `cards_updated` event if success
+     */
+    virtual QFuture<Result<void>> update_cards(const QVector<UpdateCardDraft>& cards) = 0;
 
     /**
      * @brief Get information about each deck
