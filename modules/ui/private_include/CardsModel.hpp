@@ -68,9 +68,9 @@ class CardsModel final : public QAbstractListModel {
     /// @return Deck ID
     [[nodiscard]] int deck_id() const noexcept;
 
-    int                    rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant               data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    QHash<int, QByteArray> roleNames() const override;
+    [[nodiscard]] int                    rowCount(const QModelIndex& parent) const override;
+    [[nodiscard]] QVariant               data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
   signals:
     /// @brief Emitted when the card list or the cards count changes
