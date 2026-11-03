@@ -27,6 +27,15 @@ class CardsModel final : public QAbstractListModel {
     // How many cards are there in the deck in total?
     Q_PROPERTY(int cardsCount READ cards_count NOTIFY updated FINAL);
 
+    // Count of all new cards in the deck
+    Q_PROPERTY(int newCardsCount READ new_cards_count NOTIFY updated FINAL);
+
+    // Count of all review cards in the deck
+    Q_PROPERTY(int reviewCardsCount READ review_cards_count NOTIFY updated FINAL);
+
+    // Count of all incorrect cards in the deck
+    Q_PROPERTY(int incorrectCardsCount READ incorrect_cards_count NOTIFY updated FINAL);
+
     // Count of selected cards
     Q_PROPERTY(int selectedCount READ selected_count NOTIFY cardSelectionChanged FINAL)
 
@@ -111,6 +120,21 @@ class CardsModel final : public QAbstractListModel {
     /// @return Count of the cards
     /// @note First, call the `setDeck` method to load the cards.
     [[nodiscard]] int cards_count() const noexcept;
+
+    /// @brief Get <b>new</b> cards count
+    /// @return Count of the <b>new</b> cards
+    /// @note First, call the `setDeck` method to load the cards.
+    [[nodiscard]] int new_cards_count() const noexcept;
+
+    /// @brief Get <b>review</b> cards count
+    /// @return Count of the <b>review</b> cards
+    /// @note First, call the `setDeck` method to load the cards.
+    [[nodiscard]] int review_cards_count() const noexcept;
+
+    /// @brief Get <b>incorrect</b> cards count
+    /// @return Count of the <b>incorrect</b> cards
+    /// @note First, call the `setDeck` method to load the cards.
+    [[nodiscard]] int incorrect_cards_count() const noexcept;
 
     /// @brief Get selected cards count
     /// @return Count of the selected cards

@@ -186,6 +186,33 @@ int CardsModel::cards_count() const noexcept {
 }
 
 
+int CardsModel::new_cards_count() const noexcept {
+    const auto count = std::ranges::count_if(m_cards, [](const auto& card) {
+        return card.state() == Card::State::New;
+    });
+
+    return static_cast<int>(count);
+}
+
+
+int CardsModel::review_cards_count() const noexcept {
+    const auto count = std::ranges::count_if(m_cards, [](const auto& card) {
+        return card.state() == Card::State::Review;
+    });
+
+    return static_cast<int>(count);
+}
+
+
+int CardsModel::incorrect_cards_count() const noexcept {
+    const auto count = std::ranges::count_if(m_cards, [](const auto& card) {
+        return card.state() == Card::State::Incorrect;
+    });
+
+    return static_cast<int>(count);
+}
+
+
 int CardsModel::selected_count() const noexcept {
     return m_selected_count;
 }
