@@ -545,6 +545,25 @@ Item {
                                 font.bold: true
                             }
 
+                            Revise.ComboBox {
+                                model: ListModel {
+                                    Component.onCompleted: {
+                                        append({
+                                            label: qsTr("Новая"),
+                                            textColor: Revise.Theme.green
+                                        })
+                                        append({
+                                            label: qsTr("Повторяемая"),
+                                            textColor: Revise.Theme.blue
+                                        })
+                                        append({
+                                            label: qsTr("Ошибочная"),
+                                            textColor: Revise.Theme.red
+                                        })
+                                    }
+                                }
+                            }
+
                             Revise.Button {
                                 width: parent.width
                                 text: {
