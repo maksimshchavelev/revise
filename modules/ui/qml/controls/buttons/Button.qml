@@ -137,9 +137,9 @@ T.Button {
     implicitHeight: Math.max(35, txt.implicitHeight + 10)
 
     scale: {
-        if (root.pressed) {
+        if (root.pressed && root.clickable) {
             return 0.96
-        } else if (root.hovered) {
+        } else if (root.hovered && root.clickable) {
             return 0.98
         }
         return 1.0
@@ -182,6 +182,7 @@ T.Button {
     }
 
     HoverHandler {
+        enabled: root.clickable
         cursorShape: root.hovered ? Qt.PointingHandCursor : Qt.ArrowCursor
     }
 
