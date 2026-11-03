@@ -51,5 +51,6 @@ Revise.Button {
         text: root.text
         color: root.color
         font.pixelSize: Revise.Theme.fontSizeSmall
+        opacity: root.clickable ? 1.0 : 0.5
     }
 }
