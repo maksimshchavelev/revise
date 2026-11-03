@@ -52,5 +52,6 @@ Revise.Button {
         color: root.color
         font.pixelSize: Revise.Theme.fontSizeSmall
         opacity: root.clickable ? 1.0 : 0.5
+        verticalAlignment: Revise.Text.AlignVCenter
     }
 }
