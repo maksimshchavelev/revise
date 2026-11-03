@@ -101,7 +101,7 @@ void DeckService::remove_card(const int card_id) {
 }
 
 
-void DeckService::update_card(const int deck_id, const UpdateCardDraft& card) {
+void DeckService::update_card(const UpdateCardDraft& card) {
     auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
 
     connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
@@ -110,7 +110,7 @@ void DeckService::update_card(const int deck_id, const UpdateCardDraft& card) {
         }
     });
 
-    watcher->setFuture(m_deck_service.update_card(deck_id, card));
+    watcher->setFuture(m_deck_service.update_card(card));
 }
 
 

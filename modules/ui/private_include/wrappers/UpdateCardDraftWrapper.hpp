@@ -5,23 +5,38 @@
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT
 #include <core/service/IDeckService.hpp>      // for core::IDeckService::UpdateCardDraft
 #include <type_traits>                        // for std::is_base_of, std::remove_reference
+#include <wrappers/CardWrapper.hpp>           // for ui::Card wrapper
 
 namespace ui {
 
 /// @brief Wrapper over `core::IDeckService::UpdateCardDraft`, visible from QML
 struct UpdateCardDraft final : core::IDeckService::UpdateCardDraft {
     Q_GADGET
+    QML_CONSTRUCTIBLE_VALUE
     QML_VALUE_TYPE(updateCardDraft)
 
     Q_PROPERTY(QString front READ front WRITE set_front FINAL)
     Q_PROPERTY(QString back READ back WRITE set_back FINAL)
     Q_PROPERTY(float difficulty READ difficulty WRITE set_difficulty FINAL)
+    Q_PROPERTY(int id READ id WRITE set_id FINAL)
 
   public:
+    /// @brief Construct `UpdateCardDraft` with default values
     Q_INVOKABLE UpdateCardDraft() = default;
 
-    Q_INVOKABLE UpdateCardDraft(const QString& front, const QString& back, const float difficulty) :
-        core::IDeckService::UpdateCardDraft{front, back, difficulty} {}
+    /// @brief Create `UpdateCardDraft` with id
+    /// @param id Local Card ID
+    explicit Q_INVOKABLE UpdateCardDraft(const int id) {
+        set_id(id);
+    }
+
+    /// @brief Create `UpdateCardDraft` from `ui::Card`
+    explicit Q_INVOKABLE UpdateCardDraft(Card card) {
+        set_id(card.id());
+        set_front(card.front());
+        set_back(card.back());
+        set_difficulty(card.difficulty());
+    }
 
     explicit UpdateCardDraft(const core::IDeckService::UpdateCardDraft& other) : core::IDeckService::UpdateCardDraft{other} {}
 
@@ -38,9 +53,9 @@ struct UpdateCardDraft final : core::IDeckService::UpdateCardDraft {
         return core::IDeckService::UpdateCardDraft::operator==(other);
     }
 
-private:
+  private:
     /// @brief Get front of the draft
-    QString front() const {
+    [[nodiscard]] QString front() const {
         return core::IDeckService::UpdateCardDraft::front.value_or(QString());
     }
 
@@ -50,7 +65,7 @@ private:
     }
 
     /// @brief Get back of the draft
-    QString back() const {
+    [[nodiscard]] QString back() const {
         return core::IDeckService::UpdateCardDraft::back.value_or(QString());
     }
 
@@ -60,13 +75,23 @@ private:
     }
 
     /// @brief Get difficulty of the draft
-    float difficulty() const {
+    [[nodiscard]] float difficulty() const noexcept {
         return core::IDeckService::UpdateCardDraft::difficulty.value_or(0.0f);
     }
 
     /// @brief Set difficulty of the draft
-    void set_difficulty(const float difficulty) {
+    void set_difficulty(const float difficulty) noexcept {
         core::IDeckService::UpdateCardDraft::difficulty = difficulty;
+    }
+
+    /// @brief Get id of the draft
+    [[nodiscard]] int id() const noexcept {
+        return core::IDeckService::UpdateCardDraft::id;
+    }
+
+    /// @brief Set id of the draft
+    void set_id(const int id) noexcept {
+        core::IDeckService::UpdateCardDraft::id = id;
     }
 };
 

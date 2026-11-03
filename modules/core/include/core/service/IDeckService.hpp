@@ -96,6 +96,7 @@ class IDeckService : public Notifiable {
 
     /// @brief Used as a draft for the card to be updated
     struct UpdateCardDraft {
+        Card::id_type          id{0};      ///< Local Card ID
         std::optional<QString> front;      ///< If `front` is equal to `std::nullopt`, it will not be updated
         std::optional<QString> back;       ///< If `back` is equal to `std::nullopt`, it will not be updated
         std::optional<float>   difficulty; ///< If `difficulty` is equal to `std::nullopt`, it will not be updated
@@ -199,11 +200,10 @@ class IDeckService : public Notifiable {
 
     /**
      * @brief Update card
-     * @param card_id Deck ID
-     * @param card Card
+     * @param card Card Draft
      * @note Emits `card_updated` event if success
      */
-    virtual QFuture<Result<void>> update_card(Card::id_type card_id, const UpdateCardDraft& card) = 0;
+    virtual QFuture<Result<void>> update_card(const UpdateCardDraft& card) = 0;
 
     /**
      * @brief Get information about each deck

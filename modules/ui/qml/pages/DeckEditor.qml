@@ -188,15 +188,15 @@ Item {
                         }
 
                         onIncreaseDifficultyClicked: {
-                            let card = Revise.DeckService.card(parent.id)
-                            let draft = new Revise.updateCardDraft(card.front, card.back, Math.max(0.0, Math.min(card.difficulty + 0.5, 5.0)))
-                            Revise.DeckService.update_card(parent.id, draft)
+                            let draft = new Revise.updateCardDraft(cardId);
+                            draft.difficulty = Math.max(0.0, Math.min(card.difficulty + 0.5, 5.0));
+                            Revise.DeckService.update_card(draft)
                         }
 
                         onDecreaseDifficultyClicked: {
-                            let card = Revise.DeckService.card(parent.id)
-                            let draft = new Revise.updateCardDraft(card.front, card.back, Math.max(0.0, Math.min(card.difficulty - 0.5, 5.0)))
-                            Revise.DeckService.update_card(parent.id, draft)
+                            let draft = new Revise.updateCardDraft(cardId);
+                            draft.difficulty = Math.max(0.0, Math.max(0.0, Math.min(card.difficulty - 0.5, 5.0)));
+                            Revise.DeckService.update_card(draft)
                         }
 
                         onRemoveClicked: {
