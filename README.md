@@ -24,4 +24,4 @@ The project uses the following libraries (in addition to Qt):
 
 ## License
 
-This project is licensed under [GNU GPLv3](LICENSE)
+This project is licensed under [GNU GPLv3 license](LICENSE)
