@@ -21,3 +21,7 @@ The project uses the following libraries (in addition to Qt):
 
 - [zstd](https://github.com/facebook/zstd)
 - [quazip](https://github.com/stachenov/quazip.git)
+
+## License
+
+This project is licensed under [GNU GPLv3](LICENSE)
