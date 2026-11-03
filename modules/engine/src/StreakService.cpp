@@ -37,9 +37,9 @@ core::IStreakService::Error StreakService::from_streak_storage(const core::IStre
     switch (error.kind) {
     case core::IStreakStorage::ErrorKind::InternalError:
     case core::IStreakStorage::ErrorKind::MissingValue:
-        return Error::internal_error(QString("%1: %2").arg(what).arg(error.message));
+        return Error::internal_error(QString("%1: %2").arg(what, error.message));
     default:
-        return Error::unavailable(QString("%1: %2").arg(what).arg(error.message));
+        return Error::unavailable(QString("%1: %2").arg(what, error.message));
     }
 }
 
