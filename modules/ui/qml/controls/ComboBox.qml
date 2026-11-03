@@ -108,6 +108,10 @@ ComboBox {
                 ? Revise.Theme.foregroundColor
                 : delegateItem.textColor
         }
+
+        HoverHandler {
+            cursorShape: hovered ? Qt.PointingHandCursor : Qt.ArrowCursor
+        }
     }
 
     contentItem: Revise.Text
@@ -124,6 +128,10 @@ ComboBox {
                 return Revise.Theme.foregroundColor
             const c = root.model.get(root.currentIndex).textColor
             return (c === undefined || c === null) ? Revise.Theme.foregroundColor : c
+        }
+
+        HoverHandler {
+            cursorShape: hovered ? Qt.PointingHandCursor : Qt.ArrowCursor
         }
     }
 
