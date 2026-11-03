@@ -437,7 +437,7 @@ Item {
                     Layout.fillHeight: true
 
                     contentWidth: width
-                    contentHeight: cardActions.implicitHeight + 16
+                    contentHeight: cardActions.implicitHeight
 
                     Column {
                         id: cardActions
@@ -563,18 +563,24 @@ Item {
                     Layout.fillHeight: true
 
                     contentWidth: width
-                    contentHeight: deckStatistics.implicitHeight + 16
+                    contentHeight: deckStatistics.implicitHeight
 
                     Revise.PanelColumn {
                         id: deckStatistics
-                        width: parent.width
+                        width: parent.width - 16
 
                         // Study progress
                         Revise.RadialGauge {
                             width: 220
                             anchors.horizontalCenter: parent.horizontalCenter
+                            maximum: Revise.CardsModel.cardsCount
+                            value: Revise.CardsModel.cardsCount - Revise.CardsModel.newCardsCount - Revise.CardsModel.incorrectCardsCount
                             valueText: qsTr(`${Math.trunc(value * 100 / maximum)}%`)
                             text: qsTr("Прогресс обучения")
+                        }
+
+                        Revise.HorizontalDivider {
+                            width: parent.width
                         }
 
                         // New cards
@@ -583,7 +589,8 @@ Item {
                             anchors.horizontalCenter: parent.horizontalCenter
                             backgroundColor: Color.darker(Revise.Theme.green, 3)
                             foregroundColor: Revise.Theme.green
-                            value: 20
+                            value: Revise.CardsModel.newCardsCount
+                            maximum: Revise.CardsModel.cardsCount
                             text: qsTr("Новых карточек")
                         }
 
@@ -593,7 +600,8 @@ Item {
                             anchors.horizontalCenter: parent.horizontalCenter
                             backgroundColor: Color.darker(Revise.Theme.blue, 3)
                             foregroundColor: Revise.Theme.blue
-                            value: 40
+                            value: Revise.CardsModel.reviewCardsCount
+                            maximum: Revise.CardsModel.cardsCount
                             text: qsTr("Повторяемых карточек")
                         }
 
@@ -603,7 +611,8 @@ Item {
                             anchors.horizontalCenter: parent.horizontalCenter
                             backgroundColor: Color.darker(Revise.Theme.red, 3)
                             foregroundColor: Revise.Theme.red
-                            value: 2
+                            value: Revise.CardsModel.incorrectCardsCount
+                            maximum: Revise.CardsModel.cardsCount
                             text: qsTr("Ошибочных карточек")
                         }
                     }
