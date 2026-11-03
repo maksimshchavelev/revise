@@ -50,7 +50,7 @@ import Revise as Revise
 
     \sa Revise.KebabMenu, Revise.CheckBox
 */
-Rectangle {
+Item {
     id: root
 
     /*!
@@ -195,14 +195,26 @@ Rectangle {
 
     implicitHeight: 100
 
-    color: root.statusColor()
-    radius: 12
-    scale: root.hovered ? 1.01 : 1.0
+    // Left panel with status color
+    Rectangle {
+        anchors.fill: parent
+        radius: 12
+        scale: root.hovered ? 1.01 : 1.0
+        color: root.statusColor()
+
+        Behavior on scale {
+            NumberAnimation {
+                easing.type: Easing.InOutQuad
+                duration: 60
+            }
+        }
+    }
 
     // Main background panel, overlapping the card's color status panel
     Item {
         anchors.fill: parent
         anchors.leftMargin: 8
+        scale: root.hovered ? 1.01 : 1.0
 
         // Background tint
         Rectangle {
@@ -280,11 +292,11 @@ Rectangle {
                     icon.color: Revise.Theme.textColorDark
                     background.color: "transparent"
                     onClicked: {
-                        kekabMenu.x = menuButton.x - kekabMenu.implicitWidth - 20
-                        kekabMenu.y = menuButton.y
+                        kebabMenu.x = menuButton.x - kebabMenu.implicitWidth - 20
+                        kebabMenu.y = menuButton.y
 
-                        kekabMenu.clampPosition()
-                        kekabMenu.open()
+                        kebabMenu.clampPosition()
+                        kebabMenu.open()
                     }
                 }
             }
@@ -363,12 +375,12 @@ Rectangle {
     }
 
     Revise.KebabMenu {
-        id: kekabMenu
+        id: kebabMenu
 
         Revise.KebabMenuButton {
             text: qsTr("Превью")
             onClicked: {
-                kekabMenu.close()
+                kebabMenu.close()
                 root.previewClicked()
             }
         }
@@ -376,7 +388,7 @@ Rectangle {
         Revise.KebabMenuButton {
             text: qsTr("Редактировать")
             onClicked: {
-                kekabMenu.close()
+                kebabMenu.close()
                 root.editClicked()
             }
         }
@@ -385,7 +397,7 @@ Rectangle {
             text: qsTr("Повысить сложность")
             clickable: root.difficulty < 5
             onClicked: {
-                kekabMenu.close()
+                kebabMenu.close()
                 root.increaseDifficultyClicked()
             }
         }
@@ -394,7 +406,7 @@ Rectangle {
             text: qsTr("Понизить сложность")
             clickable: root.difficulty > 0
             onClicked: {
-                kekabMenu.close()
+                kebabMenu.close()
                 root.decreaseDifficultyClicked()
             }
         }
@@ -403,7 +415,7 @@ Rectangle {
             text: qsTr("Удалить")
             color: Revise.Theme.red
             onClicked: {
-                kekabMenu.close()
+                kebabMenu.close()
                 root.removeClicked()
             }
         }
