@@ -11,7 +11,7 @@ namespace ui {
 /// @brief Wrapper over `core::IDeckService::DeckDraft`, visible from QML
 struct DeckDraft final : core::IDeckService::DeckDraft {
     Q_GADGET
-    QML_ELEMENT
+    QML_VALUE_TYPE(deckDraft)
 
     Q_PROPERTY(QString name MEMBER name FINAL)
     Q_PROPERTY(QString description MEMBER description FINAL)

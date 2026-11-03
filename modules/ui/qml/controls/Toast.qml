@@ -1,7 +1,7 @@
 // Toast message
+
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Rectangle {
@@ -9,27 +9,21 @@ Rectangle {
 
     property string header
     property string text
-    property int duration: 4000 // ms
+    required property int duration // ms
 
     property alias icon: icon.source
 
     signal opened
     signal closed
 
-    width: 280
-    height: rowLayout.implicitHeight + 20
+    width: 340
+    height: rowLayout.implicitHeight + 30
     radius: 10
     visible: false
     color: Revise.Theme.toastSuccess
 
     layer.enabled: true
-    layer.effect: DropShadow {
-        horizontalOffset: 5
-        verticalOffset: 5
-        radius: 8
-        samples: 32
-        color: "#80000000"
-    }
+    layer.effect: Revise.Shadow {}
 
     // Block clicks through toasts
     MouseArea {
@@ -74,11 +68,13 @@ Rectangle {
             Layout.fillHeight: true
             spacing: 4
 
+            // Header
             Revise.Text {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 text: root.header
                 font.bold: true
+                font.pixelSize: Revise.Theme.fontSizeMedium
                 horizontalAlignment: Text.AlignLeft
                 maximumLineCount: 2
                 color: "black"
@@ -86,11 +82,11 @@ Rectangle {
                 wrapMode: Text.WordWrap
             }
 
+            // Message
             Revise.Text {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 text: root.text
-                font.pixelSize: Revise.Theme.fontSizeSmall
                 horizontalAlignment: Text.AlignLeft
                 color: "black"
                 maximumLineCount: 10
@@ -101,9 +97,12 @@ Rectangle {
 
         Revise.IconButton {
             id: closeButton
-            Layout.preferredWidth: 16
-            Layout.preferredHeight: 16
-            source: "qrc:/res/img/close.svg"
+            Layout.preferredWidth: 28
+            Layout.preferredHeight: 28
+            icon.source: "qrc:/res/img/close.svg"
+            background.color: Color.darker(root.color, 1.1)
+            icon.anchors.margins: 6
+            icon.color: Revise.Theme.foregroundColor
             onClicked: root.close()
         }
 

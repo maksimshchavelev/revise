@@ -17,6 +17,9 @@ QtObject {
     // Main text that is easy to read against a background
     readonly property color foregroundColor: Qt.color("#c4c6dd")
 
+    // Secondary text for descriptions and explanations that isn't particularly eye-catching.
+    readonly property color secondaryForegroundColor: Qt.color("#828494")
+
     // ---------
 
     readonly property color tintColor: "#060606"
@@ -52,6 +55,7 @@ QtObject {
     readonly property int fontSizeDefault: 16
     readonly property int fontSizeMedium: 20
     readonly property int fontSizeBig: 28
+    readonly property int fontSizeGiant: 40
 
     readonly property color debugBounds: "#e30000"
 

@@ -82,9 +82,9 @@ Item {
                     anchors.right: parent.right
                     anchors.topMargin: 2
 
-                    source: "qrc:/res/img/menu.svg"
-                    size: 15
-                    color: Revise.Theme.textColorDark
+                    icon.source: "qrc:/res/img/menu.svg"
+                    size: 24
+                    background.color: "transparent"
                     opacity: 0.7
 
                     onClicked: {
@@ -239,10 +239,10 @@ Item {
         }
     }
 
-    Revise.KekabMenu {
+    Revise.KebabMenu {
         id: kekabMenu
 
-        Revise.KekabMenuButton {
+        Revise.KebabMenuButton {
             text: qsTr("Редактировать")
             onClicked: {
                 kekabMenu.close()
@@ -250,7 +250,7 @@ Item {
             }
         }
 
-        Revise.KekabMenuButton {
+        Revise.KebabMenuButton {
             text: qsTr("Экспортировать")
             onClicked: {
                 kekabMenu.close()
@@ -258,7 +258,7 @@ Item {
             }
         }
 
-        Revise.KekabMenuButton {
+        Revise.KebabMenuButton {
             text: qsTr("Удалить")
             color: Revise.Theme.red
             onClicked: {

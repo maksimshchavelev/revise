@@ -83,7 +83,7 @@ Item {
 
             text: qsTr("Создать")
             font.bold: true
-            background.color: hovered ? Revise.Theme.grey : "transparent"
+            backgroundItem.color: hovered ? Revise.Theme.grey : "transparent"
             background.opacity: 0.2
             onClicked: root.createClicked()
         }
@@ -96,7 +96,7 @@ Item {
 
             text: qsTr("Импортировать")
             font.bold: true
-            background.color: hovered ? Revise.Theme.grey : "transparent"
+            backgroundItem.color: hovered ? Revise.Theme.grey : "transparent"
             background.opacity: 0.2
             onClicked: root.importClicked()
         }

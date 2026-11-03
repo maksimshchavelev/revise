@@ -91,6 +91,7 @@ ApplicationWindow {
         x: appWindow.width - toast.width - 5
         y: 10
 
+        duration: 4000
         onClosed: Revise.ToastService.closed()
     }
 }

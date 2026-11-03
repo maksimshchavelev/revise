@@ -2,6 +2,7 @@
 
 #include "ui/UI.hpp"           // for UI header
 #include "CardEditSession.hpp" // for CardEditSession
+#include "CardSearchModel.hpp" // for CardSearchModel
 #include "CardsModel.hpp"      // for CardsModel wrapper
 #include "DeckService.hpp"     // for DeckService wrapper
 #include "DecksModel.hpp"      // for DecksModel wrapper
@@ -14,6 +15,7 @@
 namespace ui {
 
 UI::UI() {
+    qRegisterMetaType<ToastRequest>("ToastRequest");
     m_engine.addImportPath("qrc:/");
 }
 
@@ -60,9 +62,24 @@ void UI::bind_decks_model(core::IDeckService& deck_service, core::IStudyService&
 
 
 void UI::bind_cards_model(core::IDeckService& deck_service) {
-    if (auto* model = new CardsModel(deck_service, &m_engine);
-        !m_engine.setExternalSingletonInstance("Revise", "CardsModel", model)) {
+    auto* model = new CardsModel(deck_service, &m_engine);
+
+    if (!model) {
+        qFatal("Failed to construct CardsModel");
+    }
+
+    auto* search_model = new CardSearchModel(deck_service, *model, &m_engine);
+
+    if (!search_model) {
+        qFatal("Failed to construct CardSearchModel");
+    }
+
+    if (!m_engine.setExternalSingletonInstance("Revise", "CardsModel", model)) {
         qFatal("Failed to register external Revise.CardsModel singleton");
+    }
+
+    if (!m_engine.setExternalSingletonInstance("Revise", "CardSearchModel", search_model)) {
+        qFatal("Failed to register external Revise.CardSearchModel singleton");
     }
 }
 
