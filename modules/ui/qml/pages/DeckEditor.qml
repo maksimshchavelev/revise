@@ -380,11 +380,20 @@ Item {
 
                                 Revise.Button {
                                     width: parent.width
-                                    text: qsTr("Начать обучение заново")
+
+                                    text: {
+                                        if (Revise.CardsModel.selectedCount === 0)
+                                            return qsTr("Начать обучение заново")
+                                        else return qsTr(`Учить заново (${Revise.CardsModel.selectedCount} / ${Revise.CardsModel.cardsCount})`)
+                                    }
 
                                     Revise.HoverableTooltip {
                                         anchors.fill: parent
-                                        text: qsTr("Сложность и время следующего повтора будут сброшены для всех карточек")
+                                        text: {
+                                            if (Revise.CardsModel.selectedCount === 0)
+                                                return qsTr("Сложность и время следующего повтора будут сброшены для всех карточек")
+                                            else qsTr("Сложность и время следующего повтора будут сброшены для выбранных карточек")
+                                        }
                                     }
                                 }
 
