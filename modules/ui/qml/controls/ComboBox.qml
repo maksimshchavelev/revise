@@ -102,6 +102,7 @@ ComboBox {
         {
             text: delegateItem.label
             maximumLineCount: 3
+            wrapMode: Revise.Text.Wrap
             elide: Revise.Text.ElideRight
             color: (delegateItem.textColor === undefined || delegateItem.textColor === null)
                 ? Revise.Theme.foregroundColor
@@ -113,6 +114,7 @@ ComboBox {
     {
         anchors.fill: parent
         anchors.leftMargin: 8
+        anchors.rightMargin: 12
         verticalAlignment: Text.AlignVCenter
         text: root.displayText
         maximumLineCount: 1
