@@ -110,7 +110,7 @@ Item {
         id: importDialog
 
         title: qsTr("Выберите файл")
-        onAccepted: Revise.DeckService.import_deck_async(selectedFile)
+        onAccepted: Revise.DeckService.import_deck(selectedFile)
 
         nameFilters: [qsTr("Колода Revise (*.rpkg)"), qsTr(
                 "Колода Anki (*.apkg)")]
@@ -122,7 +122,7 @@ Item {
         property int deckId: 0
 
         title: qsTr("Экспортировать как .rpkg")
-        onAccepted: Revise.DeckService.export_deck_async(deckId, selectedFolder)
+        onAccepted: Revise.DeckService.export_deck(deckId, selectedFolder)
     }
 
     Shortcut {
