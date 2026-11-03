@@ -21,7 +21,7 @@ int CardsModel::rowCount(const QModelIndex& parent) const {
     if (parent.isValid()) {
         return 0;
     }
-    return m_cards.size();
+    return static_cast<int>(m_cards.size());
 }
 
 
@@ -149,14 +149,14 @@ void CardsModel::selectAll() {
         return;
     }
 
-    m_selected_count = m_cards.size();
+    m_selected_count = static_cast<int>(m_cards.size());
 
     std::ranges::for_each(m_cards, [this](auto& card) {
         card.set_selected(true);
         emit cardSelectionChanged(card.id(), true);
     });
 
-    emit dataChanged(index(0), index(m_cards.size() - 1), {SelectedRole});
+    emit dataChanged(index(0), index(static_cast<int>(m_cards.size()) - 1), {SelectedRole});
 }
 
 
@@ -172,7 +172,7 @@ void CardsModel::deselectAll() {
         emit cardSelectionChanged(card.id(), false);
     });
 
-    emit dataChanged(index(0), index(m_cards.size() - 1), {SelectedRole});
+    emit dataChanged(index(0), index(static_cast<int>(m_cards.size()) - 1), {SelectedRole});
 }
 
 
@@ -182,7 +182,7 @@ int CardsModel::deck_id() const noexcept {
 
 
 int CardsModel::cards_count() const noexcept {
-    return m_cards.size();
+    return static_cast<int>(m_cards.size());
 }
 
 
@@ -223,7 +223,7 @@ void CardsModel::on_card_created(const core::Card& card) {
         return;
     }
 
-    const int row = m_cards.size();
+    const int row = static_cast<int>(m_cards.size());
 
     beginInsertRows(QModelIndex(), row, row);
     m_cards.emplace_back(card);
@@ -248,7 +248,7 @@ void CardsModel::on_card_removed(const core::Card& card) {
     }
 
     beginRemoveRows(QModelIndex(), static_cast<int>(row), static_cast<int>(row));
-    m_cards.removeAt(row);
+    m_cards.removeAt(static_cast<int>(row));
     endRemoveRows();
 
     emit updated();
@@ -280,7 +280,7 @@ void CardsModel::on_card_updated(const core::Card& card) {
     }
 
     beginRemoveRows(QModelIndex(), static_cast<int>(row), static_cast<int>(row));
-    m_cards.removeAt(row);
+    m_cards.removeAt(static_cast<int>(row));
     endRemoveRows();
 
     emit updated();
