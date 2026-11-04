@@ -62,6 +62,9 @@ class DeckService final : public core::IDeckService {
     /// @copydoc core::IDeckService::update_cards
     QFuture<Result<void>> update_cards(const QVector<UpdateCardDraft>& cards) override;
 
+    /// @copydoc core::IDeckService::reset_cards
+    QFuture<Result<void>> reset_cards(const QVector<core::Card::id_type>& ids) override;
+
     /// @copydoc core::IDeckService::deck_summaries
     QFuture<Result<QVector<core::DeckSummary>>> deck_summaries() const override;
 

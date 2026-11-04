@@ -737,6 +737,68 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_cards(const QVecto
 }
 
 
+QFuture<core::IDeckService::Result<void>> DeckService::reset_cards(const QVector<core::Card::id_type>& ids) {
+    return QtConcurrent::run([this, ids]() -> Result<void> {
+        if (ids.empty()) {
+            auto error = Error::validation_failed("DeckService::reset_cards(): an empty list of IDs was passed for resetting");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        auto fetched_cards = m_deps.deck_storage.fetch_cards(ids);
+
+        if (!fetched_cards) {
+            auto error = from_storage_error(fetched_cards.error(), "DeckService::reset_cards(): failed to fetch cards");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        if (fetched_cards->empty()) {
+            auto error = Error::not_found("DeckService::reset_cards(): cards with this id's not found");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        if (fetched_cards->size() < ids.size()) {
+            auto error = Error::not_found("DeckService::reset_cards(): not all cards were found in the database");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        for (auto& card : *fetched_cards) {
+            card.difficulty = 2.5f;
+            card.state = core::Card::State::New;
+            card.next_review = QDateTime::currentDateTime();
+            card.updated_at = QDateTime::currentDateTime();
+        }
+
+        auto update_res = m_deps.deck_storage.update_cards(*fetched_cards);
+
+        if (!update_res) {
+            auto error = from_storage_error(update_res.error(), "DeckService::reset_cards(): failed to update cards");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        if (update_res->empty()) {
+            auto error = Error::internal_error(
+                "DeckService::reset_cards(): after updating, card storage did not return the updated cards");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        dispatch(card_updated{update_res->first()});
+        return {};
+    });
+}
+
+
 QFuture<core::IDeckService::Result<QVector<core::DeckSummary>>> DeckService::deck_summaries() const {
     return QtConcurrent::run([this]() -> Result<QVector<core::DeckSummary>> {
         auto decks_res = m_deps.deck_storage.fetch_decks();
