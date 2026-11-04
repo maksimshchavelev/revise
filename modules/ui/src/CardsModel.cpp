@@ -180,11 +180,8 @@ QVector<int> CardsModel::selectedIds() {
     QVector<int> ids;
     ids.reserve(m_selected_count);
 
-    std::ranges::for_each(m_cards, [&ids](const auto& card) {
-        if (card.selected()) {
-            ids.push_back(card.id());
-        }
-    });
+    auto selected = m_cards | std::views::filter(&Card::selected);
+    std::ranges::transform(selected, std::back_inserter(ids), &Card::id);
 
     return ids;
 }
