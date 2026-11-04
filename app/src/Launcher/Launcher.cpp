@@ -198,17 +198,17 @@ void Launcher::connect_signals() {
                                              .type = core::ToastType::SUCCESS});
     });
 
-    m_deck_service->connect<core::IDeckService::card_updated>([this](auto& e) {
-        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Карточка обновлена"),
-                                             .message = QCoreApplication::translate("deck events", "Карточка была обновлена"),
-                                             .type = core::ToastType::INFO});
-    });
-
     m_deck_service->connect<core::IDeckService::cards_updated>([this](const auto& e) {
-        m_toast_service->request(core::Toast{
-            .header = QCoreApplication::translate("deck events", "Карточки обновлены"),
-            .message = QCoreApplication::translate("deck events", "Обновлено карточек: ") + QString::number(e.cards.size()),
-            .type = core::ToastType::INFO});
+        const auto one_card_header = QCoreApplication::translate("deck events", "Карточка обновлена");
+        const auto cards_header = QCoreApplication::translate("deck events", "Карточки обновлены");
+
+        const auto one_card_message = QCoreApplication::translate("deck events", "Карточка успешно обновлена!");
+        const auto cards_message =
+            QCoreApplication::translate("deck events", "Обновлено карточек: ") + QString::number(e.cards.size());
+
+        m_toast_service->request(core::Toast{.header = e.cards.size() > 1 ? cards_header : one_card_header,
+                                             .message = e.cards.size() > 1 ? cards_message : one_card_message,
+                                             .type = core::ToastType::SUCCESS});
     });
 
     m_deck_service->connect<core::IDeckService::cards_removed>([this](const auto& e) {

@@ -113,7 +113,6 @@ class IDeckService : public Notifiable {
 
     EVENT(card_created, Card card)            ///< Card created. Stores created card
     EVENT(cards_removed, QVector<Card> cards) ///< Cards removed. Stores removed cards
-    EVENT(card_updated, Card card)            ///< Card updated. Stores updated card
     EVENT(cards_updated, QVector<Card> cards) ///< Many cards updated. Stores updated cards
 
     EVENT(import_failed, Error error) ///< Import failed
@@ -199,13 +198,6 @@ class IDeckService : public Notifiable {
      * @note Emits `cards_removed` event if success
      */
     virtual QFuture<Result<void>> remove_cards(const QVector<Card::id_type>& ids) = 0;
-
-    /**
-     * @brief Update card
-     * @param card Card Draft
-     * @note Emits `card_updated` event if success
-     */
-    virtual QFuture<Result<void>> update_card(const UpdateCardDraft& card) = 0;
 
     /**
      * @brief Bulk update all cards

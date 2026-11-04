@@ -20,7 +20,6 @@ CardSearchModel::CardSearchModel(core::IDeckService& service, CardsModel& cards_
 
     m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) { on_card_created(e.card); });
     m_deck_service.connect<core::IDeckService::cards_removed>([this](auto& e) { on_cards_removed(e.cards); });
-    m_deck_service.connect<core::IDeckService::card_updated>([this](auto& e) { on_cards_updated(QVector{e.card}); });
     m_deck_service.connect<core::IDeckService::cards_updated>([this](auto& e) { on_cards_updated(e.cards); });
 }
 

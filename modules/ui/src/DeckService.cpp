@@ -101,19 +101,6 @@ void DeckService::remove_cards(const QVector<int>& ids) {
 }
 
 
-void DeckService::update_card(const UpdateCardDraft& card) {
-    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
-
-    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
-        if (const auto result = watcher->future().result(); !result) {
-            qWarning() << "ui::DeckService::update_card() failed to update card, cause:" << result.error().message;
-        }
-    });
-
-    watcher->setFuture(m_deck_service.update_card(card));
-}
-
-
 void DeckService::update_cards(const QVector<int>& ids, const UpdateCardDraft& draft) {
     auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
 
