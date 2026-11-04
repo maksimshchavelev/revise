@@ -10,10 +10,9 @@ namespace ui {
 
 CardsModel::CardsModel(core::IDeckService& service, QObject* parent) : QAbstractListModel(parent), m_deck_service(service) {
     m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) { on_card_created(e.card); });
-
     m_deck_service.connect<core::IDeckService::card_removed>([this](auto& e) { on_card_removed(e.card); });
-
-    m_deck_service.connect<core::IDeckService::card_updated>([this](auto& e) { on_card_updated(e.card); });
+    m_deck_service.connect<core::IDeckService::card_updated>([this](auto& e) { on_cards_updated(QVector{e.card}); });
+    m_deck_service.connect<core::IDeckService::cards_updated>([this](auto& e) { on_cards_updated(e.cards); });
 }
 
 
@@ -268,33 +267,52 @@ void CardsModel::on_card_removed(const core::Card& card) {
 }
 
 
-void CardsModel::on_card_updated(const core::Card& card) {
-    const bool  moved = card.deck_id != m_last_deck_id.load();
-    std::size_t row = m_cards.size();
+void CardsModel::on_cards_updated(const QVector<core::Card>& cards) {
+    if (cards.isEmpty() || m_cards.isEmpty()) {
+        return;
+    }
+
+    const int current_deck = m_last_deck_id.load();
+
+    QHash<int, const core::Card*> updates;
+    updates.reserve(cards.size());
+    std::ranges::for_each(cards, [&updates](const core::Card& c) {
+        updates.insert(c.id, &c);
+    });
+
+    QVector<int> rows_to_remove;
 
     std::ranges::for_each(m_cards, [&, i = std::size_t{0}](auto& c) mutable {
-        if (c.id() == card.id && row == static_cast<std::size_t>(m_cards.size())) {
-            row = i;
+        const auto it = updates.constFind(c.id());
+        if (it == updates.constEnd()) {
+            ++i;
+            return;
+        }
 
-            if (!moved) {
-                const bool was_selected = c.selected();
-                c = Card{card};
-                c.set_selected(was_selected);
+        const core::Card& updated = *it.value();
+        if (updated.deck_id != current_deck) {
+            rows_to_remove.push_back(static_cast<int>(i));
+        } else {
+            const bool was_selected = c.selected();
+            c = Card{updated};
+            c.set_selected(was_selected);
 
-                const QModelIndex idx = index(static_cast<int>(i));
-                emit              dataChanged(idx, idx);
-            }
+            const QModelIndex idx = index(static_cast<int>(i));
+            emit dataChanged(idx, idx);
         }
         ++i;
     });
 
-    if (!moved || row == static_cast<std::size_t>(m_cards.size())) {
+    if (rows_to_remove.isEmpty()) {
         return;
     }
 
-    beginRemoveRows(QModelIndex(), static_cast<int>(row), static_cast<int>(row));
-    m_cards.removeAt(static_cast<int>(row));
-    endRemoveRows();
+    std::ranges::reverse(rows_to_remove);
+    std::ranges::for_each(rows_to_remove, [this](const int row) {
+        beginRemoveRows(QModelIndex(), row, row);
+        m_cards.removeAt(row);
+        endRemoveRows();
+    });
 
     emit updated();
 }

@@ -113,8 +113,8 @@ class CardsModel final : public QAbstractListModel {
     /// @brief Handle card_removed event
     void on_card_removed(const core::Card& card);
 
-    /// @brief Handle card_updated event
-    void on_card_updated(const core::Card& card);
+    /// @brief Handle card_updated or cards_updated events
+    void on_cards_updated(const QVector<core::Card>& cards);
 
     core::IDeckService& m_deck_service;       ///< Deck service
     QVector<Card>       m_cards;              ///< All cards
