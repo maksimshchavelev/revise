@@ -129,8 +129,7 @@ void Launcher::init() {
         qWarning() << "Failed to create study service, got nullptr";
     }
 
-    if (m_card_edit_session = engine::create_card_edit_session(engine::CardEditSessionType::Local);
-        !m_card_edit_session) {
+    if (m_card_edit_session = engine::create_card_edit_session(engine::CardEditSessionType::Local); !m_card_edit_session) {
         qWarning() << "Failed to create card edit session, got nullptr";
     }
 
@@ -145,29 +144,25 @@ void Launcher::init() {
 
 
 void Launcher::connect_signals() {
-    m_study_service->connect<core::IStudyService::training_finished>(
-        [this](auto& e) { m_router.navigate("home", {}); });
+    m_study_service->connect<core::IStudyService::training_finished>([this](auto& e) { m_router.navigate("home", {}); });
 
     // Deck events
     m_deck_service->connect<core::IDeckService::deck_updated>([this](auto& e) {
-        m_toast_service->request(
-            core::Toast{.header = QCoreApplication::translate("deck events", "Колода обновлена"),
-                        .message = QCoreApplication::translate("deck events", "Колода была обновлена"),
-                        .type = core::ToastType::INFO});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Колода обновлена"),
+                                             .message = QCoreApplication::translate("deck events", "Колода была обновлена"),
+                                             .type = core::ToastType::INFO});
     });
 
     m_deck_service->connect<core::IDeckService::deck_created>([this](auto& e) {
-        m_toast_service->request(
-            core::Toast{.header = QCoreApplication::translate("deck events", "Колода создана"),
-                        .message = QCoreApplication::translate("deck events", "Новая колода создана!"),
-                        .type = core::ToastType::SUCCESS});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Колода создана"),
+                                             .message = QCoreApplication::translate("deck events", "Новая колода создана!"),
+                                             .type = core::ToastType::SUCCESS});
     });
 
     m_deck_service->connect<core::IDeckService::deck_removed>([this](auto& e) {
-        m_toast_service->request(
-            core::Toast{.header = QCoreApplication::translate("deck events", "Колода удалена"),
-                        .message = QCoreApplication::translate("deck events", "Колода была удалена!"),
-                        .type = core::ToastType::SUCCESS});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Колода удалена"),
+                                             .message = QCoreApplication::translate("deck events", "Колода была удалена!"),
+                                             .type = core::ToastType::SUCCESS});
     });
 
     m_deck_service->connect<core::IDeckService::deck_exported>([this](auto& e) {
@@ -178,10 +173,9 @@ void Launcher::connect_signals() {
     });
 
     m_deck_service->connect<core::IDeckService::export_failed>([this](auto& e) {
-        m_toast_service->request(
-            core::Toast{.header = QCoreApplication::translate("deck events", "Экспорт не удался"),
-                        .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
-                        .type = core::ToastType::ERROR});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Экспорт не удался"),
+                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+                                             .type = core::ToastType::ERROR});
     });
 
     m_deck_service->connect<core::IDeckService::deck_imported>([this](auto& e) {
@@ -192,32 +186,49 @@ void Launcher::connect_signals() {
     });
 
     m_deck_service->connect<core::IDeckService::import_failed>([this](auto& e) {
-        m_toast_service->request(
-            core::Toast{.header = QCoreApplication::translate("deck events", "Импорт не удался"),
-                        .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
-                        .type = core::ToastType::ERROR});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Импорт не удался"),
+                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+                                             .type = core::ToastType::ERROR});
     });
 
     // Card events
     m_deck_service->connect<core::IDeckService::card_created>([this](auto& e) {
-        m_toast_service->request(
-            core::Toast{.header = QCoreApplication::translate("deck events", "Карточка добавлена"),
-                        .message = QCoreApplication::translate("deck events", "Карточка успешно добавлена!"),
-                        .type = core::ToastType::SUCCESS});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Карточка добавлена"),
+                                             .message = QCoreApplication::translate("deck events", "Карточка успешно добавлена!"),
+                                             .type = core::ToastType::SUCCESS});
     });
 
     m_deck_service->connect<core::IDeckService::card_updated>([this](auto& e) {
-        m_toast_service->request(
-            core::Toast{.header = QCoreApplication::translate("deck events", "Карточка обновлена"),
-                        .message = QCoreApplication::translate("deck events", "Карточка была обновлена"),
-                        .type = core::ToastType::INFO});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Карточка обновлена"),
+                                             .message = QCoreApplication::translate("deck events", "Карточка была обновлена"),
+                                             .type = core::ToastType::INFO});
+    });
+
+    m_deck_service->connect<core::IDeckService::cards_updated>([this](const auto& e) {
+        m_toast_service->request(core::Toast{
+            .header = QCoreApplication::translate("deck events", "Карточки обновлены"),
+            .message = QCoreApplication::translate("deck events", "Обновлено карточек: ") + QString::number(e.cards.size()),
+            .type = core::ToastType::INFO});
     });
 
     m_deck_service->connect<core::IDeckService::card_removed>([this](auto& e) {
-        m_toast_service->request(
-            core::Toast{.header = QCoreApplication::translate("deck events", "Карточка удалена"),
-                        .message = QCoreApplication::translate("deck events", "Карточка успешно удалена!"),
-                        .type = core::ToastType::SUCCESS});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Карточка удалена"),
+                                             .message = QCoreApplication::translate("deck events", "Карточка успешно удалена!"),
+                                             .type = core::ToastType::SUCCESS});
+    });
+
+    m_deck_service->connect<core::IDeckService::card_update_failed>([this](const auto& e) {
+        m_toast_service->request(core::Toast{
+            .header = QCoreApplication::translate("deck events", "Не удалось обновить карточку"),
+            .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+            .type = core::ToastType::ERROR});
+    });
+
+    m_deck_service->connect<core::IDeckService::card_remove_failed>([this](const auto& e) {
+        m_toast_service->request(core::Toast{
+            .header = QCoreApplication::translate("deck events", "Не удалось удалить карточку"),
+            .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+            .type = core::ToastType::ERROR});
     });
 
     // Study
@@ -261,8 +272,7 @@ void Launcher::connect_signals() {
         core::Toast toast;
 
         toast.header = QCoreApplication::translate("streak events", "Страйк сброшен!");
-        toast.message =
-            QCoreApplication::translate("streak events", "Занимайтесь каждый день, чтобы увеличивать свой страйк");
+        toast.message = QCoreApplication::translate("streak events", "Занимайтесь каждый день, чтобы увеличивать свой страйк");
         toast.type = core::ToastType::INFO;
 
         m_toast_service->request(std::move(toast));
@@ -314,12 +324,12 @@ void Launcher::post_launch() {
     auto android_sdk_version = platform::Platform::android_sdk_version();
 
     if (android_sdk_version && android_sdk_version.value() <= 31 /* android 12 */) {
-        m_toast_service->request(core::Toast{
-            .header = QCoreApplication::translate("launch events", "Слишком старый Android"),
-            .message = QString(QCoreApplication::translate("application events",
-                                                           "Похоже, вы используете Android 12 или ниже. Приложение "
-                                                           "может работать некорректно. Уведомления отключены.")),
-            .type = core::ToastType::INFO});
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("launch events", "Слишком старый Android"),
+                        .message = QString(QCoreApplication::translate("application events",
+                                                                       "Похоже, вы используете Android 12 или ниже. Приложение "
+                                                                       "может работать некорректно. Уведомления отключены.")),
+                        .type = core::ToastType::INFO});
     }
 
     if (android_sdk_version && android_sdk_version.value() > 31 /* android 13+ */) {
@@ -350,13 +360,13 @@ void Launcher::extract_web_bundle() {
         ":/res/html", QString("%1/web").arg(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)));
 
     if (!copy_res) {
-        m_toast_service->request(core::Toast{
-            .header = QCoreApplication::translate("application events", "Ошибка распаковки ресурсов"),
-            .message = QString(QCoreApplication::translate(
-                                   "application events",
-                                   "Не удалось распаковать web bundle: %1. Приложение может работать некорректно!"))
-                           .arg(copy_res.error().description),
-            .type = core::ToastType::ERROR});
+        m_toast_service->request(
+            core::Toast{.header = QCoreApplication::translate("application events", "Ошибка распаковки ресурсов"),
+                        .message = QString(QCoreApplication::translate(
+                                               "application events",
+                                               "Не удалось распаковать web bundle: %1. Приложение может работать некорректно!"))
+                                       .arg(copy_res.error().description),
+                        .type = core::ToastType::ERROR});
     }
 }
 
@@ -376,8 +386,8 @@ void Launcher::schedule_notifications() {
             continue;
         }
 
-        m_notification_service->schedule_notification(
-            QCoreApplication::translate("notification", "Пора что-нибудь повторить!"), when);
+        m_notification_service->schedule_notification(QCoreApplication::translate("notification", "Пора что-нибудь повторить!"),
+                                                      when);
     }
 }
 
