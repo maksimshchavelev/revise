@@ -176,6 +176,20 @@ void CardsModel::deselectAll() {
 }
 
 
+QVector<int> CardsModel::selectedIds() {
+    QVector<int> ids;
+    ids.reserve(m_selected_count);
+
+    std::ranges::for_each(m_cards, [&ids](const auto& card) {
+        if (card.selected()) {
+            ids.push_back(card.id());
+        }
+    });
+
+    return ids;
+}
+
+
 int CardsModel::deck_id() const noexcept {
     return m_last_deck_id.load();
 }
@@ -187,27 +201,21 @@ int CardsModel::cards_count() const noexcept {
 
 
 int CardsModel::new_cards_count() const noexcept {
-    const auto count = std::ranges::count_if(m_cards, [](const auto& card) {
-        return card.state() == Card::State::New;
-    });
+    const auto count = std::ranges::count_if(m_cards, [](const auto& card) { return card.state() == Card::State::New; });
 
     return static_cast<int>(count);
 }
 
 
 int CardsModel::review_cards_count() const noexcept {
-    const auto count = std::ranges::count_if(m_cards, [](const auto& card) {
-        return card.state() == Card::State::Review;
-    });
+    const auto count = std::ranges::count_if(m_cards, [](const auto& card) { return card.state() == Card::State::Review; });
 
     return static_cast<int>(count);
 }
 
 
 int CardsModel::incorrect_cards_count() const noexcept {
-    const auto count = std::ranges::count_if(m_cards, [](const auto& card) {
-        return card.state() == Card::State::Incorrect;
-    });
+    const auto count = std::ranges::count_if(m_cards, [](const auto& card) { return card.state() == Card::State::Incorrect; });
 
     return static_cast<int>(count);
 }
