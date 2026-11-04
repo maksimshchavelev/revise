@@ -633,6 +633,109 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_card(const UpdateC
 }
 
 
+QFuture<core::IDeckService::Result<void>> DeckService::update_cards(const QVector<UpdateCardDraft>& cards) {
+    return QtConcurrent::run([this, cards]() -> Result<void> {
+        for (const auto& card : cards) {
+            if (card.front && card.front->isEmpty()) {
+                auto error = Error::validation_failed("DeckService::update_cards(): card front is empty");
+
+                dispatch(card_update_failed{error});
+                return std::unexpected(error);
+            }
+
+            if (card.front && card.front->length() > 4096) {
+                auto error = Error::validation_failed("DeckService::update_cards(): card front is too long");
+
+                dispatch(card_update_failed{error});
+                return std::unexpected(error);
+            }
+
+            if (card.back && card.back->isEmpty()) {
+                auto error = Error::validation_failed("DeckService::update_cards(): card back is empty");
+
+                dispatch(card_update_failed{error});
+                return std::unexpected(error);
+            }
+
+            if (card.back && card.back->length() > 16384) {
+                auto error = Error::validation_failed("DeckService::update_cards(): card back is too long");
+
+                dispatch(card_update_failed{error});
+                return std::unexpected(error);
+            }
+
+            if (card.difficulty && (*card.difficulty < 0.0f || *card.difficulty > 5.0f)) {
+                auto error = Error::validation_failed("DeckService::update_cards(): card difficulty is out of range");
+
+                dispatch(card_update_failed{error});
+                return std::unexpected(error);
+            }
+        }
+
+        QVector<core::Card::id_type> ids;
+        ids.reserve(cards.size());
+        std::ranges::transform(cards, std::back_inserter(ids), &UpdateCardDraft::id);
+
+        QHash<core::Card::id_type, UpdateCardDraft> drafts;
+        drafts.reserve(cards.size());
+        std::ranges::for_each(cards, [&drafts](const auto& card) { drafts.insert(card.id, card); });
+
+        auto fetch_res = m_deps.deck_storage.fetch_cards(ids);
+
+        if (!fetch_res) {
+            auto error = from_storage_error(fetch_res.error(), "DeckService::update_cards(): failed to fetch cards");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        if (fetch_res->empty()) {
+            auto error = Error::not_found("DeckService::update_cards(): cards with this id's not found");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        if (fetch_res->size() < cards.size()) {
+            auto error = Error::not_found("DeckService::update_cards(): not all cards were found in the database");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        for (auto& card : *fetch_res) {
+            card.front = drafts[card.id].front.value_or(card.front);
+            card.back = drafts[card.id].back.value_or(card.back);
+            card.difficulty = drafts[card.id].difficulty.value_or(card.difficulty);
+            card.updated_at = QDateTime::currentDateTime();
+        }
+
+        QVector<core::Card> updates;
+        updates.reserve(cards.size());
+
+        auto update_res = m_deps.deck_storage.update_cards({*fetch_res});
+
+        if (!update_res) {
+            auto error = from_storage_error(update_res.error(), "DeckService::update_cards(): failed to update card");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        if (update_res->empty()) {
+            auto error = Error::internal_error(
+                "DeckService::update_cards(): after updating, card storage did not return the updated card");
+
+            dispatch(card_update_failed{error});
+            return std::unexpected(error);
+        }
+
+        dispatch(cards_updated{*fetch_res});
+        return {};
+    });
+}
+
+
 QFuture<core::IDeckService::Result<QVector<core::DeckSummary>>> DeckService::deck_summaries() const {
     return QtConcurrent::run([this]() -> Result<QVector<core::DeckSummary>> {
         auto decks_res = m_deps.deck_storage.fetch_decks();
