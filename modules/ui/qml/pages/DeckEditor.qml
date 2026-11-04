@@ -264,7 +264,7 @@ Item {
                         Layout.fillHeight: true
 
                         contentWidth: width
-                        contentHeight: deckProperties.implicitHeight + 16
+                        contentHeight: deckProperties.implicitHeight
 
                         Column {
                             id: deckProperties
