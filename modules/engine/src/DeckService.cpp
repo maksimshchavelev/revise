@@ -1,4 +1,4 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "engine/DeckService.hpp" // for header
 #include <QFileInfo>              // for QFileInfo
@@ -802,13 +802,13 @@ QFuture<core::IDeckService::Result<QVector<core::Card>>> DeckService::search_car
 core::IDeckService::Error DeckService::from_storage_error(const core::IDeckStorage::Error& error, const QString& message) {
     switch (error.kind) {
     case core::IDeckStorage::ErrorKind::AlreadyExists:
-        return Error::already_exists(QString("%1: %2").arg(message).arg(error.message));
+        return Error::already_exists(QString("%1: %2").arg(message, error.message));
 
     case core::IDeckStorage::ErrorKind::NotFound:
-        return Error::not_found(QString("%1: %2").arg(message).arg(error.message));
+        return Error::not_found(QString("%1: %2").arg(message, error.message));
 
     default:
-        return Error::internal_error(QString("%1: %2").arg(message).arg(error.message));
+        return Error::internal_error(QString("%1: %2").arg(message, error.message));
     }
 }
 
