@@ -215,6 +215,13 @@ class IDeckService : public Notifiable {
     virtual QFuture<Result<void>> update_cards(const QVector<UpdateCardDraft>& cards) = 0;
 
     /**
+     * @brief Reset learning progress for selected cards
+     * @param ids Card IDs whose progress needs to be reset
+     * @note Emits `cards_updated` event if success
+     */
+    virtual QFuture<Result<void>> reset_cards(const QVector<Card::id_type>& ids) = 0;
+
+    /**
      * @brief Get information about each deck
      * @return QVector of deck summary
      */
