@@ -125,8 +125,11 @@ void DeckService::update_cards(const QVector<int>& ids, const UpdateCardDraft& d
 
     QVector<core::IDeckService::UpdateCardDraft> drafts;
     drafts.reserve(ids.size());
-    std::ranges::for_each(
-        ids, [&drafts, &draft](const int id) { drafts.emplace_back(id, draft.front(), draft.back(), draft.difficulty()); });
+    std::ranges::for_each(ids, [&drafts, &draft](const int id) {
+        auto local = draft;
+        local.set_id(id);
+        drafts.emplace_back(local);
+    });
 
     watcher->setFuture(m_deck_service.update_cards(drafts));
 }
