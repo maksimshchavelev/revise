@@ -114,6 +114,24 @@ void DeckService::update_card(const UpdateCardDraft& card) {
 }
 
 
+void DeckService::update_cards(const QVector<int>& ids, const UpdateCardDraft& draft) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::update_card() failed to perform bulk cards update, cause:" << result.error().message;
+        }
+    });
+
+    QVector<core::IDeckService::UpdateCardDraft> drafts;
+    drafts.reserve(ids.size());
+    std::ranges::for_each(
+        ids, [&drafts, &draft](const int id) { drafts.emplace_back(id, draft.front(), draft.back(), draft.difficulty()); });
+
+    watcher->setFuture(m_deck_service.update_cards(drafts));
+}
+
+
 Deck DeckService::deck(const int deck_id) const {
     const auto result = m_deck_service.deck(deck_id).result<core::IDeckService::Result<Deck>>();
 
