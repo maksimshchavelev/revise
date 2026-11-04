@@ -93,9 +93,8 @@ class CardSearchModel final : public QAbstractListModel {
     /// @brief Handle card_removed event: remove the matching row
     void on_card_removed(const core::Card& card);
 
-    /// @brief Handle card_updated event: update, insert, or remove the row
-    ///        depending on whether the card matched before and matches now
-    void on_card_updated(const core::Card& card);
+    /// @brief Handle card_updated or cards_updated events
+    void on_cards_updated(const QVector<core::Card>& cards);
 
     /// @brief Mirror a selection change from CardsModel into this model
     /// @param cardId The local ID of the card
