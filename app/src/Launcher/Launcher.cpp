@@ -211,24 +211,29 @@ void Launcher::connect_signals() {
             .type = core::ToastType::INFO});
     });
 
-    m_deck_service->connect<core::IDeckService::card_removed>([this](auto& e) {
-        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Карточка удалена"),
-                                             .message = QCoreApplication::translate("deck events", "Карточка успешно удалена!"),
+    m_deck_service->connect<core::IDeckService::cards_removed>([this](const auto& e) {
+        const auto one_card_header = QCoreApplication::translate("deck events", "Карточка удалена");
+        const auto cards_header = QCoreApplication::translate("deck events", "Карточки удалены");
+
+        const auto one_card_message = QCoreApplication::translate("deck events", "Карточка успешно удалена!");
+        const auto cards_message =
+            QCoreApplication::translate("deck events", "Удалено карточек: ") + QString::number(e.cards.size());
+
+        m_toast_service->request(core::Toast{.header = e.cards.size() > 1 ? cards_header : one_card_header,
+                                             .message = e.cards.size() > 1 ? cards_message : one_card_message,
                                              .type = core::ToastType::SUCCESS});
     });
 
     m_deck_service->connect<core::IDeckService::card_update_failed>([this](const auto& e) {
-        m_toast_service->request(core::Toast{
-            .header = QCoreApplication::translate("deck events", "Не удалось обновить карточку"),
-            .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
-            .type = core::ToastType::ERROR});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Не удалось обновить карточку"),
+                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+                                             .type = core::ToastType::ERROR});
     });
 
     m_deck_service->connect<core::IDeckService::card_remove_failed>([this](const auto& e) {
-        m_toast_service->request(core::Toast{
-            .header = QCoreApplication::translate("deck events", "Не удалось удалить карточку"),
-            .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
-            .type = core::ToastType::ERROR});
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Не удалось удалить карточку"),
+                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+                                             .type = core::ToastType::ERROR});
     });
 
     // Study
