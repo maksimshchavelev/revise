@@ -793,7 +793,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::reset_cards(const QVector
             return std::unexpected(error);
         }
 
-        dispatch(card_updated{update_res->first()});
+        dispatch(cards_updated{*update_res});
         return {};
     });
 }
