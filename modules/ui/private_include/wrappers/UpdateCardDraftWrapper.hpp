@@ -53,7 +53,6 @@ struct UpdateCardDraft final : core::IDeckService::UpdateCardDraft {
         return core::IDeckService::UpdateCardDraft::operator==(other);
     }
 
-  private:
     /// @brief Get front of the draft
     [[nodiscard]] QString front() const {
         return core::IDeckService::UpdateCardDraft::front.value_or(QString());
