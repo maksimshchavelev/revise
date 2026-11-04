@@ -525,12 +525,19 @@ QFuture<core::IDeckService::Result<core::Card>> DeckService::card(core::Card::id
 }
 
 
-QFuture<core::IDeckService::Result<void>> DeckService::remove_card(core::Card::id_type id) {
-    return QtConcurrent::run([this, id]() -> Result<void> {
-        auto remove_res = m_deps.deck_storage.remove_cards({id});
+QFuture<core::IDeckService::Result<void>> DeckService::remove_cards(const QVector<core::Card::id_type>& ids) {
+    return QtConcurrent::run([this, ids]() -> Result<void> {
+        if (ids.empty()) {
+            auto error = Error::validation_failed("DeckService::remove_cards(): got empty list of ID's");
+
+            dispatch(card_remove_failed{error});
+            return std::unexpected(error);
+        }
+
+        auto remove_res = m_deps.deck_storage.remove_cards(ids);
 
         if (!remove_res) {
-            auto error = from_storage_error(remove_res.error(), "DeckService::remove_card(): failed to remove card");
+            auto error = from_storage_error(remove_res.error(), "DeckService::remove_cards(): failed to remove cards");
 
             dispatch(card_remove_failed{error});
             return std::unexpected(error);
@@ -538,13 +545,13 @@ QFuture<core::IDeckService::Result<void>> DeckService::remove_card(core::Card::i
 
         if (remove_res->empty()) {
             auto error =
-                Error::internal_error("DeckService::remove_card(): after removing, storage did not return the removed card");
+                Error::internal_error("DeckService::remove_cards(): after removing, storage did not return the removed cards");
 
             dispatch(card_remove_failed{error});
             return std::unexpected(error);
         }
 
-        dispatch(card_removed{remove_res->first()});
+        dispatch(cards_removed{*remove_res});
         return {};
     });
 }

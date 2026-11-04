@@ -90,8 +90,8 @@ class CardSearchModel final : public QAbstractListModel {
     ///        new card matches the current query
     void on_card_created(const core::Card& card);
 
-    /// @brief Handle card_removed event: remove the matching row
-    void on_card_removed(const core::Card& card);
+    /// @brief Handle cards_removed event
+    void on_cards_removed(const QVector<core::Card>& cards);
 
     /// @brief Handle card_updated or cards_updated events
     void on_cards_updated(const QVector<core::Card>& cards);

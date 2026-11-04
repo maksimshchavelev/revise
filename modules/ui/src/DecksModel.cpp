@@ -8,11 +8,8 @@ DecksModel::DecksModel(core::IDeckService& deck_service, core::IStudyService& st
     QAbstractListModel(parent), m_deck_service(deck_service), m_study_service(study_service) {
 
     m_deck_service.connect<core::IDeckService::deck_updated>([this](auto& e) { update(); });
-
     m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) { update(); });
-
-    m_deck_service.connect<core::IDeckService::card_removed>([this](auto& e) { update(); });
-
+    m_deck_service.connect<core::IDeckService::cards_removed>([this](auto& e) { update(); });
     m_study_service.connect<core::IStudyService::training_finished>([this](auto& e) { update(); });
 
     update();

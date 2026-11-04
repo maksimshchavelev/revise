@@ -19,7 +19,7 @@ CardSearchModel::CardSearchModel(core::IDeckService& service, CardsModel& cards_
     connect(&m_cards_model, &CardsModel::cardSelectionChanged, this, &CardSearchModel::on_card_selection_changed);
 
     m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) { on_card_created(e.card); });
-    m_deck_service.connect<core::IDeckService::card_removed>([this](auto& e) { on_card_removed(e.card); });
+    m_deck_service.connect<core::IDeckService::cards_removed>([this](auto& e) { on_cards_removed(e.cards); });
     m_deck_service.connect<core::IDeckService::card_updated>([this](auto& e) { on_cards_updated(QVector{e.card}); });
     m_deck_service.connect<core::IDeckService::cards_updated>([this](auto& e) { on_cards_updated(e.cards); });
 }
@@ -170,23 +170,45 @@ void CardSearchModel::on_card_created(const core::Card& card) {
 }
 
 
-void CardSearchModel::on_card_removed(const core::Card& card) {
-    std::size_t row = m_cards.size();
+void CardSearchModel::on_cards_removed(const QVector<core::Card>& cards) {
+    if (cards.isEmpty()) {
+        return;
+    }
+
+    QSet<int> ids_to_remove;
+    ids_to_remove.reserve(cards.size());
+    std::ranges::for_each(cards, [&ids_to_remove](const core::Card& c) {
+        ids_to_remove.insert(c.id);
+    });
+
+    std::ranges::for_each(ids_to_remove, [this](const int id) {
+        m_selected_ids.remove(id);
+    });
+
+    if (m_cards.isEmpty()) {
+        return;
+    }
+
+    QVector<int> rows_to_remove;
+    rows_to_remove.reserve(ids_to_remove.size());
 
     std::ranges::for_each(m_cards, [&, i = std::size_t{0}](const auto& c) mutable {
-        if (c.id() == card.id && row == static_cast<std::size_t>(m_cards.size())) {
-            row = i;
+        if (ids_to_remove.contains(c.id())) {
+            rows_to_remove.push_back(static_cast<int>(i));
         }
         ++i;
     });
 
-    if (row == static_cast<std::size_t>(m_cards.size())) {
+    if (rows_to_remove.isEmpty()) {
         return;
     }
 
-    beginRemoveRows(QModelIndex(), static_cast<int>(row), static_cast<int>(row));
-    m_cards.removeAt(row);
-    endRemoveRows();
+    std::ranges::reverse(rows_to_remove);
+    std::ranges::for_each(rows_to_remove, [this](const int row) {
+        beginRemoveRows(QModelIndex(), row, row);
+        m_cards.removeAt(row);
+        endRemoveRows();
+    });
 
     emit updated();
 }

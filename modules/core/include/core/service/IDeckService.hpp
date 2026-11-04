@@ -112,7 +112,7 @@ class IDeckService : public Notifiable {
     EVENT(deck_exported, Deck deck) ///< Deck exported (upon successful export). Stores exported deck
 
     EVENT(card_created, Card card)            ///< Card created. Stores created card
-    EVENT(card_removed, Card card)            ///< Card removed. Stores removed card
+    EVENT(cards_removed, QVector<Card> cards) ///< Cards removed. Stores removed cards
     EVENT(card_updated, Card card)            ///< Card updated. Stores updated card
     EVENT(cards_updated, QVector<Card> cards) ///< Many cards updated. Stores updated cards
 
@@ -194,11 +194,11 @@ class IDeckService : public Notifiable {
     virtual QFuture<Result<Card>> card(Card::id_type id) const = 0;
 
     /**
-     * @brief Remove card
-     * @param id ID of the card
-     * @note Emits `card_removed` event if success
+     * @brief Remove cards with specified ID's
+     * @param ids ID's of the cards
+     * @note Emits `cards_removed` event if success
      */
-    virtual QFuture<Result<void>> remove_card(Card::id_type id) = 0;
+    virtual QFuture<Result<void>> remove_cards(const QVector<Card::id_type>& ids) = 0;
 
     /**
      * @brief Update card

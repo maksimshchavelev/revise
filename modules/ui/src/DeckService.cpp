@@ -88,7 +88,7 @@ void DeckService::create_card(const int deck_id, const CreateCardDraft& card) {
 }
 
 
-void DeckService::remove_card(const int card_id) {
+void DeckService::remove_cards(const QVector<int>& ids) {
     auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
 
     connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
@@ -97,7 +97,7 @@ void DeckService::remove_card(const int card_id) {
         }
     });
 
-    watcher->setFuture(m_deck_service.remove_card(card_id));
+    watcher->setFuture(m_deck_service.remove_cards(ids));
 }
 
 
@@ -132,6 +132,19 @@ void DeckService::update_cards(const QVector<int>& ids, const UpdateCardDraft& d
     });
 
     watcher->setFuture(m_deck_service.update_cards(drafts));
+}
+
+
+void DeckService::reset_cards(const QVector<int>& ids) {
+    auto* watcher = new QFutureWatcher<core::IDeckService::Result<void>>(this);
+
+    connect(watcher, &QFutureWatcher<core::IDeckService::Result<void>>::finished, this, [watcher] {
+        if (const auto result = watcher->future().result(); !result) {
+            qWarning() << "ui::DeckService::reset_cards() failed to reset cards, cause:" << result.error().message;
+        }
+    });
+
+    watcher->setFuture(m_deck_service.reset_cards(ids));
 }
 
 

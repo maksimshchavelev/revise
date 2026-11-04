@@ -47,14 +47,17 @@ class DeckService final : public QObject {
     /// @copydoc core::IDeckService::create_card
     Q_INVOKABLE void create_card(int deck_id, const CreateCardDraft& card);
 
-    /// @copydoc core::IDeckService::remove_card
-    Q_INVOKABLE void remove_card(int card_id);
+    /// @copydoc core::IDeckService::remove_cards
+    Q_INVOKABLE void remove_cards(const QVector<int>& ids);
 
     /// @copydoc core::IDeckService::update_card
     Q_INVOKABLE void update_card(const UpdateCardDraft& card);
 
     /// @brief Updates all cards with the specified IDs according to the `draft` template
     Q_INVOKABLE void update_cards(const QVector<int>& ids, const UpdateCardDraft& draft);
+
+    /// @copydoc core::IDeckService::reset_cards
+    Q_INVOKABLE void reset_cards(const QVector<int>& ids);
 
     /// @copydoc core::IDeckService::deck
     Q_INVOKABLE Deck deck(int deck_id) const;
