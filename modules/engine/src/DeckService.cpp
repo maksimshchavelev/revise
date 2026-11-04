@@ -707,6 +707,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_cards(const QVecto
             card.front = drafts[card.id].front.value_or(card.front);
             card.back = drafts[card.id].back.value_or(card.back);
             card.difficulty = drafts[card.id].difficulty.value_or(card.difficulty);
+            card.state = drafts[card.id].state.value_or(card.state);
             card.updated_at = QDateTime::currentDateTime();
         }
 
