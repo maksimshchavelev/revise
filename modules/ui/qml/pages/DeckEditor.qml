@@ -48,7 +48,7 @@ Item {
                         Layout.alignment: Qt.AlignVCenter
                         icon.source: "qrc:/res/img/back.svg"
                         size: Revise.Theme.fontSizeBig
-                        onClicked: Revise.Router.back()
+                        onClicked: Revise.Router.navigate("home", {}, Revise.page.Page)
                     }
 
                     Revise.Text {
@@ -445,6 +445,11 @@ Item {
                                     Revise.HoverableTooltip {
                                         anchors.fill: parent
                                         text: qsTr("Колода будет удалена. Действие необратимо")
+                                    }
+
+                                    onClicked: {
+                                        Revise.DeckService.remove_deck(root.deckId)
+                                        Revise.Router.navigate("home", {}, Revise.page.Page)
                                     }
                                 }
                             }
