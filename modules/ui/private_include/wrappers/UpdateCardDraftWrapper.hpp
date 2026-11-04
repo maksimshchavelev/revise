@@ -19,6 +19,7 @@ struct UpdateCardDraft final : core::IDeckService::UpdateCardDraft {
     Q_PROPERTY(QString back READ back WRITE set_back FINAL)
     Q_PROPERTY(float difficulty READ difficulty WRITE set_difficulty FINAL)
     Q_PROPERTY(int id READ id WRITE set_id FINAL)
+    Q_PROPERTY(Card::State state READ state WRITE set_state FINAL)
 
   public:
     /// @brief Construct `UpdateCardDraft` with default values
@@ -91,6 +92,17 @@ struct UpdateCardDraft final : core::IDeckService::UpdateCardDraft {
     /// @brief Set id of the draft
     void set_id(const int id) noexcept {
         core::IDeckService::UpdateCardDraft::id = id;
+    }
+
+    /// @brief Get state of the draft
+    [[nodiscard]] Card::State state() const noexcept {
+        return static_cast<Card::State>(
+            static_cast<int>(core::IDeckService::UpdateCardDraft::state.value_or(core::Card::State::New)));
+    }
+
+    /// @brief Set state of the draft
+    void set_state(const Card::State state) noexcept {
+        core::IDeckService::UpdateCardDraft::state = static_cast<core::Card::State>(state);
     }
 };
 
