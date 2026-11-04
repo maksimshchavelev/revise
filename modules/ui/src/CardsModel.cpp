@@ -190,6 +190,14 @@ QVector<int> CardsModel::selectedIds() {
 }
 
 
+QVector<int> CardsModel::ids() {
+    QVector<int> ids;
+    ids.reserve(m_cards.size());
+    std::ranges::transform(m_cards, std::back_inserter(ids), &Card::id);
+    return ids;
+}
+
+
 int CardsModel::deck_id() const noexcept {
     return m_last_deck_id.load();
 }
