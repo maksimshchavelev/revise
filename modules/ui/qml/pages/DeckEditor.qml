@@ -200,7 +200,7 @@ Item {
                         }
 
                         onRemoveClicked: {
-                            Revise.DeckService.remove_card(parent.id)
+                            Revise.DeckService.remove_cards([parent.id])
                         }
                     }
                 }
@@ -378,8 +378,10 @@ Item {
                                 header.icon.source: "qrc:/res/img/action.svg"
                                 header.label.text: qsTr("Действия с колодой")
 
+                                // Restart learning
                                 Revise.Button {
                                     width: parent.width
+                                    clickable: Revise.CardsModel.cardsCount > 0
 
                                     text: {
                                         if (Revise.CardsModel.selectedCount === 0)
@@ -395,11 +397,21 @@ Item {
                                             else qsTr("Сложность и время следующего повтора будут сброшены для выбранных карточек")
                                         }
                                     }
+
+                                    onClicked: {
+                                        if (Revise.CardsModel.selectedCount === 0) {
+                                            Revise.DeckService.reset_cards(Revise.CardsModel.ids());
+                                        } else {
+                                            Revise.DeckService.reset_cards(Revise.CardsModel.selectedIds());
+                                        }
+                                    }
                                 }
 
+                                // Remove cards
                                 Revise.Button {
                                     width: parent.width
                                     color: Revise.Theme.red
+                                    clickable: Revise.CardsModel.cardsCount > 0
 
                                     text: {
                                         if (Revise.CardsModel.selectedCount === 0)
@@ -413,6 +425,14 @@ Item {
                                             if (Revise.CardsModel.selectedCount === 0)
                                                 return qsTr("Все карточки будут удалены. Действие необратимо")
                                             else qsTr("Только выбранные карточки будут удалены. Действие необратимо")
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        if (Revise.CardsModel.selectedCount === 0) {
+                                            Revise.DeckService.remove_cards(Revise.CardsModel.ids());
+                                        } else {
+                                            Revise.DeckService.remove_cards(Revise.CardsModel.selectedIds());
                                         }
                                     }
                                 }
@@ -461,8 +481,11 @@ Item {
                                 width: parent.width
                             }
 
+                            // Select all cards or deselect selected
                             Revise.Button {
                                 width: parent.width
+                                clickable: Revise.CardsModel.cardsCount > 0
+
                                 text: {
                                     if (Revise.CardsModel.selectedCount === 0)
                                         return qsTr("Выбрать всё")
@@ -518,6 +541,8 @@ Item {
 
                             Revise.Button {
                                 width: parent.width
+                                clickable: Revise.CardsModel.cardsCount > 0
+
                                 text: {
                                     if (Revise.CardsModel.selectedCount === 0)
                                         return qsTr("Задать сложность")
@@ -530,6 +555,17 @@ Item {
                                         if (Revise.CardsModel.selectedCount === 0)
                                             return qsTr("Выбранная сложность будет установлена для всех карточек")
                                         qsTr("Выбранная сложность будет установлена для выбранных карточек")
+                                    }
+                                }
+
+                                onClicked: {
+                                    let draft = new Revise.updateCardDraft();
+                                    draft.difficulty = setDifficultySlider.value;
+
+                                    if (Revise.CardsModel.selectedCount === 0) {
+                                        Revise.DeckService.update_cards(Revise.CardsModel.ids(), draft);
+                                    } else {
+                                        Revise.DeckService.update_cards(Revise.CardsModel.selectedIds(), draft);
                                     }
                                 }
                             }
@@ -546,6 +582,8 @@ Item {
                             }
 
                             Revise.ComboBox {
+                                id: cardStateComboBox
+
                                 model: ListModel {
                                     Component.onCompleted: {
                                         append({
@@ -566,6 +604,8 @@ Item {
 
                             Revise.Button {
                                 width: parent.width
+                                clickable: Revise.CardsModel.cardsCount > 0
+
                                 text: {
                                     if (Revise.CardsModel.selectedCount === 0)
                                         return qsTr("Задать статус")
@@ -578,6 +618,23 @@ Item {
                                         if (Revise.CardsModel.selectedCount === 0)
                                             return qsTr("Выбранный статус будет установлен для всех карточек")
                                         qsTr("Выбранный статус будет установлен для выбранных карточек")
+                                    }
+                                }
+
+                                onClicked: {
+                                    let draft = new Revise.updateCardDraft();
+
+                                    if (cardStateComboBox.displayText === qsTr("Новая"))
+                                        draft.state = Revise.Card.State.New
+                                    else if (cardStateComboBox.displayText === qsTr("Повторяемая"))
+                                        draft.state = Revise.Card.State.Review
+                                    else if (cardStateComboBox.displayText === qsTr("Ошибочная"))
+                                        draft.state = Revise.Card.State.Incorrect
+
+                                    if (Revise.CardsModel.selectedCount === 0) {
+                                        Revise.DeckService.update_cards(Revise.CardsModel.ids(), draft);
+                                    } else {
+                                        Revise.DeckService.update_cards(Revise.CardsModel.selectedIds(), draft);
                                     }
                                 }
                             }
@@ -603,7 +660,7 @@ Item {
                             anchors.horizontalCenter: parent.horizontalCenter
                             maximum: Revise.CardsModel.cardsCount
                             value: Revise.CardsModel.cardsCount - Revise.CardsModel.newCardsCount - Revise.CardsModel.incorrectCardsCount
-                            valueText: qsTr(`${Math.trunc(value * 100 / maximum)}%`)
+                            valueText: Revise.CardsModel.cardsCount > 0 ? qsTr(`${Math.trunc(value * 100 / maximum)}%`) : "0%"
                             text: qsTr("Прогресс обучения")
                         }
 
