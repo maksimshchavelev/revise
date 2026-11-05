@@ -1,10 +1,43 @@
-// The sidebar displayed on the left (on the desktop) with the navigation menu and the streak display
+// Toolbar.qml
 
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
+/*!
+    \qmltype Sidebar
+    \brief The main navigation sidebar of the application.
+    \inqmlmodule Revise
+    \inherits Item
+    \since 1.0
+
+    Sidebar provides top-level navigation between the main pages of the
+    application, shows the current streak, and displays the application
+    version. It is intended for the desktop layout, where navigation lives
+    in a persistent panel alongside the content.
+
+    The active menu item is derived from
+    \l {Revise.Router::currentPage}{Revise.Router.currentPage}, so the
+    sidebar stays in sync with navigation regardless of where the page
+    change originated. Clicking a menu item navigates through
+    \l {Revise.Router::navigate}{Revise.Router.navigate}.
+
+    The streak display is bound to \l Revise.StreakService and requires no
+    additional wiring from the consumer.
+
+    The component has no public API of its own; its behavior is driven by
+    \l Revise.Router, \l Revise.StreakService, and \l Revise.BuildInfo.
+
+    \section1 Example Usage
+
+    \qml
+    Revise.Sidebar {
+        Layout.fillHeight: true
+    }
+    \endqml
+
+    \sa Revise.MenuButton, Revise.StreakIndicator, Revise.Router
+*/
 Item {
     id: root
 
@@ -12,13 +45,7 @@ Item {
     height: layout.implicitHeight
 
     layer.enabled: true
-    layer.effect: DropShadow {
-        horizontalOffset: 4
-        verticalOffset: 4
-        radius: 8
-        samples: 32
-        color: "#80000000"
-    }
+    layer.effect: Revise.Shadow{}
 
     Rectangle {
         id: background
@@ -49,9 +76,9 @@ Item {
 
         Revise.MenuButton {
             text: qsTr("Настройки")
-            selected: Revise.Router.currentPage.name === "Revise.Settings"
+            selected: Revise.Router.currentPage.name === "settings"
             Layout.fillWidth: true
-            onClicked: Revise.Router.navigate("Revise.Settings", {})
+            onClicked: Revise.Router.navigate("settings", {})
         }
 
         Revise.VerticalSpacer {}
