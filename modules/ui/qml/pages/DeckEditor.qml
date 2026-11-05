@@ -187,6 +187,8 @@ Item {
                             }, Revise.page.Page)
                         }
 
+                        onResetClicked: Revise.DeckService.reset_cards([parent.id]);
+
                         onIncreaseDifficultyClicked: {
                             let draft = new Revise.updateCardDraft(cardId);
                             draft.difficulty = Math.max(0.0, Math.min(card.difficulty + 0.5, 5.0));

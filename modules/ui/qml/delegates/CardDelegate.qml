@@ -193,6 +193,12 @@ Item {
     */
         signal removeClicked
 
+    /*!
+        \qmlsignal CardDelegate::resetClicked()
+        \brief Emitted when the user selects the reset learning progress action from the kebab menu.
+    */
+        signal resetClicked
+
     implicitHeight: 100
 
     // Left panel with status color
@@ -390,6 +396,14 @@ Item {
             onClicked: {
                 kebabMenu.close()
                 root.editClicked()
+            }
+        }
+
+        Revise.KebabMenuButton {
+            text: qsTr("Учить заново")
+            onClicked: {
+                kebabMenu.close()
+                root.resetClicked()
             }
         }
 
