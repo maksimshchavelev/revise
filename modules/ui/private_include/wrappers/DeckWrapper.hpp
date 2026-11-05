@@ -40,14 +40,14 @@ struct Deck final : core::Deck {
     template <typename OtherDeck>
         requires std::is_base_of_v<core::Deck, std::remove_reference_t<OtherDeck>>
     Deck& operator=(OtherDeck&& other) {
-        Deck::operator=(std::forward<OtherDeck>(other));
+        core::Deck::operator=(std::forward<OtherDeck>(other));
         return *this;
     }
 
     template <typename OtherDeck>
         requires std::is_base_of_v<core::Deck, std::remove_reference_t<OtherDeck>>
     bool operator==(const OtherDeck& other) const noexcept {
-        return Deck::operator==(other);
+        return core::Deck::operator==(other);
     }
 };
 
