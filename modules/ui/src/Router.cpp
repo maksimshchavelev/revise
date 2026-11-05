@@ -24,8 +24,7 @@ void Router::push_page(const QString& name, QQmlComponent* page) {
 
 void Router::navigate(Page page) {
     if (QThread::currentThread() != thread()) {
-        QMetaObject::invokeMethod(
-            this, [this, page = std::move(page)] { navigate(std::move(page)); }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, [this, page = std::move(page)] { navigate(std::move(page)); }, Qt::QueuedConnection);
         return;
     }
 
@@ -136,6 +135,11 @@ void Router::clear_history() {
 
 
 QQuickItem* Router::page(const QString& name) {
+    if (!m_pages.contains(name) || m_pages[name] == nullptr) {
+        qWarning() << QString("No page named %1 was found, or the pointer to the page is nullptr").arg(name);
+        return nullptr;
+    }
+
     if (m_pages[name]->isError()) {
         qWarning() << "Failed to create page via incubator:" << m_pages[name]->errors();
         return nullptr;
