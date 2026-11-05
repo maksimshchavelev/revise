@@ -160,7 +160,7 @@ T.Button {
             id: txt
             anchors.centerIn: parent
             width: Math.min(implicitWidth, parent.width)
-            visible: root.clickable && !root.loading
+            visible: !root.loading
             label.text: root.text
             font: root.font
             icon.source: root.icon.source
