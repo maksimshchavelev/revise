@@ -1,4 +1,4 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "ui/Router.hpp"         // for header
 #include <QThread>               // for QThread
@@ -32,7 +32,7 @@ void Router::navigate(Page page) {
         return;
     }
 
-    if (!platform::Platform::supports_multiple_windows()) {
+    if constexpr (!platform::Platform::supports_multiple_windows()) {
         page.mode = Page::OpenMode::Page;
     }
 
