@@ -9,6 +9,23 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Get hash of git last commit
+
+find_package(Git QUIET)
+
+if(GIT_FOUND)
+    execute_process(
+            COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            OUTPUT_VARIABLE GIT_COMMIT_HASH
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    set_property(GLOBAL APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/.git/index")
+    message(STATUS "Git commit hash: ${GIT_COMMIT_HASH}")
+endif()
+# ------------------------
+
 if(LINUX OR UNIX AND NOT APPLE)
     set(CMAKE_CXX_FLAGS_DEBUG   "-g -O0")
     set(CMAKE_CXX_FLAGS_RELEASE "-O2")
