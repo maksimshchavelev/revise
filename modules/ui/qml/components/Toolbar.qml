@@ -85,7 +85,11 @@ Item {
         Revise.Text {
             color: Revise.Theme.textColorDark
             font.pixelSize: Revise.Theme.fontSizeSmall
-            text: qsTr(`Revise ${Revise.BuildInfo.version}`)
+            text: {
+                if (Revise.BuildInfo.isBetaBuild)
+                    return qsTr(`Revise ${Revise.BuildInfo.version}b`)
+                return qsTr(`Revise ${Revise.BuildInfo.version}`)
+            }
             Layout.alignment: Qt.AlignHCenter
         }
     }
