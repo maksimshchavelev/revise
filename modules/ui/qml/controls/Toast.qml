@@ -22,7 +22,6 @@ Rectangle {
     visible: false
     color: Revise.Theme.toastSuccess
 
-    layer.enabled: true
     layer.effect: Revise.Shadow {}
 
     // Block clicks through toasts

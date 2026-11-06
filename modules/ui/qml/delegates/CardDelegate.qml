@@ -236,7 +236,6 @@ Item {
                 return Revise.Theme.surfaceColor
             }
 
-            layer.enabled: true
             layer.effect: Revise.Shadow {}
 
             Behavior on color {

@@ -145,7 +145,6 @@ T.Button {
         return 1.0
     }
 
-    layer.enabled: true
     layer.effect: Revise.Shadow {}
 
     background: Rectangle {

@@ -35,15 +35,7 @@ Item {
             anchors.fill: parent
             color: Revise.Theme.surfaceColor
             radius: 10
-            layer.enabled: true
-
-            layer.effect: DropShadow {
-                horizontalOffset: 4
-                verticalOffset: 4
-                radius: 8
-                samples: 32
-                color: "#80000000"
-            }
+            layer.effect: Revise.Shadow {}
         }
 
         ColumnLayout {

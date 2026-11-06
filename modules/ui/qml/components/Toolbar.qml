@@ -44,7 +44,6 @@ Item {
     width: 150
     height: layout.implicitHeight
 
-    layer.enabled: true
     layer.effect: Revise.Shadow{}
 
     Rectangle {

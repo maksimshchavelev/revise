@@ -159,7 +159,6 @@ ComboBox {
             radius: 6
             border.width: 1
             border.color: Color.lighter(Revise.Theme.surfaceContainerColor, 1.2)
-            layer.enabled: true
             layer.effect: Revise.Shadow{}
         }
 

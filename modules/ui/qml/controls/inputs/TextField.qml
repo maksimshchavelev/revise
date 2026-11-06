@@ -29,7 +29,6 @@ Rectangle {
     border.color: Color.lighter(Revise.Theme.surfaceColor, 1.5)
     clip: true
 
-    layer.enabled: true
     layer.effect: Revise.Shadow {}
 
     Revise.Text {

@@ -96,7 +96,6 @@ Controls.SpinBox {
         border.width: 1
         border.color: Color.lighter(Revise.Theme.surfaceColor, 1.5)
 
-        layer.enabled: true
         layer.effect: Revise.Shadow {}
 
         Rectangle {
