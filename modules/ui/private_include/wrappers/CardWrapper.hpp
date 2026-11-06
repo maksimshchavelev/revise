@@ -11,7 +11,8 @@ namespace ui {
 /// @brief Wrapper over core::Card, visible from QML
 struct Card {
     Q_GADGET
-    QML_ELEMENT
+    QML_CONSTRUCTIBLE_VALUE
+    QML_VALUE_TYPE(card)
 
     Q_PROPERTY(int id READ id WRITE set_id)
     Q_PROPERTY(int globalId READ global_id WRITE set_global_id)
@@ -37,7 +38,7 @@ struct Card {
 
     Q_ENUM(State)
 
-    Card() = default;
+    Q_INVOKABLE Card() = default;
 
     explicit Card(const core::Card& card) : m_card{card} {}
     explicit Card(core::Card&& card) : m_card{std::move(card)} {}
