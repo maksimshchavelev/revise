@@ -5,6 +5,7 @@
 #include <QtConcurrent>           // for QtConcurrent
 #include <QtEnvironmentVariables> // for env variables
 
+#include <core/BuildInfo.hpp>                      // for BuildInfo
 #include <engine/AlgorithmFactory.hpp>             // for engine::create_study_algorithm
 #include <engine/CardEditSessionFactory.hpp>       // for engine:create_card_edit_session
 #include <engine/DeckService.hpp>                  // for engine::DeckService
@@ -355,8 +356,16 @@ void Launcher::post_launch() {
     }
 
     m_router.navigate(ui::Page{"home"});
-
     m_loading_screen.set_visible(false);
+
+    if constexpr (REVISE_BETA_BUILD) {
+        core::Toast beta_access_toast;
+        beta_access_toast.header = QCoreApplication::translate("beta access", "Ранний доступ");
+        beta_access_toast.message = QCoreApplication::translate(
+            "beta access", "Текущая версия находится в раннем доступе, поэтому некоторый функционал может работать нестабильно");
+        beta_access_toast.type = core::ToastType::INFO;
+        m_toast_service->request(std::move(beta_access_toast));
+    }
 }
 
 
