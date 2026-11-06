@@ -21,11 +21,12 @@ import Revise as Revise
     replacing the components. The value is a
     \l {Revise.CopyableText}{Revise.CopyableText}, which means it can be
     selected with the mouse and copied to the clipboard, while remaining
-    read-only. This makes the component suitable for showing build
-    information, identifiers, and other values that users may want to copy.
+    read-only.
 
-    If the key does not fit into the space that remains after the value takes
-    its natural width, the key is elided on the right.
+    The width of the key can be fixed through \l keyWidth, which is useful
+    when several rows are stacked vertically and their keys should align in
+    a column. When \l keyWidth is not set, the key takes the space that
+    remains after the value, and is elided on the right if it does not fit.
 
     \section1 Example Usage
 
@@ -35,6 +36,21 @@ import Revise as Revise
         value.text: Revise.BuildInfo.compilerId
     }
     \endqml
+
+    Aligning keys in a column:
+
+    \qml
+    Column {
+        property int optionsWidth: 140
+
+        Revise.KeyValue {
+            width: parent.width
+            keyWidth: parent.optionsWidth
+            key.text: qsTr("Compiler")
+            value.text: Revise.BuildInfo.compilerId
+        }
+    }
+    \endqml
 */
 Row {
     id: root
@@ -42,13 +58,28 @@ Row {
     width: parent ? parent.width : implicitWidth
 
     /*!
+        \qmlproperty int KeyValue::keyWidth
+        \brief The fixed width of the key, in pixels.
+
+        When the value is greater than \c 0, the key is given exactly this
+        width and the value takes the remaining space. This is useful when
+        several rows are stacked and their keys should line up in a column.
+
+        When the value is \c 0 (the default), the key takes the space that
+        remains after the value has taken its natural width.
+
+        The default value is \c 0.
+    */
+    property int keyWidth: 0
+
+    /*!
         \qmlproperty Revise.Text KeyValue::key
         \brief The label element shown on the left side of the row.
 
         The text is rendered with
         \l {Revise.Theme::foregroundColor}{Revise.Theme.foregroundColor}
-        by default. When the key is wider than the space that remains after
-        the value, it is elided on the right so it never overlaps the value.
+        by default. The element is elided on the right if it does not fit
+        into its width, so it never overlaps the value.
     */
     property alias key: keyText
 
@@ -61,21 +92,24 @@ Row {
         by default. The element is a
         \l {Revise.CopyableText}{Revise.CopyableText}: it is read-only, but
         its contents can be selected with the mouse and copied to the
-        clipboard. The element takes its natural width (\c implicitWidth),
-        so its position on the right is stable regardless of how long the key
-        is.
+        clipboard.
     */
     property alias value: valueText
 
     Revise.Text {
         id: keyText
-        width: Math.max(0, root.width - valueText.width)
+        width: root.keyWidth > 0
+            ? root.keyWidth
+            : Math.max(0, root.width - valueText.width)
         color: Revise.Theme.foregroundColor
         elide: Text.ElideRight
     }
 
     Revise.CopyableText {
         id: valueText
+        width: root.keyWidth > 0
+            ? Math.max(0, root.width - root.keyWidth)
+            : implicitWidth
         color: Revise.Theme.secondaryForegroundColor
     }
 }
