@@ -9,8 +9,9 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Get hash of git last commit
+option(REVISE_BETA_BUILD "Is the Revise build an early access beta build?" FALSE)
 
+# Get hash of git last commit
 find_package(Git QUIET)
 
 if(GIT_FOUND)

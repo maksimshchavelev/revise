@@ -24,6 +24,7 @@ class BuildInfo : public QObject {
     Q_PROPERTY(QString buildHostSystem MEMBER buildHostSystem CONSTANT)
     Q_PROPERTY(QString buildGitCommitHash MEMBER buildGitCommitHash CONSTANT)
     Q_PROPERTY(QString buildQtVersion MEMBER buildQtVersion CONSTANT)
+    Q_PROPERTY(bool isBetaBuild MEMBER isBetaBuild CONSTANT)
 
   public:
     explicit BuildInfo(QObject* parent = nullptr) : QObject(parent) {}
@@ -39,7 +40,7 @@ class BuildInfo : public QObject {
     QString buildFlags = core::REVISE_BUILD_FLAGS;
     QString buildHostSystem = core::REVISE_BUILD_HOST_SYSTEM;
     QString buildGitCommitHash = core::REVISE_BUILD_GIT_COMMIT_HASH;
-    QString buildQtVersion = core::REVISE_QT_VERSION;
+    bool    isBetaBuild = REVISE_BETA_BUILD;
 };
 
 } // namespace ui
