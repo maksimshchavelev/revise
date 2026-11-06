@@ -7,4 +7,4 @@ CMakeLists.txt.user*
 revise.db
 docs/html
 ./CMakeLists.txt.user
-modules/core/BuildInfo.hpp
+modules/core/include/core/BuildInfo.hpp
