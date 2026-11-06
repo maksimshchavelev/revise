@@ -1,7 +1,7 @@
-// A deck that will be displayed on the main page
+// AddDeckDelegate.qml
+
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -12,7 +12,7 @@ Item {
 
     property bool loading: false // If set to true, a loading animation will be displayed
     property string header: qsTr("Добавить колоду")
-    property string description: qsTr("Вы можете либо создать новую колоду, либо импортировать существующую в формате Anki или Revise")
+    property string description: qsTr("Вы можете создать новую колоду или импортировать существующую из Anki или Revise")
 
     signal importClicked
     signal createClicked
@@ -31,7 +31,7 @@ Item {
         id: content
         visible: opacity > 0
         opacity: root.loading ? 0.0 : 1.0
-        spacing: 4
+        spacing: 8
 
         Behavior on opacity {
             NumberAnimation {
@@ -50,7 +50,7 @@ Item {
             Layout.fillWidth: true
             text: root.header
             elide: Text.ElideRight
-            color: Revise.Theme.textColor
+            color: Revise.Theme.foregroundColor
             font.bold: true
         }
 
@@ -62,7 +62,7 @@ Item {
             Layout.fillHeight: true
             text: root.description
             elide: Text.ElideRight
-            color: Revise.Theme.textColorDark
+            color: Revise.Theme.secondaryForegroundColor
             font.pixelSize: Revise.Theme.fontSizeSmall
             wrapMode: Text.WordWrap
         }
@@ -75,8 +75,6 @@ Item {
 
             text: qsTr("Создать")
             font.bold: true
-            backgroundItem.color: hovered ? Revise.Theme.grey : "transparent"
-            background.opacity: 0.2
             onClicked: root.createClicked()
         }
 
@@ -85,15 +83,12 @@ Item {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.preferredWidth: parent.width * 0.9
             Layout.preferredHeight: 30
+            Layout.bottomMargin: 4
 
             text: qsTr("Импортировать")
             font.bold: true
-            backgroundItem.color: hovered ? Revise.Theme.grey : "transparent"
-            background.opacity: 0.2
             onClicked: root.importClicked()
         }
-
-        Revise.Spacer {}
     }
 
     Revise.Spinner {
