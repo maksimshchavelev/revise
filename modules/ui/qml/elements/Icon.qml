@@ -3,6 +3,7 @@
 import QtQuick
 import QtQuick.VectorImage
 import QtQuick.Effects
+import Revise as Revise
 
 /*!
     \qmltype Icon
@@ -65,7 +66,7 @@ Item {
         stay transparent. This property is an alias to
         \l {QtQuick.Effects::MultiEffect::colorizationColor}{MultiEffect.colorizationColor}.
     */
-    property alias color: overlay.colorizationColor
+    property color color: Revise.Theme.foregroundColor
 
     width: root.size
     height: root.size
@@ -84,5 +85,6 @@ Item {
         anchors.fill: img
         source: img
         colorization: 1.0
+        colorizationColor: root.color
     }
 }
