@@ -40,6 +40,7 @@ class BuildInfo : public QObject {
     QString buildFlags = core::REVISE_BUILD_FLAGS;
     QString buildHostSystem = core::REVISE_BUILD_HOST_SYSTEM;
     QString buildGitCommitHash = core::REVISE_BUILD_GIT_COMMIT_HASH;
+    QString buildQtVersion = core::REVISE_QT_VERSION;
     bool    isBetaBuild = REVISE_BETA_BUILD;
 };
 
