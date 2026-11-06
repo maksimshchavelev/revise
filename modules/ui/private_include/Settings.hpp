@@ -18,25 +18,33 @@ class Settings final : public QObject {
   public:
     Q_PROPERTY(int maxInterval READ max_interval WRITE set_max_interval NOTIFY maxIntervalChanged FINAL)
     Q_PROPERTY(float learningRate READ learning_rate WRITE set_learning_rate NOTIFY learningRateChanged FINAL)
+    Q_PROPERTY(float uiScale READ ui_scale WRITE set_ui_scale NOTIFY uiScaleChanged FINAL)
 
     explicit Settings(core::ISettings& settings, QObject* parent = nullptr);
 
   signals:
     void maxIntervalChanged();
     void learningRateChanged();
+    void uiScaleChanged();
 
   private:
     /// @brief Get max card review interval
-    int max_interval() const;
+    [[nodiscard]] int max_interval() const;
 
     /// @brief Set max card review interval
-    void set_max_interval(int interval) const;
+    void set_max_interval(int interval);
 
     /// @brief Get learning rate
-    float learning_rate() const;
+    [[nodiscard]] float learning_rate() const;
 
     /// @brief Set learning rate
-    void set_learning_rate(float rate) const;
+    void set_learning_rate(float rate);
+
+    /// @brief Get UI scale
+    [[nodiscard]] float ui_scale() const;
+
+    /// @brief Set UI scale
+    void set_ui_scale(float scale);
 
     core::ISettings& m_settings;
 };
