@@ -33,6 +33,4 @@ Item {
         anchors.centerIn: parent
         smooth: true
     }
-
-    DebugBounds {}
 }
