@@ -121,10 +121,8 @@ Item {
                 Revise.Button {
                     text: qsTr("Создать")
                     onClicked: {
-                        let card = new Revise.Card()
-                        card.deck_id = root.deck.id
-                        card.difficulty = 2.5
-                        card.next_review = new Date()
+                        let card = new Revise.card()
+                        card.deckId = root.deck.id
                         Revise.Router.navigate("cardEditor", {
                             "editMode": false,
                             "card": card
@@ -632,11 +630,11 @@ Item {
                                     let draft = new Revise.updateCardDraft();
 
                                     if (cardStateComboBox.displayText === qsTr("Новая"))
-                                        draft.state = Revise.Card.State.New
+                                        draft.state = Revise.card.State.New
                                     else if (cardStateComboBox.displayText === qsTr("Повторяемая"))
-                                        draft.state = Revise.Card.State.Review
+                                        draft.state = Revise.card.State.Review
                                     else if (cardStateComboBox.displayText === qsTr("Ошибочная"))
-                                        draft.state = Revise.Card.State.Incorrect
+                                        draft.state = Revise.card.State.Incorrect
 
                                     if (Revise.CardsModel.selectedCount === 0) {
                                         Revise.DeckService.update_cards(Revise.CardsModel.ids(), draft);
