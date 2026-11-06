@@ -18,8 +18,8 @@ inline const auto REVISE_BUILD_TARGET_ARCH = "x86_64";
 inline const auto REVISE_BUILD_HOST_ARCH = "x86_64";
 inline const auto REVISE_BUILD_TYPE = "Debug";
 inline const auto REVISE_BUILD_FLAGS = "-O2 -g -O0";
-inline const auto REVISE_HOST_SYSTEM = "Linux-6.17.0-14-generic";
-inline const auto REVISE_GIT_COMMIT_HASH = "8986dbfe5018ae42ccce9f4307830c929d79307e";
+inline const auto REVISE_BUILD_HOST_SYSTEM = "Linux-6.17.0-14-generic";
+inline const auto REVISE_BUILD_GIT_COMMIT_HASH = "b2f0f846a2e5dd5fe699c8631b824c1daf7ae610";
 
 // Qt info
 inline const auto REVISE_QT_VERSION = "6.12.0";
