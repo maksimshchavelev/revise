@@ -11,7 +11,8 @@ namespace ui {
 /// @brief Wrapper over `core::IDeckService::CreateCardDraft`, visible from QML
 struct CreateCardDraft final : core::IDeckService::CreateCardDraft {
     Q_GADGET
-    QML_ELEMENT
+    QML_CONSTRUCTIBLE_VALUE
+    QML_VALUE_TYPE(createCardDraft)
 
     Q_PROPERTY(QString front MEMBER front FINAL)
     Q_PROPERTY(QString back MEMBER back FINAL)
