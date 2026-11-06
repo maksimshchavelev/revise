@@ -63,11 +63,13 @@ Item {
         id: label
 
         anchors.top: parent.top
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: controlSlot.left
         anchors.rightMargin: 12
+        verticalAlignment: Revise.Text.AlignVCenter
 
-        wrapMode: Text.WordWrap
+        wrapMode: Text.Wrap
         width: Math.min(Revise.Theme.settingsLabelWidth, parent.width - controlSlot.width - anchors.rightMargin)
     }
 
@@ -79,7 +81,5 @@ Item {
 
         width: childrenRect.width
         height: childrenRect.height
-
-        layer.enabled: true
     }
 }
