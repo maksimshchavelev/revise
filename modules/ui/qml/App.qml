@@ -17,6 +17,23 @@ ApplicationWindow {
     Item {
         id: pageHost
         anchors.fill: parent
+        clip: true
+
+        property real uiScale: Revise.SettingsService.uiScale
+
+        Item {
+            id: contentHost
+
+            width: pageHost.width / pageHost.uiScale
+            height: pageHost.height / pageHost.uiScale
+
+            transform: Scale {
+                xScale: pageHost.uiScale
+                yScale: pageHost.uiScale
+                origin.x: 0
+                origin.y: 0
+            }
+        }
     }
 
     Revise.LoadingScreen {
@@ -42,8 +59,8 @@ ApplicationWindow {
         function onPageChanged() {
             let newPage = Revise.Router.currentPageItem
 
-            newPage.parent = pageHost
-            newPage.anchors.fill = pageHost
+            newPage.parent = contentHost
+            newPage.anchors.fill = contentHost
 
             if (newPage.hasOwnProperty("windowTitle")) {
                 appWindow.title = newPage.windowTitle
