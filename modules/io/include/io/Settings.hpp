@@ -1,4 +1,4 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
@@ -9,23 +9,26 @@ namespace io {
 
 class Settings : public core::ISettings {
   public:
-    /// @param path Path to settings file
     Settings();
 
     /// @copydoc core::ISettings::learning_rate
-    float learning_rate() const override;
+    [[nodiscard]] float learning_rate() const override;
 
     /// @copydoc core::ISettings::set_learning_rate
-    virtual std::expected<void, core::SettingsError> set_learning_rate(float rate) override;
+    std::expected<void, core::SettingsError> set_learning_rate(float rate) override;
 
     /// @copydoc core::ISettings::max_interval
-    virtual int max_interval() const override;
+    [[nodiscard]] int max_interval() const override;
 
     /// @copydoc core::ISettings::set_max_interval
-    virtual std::expected<void, core::SettingsError> set_max_interval(int interval) override;
+    std::expected<void, core::SettingsError> set_max_interval(int interval) override;
 
-    /// @copydoc core::ISettings::application_version
-    QString application_version() const override;
+    /// @copydoc core::ISettings::ui_scale
+    [[nodiscard]] float ui_scale() const override;
+
+    /// @copydoc core::ISettings::set_ui_scale
+    virtual std::expected<void, core::SettingsError> set_ui_scale(float scale);
+
 
   private:
     QSettings m_settings;
