@@ -50,6 +50,21 @@ function serializeHtmlWithMathJax(rootHtml) {
     return container.innerHTML;
 }
 
+function updateEditorHeight() {
+    const toolbar = document.querySelector(".ql-toolbar");
+    const container = document.querySelector(".ql-container");
+    const editor = document.querySelector(".ql-editor");
+
+    if (!toolbar || !container || !editor) {
+        return;
+    }
+
+    const available = Math.max(0, window.innerHeight - toolbar.offsetHeight);
+
+    container.style.height = available + "px";
+    editor.style.height = available + "px";
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     if (!window.MathJax) {
         throw new Error("MathJax is not loaded");
@@ -160,4 +175,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             quill.setText("");
         }
     };
+
+    updateEditorHeight();
+    window.addEventListener("resize", updateEditorHeight);
 });

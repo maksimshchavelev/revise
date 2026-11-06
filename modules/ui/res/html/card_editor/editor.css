@@ -1,7 +1,9 @@
 html, body {
     margin: 0;
+    padding: 0;
     height: 100%;
     overflow: hidden;
+    background-color: #0d1424;
 }
 
 #editor {
@@ -9,30 +11,27 @@ html, body {
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    position: relative;
+    background-color: #0d1424;
 }
 
 div.ql-toolbar {
     flex: 0 0 auto;
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    background-color: #2b2b2b;
+    background-color: #141b2b;
     border: none;
     font-size: 18px;
 }
 
 div.ql-toolbar button .ql-stroke {
-    stroke: #929292 !important;
+    stroke: #c4c6dd !important;
 }
 div.ql-toolbar button .ql-fill {
-    fill: #929292 !important;
+    fill: #c4c6dd !important;
 }
 div.ql-toolbar button:hover .ql-stroke {
-    stroke: #D8D8D8 !important;
+    stroke: #ffffff !important;
 }
 div.ql-toolbar button:hover .ql-fill {
-    fill: #D8D8D8 !important;
+    fill: #ffffff !important;
 }
 div.ql-toolbar button.ql-active .ql-stroke {
     stroke: #ffffff !important;
@@ -41,116 +40,120 @@ div.ql-toolbar button.ql-active .ql-fill {
     fill: #ffffff !important;
 }
 
-.ql-container {
+#editor .ql-container {
     flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
-    background-color: #1c1e21;
+    background-color: #0d1424;
     border: none !important;
-    height: 100%;
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
 }
 
-.ql-editor {
-    color: #D8D8D8;
-    font-family: "AnonymousPro", monospace;
-    font-size: 18px;
+#editor .ql-editor {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto !important;
     overflow-y: auto;
     overflow-x: hidden;
     box-sizing: border-box;
-    background-color: #1c1e21;
+    background-color: #0d1424;
+    color: #c4c6dd;
+    font-family: "AnonymousPro", monospace;
+    font-size: 18px;
     position: relative;
-    height: 100%;
+    padding-bottom: 4px;
 }
 
-/* Scrollbar */
 .ql-editor::-webkit-scrollbar {
     width: 10px;
 }
 .ql-editor::-webkit-scrollbar-track {
-    background: #1c1e21;
+    background: #11192b;
     border-radius: 5px;
 }
 .ql-editor::-webkit-scrollbar-thumb {
-    background: #555;
+    background: #353bab;
     border-radius: 5px;
 }
 .ql-editor::-webkit-scrollbar-thumb:hover {
-    background: #888;
+    background: #6b7090;
 }
 .ql-editor::-webkit-scrollbar-corner {
-    background: #1c1e21;
+    background: #11192b;
 }
 
 .ql-snow .ql-picker {
-    color: #D8D8D8 !important;
+    color: #c4c6dd !important;
 }
 .ql-snow .ql-picker-label::before {
-    color: #D8D8D8 !important;
+    color: #c4c6dd !important;
 }
 .ql-snow .ql-picker.ql-expanded .ql-picker-options {
-    background-color: #2b2b2b !important;
-    border: 1px solid #444 !important;
+    background-color: #141b2b !important;
+    border: 1px solid #2a3350 !important;
 }
 .ql-snow .ql-picker-item::before {
-    color: #D8D8D8 !important;
+    color: #c4c6dd !important;
 }
 .ql-snow .ql-picker-item:hover {
-    background-color: #3a3a3a !important;
+    background-color: #1e2740 !important;
 }
 .ql-snow .ql-picker-item:hover::before {
-    color: #D8D8D8 !important;
+    color: #c4c6dd !important;
 }
 .ql-snow .ql-picker-item.ql-selected::before {
     color: #ffffff !important;
 }
 
 .ql-snow .ql-picker.ql-align .ql-picker-options {
-    background-color: #2b2b2b !important;
-    border: 1px solid #444 !important;
+    background-color: #141b2b !important;
+    border: 1px solid #2a3350 !important;
 }
 .ql-snow .ql-picker.ql-align .ql-picker-item {
-    color: #D8D8D8 !important;
+    color: #c4c6dd !important;
 }
 .ql-snow .ql-picker.ql-align .ql-picker-item:hover {
-    background-color: #3a3a3a !important;
-    color: #D8D8D8 !important;
+    background-color: #1e2740 !important;
+    color: #c4c6dd !important;
 }
 
 .ql-snow .ql-picker.ql-syntax .ql-picker-label {
-    color: #D8D8D8 !important;
+    color: #c4c6dd !important;
 }
 .ql-snow .ql-picker.ql-syntax .ql-picker-label svg {
-    stroke: #D8D8D8 !important;
+    stroke: #c4c6dd !important;
 }
 .ql-snow .ql-picker.ql-syntax.ql-expanded .ql-picker-options {
-    background-color: #2b2b2b !important;
-    border: 1px solid #444 !important;
+    background-color: #141b2b !important;
+    border: 1px solid #2a3350 !important;
 }
 .ql-snow .ql-picker.ql-syntax .ql-picker-item {
-    color: #D8D8D8 !important;
+    color: #c4c6dd !important;
 }
 .ql-snow .ql-picker.ql-syntax .ql-picker-item.ql-selected {
     color: #ffffff !important;
-    background-color: #3a3a3a !important;
+    background-color: #1e2740 !important;
 }
 
 .ql-snow .ql-tooltip {
-    background-color: #232529 !important;
-    color: #D8D8D8 !important;
+    background-color: #141b2b !important;
+    color: #c4c6dd !important;
     border: none !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45) !important;
 }
 .ql-snow .ql-tooltip input {
-    background-color: #1c1e21 !important;
-    color: #D8D8D8 !important;
+    background-color: #0d1424 !important;
+    color: #c4c6dd !important;
     border: none !important;
     outline: none !important;
 }
 .ql-snow .ql-tooltip input:focus {
-    border: 1px solid #888888 !important;
+    border: 1px solid #6b7090 !important;
 }
 .ql-snow .ql-tooltip a {
-    color: #D8D8D8 !important;
+    color: #c4c6dd !important;
 }
 
 .ql-toolbar,
@@ -191,15 +194,15 @@ div.ql-toolbar button.ql-active .ql-fill {
 .ql-toolbar [class*="align"] .ql-stroke,
 .ql-toolbar [class*="align"] .ql-fill,
 .ql-toolbar [class*="align"] path {
-    stroke: #929292 !important;
-    fill: #929292 !important;
+    stroke: #c4c6dd !important;
+    fill: #c4c6dd !important;
 }
 
 .ql-toolbar [class*="align"]:hover svg,
 .ql-toolbar [class*="align"]:hover .ql-stroke,
 .ql-toolbar [class*="align"]:hover .ql-fill {
-    stroke: #D8D8D8 !important;
-    fill: #D8D8D8 !important;
+    stroke: #ffffff !important;
+    fill: #ffffff !important;
 }
 
 .ql-toolbar .ql-active[class*="align"] svg,
@@ -210,6 +213,6 @@ div.ql-toolbar button.ql-active .ql-fill {
 }
 
 .ql-editor.ql-blank::before {
-    color: #888888 !important;
+    color: #6b7090 !important;
     font-style: normal;
 }
