@@ -58,7 +58,7 @@ Item {
         anchors.fill: parent
         anchors.margins: 6
         anchors.topMargin: 12
-        spacing: 12
+        spacing: 6
 
         Revise.StreakIndicator {
             streak: Revise.StreakService.streak
@@ -66,7 +66,10 @@ Item {
             Layout.alignment: Qt.AlignHCenter
         }
 
+        Revise.Spacer {}
+
         Revise.MenuButton {
+            icon.source: "qrc:/res/img/deck.svg"
             text: qsTr("Колоды")
             selected: Revise.Router.currentPage.name === "home"
             Layout.fillWidth: true
@@ -74,6 +77,7 @@ Item {
         }
 
         Revise.MenuButton {
+            icon.source: "qrc:/res/img/settings.svg"
             text: qsTr("Настройки")
             selected: Revise.Router.currentPage.name === "settings"
             Layout.fillWidth: true
