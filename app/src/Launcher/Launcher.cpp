@@ -148,22 +148,34 @@ void Launcher::connect_signals() {
     m_study_service->connect<core::IStudyService::training_finished>([this](auto& e) { m_router.navigate("home", {}); });
 
     // Deck events
-    m_deck_service->connect<core::IDeckService::deck_updated>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::deck_updated>([this](const auto& e) {
         m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Колода обновлена"),
                                              .message = QCoreApplication::translate("deck events", "Колода была обновлена"),
                                              .type = core::ToastType::INFO});
     });
 
-    m_deck_service->connect<core::IDeckService::deck_created>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::deck_created>([this](const auto& e) {
         m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Колода создана"),
                                              .message = QCoreApplication::translate("deck events", "Новая колода создана!"),
                                              .type = core::ToastType::SUCCESS});
     });
 
-    m_deck_service->connect<core::IDeckService::deck_removed>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::deck_removed>([this](const auto& e) {
         m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Колода удалена"),
                                              .message = QCoreApplication::translate("deck events", "Колода была удалена!"),
                                              .type = core::ToastType::SUCCESS});
+    });
+
+    m_deck_service->connect<core::IDeckService::deck_remove_failed>([this](const auto& e) {
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Не удалось удалить колоду"),
+                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+                                             .type = core::ToastType::ERROR});
+    });
+
+    m_deck_service->connect<core::IDeckService::deck_create_failed>([this](const auto& e) {
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Не удалось создать колоду"),
+                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+                                             .type = core::ToastType::ERROR});
     });
 
     m_deck_service->connect<core::IDeckService::deck_exported>([this](auto& e) {
@@ -173,27 +185,27 @@ void Launcher::connect_signals() {
                         .type = core::ToastType::SUCCESS});
     });
 
-    m_deck_service->connect<core::IDeckService::export_failed>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::export_failed>([this](const auto& e) {
         m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Экспорт не удался"),
                                              .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
                                              .type = core::ToastType::ERROR});
     });
 
-    m_deck_service->connect<core::IDeckService::deck_imported>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::deck_imported>([this](const auto& e) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("deck events", "Колода импортирована"),
                         .message = QCoreApplication::translate("deck events", "Колода успешно импортирована"),
                         .type = core::ToastType::SUCCESS});
     });
 
-    m_deck_service->connect<core::IDeckService::import_failed>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::import_failed>([this](const auto& e) {
         m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Импорт не удался"),
                                              .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
                                              .type = core::ToastType::ERROR});
     });
 
     // Card events
-    m_deck_service->connect<core::IDeckService::card_created>([this](auto& e) {
+    m_deck_service->connect<core::IDeckService::card_created>([this](const auto& e) {
         m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Карточка добавлена"),
                                              .message = QCoreApplication::translate("deck events", "Карточка успешно добавлена!"),
                                              .type = core::ToastType::SUCCESS});
@@ -237,8 +249,14 @@ void Launcher::connect_signals() {
                                              .type = core::ToastType::ERROR});
     });
 
+    m_deck_service->connect<core::IDeckService::card_create_failed>([this](const auto& e) {
+        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Не удалось создать карточку"),
+                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
+                                             .type = core::ToastType::ERROR});
+    });
+
     // Study
-    m_study_service->connect<core::IStudyService::error>([this](auto& e) {
+    m_study_service->connect<core::IStudyService::error>([this](const auto& e) {
         core::Toast toast;
 
         toast.header = QCoreApplication::translate("study events", "Не удалось начать обучение");
@@ -249,7 +267,7 @@ void Launcher::connect_signals() {
         m_router.back();
     });
 
-    m_study_service->connect<core::IStudyService::training_finished>([this](auto& e) {
+    m_study_service->connect<core::IStudyService::training_finished>([this](const auto& e) {
         core::Toast toast;
 
         toast.header = QCoreApplication::translate("study events", "Обучение завершено");
@@ -263,7 +281,7 @@ void Launcher::connect_signals() {
         m_router.navigate(ui::Page{"home"});
     });
 
-    m_study_service->connect<core::IStudyService::training_aborted>([this](auto& e) {
+    m_study_service->connect<core::IStudyService::training_aborted>([this](const auto& e) {
         core::Toast toast;
 
         toast.header = QCoreApplication::translate("study events", "Обучение прервано");
@@ -274,7 +292,7 @@ void Launcher::connect_signals() {
     });
 
     // Streak service
-    m_streak_service->connect<core::IStreakService::reset>([this](auto& e) {
+    m_streak_service->connect<core::IStreakService::reset>([this](const auto& e) {
         core::Toast toast;
 
         toast.header = QCoreApplication::translate("streak events", "Страйк сброшен!");
