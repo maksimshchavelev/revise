@@ -8,7 +8,7 @@ import Revise as Revise
 Item {
     id: root
 
-    property var pageParams: null // Revise.Deck expected
+    property var pageParams: null // Revise.deck expected
     property bool openedAsWindow: false
     property string windowTitle: qsTr("Редактирование колоды - Revise")
 
@@ -778,6 +778,9 @@ Item {
     }
 
     function onEnter() {
+        if (Revise.CardsModel.deckId === root.deckId)
+            return;
+
         root.deck = Revise.DeckService.deck(root.deckId)
         Revise.CardSearchModel.searchFront = ""
         Revise.CardsModel.setDeck(root.deckId)

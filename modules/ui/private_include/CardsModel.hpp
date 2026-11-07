@@ -24,6 +24,9 @@ class CardsModel final : public QAbstractListModel {
     QML_UNCREATABLE("CardsModel is provided by C++")
 
   public:
+    // Which deck's cards are currently loaded?
+    Q_PROPERTY(int deckId READ deck_id NOTIFY updated FINAL);
+
     // How many cards are there in the deck in total?
     Q_PROPERTY(int cardsCount READ cards_count NOTIFY updated FINAL);
 
