@@ -40,9 +40,9 @@ bool SearchEngine::card_matches(const core::Card& card, const std::shared_ptr<co
 
     // By front
     case core::CardFilterKind::Front: {
-        const auto& f = static_cast<const core::CardFrontSearchFilter&>(*filter);
-        QString     plain = utils::Html::plain_text(card.front).trimmed();
-        return plain.startsWith(f.front.trimmed(), Qt::CaseInsensitive);
+        const auto&   f = static_cast<const core::CardFrontSearchFilter&>(*filter);
+        const QString plain = utils::Html::plain_text(card.front).trimmed();
+        return plain.contains(f.front.trimmed(), Qt::CaseInsensitive);
     }
 
     // Unknown
