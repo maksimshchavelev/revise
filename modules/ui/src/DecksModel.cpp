@@ -39,7 +39,7 @@ QVariant DecksModel::data(const QModelIndex& index, int role) const {
         return deck.deck.id;
     case NewCardsRole:
         return deck.new_cards;
-    case ConsolidateCardsRole:
+    case ReviewCardsRole:
         return deck.review_cards;
     case IncorrectCardsRole:
         return deck.incorrect_cards;
@@ -58,7 +58,7 @@ QHash<int, QByteArray> DecksModel::roleNames() const {
                                         {DescriptionRole, "description"},
                                         {TimeLimitRole, "timeLimit"},
                                         {NewCardsRole, "newCards"},
-                                        {ConsolidateCardsRole, "consolidateCards"},
+                                        {ReviewCardsRole, "reviewCards"},
                                         {IncorrectCardsRole, "incorrectCards"},
                                         {DeckId, "deckId"},
                                         {RepeatableToday, "repeatableToday"},

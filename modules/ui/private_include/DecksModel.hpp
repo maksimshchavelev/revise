@@ -24,7 +24,7 @@ class DecksModel final : public QAbstractListModel {
         DescriptionRole,
         TimeLimitRole,
         NewCardsRole,
-        ConsolidateCardsRole,
+        ReviewCardsRole,
         IncorrectCardsRole,
         DeckId,
         RepeatableToday,
