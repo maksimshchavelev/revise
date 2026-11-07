@@ -33,7 +33,7 @@ Item {
             top: root.top
             bottom: root.bottom
             right: root.right
-            leftMargin: 6
+            leftMargin: 12
             rightMargin: 2
             bottomMargin: 2
             topMargin: 2
