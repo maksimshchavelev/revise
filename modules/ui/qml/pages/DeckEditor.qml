@@ -15,7 +15,7 @@ Item {
     property int deckId: pageParams ? pageParams.deckId : 0
 
     property
-    Revise.Deck
+    Revise.deck
     deck
 
     Revise.Background {

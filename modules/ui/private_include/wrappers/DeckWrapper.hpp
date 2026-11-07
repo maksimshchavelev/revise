@@ -11,7 +11,7 @@ namespace ui {
 /// @brief Wrapper over `core::Deck`, visible from QML
 struct Deck final : core::Deck {
     Q_GADGET
-    QML_ELEMENT
+    QML_VALUE_TYPE(deck)
 
     Q_PROPERTY(QString name MEMBER name FINAL)
     Q_PROPERTY(QString description MEMBER description FINAL)
@@ -54,7 +54,7 @@ struct Deck final : core::Deck {
 /// @brief Wrapper over core::DeckSummary, visible from QML
 struct DeckSummary final : core::DeckSummary {
     Q_GADGET
-    QML_ELEMENT
+    QML_VALUE_TYPE(deckSummary)
 
     Q_PROPERTY(int new_cards MEMBER new_cards FINAL)
     Q_PROPERTY(int review_cards MEMBER review_cards FINAL)
