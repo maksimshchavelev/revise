@@ -123,8 +123,8 @@ Dialog {
             property: "scale"
             from: 1.0
             to: 0.5
-            duration: 140
-            easing.type: Easing.InCubic
+            duration: 160
+            easing.type: Easing.InQuint
         }
     }
 
