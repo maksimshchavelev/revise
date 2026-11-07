@@ -1,7 +1,6 @@
 import QtQuick
 import QtWebView
 import QtCore
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -15,9 +14,6 @@ Item {
 
         anchors.fill: parent
         visible: !loading
-
-        settings.allowFileAccess: true
-        settings.localContentCanAccessFileUrls: true
 
         Component.onCompleted: {
             web.url = Qt.resolvedUrl(root.editor)

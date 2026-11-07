@@ -100,9 +100,6 @@ WebView {
     */
     property string pendingHtml: ""
 
-    settings.allowFileAccess: true
-    settings.localContentCanAccessFileUrls: true
-
     Component.onCompleted: {
         const base = Qt.resolvedUrl(StandardPaths.writableLocation(StandardPaths.AppDataLocation) + "/web/card/card.html")
         web.url = base
