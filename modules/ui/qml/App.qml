@@ -11,7 +11,7 @@ ApplicationWindow {
     minimumWidth: 480
     minimumHeight: 320
 
-    width: 1065
+    width: 1075
     height: 720
 
     Item {
