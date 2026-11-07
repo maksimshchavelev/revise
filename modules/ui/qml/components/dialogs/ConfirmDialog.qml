@@ -130,6 +130,9 @@ Dialog {
 
     Overlay.modal: Rectangle {
         color: Qt.rgba(0, 0, 0, 0.4)
+        Behavior on opacity {
+            NumberAnimation { duration: 140 }
+        }
     }
 
     background: Rectangle {
