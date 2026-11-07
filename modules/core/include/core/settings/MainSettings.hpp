@@ -17,6 +17,12 @@ class MainSettings {
 
     /// @brief Set User Interface Scaling
     virtual std::expected<void, SettingsError> set_ui_scale(float scale) = 0;
+
+    /// @brief Show notification about early access
+    [[nodiscard]] virtual bool notify_about_early_access() const = 0;
+
+    /// @brief Enable or disable notification about early access
+    virtual std::expected<void, SettingsError> set_notify_about_early_access(bool enabled) = 0;
 };
 
 } // namespace core

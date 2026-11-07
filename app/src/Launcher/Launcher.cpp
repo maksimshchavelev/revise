@@ -358,7 +358,7 @@ void Launcher::post_launch() {
     m_router.navigate(ui::Page{"home"});
     m_loading_screen.set_visible(false);
 
-    if constexpr (REVISE_BETA_BUILD) {
+    if (REVISE_BETA_BUILD && m_settings->notify_about_early_access()) {
         core::Toast beta_access_toast;
         beta_access_toast.header = QCoreApplication::translate("beta access", "Ранний доступ");
         beta_access_toast.message = QCoreApplication::translate(

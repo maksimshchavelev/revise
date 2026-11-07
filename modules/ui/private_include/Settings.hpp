@@ -19,6 +19,9 @@ class Settings final : public QObject {
     Q_PROPERTY(int maxInterval READ max_interval WRITE set_max_interval NOTIFY maxIntervalChanged FINAL)
     Q_PROPERTY(float learningRate READ learning_rate WRITE set_learning_rate NOTIFY learningRateChanged FINAL)
     Q_PROPERTY(float uiScale READ ui_scale WRITE set_ui_scale NOTIFY uiScaleChanged FINAL)
+    Q_PROPERTY(float notifyAboutEarlyAccess READ notify_about_early_access WRITE set_notify_about_early_access NOTIFY
+                   notifyAboutEarlyAccessChanged FINAL)
+
 
     explicit Settings(core::ISettings& settings, QObject* parent = nullptr);
 
@@ -26,6 +29,7 @@ class Settings final : public QObject {
     void maxIntervalChanged();
     void learningRateChanged();
     void uiScaleChanged();
+    void notifyAboutEarlyAccessChanged();
 
   private:
     /// @brief Get max card review interval
@@ -45,6 +49,12 @@ class Settings final : public QObject {
 
     /// @brief Set UI scale
     void set_ui_scale(float scale);
+
+    /// @brief Is notification about early access enabled?
+    [[nodiscard]] bool notify_about_early_access() const;
+
+    /// @brief Enable or disable early access notification
+    void set_notify_about_early_access(bool enabled);
 
     core::ISettings& m_settings;
 };

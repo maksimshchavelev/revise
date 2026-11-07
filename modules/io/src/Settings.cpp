@@ -57,4 +57,16 @@ std::expected<void, core::SettingsError> Settings::set_ui_scale(const float scal
     return {};
 }
 
+
+bool Settings::notify_about_early_access() const {
+    return m_settings.value("main_notify_about_early_access", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_notify_about_early_access(const bool enabled) {
+    m_settings.setValue("main_notify_about_early_access", enabled);
+    m_settings.sync();
+    return {};
+}
+
 } // namespace io

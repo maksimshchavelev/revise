@@ -27,8 +27,13 @@ class Settings : public core::ISettings {
     [[nodiscard]] float ui_scale() const override;
 
     /// @copydoc core::ISettings::set_ui_scale
-    virtual std::expected<void, core::SettingsError> set_ui_scale(float scale);
+    std::expected<void, core::SettingsError> set_ui_scale(float scale) override;
 
+    /// @copydoc core::ISettings::notify_about_early_access
+    [[nodiscard]] bool notify_about_early_access() const override;
+
+    /// @copydoc core::ISettings::set_notify_about_early_access
+    std::expected<void, core::SettingsError> set_notify_about_early_access(bool enabled) override;
 
   private:
     QSettings m_settings;

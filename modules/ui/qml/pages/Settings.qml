@@ -45,6 +45,7 @@ Item {
                 header.label.text: qsTr("Основные настройки")
                 header.icon.source: "qrc:/res/img/settings.svg"
 
+                // UI scale
                 Revise.SettingsRow {
                     text: qsTr("Масштаб интерфейса")
 
@@ -73,6 +74,19 @@ Item {
                             }
 
                             onMoved: Revise.SettingsService.uiScale = value / 100
+                        }
+                    }
+                }
+
+                // Show notification about early access
+                Revise.SettingsRow {
+                    visible: Revise.BuildInfo.isBetaBuild
+                    text: qsTr("Уведомлять о раннем доступе")
+
+                    Revise.Switch {
+                        checked: Revise.SettingsService.notifyAboutEarlyAccess
+                        onToggled: function(state) {
+                            Revise.SettingsService.notifyAboutEarlyAccess = state
                         }
                     }
                 }

@@ -52,4 +52,19 @@ void Settings::set_ui_scale(const float scale) {
     emit uiScaleChanged();
 }
 
+
+bool Settings::notify_about_early_access() const {
+    return m_settings.notify_about_early_access();
+}
+
+
+void Settings::set_notify_about_early_access(const bool enabled) {
+    if (auto res = m_settings.set_notify_about_early_access(enabled); !res) {
+        qWarning() << res.error().message;
+        return;
+    }
+
+    emit notifyAboutEarlyAccessChanged();
+}
+
 } // namespace ui
