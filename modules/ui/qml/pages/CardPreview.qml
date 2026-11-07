@@ -1,8 +1,7 @@
-// Card preview page
+// CardPreview.qml
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls as QQC
 import Revise as Revise
 
 Item {
@@ -28,6 +27,15 @@ Item {
         spacing: 8
         visible: !htmlCard.loading
 
+        Revise.IconText {
+            Layout.fillWidth: true
+
+            icon.source: "qrc:/res/img/circle.svg"
+            icon.color: Revise.Theme.primaryColor
+            label.text: root.flipped ? qsTr("Обратная сторона") : qsTr("Лицевая сторона")
+            label.font.bold: true
+        }
+
         Revise.CardView {
             id: htmlCard
             Layout.fillWidth: true
@@ -37,12 +45,18 @@ Item {
 
         Revise.Button {
             Layout.fillWidth: true
+            Layout.preferredHeight: 42
+            backgroundItem.color: "white"
+            backgroundItem.opacity: 0.05
             text: qsTr("Перевернуть")
             onClicked: root.flip()
         }
 
         Revise.Button {
             Layout.fillWidth: true
+            Layout.preferredHeight: 42
+            backgroundItem.color: "white"
+            backgroundItem.opacity: 0.05
             text: qsTr("Назад")
             onClicked: Revise.Router.back()
         }
