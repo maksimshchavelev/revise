@@ -27,10 +27,8 @@ StudyService::StudyService(core::IStudyEngine& study_engine) : m_study_engine(st
 }
 
 
-void StudyService::start(int deck_id) {
-    auto res = m_study_engine.start(deck_id);
-
-    if (!res) {
+void StudyService::start(const int deck_id) {
+    if (auto res = m_study_engine.start(deck_id); !res) {
         dispatch(error{QString("Failed to start training, cause: %1").arg(res.error())});
         return;
     }
@@ -43,7 +41,7 @@ void StudyService::start(int deck_id) {
 }
 
 
-void StudyService::answer(float difficulty) {
+void StudyService::answer(const float difficulty) {
     auto res = m_study_engine.answer(difficulty);
 
     if (!res) {
@@ -52,9 +50,7 @@ void StudyService::answer(float difficulty) {
     }
 
     if (res->finished) {
-        auto save_res = m_study_engine.save_trained();
-
-        if (!save_res) {
+        if (const auto save_res = m_study_engine.save_trained(); !save_res) {
             dispatch(error{QString("Training finished, failed to save results, cause: %1").arg(res.error())});
             return;
         }
@@ -75,9 +71,7 @@ void StudyService::answer(float difficulty) {
 
 
 void StudyService::flip() {
-    auto res = m_study_engine.flip();
-
-    if (!res) {
+    if (auto res = m_study_engine.flip(); !res) {
         dispatch(error{QString("Failed to flip card, cause: %1").arg(res.error())});
         return;
     }
@@ -87,9 +81,7 @@ void StudyService::flip() {
 
 
 void StudyService::abort() {
-    auto res = m_study_engine.abort();
-
-    if (!res) {
+    if (auto res = m_study_engine.abort(); !res) {
         dispatch(error{QString("Failed to abort training, cause: %1").arg(res.error())});
         return;
     }
@@ -105,9 +97,7 @@ const std::optional<core::Card>& StudyService::current_card() const {
 
 
 void StudyService::reload_current_card() {
-    auto res = m_study_engine.reload_state();
-
-    if (!res) {
+    if (auto res = m_study_engine.reload_state(); !res) {
         dispatch(error{QString("Failed to reload current card in study service: %1").arg(res.error())});
     }
 }
