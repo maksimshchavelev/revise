@@ -757,7 +757,10 @@ Item {
     }
 
     function save() {
-        Revise.DeckService.update_deck(root.deck.id, createDeckDraft())
+        let draft = createDeckDraft();
+        root.deck.name = draft.name;
+        root.deck.description = draft.description;
+        Revise.DeckService.update_deck(root.deck.id, draft)
     }
 
     function createDeckDraft() {
