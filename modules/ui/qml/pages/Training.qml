@@ -56,10 +56,9 @@ Item {
                 size: 32
                 onClicked: {
                     Revise.StudyService.pause()
-                    console.log(`Editing card with id = ${Revise.StudyService.card.id}`)
                     Revise.Router.navigate("cardEditor", {
                         "editMode": true,
-                        "card": Revise.DeckService.card(Revise.StudyService.card.id)
+                        "card": Revise.StudyService.card
                     }, Revise.page.Page)
                 }
             }
