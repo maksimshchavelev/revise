@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include <QQueue>                // for QQueue
-#include <core/IAlgorithm.hpp>   // for core::IAlgorithm
+#include <QQueue>                        // for QQueue
+#include <core/IAlgorithm.hpp>           // for core::IAlgorithm
+#include <core/IStudyEngine.hpp>         // for core::IStudyEngine
 #include <core/storage/IDeckStorage.hpp> // for core::IDeckStorage
-#include <core/IStudyEngine.hpp> // for core::IStudyEngine
 
 namespace engine {
 
@@ -49,10 +49,10 @@ class StudyEngine final : public core::IStudyEngine {
     std::expected<StudyInfo, QString> get_study_info(core::Deck::id_type deck_id) const override;
 
   private:
-    QQueue<core::Card>               m_cards;
-    QVector<core::Card>              m_trained_cards;
-    core::IStudyEngine::SessionState m_session_state;
-    StudyEngineDeps                  m_deps;
+    QQueue<core::Card>  m_cards;
+    QVector<core::Card> m_trained_cards;
+    SessionState        m_session_state{};
+    StudyEngineDeps     m_deps;
 };
 
 } // namespace engine

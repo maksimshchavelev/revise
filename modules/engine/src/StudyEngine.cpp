@@ -123,9 +123,30 @@ std::expected<void, QString> StudyEngine::abort() {
 
 
 std::expected<void, QString> StudyEngine::save_trained() {
-    auto res = m_deps.deck_storage.update_cards(m_trained_cards);
+    if (m_trained_cards.empty()) {
+        return {};
+    }
 
-    if (!res) {
+    const auto fetched_cards = m_deps.deck_storage.fetch_cards(m_trained_cards.first().deck_id);
+
+    if (!fetched_cards) {
+        return std::unexpected(QString("Failed to fetch cards, cause: %1").arg(fetched_cards.error().message));
+    }
+
+    QHash<core::Card::id_type, core::Card> mapped_cards;
+    mapped_cards.reserve(fetched_cards->size());
+
+    std::ranges::for_each(*fetched_cards, [&mapped_cards](const auto& card) mutable {
+        mapped_cards[card.id] = std::move(card);
+    });
+
+    std::ranges::for_each(m_trained_cards, [&mapped_cards](auto& card) {
+         card.front = mapped_cards[card.id].front;
+         card.back = mapped_cards[card.id].back;
+         card.updated_at = mapped_cards[card.id].updated_at;
+    });
+
+    if (auto res = m_deps.deck_storage.update_cards(m_trained_cards); !res) {
         return std::unexpected(QString("Failed to update cards, cause: %1").arg(res.error().message));
     }
 
