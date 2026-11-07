@@ -64,7 +64,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::remove_deck(core::Deck::i
             return std::unexpected(error);
         }
 
-        if (!remove_res->empty()) {
+        if (remove_res->empty()) {
             auto error =
                 Error::internal_error("DeckService::remove_deck(): after removing, deck storage did not return the removed deck");
 
