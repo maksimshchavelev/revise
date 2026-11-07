@@ -329,7 +329,6 @@ void Launcher::post_launch() {
     m_router.push_page("training", m_ui.create_page(QUrl("qrc:/qml/pages/Training.qml")));
     m_router.push_page("cardEditor", m_ui.create_page(QUrl("qrc:/qml/pages/CardEditor.qml")));
     m_router.push_page("cardPreview", m_ui.create_page(QUrl("qrc:/qml/pages/CardPreview.qml")));
-    m_router.push_page("createDeck", m_ui.create_page(QUrl("qrc:/qml/pages/CreateDeck.qml")));
 
     m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Настройка базы данных..."));
 
