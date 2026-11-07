@@ -1,8 +1,8 @@
+// DeckDelegate.qml
 // A deck that will be displayed on the main page
 
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -11,14 +11,14 @@ Item {
     width: 170
     height: 210
 
-    property int newCards: 0 // Cards that have not yet been studied
-    property int consolidateCards: 0 // Cards that have already been studied and need to be reviewed
-    property int incorrectCards: 0 // Cards that the user answered incorrectly during the last training session
-    property int deckId: 0 // deck id
-    property int timeLimit: 0 // time limit
-    property string deckName
-    property string deckDescription
-    property bool repeatableToday: false
+    property int newCardsProperty // Cards that have not yet been studied
+    property int reviewCardsProperty // Cards that have already been studied and need to be reviewed
+    property int incorrectCardsProperty  // Cards that the user answered incorrectly during the last study session
+    property int deckIdProperty // deck id
+    property int timeLimitProperty // time limit
+    property string deckNameProperty // deck name
+    property string deckDescriptionProperty // deck description
+    property bool repeatableTodayProperty // is a deck repeatable today?
 
     signal studyClicked
     signal editClicked
@@ -55,15 +55,15 @@ Item {
                     id: nameText
                     height: parent.height
                     width: menuButton.x - parent.x - 2
-                    text: root.deckName
+                    text: root.deckNameProperty
                     elide: Text.ElideRight
-                    color: Revise.Theme.textColor
+                    color: Revise.Theme.foregroundColor
                     font.bold: true
                     wrapMode: Text.WordWrap
 
                     Revise.HoverableTooltip {
                         anchors.fill: parent
-                        text: root.deckName
+                        text: root.deckNameProperty
                     }
                 }
 
@@ -95,19 +95,19 @@ Item {
 
                 Revise.Text {
                     anchors.fill: parent
-                    text: root.deckDescription.length > 0 ? root.deckDescription : qsTr(
+                    text: root.deckDescriptionProperty.length > 0 ? root.deckDescriptionProperty : qsTr(
                                                                 "Без описания...")
                     elide: Text.ElideRight
                     verticalAlignment: Revise.Text.AlignVCenter
-                    color: Revise.Theme.textColorDark
+                    color: Revise.Theme.secondaryForegroundColor
                     font.pixelSize: Revise.Theme.fontSizeSmall
                     wrapMode: Text.WordWrap
                 }
 
                 Revise.HoverableTooltip {
-                    visible: root.deckDescription.length > 0
+                    visible: root.deckDescriptionProperty.length > 0
                     anchors.fill: parent
-                    text: root.deckDescription
+                    text: root.deckDescriptionProperty
                 }
             }
 
@@ -124,9 +124,9 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.Text {
-                    text: root.newCards
+                    text: root.newCardsProperty
                     font.pixelSize: Revise.Theme.fontSizeSmall
-                    color: root.newCards > 0 ? Revise.Theme.green : Revise.Theme.textColorDark
+                    color: root.newCardsProperty > 0 ? Revise.Theme.green : Revise.Theme.secondaryForegroundColor
                 }
             }
 
@@ -143,9 +143,9 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.Text {
-                    text: root.consolidateCards
+                    text: root.reviewCardsProperty
                     font.pixelSize: Revise.Theme.fontSizeSmall
-                    color: root.consolidateCards > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
+                    color: root.reviewCardsProperty > 0 ? Revise.Theme.blue : Revise.Theme.secondaryForegroundColor
                 }
             }
 
@@ -162,9 +162,9 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.Text {
-                    text: root.incorrectCards
+                    text: root.incorrectCardsProperty
                     font.pixelSize: Revise.Theme.fontSizeSmall
-                    color: root.incorrectCards > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
+                    color: root.incorrectCardsProperty > 0 ? Revise.Theme.red : Revise.Theme.secondaryForegroundColor
                 }
             }
 
@@ -173,13 +173,13 @@ Item {
                 Layout.fillWidth: true
                 spacing: 10
 
-                property bool timeUnlimited: root.timeLimit === 0
+                property bool timeUnlimited: root.timeLimitProperty === 0
                 property int iconSize: 16
 
                 Revise.Icon {
                     size: parent.iconSize
                     source: "qrc:/res/img/clocks.svg"
-                    color: Revise.Theme.textColor
+                    color: Revise.Theme.foregroundColor
                 }
 
                 Revise.HorizontalSpacer {}
@@ -188,14 +188,14 @@ Item {
                     visible: parent.timeUnlimited
                     size: parent.iconSize
                     source: "qrc:/res/img/infinity.svg"
-                    color: Revise.Theme.textColorDark
+                    color: Revise.Theme.secondaryForegroundColor
                 }
 
                 Revise.Text {
                     visible: !parent.timeUnlimited
-                    text: qsTr(`${root.timeLimit} с`)
+                    text: qsTr(`${root.timeLimitProperty} с`)
                     font.pixelSize: Revise.Theme.fontSizeSmall
-                    color: Revise.Theme.textColor
+                    color: Revise.Theme.foregroundColor
                     verticalAlignment: Revise.Text.AlignVCenter
                 }
             }
@@ -209,12 +209,12 @@ Item {
 
                 text: "Учить"
                 font.bold: true
-                clickable: root.repeatableToday
+                clickable: root.repeatableTodayProperty
 
                 onClicked: root.studyClicked()
 
                 Revise.HoverableTooltip {
-                    visible: !root.repeatableToday
+                    visible: !root.repeatableTodayProperty
                     anchors.fill: parent
                     text: qsTr("Сегодня учить нечего. Отдохните")
                 }
