@@ -19,6 +19,9 @@ import Revise as Revise
     initial keyboard focus, so pressing Enter activates it as soon as the
     dialog opens.
 
+    The dialog fades in and scales up slightly on open, and collapses by
+    scaling down on close.
+
     \section1 Example Usage
 
     \qml
@@ -97,6 +100,33 @@ Dialog {
     spacing: 20
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+    enter: Transition {
+        NumberAnimation {
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 220
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            property: "scale"
+            from: 0.75
+            to: 1.0
+            duration: 280
+            easing.type: Easing.OutBack
+        }
+    }
+
+    exit: Transition {
+        NumberAnimation {
+            property: "scale"
+            from: 1.0
+            to: 0.5
+            duration: 140
+            easing.type: Easing.InCubic
+        }
+    }
 
     Overlay.modal: Rectangle {
         color: Qt.rgba(0, 0, 0, 0.4)
