@@ -526,22 +526,16 @@ Item {
                                 font.bold: true
                             }
 
-                            RowLayout {
+                            Revise.ValueSlider {
+                                id: setDifficultySlider
+
                                 width: parent.width
-                                spacing: 8
 
-                                Revise.Text {
-                                    text: setDifficultySlider.value.toFixed(1)
-                                }
-
-                                Revise.Slider {
-                                    id: setDifficultySlider
-
-                                    Layout.fillWidth: true
-                                    from: 0
-                                    to: 5
-                                    value: 2.5
-                                }
+                                label.text: value.toFixed(1)
+                                slider.from: 0.0
+                                slider.to: 5.0
+                                slider.stepSize: 0.1
+                                value: 2.5
                             }
 
                             Revise.Button {

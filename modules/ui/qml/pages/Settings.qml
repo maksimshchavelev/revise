@@ -49,32 +49,20 @@ Item {
                 Revise.SettingsRow {
                     text: qsTr("Масштаб интерфейса")
 
-                    Row {
-                        width: 180
-                        spacing: 8
+                    Revise.ValueSlider {
+                        id: uiScaleSlider
 
-                        Revise.Text {
-                            width: 30
-                            id: uiScaleText
-                            text: `${uiScaleSlider.value.toFixed(0)}%`
-                            anchors.verticalCenter: uiScaleSlider.verticalCenter
+                        label.text: `${value.toFixed(0)}%`
+                        slider.from: 70
+                        slider.to: 130
+                        slider.stepSize: 5
+
+                        Binding on value {
+                            value: Revise.SettingsService.uiScale * 100
+                            when: !uiScaleSlider.pressed
                         }
 
-                        Revise.Slider {
-                            id: uiScaleSlider
-
-                            width: parent.width - learningSpeedText.width - parent.spacing
-                            from: 70
-                            to: 130
-                            stepSize: 5
-
-                            Binding on value {
-                                value: Revise.SettingsService.uiScale * 100
-                                when: !uiScaleSlider.pressed
-                            }
-
-                            onMoved: Revise.SettingsService.uiScale = value / 100
-                        }
+                        onMoved: Revise.SettingsService.uiScale = value / 100
                     }
                 }
 
@@ -130,30 +118,20 @@ Item {
                 Revise.SettingsRow {
                     text: qsTr("Скорость обучения")
 
-                    Row {
-                        width: 180
-                        spacing: 8
+                    Revise.ValueSlider {
+                        id: learningRateSlider
 
-                        Revise.Text {
-                            id: learningSpeedText
-                            text: learningSpeedSlider.value.toFixed(1)
-                            anchors.verticalCenter: learningSpeedSlider.verticalCenter
+                        label.text: value.toFixed(1)
+                        slider.from: 1.0
+                        slider.to: 5.0
+                        slider.stepSize: 0.1
+
+                        Binding on value {
+                            value: Revise.SettingsService.learningRate
+                            when: !learningRateSlider.pressed
                         }
 
-                        Revise.Slider {
-                            id: learningSpeedSlider
-
-                            width: parent.width - learningSpeedText.width - parent.spacing
-                            from: 1.0
-                            to: 5.0
-
-                            Binding on value {
-                                value: Revise.SettingsService.learningRate
-                                when: !learningSpeedSlider.pressed
-                            }
-
-                            onMoved: Revise.SettingsService.learningRate = value
-                        }
+                        onMoved: Revise.SettingsService.learningRate = value
                     }
 
                     Revise.HoverableTooltip {
