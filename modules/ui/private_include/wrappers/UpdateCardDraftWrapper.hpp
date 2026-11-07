@@ -20,6 +20,7 @@ struct UpdateCardDraft final : core::IDeckService::UpdateCardDraft {
     Q_PROPERTY(float difficulty READ difficulty WRITE set_difficulty FINAL)
     Q_PROPERTY(int id READ id WRITE set_id FINAL)
     Q_PROPERTY(Card::State state READ state WRITE set_state FINAL)
+    Q_PROPERTY(QDateTime nextReview READ next_review WRITE set_next_review FINAL)
 
   public:
     /// @brief Construct `UpdateCardDraft` with default values
@@ -103,6 +104,16 @@ struct UpdateCardDraft final : core::IDeckService::UpdateCardDraft {
     /// @brief Set state of the draft
     void set_state(const Card::State state) noexcept {
         core::IDeckService::UpdateCardDraft::state = static_cast<core::Card::State>(state);
+    }
+
+    /// @brief Get next review of the draft
+    [[nodiscard]] QDateTime next_review() const noexcept {
+        return core::IDeckService::UpdateCardDraft::next_review.value_or(QDateTime::currentDateTime());
+    }
+
+    /// @brief Set next review of the draft
+    void set_next_review(const QDateTime& next_review) noexcept {
+        core::IDeckService::UpdateCardDraft::next_review = next_review;
     }
 };
 
