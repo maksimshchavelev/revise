@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+    <head>
     <meta charset="utf-8">
 
     <!-- MathJax configuration -->
@@ -69,28 +69,28 @@
 
         ::-webkit-scrollbar {
             width: 12px;
-            background-color: #11192b;
+            background-color: #1c1e21;
             border-radius: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #11192b;
+            background: #1c1e21;
             border-radius: 6px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #353bab;
+            background: #292c30;
             border-radius: 6px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #6b7090;
+            background: #3a3f45;
         }
         ::-webkit-scrollbar-corner {
-            background: #11192b;
+            background: #1c1e21;
             border-radius: 6px;
         }
 
         body {
             scrollbar-width: thin;
-            scrollbar-color: #353bab #11192b;
+            scrollbar-color: #292c30 #1c1e21;
         }
 
         img {
@@ -196,113 +196,113 @@
             padding-left: 5px !important;
         }
     </style>
-</head>
+    </head>
 
-<body>
-<div id="card"></div>
+    <body>
+        <div id="card"></div>
 
-<!-- Load highlight.js and line numbers plugin locally -->
-<script src="../deps/highlight/highlight.min.js"></script>
-<script src="../deps/highlight/highlightjs-line-numbers.min.js"></script>
+        <!-- Load highlight.js and line numbers plugin locally -->
+        <script src="../deps/highlight/highlight.min.js"></script>
+        <script src="../deps/highlight/highlightjs-line-numbers.min.js"></script>
 
-<!-- Load additional languages locally -->
-<script src="../deps/highlight/languages/c.min.js"></script>
-<script src="../deps/highlight/languages/cpp.min.js"></script>
-<script src="../deps/highlight/languages/python.min.js"></script>
-<script src="../deps/highlight/languages/qml.min.js"></script>
-<script src="../deps/highlight/languages/rust.min.js"></script>
-<script src="../deps/highlight/languages/sql.min.js"></script>
+        <!-- Load additional languages locally -->
+        <script src="../deps/highlight/languages/c.min.js"></script>
+        <script src="../deps/highlight/languages/cpp.min.js"></script>
+        <script src="../deps/highlight/languages/python.min.js"></script>
+        <script src="../deps/highlight/languages/qml.min.js"></script>
+        <script src="../deps/highlight/languages/rust.min.js"></script>
+        <script src="../deps/highlight/languages/sql.min.js"></script>
 
-<script>
-    // Initialize highlight.js
-    document.addEventListener('DOMContentLoaded', function() {
-        hljs.configure({
-            languages: ['cpp', 'c', 'python', 'qml', 'rust', 'sql']
-        });
-    });
+        <script>
+            // Initialize highlight.js
+            document.addEventListener('DOMContentLoaded', function() {
+                hljs.configure({
+                    languages: ['cpp', 'c', 'python', 'qml', 'rust', 'sql']
+                });
+            });
 
-    // Function to highlight all code blocks
-    function highlightAllCodeBlocks() {
-        try {
-            const codeBlocks = document.querySelectorAll('#card pre code');
+            // Function to highlight all code blocks
+            function highlightAllCodeBlocks() {
+                try {
+                    const codeBlocks = document.querySelectorAll('#card pre code');
 
-            codeBlocks.forEach((block) => {
-                const originalContent = block.textContent;
+                    codeBlocks.forEach((block) => {
+                        const originalContent = block.textContent;
 
-                if (!block.className || !block.className.match(/\blanguage-\w+\b/)) {
-                    const result = hljs.highlightAuto(originalContent);
-                    block.className = result.language ? `hljs language-${result.language}` : 'hljs';
-                    block.innerHTML = result.value;
-                } else {
-                    hljs.highlightElement(block);
-                }
+                        if (!block.className || !block.className.match(/\blanguage-\w+\b/)) {
+                            const result = hljs.highlightAuto(originalContent);
+                            block.className = result.language ? `hljs language-${result.language}` : 'hljs';
+                            block.innerHTML = result.value;
+                        } else {
+                            hljs.highlightElement(block);
+                        }
 
-                if (block.parentElement && block.parentElement.tagName === 'PRE') {
-                    if (block.classList.contains('hljs-ln-code')) {
-                        const pre = block.parentElement;
-                        const newCode = document.createElement('code');
-                        newCode.className = block.className;
-                        newCode.textContent = originalContent;
-                        pre.innerHTML = '';
-                        pre.appendChild(newCode);
-                        hljs.highlightElement(newCode);
-                        block = newCode;
-                    }
+                        if (block.parentElement && block.parentElement.tagName === 'PRE') {
+                            if (block.classList.contains('hljs-ln-code')) {
+                                const pre = block.parentElement;
+                                const newCode = document.createElement('code');
+                                newCode.className = block.className;
+                                newCode.textContent = originalContent;
+                                pre.innerHTML = '';
+                                pre.appendChild(newCode);
+                                hljs.highlightElement(newCode);
+                                block = newCode;
+                            }
 
-                    hljs.lineNumbersBlock(block, {
-                        singleLine: false
+                            hljs.lineNumbersBlock(block, {
+                                singleLine: false
+                            });
+                        }
                     });
+
+                    const inlineCodeBlocks = document.querySelectorAll('#card code:not(pre code)');
+                    inlineCodeBlocks.forEach((block) => {
+                        if (!block.className || !block.className.match(/\blanguage-\w+\b/)) {
+                            const result = hljs.highlightAuto(block.textContent);
+                            block.className = result.language ? `hljs language-${result.language}` : 'hljs';
+                            block.innerHTML = result.value;
+                        } else {
+                            hljs.highlightElement(block);
+                        }
+                    });
+
+                    return true;
+                } catch (error) {
+                    console.error('Error highlighting code blocks:', error);
+                    return false;
                 }
-            });
-
-            const inlineCodeBlocks = document.querySelectorAll('#card code:not(pre code)');
-            inlineCodeBlocks.forEach((block) => {
-                if (!block.className || !block.className.match(/\blanguage-\w+\b/)) {
-                    const result = hljs.highlightAuto(block.textContent);
-                    block.className = result.language ? `hljs language-${result.language}` : 'hljs';
-                    block.innerHTML = result.value;
-                } else {
-                    hljs.highlightElement(block);
-                }
-            });
-
-            return true;
-        } catch (error) {
-            console.error('Error highlighting code blocks:', error);
-            return false;
-        }
-    }
-
-    function renderCard(html) {
-        const el = document.getElementById("card");
-        el.innerHTML = html;
-
-        setTimeout(() => {
-            highlightAllCodeBlocks();
-            if (window.MathJax && MathJax.typesetPromise) {
-                MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
             }
-        }, 0);
-    }
 
-    function setFontSize(px) {
-        const body = document.body;
-        body.style.fontSize = px + "px";
-        if (window.MathJax && MathJax.typesetPromise) {
-            MathJax.typesetPromise([document.getElementById("card")]).catch(err => console.error(err));
-        }
-        setTimeout(highlightAllCodeBlocks, 0);
-    }
+            function renderCard(html) {
+                const el = document.getElementById("card");
+                el.innerHTML = html;
 
-    function setTextColor(color) {
-        document.body.style.color = color;
-        const mathElements = document.querySelectorAll("mjx-container, mjx-math, svg");
-        mathElements.forEach(el => el.style.color = color);
-    }
+                setTimeout(() => {
+                    highlightAllCodeBlocks();
+                    if (window.MathJax && MathJax.typesetPromise) {
+                        MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
+                    }
+                }, 0);
+            }
 
-    function refreshHighlighting() {
-        return highlightAllCodeBlocks();
-    }
-</script>
-</body>
+            function setFontSize(px) {
+                const body = document.body;
+                body.style.fontSize = px + "px";
+                if (window.MathJax && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([document.getElementById("card")]).catch(err => console.error(err));
+                }
+                setTimeout(highlightAllCodeBlocks, 0);
+            }
+
+            function setTextColor(color) {
+                document.body.style.color = color;
+                const mathElements = document.querySelectorAll("mjx-container, mjx-math, svg");
+                mathElements.forEach(el => el.style.color = color);
+            }
+
+            function refreshHighlighting() {
+                return highlightAllCodeBlocks();
+            }
+        </script>
+    </body>
 </html>
