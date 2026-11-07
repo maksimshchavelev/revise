@@ -285,7 +285,7 @@ void Launcher::connect_signals() {
         core::Toast toast;
 
         toast.header = QCoreApplication::translate("study events", "Обучение прервано");
-        toast.message = QCoreApplication::translate("study events", "Отдохните и вернитесь чуть позже :)");
+        toast.message = QCoreApplication::translate("study events", "Отдохните и вернитесь чуть позже");
         toast.type = core::ToastType::INFO;
 
         m_toast_service->request(std::move(toast));
