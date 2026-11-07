@@ -62,6 +62,8 @@ struct DeckSummary final : core::DeckSummary {
     Q_PROPERTY(Deck deck MEMBER deck FINAL)
 
   public:
+    Q_INVOKABLE DeckSummary() = default;
+
     explicit DeckSummary(const core::DeckSummary& other) : core::DeckSummary{other} {}
 
     template <typename OtherDeckSummary>
