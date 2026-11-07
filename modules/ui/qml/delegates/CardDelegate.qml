@@ -199,6 +199,12 @@ Item {
     */
         signal resetClicked
 
+    /*!
+        \qmlsignal CardDelegate::repeatTodayClicked()
+        \brief Emitted when the user selects the repeat today action from the kebab menu.
+    */
+        signal repeatTodayClicked
+
     implicitHeight: 100
 
     // Left panel with status color
@@ -395,6 +401,14 @@ Item {
             onClicked: {
                 kebabMenu.close()
                 root.editClicked()
+            }
+        }
+
+        Revise.KebabMenuButton {
+            text: qsTr("Повторить сегодня")
+            onClicked: {
+                kebabMenu.close()
+                root.repeatTodayClicked()
             }
         }
 

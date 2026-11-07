@@ -187,6 +187,12 @@ Item {
 
                         onResetClicked: Revise.DeckService.reset_cards([parent.id]);
 
+                        onRepeatTodayClicked: {
+                            let draft = new Revise.updateCardDraft();
+                            draft.nextReview = new Date();
+                            Revise.DeckService.update_cards([parent.id], draft)
+                        }
+
                         onIncreaseDifficultyClicked: {
                             let draft = new Revise.updateCardDraft(cardId);
                             draft.difficulty = Math.max(0.0, Math.min(card.difficulty + 0.5, 5.0));
@@ -519,6 +525,7 @@ Item {
                                 width: parent.width
                             }
 
+
                             // Set cards difficulty
                             Revise.Text {
                                 width: parent.width
@@ -572,6 +579,7 @@ Item {
                             Revise.HorizontalDivider {
                                 width: parent.width
                             }
+
 
                             // Set cards status
                             Revise.Text {
@@ -629,6 +637,49 @@ Item {
                                         draft.state = Revise.card.State.Review
                                     else if (cardStateComboBox.displayText === qsTr("Ошибочная"))
                                         draft.state = Revise.card.State.Incorrect
+
+                                    if (Revise.CardsModel.selectedCount === 0) {
+                                        Revise.DeckService.update_cards(Revise.CardsModel.ids(), draft);
+                                    } else {
+                                        Revise.DeckService.update_cards(Revise.CardsModel.selectedIds(), draft);
+                                    }
+                                }
+                            }
+
+                            Revise.HorizontalDivider {
+                                width: parent.width
+                            }
+
+
+                            Revise.Text {
+                                width: parent.width
+                                text: qsTr("Повторить карточки сегодня")
+                                font.bold: true
+                            }
+
+                            // Review today
+                            Revise.Button {
+                                width: parent.width
+                                clickable: Revise.CardsModel.cardsCount > 0
+
+                                text: {
+                                    if (Revise.CardsModel.selectedCount === 0)
+                                        return qsTr("Повторить сегодня")
+                                    return qsTr(`Повторить сегодня (${Revise.CardsModel.selectedCount} / ${Revise.CardsModel.cardsCount})`)
+                                }
+
+                                Revise.HoverableTooltip {
+                                    anchors.fill: parent
+                                    text: {
+                                        if (Revise.CardsModel.selectedCount === 0)
+                                            return qsTr("Все карточки будут повторены сегодня без сброса сложности")
+                                        qsTr("Только выбранные карточки будут повторены сегодня без сброса сложности")
+                                    }
+                                }
+
+                                onClicked: {
+                                    let draft = new Revise.updateCardDraft();
+                                    draft.nextReview = new Date();
 
                                     if (Revise.CardsModel.selectedCount === 0) {
                                         Revise.DeckService.update_cards(Revise.CardsModel.ids(), draft);
