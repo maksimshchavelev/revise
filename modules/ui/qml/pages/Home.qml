@@ -116,7 +116,7 @@ Item {
         id: createDeckDrawer
 
         width: 350
-        height: parent.height
+        height: root.height
         edge: Qt.RightEdge
 
         background: Revise.Background {}
