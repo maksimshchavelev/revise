@@ -19,9 +19,7 @@ import Revise as Revise
     Both the key and the value are exposed as aliases to the internal elements,
     so their text, font, and color can be adjusted from the outside without
     replacing the components. The value is a
-    \l {Revise.CopyableText}{Revise.CopyableText}, which means it can be
-    selected with the mouse and copied to the clipboard, while remaining
-    read-only.
+    \l {Revise.Text}{Revise.Text}
 
     The width of the key can be fixed through \l keyWidth, which is useful
     when several rows are stacked vertically and their keys should align in
@@ -84,14 +82,13 @@ Row {
     property alias key: keyText
 
     /*!
-        \qmlproperty Revise.CopyableText KeyValue::value
+        \qmlproperty Revise.Text KeyValue::value
         \brief The value element shown on the right side of the row.
 
         The text is rendered with
         \l {Revise.Theme::secondaryForegroundColor}{Revise.Theme.secondaryForegroundColor}
         by default. The element is a
-        \l {Revise.CopyableText}{Revise.CopyableText}: it is read-only, but
-        its contents can be selected with the mouse and copied to the
+        \l {Revise.Text}{Revise.Text}: it is read-only
         clipboard.
     */
     property alias value: valueText
@@ -105,7 +102,7 @@ Row {
         elide: Text.ElideRight
     }
 
-    Revise.CopyableText {
+    Revise.Text {
         id: valueText
         width: root.keyWidth > 0
             ? Math.max(0, root.width - root.keyWidth)
