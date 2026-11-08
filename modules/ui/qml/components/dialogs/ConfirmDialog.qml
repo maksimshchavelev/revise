@@ -1,4 +1,3 @@
-// ConfirmDialog.qml
 
 import QtQuick
 import QtQuick.Controls
@@ -24,6 +23,11 @@ import Revise as Revise
     \l accepted without showing the dialog, which lets callers skip the
     prompt based on a persistent setting. The \l dontAskAgain checkbox is
     initialized from \l suppressed each time the dialog opens.
+
+    The dialog uses \c Revise.SettingsService.uiScale to scale its entire
+    visual representation, including the background and all child items.
+    The effective scale is automatically reduced when necessary to keep
+    the dialog within the available overlay area.
 
     The dialog fades in and scales up slightly on open, and collapses by
     scaling down on close.
@@ -116,12 +120,34 @@ Dialog {
         When this property is \c true, \l requestOpen() emits \l accepted
         without showing the dialog. When it is \c false, \l requestOpen()
         opens the dialog normally. Typically bound to the inverse of a
-        persistent "ask before" setting, and copied into \l dontAskAgain
-        when the dialog opens.
+        persistent "ask before" setting, and copied into
+        \l dontAskAgain when the dialog opens.
 
         The default value is \c false.
     */
     property bool suppressed: false
+
+    /*!
+        \qmlproperty real ConfirmDialog::effectiveScale
+        \brief The effective visual scale of the dialog.
+
+        This value follows \c Revise.SettingsService.uiScale but is reduced
+        when necessary to keep the dialog within the available overlay area.
+        It is read-only.
+    */
+    readonly property real effectiveScale: {
+        const requestedScale = Math.max(0.01, Revise.SettingsService.uiScale)
+
+        const overlay = Overlay.overlay
+
+        if (!overlay || width <= 0 || height <= 0)
+            return requestedScale
+
+        const maxWidthScale = Math.max(0.01, (overlay.width - 32) / width)
+        const maxHeightScale = Math.max(0.01, (overlay.height - 32) / height)
+
+        return Math.min(requestedScale, maxWidthScale, maxHeightScale)
+    }
 
     /*!
         \qmlmethod void ConfirmDialog::requestOpen()
@@ -144,7 +170,13 @@ Dialog {
     }
 
     anchors.centerIn: Overlay.overlay
+    transformOrigin: Item.Center
+    margins: 16
+
     width: Math.min(400, Overlay.overlay ? Overlay.overlay.width * 0.9 : 400)
+
+    scale: effectiveScale
+
     modal: true
 
     padding: 0
@@ -160,10 +192,11 @@ Dialog {
             duration: 220
             easing.type: Easing.OutCubic
         }
+
         NumberAnimation {
             property: "scale"
-            from: 0.75
-            to: 1.0
+            from: root.effectiveScale * 0.75
+            to: root.effectiveScale
             duration: 280
             easing.type: Easing.OutBack
         }
@@ -172,8 +205,8 @@ Dialog {
     exit: Transition {
         NumberAnimation {
             property: "scale"
-            from: 1.0
-            to: 0.5
+            from: root.effectiveScale
+            to: root.effectiveScale * 0.5
             duration: 160
             easing.type: Easing.InQuint
         }
@@ -181,6 +214,7 @@ Dialog {
 
     Overlay.modal: Rectangle {
         color: Qt.rgba(0, 0, 0, 0.4)
+
         Behavior on opacity {
             NumberAnimation {
                 duration: 140
@@ -191,10 +225,8 @@ Dialog {
     background: Rectangle {
         radius: 12
         color: Revise.Theme.surfaceColor
-        layer.enabled: true
-        layer.effect: Revise.Shadow
-        {
-        }
+
+        layer.effect: Revise.Shadow {}
     }
 
     header: Item {
@@ -202,11 +234,14 @@ Dialog {
 
         Revise.Text {
             id: titleLabel
+
             anchors.fill: parent
             anchors.margins: 12
+
             text: root.titleText
             font.pixelSize: Revise.Theme.fontSizeMedium
             font.bold: true
+
             color: Revise.Theme.foregroundColor
             wrapMode: Text.WordWrap
         }
@@ -217,8 +252,10 @@ Dialog {
 
         Revise.Text {
             id: messageLabel
+
             anchors.fill: parent
             anchors.margins: 12
+
             text: root.messageText
             color: Revise.Theme.secondaryForegroundColor
             wrapMode: Text.WordWrap
@@ -244,9 +281,12 @@ Dialog {
 
                 Revise.LabeledCheckBox {
                     id: dontAskAgainCheckBox
+
                     Layout.fillWidth: true
+
                     text: qsTr("Больше не спрашивать")
                     color: Revise.Theme.secondaryForegroundColor
+
                     onChanged: function (checked) {
                         dontAskAgainCheckBox.checked = checked
                     }
