@@ -136,10 +136,13 @@ Item {
             // List of the cards
             ListView {
                 id: listView
+
                 model: Revise.CardsModel
                 spacing: 12
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
+                reuseItems: true
+                cacheBuffer: 900
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
