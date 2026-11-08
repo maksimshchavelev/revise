@@ -202,6 +202,23 @@ QVector<int> CardsModel::ids() {
 }
 
 
+void CardsModel::select_cards(const QVector<int>& ids) {
+    const QSet ids_set(ids.begin(), ids.end());
+
+    std::ranges::for_each(m_cards, [&, i = std::size_t{0}](auto& card) mutable {
+        if (ids_set.contains(card.id()) && !card.selected()) {
+            card.set_selected(true);
+
+            ++m_selected_count;
+            const QModelIndex idx = index(static_cast<int>(i));
+            emit              dataChanged(idx, idx, {SelectedRole});
+            emit              cardSelectionChanged(card.id(), true);
+        }
+        ++i;
+    });
+}
+
+
 int CardsModel::deck_id() const noexcept {
     return m_last_deck_id.load();
 }
@@ -260,9 +277,7 @@ void CardsModel::on_cards_removed(const QVector<core::Card>& cards) {
 
     QSet<int> ids_to_remove;
     ids_to_remove.reserve(cards.size());
-    std::ranges::for_each(cards, [&ids_to_remove](const core::Card& c) {
-        ids_to_remove.insert(c.id);
-    });
+    std::ranges::for_each(cards, [&ids_to_remove](const core::Card& c) { ids_to_remove.insert(c.id); });
 
     QVector<int> rows_to_remove;
     rows_to_remove.reserve(ids_to_remove.size());
@@ -307,9 +322,7 @@ void CardsModel::on_cards_updated(const QVector<core::Card>& cards) {
 
     QHash<int, const core::Card*> updates;
     updates.reserve(cards.size());
-    std::ranges::for_each(cards, [&updates](const core::Card& c) {
-        updates.insert(c.id, &c);
-    });
+    std::ranges::for_each(cards, [&updates](const core::Card& c) { updates.insert(c.id, &c); });
 
     QVector<int> rows_to_remove;
 
@@ -329,7 +342,7 @@ void CardsModel::on_cards_updated(const QVector<core::Card>& cards) {
             c.set_selected(was_selected);
 
             const QModelIndex idx = index(static_cast<int>(i));
-            emit dataChanged(idx, idx);
+            emit              dataChanged(idx, idx);
         }
         ++i;
     });

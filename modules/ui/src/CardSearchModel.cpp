@@ -2,10 +2,10 @@
 
 #include "CardSearchModel.hpp"
 #include "CardsModel.hpp" // for CardsModel::deck_id(), deckChanged, cardSelectionChanged
-#include <QThreadPool> // for QThreadPool
-#include <algorithm>   // for std::ranges::for_each
-#include <cstddef>     // for std::size_t
-#include <utility>     // for std::move
+#include <QThreadPool>    // for QThreadPool
+#include <algorithm>      // for std::ranges::for_each
+#include <cstddef>        // for std::size_t
+#include <utility>        // for std::move
 
 namespace ui {
 
@@ -73,6 +73,16 @@ QHash<int, QByteArray> CardSearchModel::roleNames() const {
 }
 
 
+void CardSearchModel::selectFoundCards() {
+    QVector<int> ids;
+    ids.reserve(m_cards.size());
+
+    std::ranges::for_each(m_cards, [&ids](const auto& card) mutable { ids.push_back(card.id()); });
+
+    m_cards_model.select_cards(ids);
+}
+
+
 QString CardSearchModel::search_front() const {
     return m_search_front;
 }
@@ -90,7 +100,7 @@ void CardSearchModel::set_search_front(QString front) {
 
 
 int CardSearchModel::found_cards_count() const noexcept {
-    return m_cards.size();
+    return static_cast<int>(m_cards.size());
 }
 
 
@@ -176,13 +186,9 @@ void CardSearchModel::on_cards_removed(const QVector<core::Card>& cards) {
 
     QSet<int> ids_to_remove;
     ids_to_remove.reserve(cards.size());
-    std::ranges::for_each(cards, [&ids_to_remove](const core::Card& c) {
-        ids_to_remove.insert(c.id);
-    });
+    std::ranges::for_each(cards, [&ids_to_remove](const core::Card& c) { ids_to_remove.insert(c.id); });
 
-    std::ranges::for_each(ids_to_remove, [this](const int id) {
-        m_selected_ids.remove(id);
-    });
+    std::ranges::for_each(ids_to_remove, [this](const int id) { m_selected_ids.remove(id); });
 
     if (m_cards.isEmpty()) {
         return;
@@ -222,9 +228,7 @@ void CardSearchModel::on_cards_updated(const QVector<core::Card>& cards) {
 
     QHash<int, const core::Card*> updates;
     updates.reserve(cards.size());
-    std::ranges::for_each(cards, [&updates](const core::Card& c) {
-        updates.insert(c.id, &c);
-    });
+    std::ranges::for_each(cards, [&updates](const core::Card& c) { updates.insert(c.id, &c); });
 
     QVector<int> rows_to_remove;
 
@@ -244,7 +248,7 @@ void CardSearchModel::on_cards_updated(const QVector<core::Card>& cards) {
             c.set_selected(was_selected);
 
             const QModelIndex idx = index(static_cast<int>(i));
-            emit dataChanged(idx, idx);
+            emit              dataChanged(idx, idx);
         }
         ++i;
     });
@@ -264,15 +268,15 @@ void CardSearchModel::on_cards_updated(const QVector<core::Card>& cards) {
 }
 
 
-void CardSearchModel::on_card_selection_changed(int cardId, bool selected) {
+void CardSearchModel::on_card_selection_changed(const int cardId, const bool selected) {
+    if (selected) {
+        m_selected_ids.insert(cardId);
+    } else {
+        m_selected_ids.remove(cardId);
+    }
+
     std::ranges::for_each(m_cards, [&, i = std::size_t{0}](auto& card) mutable {
         if (card.id() == cardId) {
-            if (selected) {
-                m_selected_ids.insert(cardId);
-            } else {
-                m_selected_ids.remove(cardId);
-            }
-
             const QModelIndex idx = index(static_cast<int>(i));
             emit              dataChanged(idx, idx, {SelectedRole});
         }

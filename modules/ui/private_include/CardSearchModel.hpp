@@ -64,9 +64,12 @@ class CardSearchModel final : public QAbstractListModel {
     /// @return Count of matching cards
     [[nodiscard]] int found_cards_count() const noexcept;
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    QHash<int, QByteArray> roleNames() const override;
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+
+    /// @brief Select only found cards via CardsModel
+    Q_INVOKABLE void selectFoundCards();
 
   signals:
     /// @brief Emitted when the search result or its count changes

@@ -489,23 +489,32 @@ Item {
                                 clickable: Revise.CardsModel.cardsCount > 0
 
                                 text: {
-                                    if (Revise.CardsModel.selectedCount === 0)
-                                        return qsTr("Выбрать всё")
+                                    if (Revise.CardsModel.selectedCount === 0) {
+                                        if (Revise.CardSearchModel.searchFront.length === 0)
+                                            return qsTr("Выбрать всё")
+                                        return qsTr("Выбрать найденное")
+                                    }
                                     return qsTr("Снять выделение")
                                 }
 
                                 Revise.HoverableTooltip {
                                     anchors.fill: parent
                                     text: {
-                                        if (Revise.CardsModel.selectedCount === 0)
-                                            return qsTr("Выбрать все карточки в колоде")
+                                        if (Revise.CardsModel.selectedCount === 0) {
+                                            if (Revise.CardSearchModel.searchFront.length === 0)
+                                                return qsTr("Выбрать все карточки в колоде")
+                                            return qsTr("Выбрать только найденные карточки")
+                                        }
                                         return qsTr("Снять выделение со всех карточек в колоде")
                                     }
                                 }
 
                                 onClicked: {
                                     if (Revise.CardsModel.selectedCount === 0) {
-                                        Revise.CardsModel.selectAll()
+                                        if (Revise.CardSearchModel.searchFront.length === 0)
+                                            Revise.CardsModel.selectAll()
+                                        else
+                                            Revise.CardSearchModel.selectFoundCards()
                                     } else {
                                         Revise.CardsModel.deselectAll()
                                     }

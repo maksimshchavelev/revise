@@ -82,6 +82,9 @@ class CardsModel final : public QAbstractListModel {
     /// @brief Get ID's of all cards in the deck
     Q_INVOKABLE QVector<int> ids();
 
+    /// @brief Select cards with provided ID's
+    void select_cards(const QVector<int>& ids);
+
     /// @brief Get the ID of the currently loaded deck
     /// @return Deck ID
     [[nodiscard]] int deck_id() const noexcept;
