@@ -251,11 +251,6 @@ Item {
                 }
 
                 Revise.KeyValue {
-                    key.text: qsTr("Флаги компилятора")
-                    value.text: Revise.BuildInfo.buildFlags
-                }
-
-                Revise.KeyValue {
                     key.text: qsTr("Версия Qt")
                     value.text: Revise.BuildInfo.buildQtVersion
                 }
