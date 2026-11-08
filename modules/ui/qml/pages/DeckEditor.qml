@@ -142,7 +142,7 @@ Item {
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
                 reuseItems: true
-                cacheBuffer: 900
+                cacheBuffer: listView.height * 2
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
