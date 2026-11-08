@@ -135,6 +135,8 @@ Dialog {
         \c onAccepted handler runs exactly as if the user had confirmed.
     */
     function requestOpen() {
+        dontAskAgain = suppressed
+
         if (suppressed)
             accepted()
         else
@@ -264,6 +266,4 @@ Dialog {
             }
         }
     }
-
-    onOpened: dontAskAgain = suppressed
 }
