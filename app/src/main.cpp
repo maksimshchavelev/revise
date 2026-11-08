@@ -1,9 +1,13 @@
 // Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "Launcher/Launcher.hpp" // for Launcher
+#include <QQuickWindow>          // for QQuickWindow
+#include <QSGRendererInterface>  // for QSGRendererInterface
 #include <QtWebView>             // for QtWebView::initialize()
 
 int main(int argc, char* argv[]) {
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+
 #ifndef Q_OS_ANDROID
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
 #endif
