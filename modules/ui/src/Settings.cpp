@@ -175,4 +175,19 @@ void Settings::set_ask_set_state_for_many_cards(const bool enabled) {
     emit askSetStateForManyCardsChanged();
 }
 
+
+bool Settings::ask_abort_learning() const {
+    return m_settings.ask_abort_learning();
+}
+
+
+void Settings::set_ask_abort_learning(const bool enabled) {
+    if (auto res = m_settings.set_ask_abort_learning(enabled); !res) {
+        qWarning() << res.error().message;
+        return;
+    }
+
+    emit askAbortLearningChanged();
+}
+
 } // namespace ui

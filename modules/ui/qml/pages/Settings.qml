@@ -151,6 +151,16 @@ Item {
                         Revise.SettingsService.askSetStateForManyCards = checked
                     }
                 }
+
+                // Ask about aborting learning
+                Revise.LabeledCheckBox {
+                    width: parent.width
+                    text: qsTr("Подтверждать прерывание обучения")
+                    checked: Revise.SettingsService.askAbortLearning
+                    onChanged: function(checked) {
+                        Revise.SettingsService.askAbortLearning = checked
+                    }
+                }
             }
 
             // Study algorithm settings

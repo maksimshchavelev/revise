@@ -34,8 +34,8 @@ Item {
                 background.color: "transparent"
                 size: 32
                 onClicked: {
-                    Revise.StudyService.abort()
-                    Revise.Router.navigate("home", {}, Revise.page.Page)
+                    Revise.StudyService.pause()
+                    abortLearningDialog.requestOpen()
                 }
             }
 
@@ -94,6 +94,23 @@ Item {
             onHardClicked: Revise.StudyService.answer(3.0)
             onBadClicked: Revise.StudyService.answer(5.0)
         }
+    }
+
+    Revise.ConfirmDialog {
+        id: abortLearningDialog
+
+        titleText: qsTr("Прервать обучение?")
+        messageText: qsTr("Если выйти сейчас, прогресс этой сессии будет потерян")
+        confirmButtonText: qsTr("Прервать")
+        suppressed: !Revise.SettingsService.askAbortLearning
+
+        onAccepted: {
+            Revise.StudyService.abort()
+            Revise.SettingsService.askAbortLearning = !dontAskAgain
+            Revise.Router.navigate("home", {}, Revise.page.Page)
+        }
+
+        onRejected: Revise.StudyService.resume()
     }
 
     function onEnter() {

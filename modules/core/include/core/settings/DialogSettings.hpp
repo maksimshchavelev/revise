@@ -53,6 +53,12 @@ class DialogSettings {
 
     /// @brief Specify whether to prompt the user when they want to set state for many cards
     virtual std::expected<void, SettingsError> set_ask_set_state_for_many_cards(bool enabled) = 0;
+
+    /// @brief Ask when user wants abort learning?
+    [[nodiscard]] virtual bool ask_abort_learning() const = 0;
+
+    /// @brief Specify whether to prompt the user when they want to abort learning
+    virtual std::expected<void, SettingsError> set_ask_abort_learning(bool enabled) = 0;
 };
 
 } // namespace core

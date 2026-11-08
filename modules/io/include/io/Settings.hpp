@@ -82,6 +82,12 @@ class Settings : public core::ISettings {
     /// @brief Specify whether to prompt the user when they want to set state for many cards
     std::expected<void, core::SettingsError> set_ask_set_state_for_many_cards(bool enabled) override;
 
+    /// @brief Ask when user wants abort learning?
+    [[nodiscard]] bool ask_abort_learning() const override;
+
+    /// @brief Specify whether to prompt the user when they want to abort learning
+    std::expected<void, core::SettingsError> set_ask_abort_learning(bool enabled) override;
+
   private:
     QSettings m_settings;
 };

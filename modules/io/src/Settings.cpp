@@ -153,4 +153,16 @@ std::expected<void, core::SettingsError> Settings::set_ask_set_state_for_many_ca
     return {};
 }
 
+
+bool Settings::ask_abort_learning() const {
+    return m_settings.value("dialogs_ask_abort_learning", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_ask_abort_learning(bool enabled) {
+    m_settings.setValue("dialogs_ask_abort_learning", enabled);
+    m_settings.sync();
+    return {};
+}
+
 } // namespace io

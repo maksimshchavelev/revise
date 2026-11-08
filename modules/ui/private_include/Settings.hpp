@@ -38,6 +38,8 @@ class Settings final : public QObject {
                    set_ask_set_difficulty_for_many_cards NOTIFY askSetDifficultyForManyCardsChanged FINAL)
     Q_PROPERTY(bool askSetStateForManyCards READ ask_set_state_for_many_cards WRITE set_ask_set_state_for_many_cards NOTIFY
                    askSetStateForManyCardsChanged FINAL)
+    Q_PROPERTY(bool askAbortLearning READ ask_abort_learning WRITE set_ask_abort_learning NOTIFY
+                   askAbortLearningChanged FINAL)
 
 
     explicit Settings(core::ISettings& settings, QObject* parent = nullptr);
@@ -59,6 +61,7 @@ class Settings final : public QObject {
     void askRemoveDeckChanged();
     void askSetDifficultyForManyCardsChanged();
     void askSetStateForManyCardsChanged();
+    void askAbortLearningChanged();
 
   private:
     // ----------------------- Study algorithm settings -----------------------
@@ -129,6 +132,12 @@ class Settings final : public QObject {
 
     /// @brief Specify whether to prompt the user when they want to set state for many cards
     void set_ask_set_state_for_many_cards(bool enabled);
+
+    /// @brief Ask when user wants to abort learning?
+    [[nodiscard]] bool ask_abort_learning() const;
+
+    /// @brief Specify whether to prompt the user when they want to abort learning
+    void set_ask_abort_learning(bool enabled);
 
     core::ISettings& m_settings;
 };
