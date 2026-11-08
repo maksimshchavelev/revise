@@ -17,6 +17,11 @@ import Revise as Revise
     each child is typically a \l Revise.KebabMenuButton. The popup opens
     with a short scale and opacity animation.
 
+    The popup is scaled according to
+    \c Revise.SettingsService.uiScale. Its effective scale is reduced
+    when necessary to ensure that the menu can fit within the enclosing
+    window. Scaling is performed relative to the top-left corner.
+
     The popup position is automatically adjusted when it would otherwise
     extend beyond the bounds of the application window. The window size
     is tracked through the \l windowWidth and \l windowHeight properties,
@@ -89,6 +94,46 @@ Item {
     property int windowHeight: Window.window ? Window.window.height : 0
 
     /*!
+        \qmlproperty real KebabMenu::effectiveScale
+        \brief The effective scale factor of the popup.
+
+        This property follows \c Revise.SettingsService.uiScale and is
+        reduced when necessary to ensure that the menu fits within the
+        enclosing window.
+
+        The calculation uses the implicit dimensions of the internal
+        layout rather than the popup dimensions to avoid binding loops.
+        This property is read-only.
+    */
+    readonly property real effectiveScale: {
+        const requestedScale = Math.max(
+            0.01,
+            Revise.SettingsService.uiScale
+        )
+
+        const menuWidth = layout.implicitWidth
+            + popup.leftPadding
+            + popup.rightPadding
+
+        const menuHeight = layout.implicitHeight
+            + popup.topPadding
+            + popup.bottomPadding
+
+        if (windowWidth <= 0 || windowHeight <= 0
+            || menuWidth <= 0 || menuHeight <= 0) {
+            return requestedScale
+        }
+
+        const maxWidthScale = windowWidth / menuWidth
+        const maxHeightScale = windowHeight / menuHeight
+
+        return Math.max(
+            0.01,
+            Math.min(requestedScale, maxWidthScale, maxHeightScale)
+        )
+    }
+
+    /*!
         \qmlsignal KebabMenu::closed()
         \brief Emitted after the popup has been closed via \l close().
 
@@ -103,7 +148,7 @@ Item {
 
         The popup is shown with a short scale and opacity animation.
         After opening, its position is not re-clamped automatically; call
-        \l open() again after moving the menu if clamping is required.
+        \l clampPosition() when clamping is required.
     */
     function open() {
         popup.open()
@@ -121,6 +166,38 @@ Item {
         root.closed()
     }
 
+    /*!
+        \qmlmethod void KebabMenu::clampPosition()
+        \brief Adjusts the popup position to keep it within the window.
+
+        The popup's origin is obtained using \c root.mapToItem().
+        Its scaled dimensions are used to determine whether the right
+        or bottom window boundaries would be exceeded.
+
+        The original positioning algorithm is preserved: the popup
+        is shifted by the amount of the overflow through its \c x
+        and \c y properties.
+    */
+    function clampPosition() {
+        let mapped = root.mapToItem(null, 0, 0)
+
+        let menuX = mapped.x
+            + popup.implicitWidth * effectiveScale
+            + popup.x
+
+        let menuY = mapped.y
+            + popup.implicitHeight * effectiveScale
+            + popup.y
+
+        if (menuX > windowWidth) {
+            popup.x -= menuX - windowWidth
+        }
+
+        if (menuY > windowHeight) {
+            popup.y -= menuY - windowHeight
+        }
+    }
+
     Popup {
         id: popup
 
@@ -128,7 +205,10 @@ Item {
         modal: false
         focus: true
         padding: 5
-        scale: opened ? 1.0 : 0.7
+
+        transformOrigin: Popup.TopLeft
+
+        scale: root.effectiveScale * (opened ? 1.0 : 0.7)
         opacity: opened ? 1.0 : 0
 
         background: Rectangle {
@@ -153,21 +233,6 @@ Item {
                 easing.type: Easing.InOutQuad
                 duration: 60
             }
-        }
-    }
-
-    function clampPosition() {
-        let mapped = root.mapToItem(null, 0, 0)
-
-        let menuX = mapped.x + popup.implicitWidth + popup.x
-        let menuY = mapped.y + popup.implicitHeight + popup.y
-
-        if (menuX > windowWidth) {
-            popup.x -= menuX - windowWidth
-        }
-
-        if (menuY > windowHeight) {
-            popup.y -= menuY - windowHeight
         }
     }
 }
