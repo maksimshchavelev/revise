@@ -59,7 +59,7 @@ Item {
                     elide: Text.ElideRight
                     color: Revise.Theme.foregroundColor
                     font.bold: true
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.Wrap
 
                     Revise.HoverableTooltip {
                         anchors.fill: parent
