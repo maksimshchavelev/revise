@@ -132,6 +132,10 @@ if (WIN32)
 
         COMMAND windeployqt --no-translations --qmldir dist/qml dist/apprevise.exe
 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:zlib>
+        ${CMAKE_BINARY_DIR}/dist
+
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         DEPENDS apprevise
         USES_TERMINAL

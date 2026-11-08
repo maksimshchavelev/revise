@@ -7,25 +7,46 @@ file(GLOB_RECURSE IO_SOURCES CONFIGURE_DEPENDS
 
 include(FetchContent)
 
+
+# zlib
+set(ZLIB_INSTALL OFF CACHE BOOL "" FORCE)
+
+FetchContent_Declare(
+        zlib
+        GIT_REPOSITORY https://github.com/madler/zlib.git
+        GIT_TAG        v1.4
+)
+FetchContent_MakeAvailable(zlib)
+
+if(NOT TARGET ZLIB::ZLIB)
+    add_library(ZLIB::ZLIB ALIAS zlibstatic)
+endif()
+
+set(ZLIB_LIBRARY    zlibstatic CACHE STRING "" FORCE)
+set(ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR}" CACHE PATH "" FORCE)
+
+
+# quazip
+set(QUAZIP_USE_QT_ZLIB OFF CACHE BOOL "" FORCE)
 set(QUAZIP_QT_MAJOR_VERSION 6 CACHE STRING "" FORCE)
 set(QUAZIP_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
 set(QUAZIP_ENABLE_TOOLS OFF CACHE BOOL "" FORCE)
 set(QUAZIP_INSTALL OFF CACHE BOOL "" FORCE)
 
-# quazip
 FetchContent_Declare(quazip
-    GIT_REPOSITORY https://github.com/stachenov/quazip.git
-    GIT_TAG v1.5
+        GIT_REPOSITORY https://github.com/stachenov/quazip.git
+        GIT_TAG v1.5
 )
 FetchContent_MakeAvailable(quazip)
 
+
+# zstd
 set(ZSTD_BUILD_INSTALL OFF CACHE BOOL "" FORCE)
 set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "" FORCE)
 set(ZSTD_BUILD_SHARED OFF CACHE BOOL "" FORCE)
 set(ZSTD_BUILD_STATIC ON CACHE BOOL "" FORCE)
 set(ZSTD_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
-# zstd
 FetchContent_Declare(
   zstd
   GIT_REPOSITORY https://github.com/facebook/zstd.git
