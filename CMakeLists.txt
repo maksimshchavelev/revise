@@ -105,10 +105,18 @@ add_custom_target(cppcheck
 
 # build appimage (for linux)
 if (UNIX AND NOT APPLE)
+    get_target_property(QMAKE_EXECUTABLE Qt6::qmake IMPORTED_LOCATION)
+
     add_custom_target(appimage
         COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR}
 
-        COMMAND ${LINUXDEPLOYQT} AppDir/usr/share/applications/revise.desktop -qmldir=AppDir/qml -appimage -verbose=1 -unsupported-allow-new-glibc
+        COMMAND ${LINUXDEPLOYQT}
+            AppDir/usr/share/applications/revise.desktop
+            -qmldir=AppDir/qml
+            -appimage
+            -verbose=1
+            -unsupported-allow-new-glibc
+            -qmake=${QMAKE_EXECUTABLE}
 
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         DEPENDS apprevise
