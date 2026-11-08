@@ -244,6 +244,8 @@ Item {
                 spacing: 4
                 clip: true
 
+                background: Item {}
+
                 // Deck properties
                 Revise.TabButton {
                     width: implicitWidth
