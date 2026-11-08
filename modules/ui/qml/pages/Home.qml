@@ -47,7 +47,8 @@ Item {
         cellHeight: 220
         rightMargin: 6
 
-        ScrollBar.vertical: Revise.Scrollbar {
+        ScrollBar.vertical: Revise.Scrollbar
+        {
             visible: gridView.contentHeight > gridView.height
         }
 
@@ -122,11 +123,31 @@ Item {
         scale: Revise.SettingsService.uiScale
         transformOrigin: Item.TopRight
 
-        background: Revise.Background {}
+        background: Revise.Background{}
 
         Overlay.modal: Rectangle {
             color: Qt.rgba(0, 0, 0, 0.4)
             anchors.fill: parent
+        }
+
+        enter: Transition {
+            NumberAnimation {
+                property: "position"
+                from: 0.0
+                to: 1.0
+                duration: 280
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        exit: Transition {
+            NumberAnimation {
+                property: "position"
+                from: 1.0
+                to: 0.0
+                duration: 220
+                easing.type: Easing.InCubic
+            }
         }
 
         ColumnLayout {
@@ -141,7 +162,9 @@ Item {
                 contentWidth: width
                 contentHeight: deckCreateTab.implicitHeight
 
-                ScrollBar.vertical: Revise.Scrollbar {}
+                ScrollBar.vertical: Revise.Scrollbar
+                {
+                }
 
                 Column {
                     id: deckCreateTab
