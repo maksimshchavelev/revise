@@ -19,6 +19,12 @@ import Revise as Revise
     initial keyboard focus, so pressing Enter activates it as soon as the
     dialog opens.
 
+    The dialog is intended to be driven through \l requestOpen() instead of
+    \l open(). When \l suppressed is \c true, \l requestOpen() emits
+    \l accepted without showing the dialog, which lets callers skip the
+    prompt based on a persistent setting. The \l dontAskAgain checkbox is
+    initialized from \l suppressed each time the dialog opens.
+
     The dialog fades in and scales up slightly on open, and collapses by
     scaling down on close.
 
@@ -26,12 +32,27 @@ import Revise as Revise
 
     \qml
     Revise.ConfirmDialog {
-        titleText: qsTr("Удалить колоду?")
-        messageText: qsTr("Это действие нельзя отменить.")
-        confirmButtonText: qsTr("Удалить")
-        onAccepted: Revise.DeckService.remove_deck(deckId)
-        onDontAskAgainChanged: (checked) => settings.skipDeleteConfirmation = checked
+        id: deleteDialog
+
+        titleText: qsTr("Delete deck?")
+        messageText: qsTr("This action cannot be undone.")
+        confirmButtonText: qsTr("Delete")
+
+        suppressed: !Revise.SettingsService.askRemoveDeck
+
+        onOpened: dontAskAgain = suppressed
+
+        onAccepted: {
+            Revise.SettingsService.askRemoveDeck = !dontAskAgain
+            Revise.DeckService.remove_deck(deckId)
+        }
     }
+    \endqml
+
+    Open the dialog through \l requestOpen():
+
+    \qml
+    deleteDialog.requestOpen()
     \endqml
 */
 Dialog {
@@ -73,24 +94,52 @@ Dialog {
     property string cancelButtonText: qsTr("Отмена")
 
     /*!
-        \qmlproperty bool ConfirmDialog::dontAskAgainValue
+        \qmlproperty bool ConfirmDialog::dontAskAgain
         \brief Whether the "don't ask again" checkbox is checked.
 
         This property is an alias to the internal
-        \l {Revise.LabeledCheckBox::checked}{Revise.LabeledCheckBox.checked},
-        so its state can be read when the user confirms the dialog.
+        \l {Revise.LabeledCheckBox::checked}{Revise.LabeledCheckBox.checked}.
+        It is initialized from \l suppressed when the dialog opens, and its
+        value can be read in the \l accepted handler to persist the user's
+        choice. ConfirmDialog does not emit a signal when the checkbox is
+        toggled; consumers should read this property from \c onAccepted
+        instead.
+
+        The default value is \c false.
     */
-    property alias dontAskAgainValue: dontAskAgainCheckBox.checked
+    property alias dontAskAgain: dontAskAgainCheckBox.checked
 
     /*!
-        \qmlsignal ConfirmDialog::dontAskAgainChanged(bool checked)
-        \brief Emitted when the "don't ask again" checkbox is toggled.
+        \qmlproperty bool ConfirmDialog::suppressed
+        \brief Whether the prompt should be skipped entirely.
 
-        The \a checked argument contains the new state of the checkbox. The
-        signal is forwarded from the internal
-        \l {Revise.LabeledCheckBox::changed}{Revise.LabeledCheckBox.changed}.
+        When this property is \c true, \l requestOpen() emits \l accepted
+        without showing the dialog. When it is \c false, \l requestOpen()
+        opens the dialog normally. Typically bound to the inverse of a
+        persistent "ask before" setting, and copied into \l dontAskAgain
+        when the dialog opens.
+
+        The default value is \c false.
     */
-    signal dontAskAgainChanged(bool checked);
+    property bool suppressed: false
+
+    /*!
+        \qmlmethod void ConfirmDialog::requestOpen()
+        \brief Opens the dialog, or emits \l accepted immediately if
+        \l suppressed is \c true.
+
+        Use this method instead of \l open() when the dialog is triggered by
+        a user action and the prompt may have been suppressed by a
+        persistent setting. When \l suppressed is \c true, the dialog is not
+        shown and \l accepted is emitted directly, so the caller's
+        \c onAccepted handler runs exactly as if the user had confirmed.
+    */
+    function requestOpen() {
+        if (suppressed)
+            accepted()
+        else
+            open()
+    }
 
     anchors.centerIn: Overlay.overlay
     width: Math.min(400, Overlay.overlay ? Overlay.overlay.width * 0.9 : 400)
@@ -131,7 +180,9 @@ Dialog {
     Overlay.modal: Rectangle {
         color: Qt.rgba(0, 0, 0, 0.4)
         Behavior on opacity {
-            NumberAnimation { duration: 140 }
+            NumberAnimation {
+                duration: 140
+            }
         }
     }
 
@@ -139,7 +190,9 @@ Dialog {
         radius: 12
         color: Revise.Theme.surfaceColor
         layer.enabled: true
-        layer.effect: Revise.Shadow {}
+        layer.effect: Revise.Shadow
+        {
+        }
     }
 
     header: Item {
@@ -192,8 +245,8 @@ Dialog {
                     Layout.fillWidth: true
                     text: qsTr("Больше не спрашивать")
                     color: Revise.Theme.secondaryForegroundColor
-                    onChanged: function(checked) {
-                        root.dontAskAgainChanged(checked);
+                    onChanged: function (checked) {
+                        dontAskAgainCheckBox.checked = checked
                     }
                 }
 
@@ -211,4 +264,6 @@ Dialog {
             }
         }
     }
+
+    onOpened: dontAskAgain = suppressed
 }
