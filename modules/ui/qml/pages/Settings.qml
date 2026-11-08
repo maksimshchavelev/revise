@@ -67,15 +67,88 @@ Item {
                 }
 
                 // Show notification about early access
-                Revise.SettingsRow {
-                    visible: Revise.BuildInfo.isBetaBuild
+                Revise.LabeledCheckBox {
+                    width: parent.width
                     text: qsTr("Уведомлять о раннем доступе")
+                    checked: Revise.SettingsService.notifyAboutEarlyAccess
+                    onChanged: function(checked) {
+                        Revise.SettingsService.notifyAboutEarlyAccess = checked
+                    }
+                }
+            }
 
-                    Revise.Switch {
-                        checked: Revise.SettingsService.notifyAboutEarlyAccess
-                        onToggled: function(state) {
-                            Revise.SettingsService.notifyAboutEarlyAccess = state
-                        }
+            Revise.SettingsPanel {
+                width: parent.width
+                header.icon.source: "qrc:/res/img/dialog.svg"
+                header.label.text: qsTr("Диалоговые окна")
+
+                // Ask about removing one card
+                Revise.LabeledCheckBox {
+                    width: parent.width
+                    text: qsTr("Подтверждать удаление карточки")
+                    checked: Revise.SettingsService.askRemoveOneCard
+                    onChanged: function(checked) {
+                        Revise.SettingsService.askRemoveOneCard = checked
+                    }
+                }
+
+                // Ask about removing many cards
+                Revise.LabeledCheckBox {
+                    width: parent.width
+                    text: qsTr("Подтверждать удаление нескольких карточек")
+                    checked: Revise.SettingsService.askRemoveManyCards
+                    onChanged: function(checked) {
+                        Revise.SettingsService.askRemoveManyCards = checked
+                    }
+                }
+
+                // Ask about relearning one card
+                Revise.LabeledCheckBox {
+                    width: parent.width
+                    text: qsTr("Подтверждать сброс прогресса обучения для одной карточки")
+                    checked: Revise.SettingsService.askRelearnOneCard
+                    onChanged: function(checked) {
+                        Revise.SettingsService.askRelearnOneCard = checked
+                    }
+                }
+
+                // Ask about relearning many cards
+                Revise.LabeledCheckBox {
+                    width: parent.width
+                    text: qsTr("Подтверждать сброс прогресса обучения для нескольких карточек")
+                    checked: Revise.SettingsService.askRelearnManyCards
+                    onChanged: function(checked) {
+                        Revise.SettingsService.askRelearnManyCards = checked
+                    }
+                }
+
+                // Ask about removing a deck
+                Revise.LabeledCheckBox {
+                    width: parent.width
+                    text: qsTr("Подтверждать удаление колоды")
+                    checked: Revise.SettingsService.askRemoveDeck
+                    onChanged: function(checked) {
+                        Revise.SettingsService.askRemoveDeck = checked
+                    }
+                }
+
+                // Ask about set difficulty to many cards
+                Revise.LabeledCheckBox {
+                    width: parent.width
+                    text: qsTr("Подтверждать пакетное изменение сложности карточек")
+                    checked: Revise.SettingsService.askSetDifficultyForManyCards
+                    onChanged: function(checked) {
+                        Revise.SettingsService.askSetDifficultyForManyCards = checked
+                    }
+                }
+
+                // Ask about set state to many cards
+                Revise.LabeledCheckBox {
+                    width: parent.width
+                    text: qsTr("Подтверждать пакетное изменение статуса карточек")
+                    checked: Revise.SettingsService.askSetStateForManyCards
+                    onChanged: function(checked) {
+                        Revise.SettingsService.askSetStateForManyCards = checked
                     }
                 }
             }

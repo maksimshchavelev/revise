@@ -69,4 +69,88 @@ std::expected<void, core::SettingsError> Settings::set_notify_about_early_access
     return {};
 }
 
+
+bool Settings::ask_remove_one_card() const {
+    return m_settings.value("dialogs_ask_remove_one_card", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_ask_remove_one_card(const bool enabled) {
+    m_settings.setValue("dialogs_ask_remove_one_card", enabled);
+    m_settings.sync();
+    return {};
+}
+
+
+bool Settings::ask_remove_many_cards() const {
+    return m_settings.value("dialogs_ask_remove_many_cards", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_ask_remove_many_cards(const bool enabled) {
+    m_settings.setValue("dialogs_ask_remove_many_cards", enabled);
+    m_settings.sync();
+    return {};
+}
+
+
+bool Settings::ask_relearn_one_card() const {
+    return m_settings.value("dialogs_ask_relearn_one_card", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_ask_relearn_one_card(const bool enabled) {
+    m_settings.setValue("dialogs_ask_relearn_one_card", enabled);
+    m_settings.sync();
+    return {};
+}
+
+
+bool Settings::ask_relearn_many_cards() const {
+    return m_settings.value("dialogs_ask_relearn_many_cards", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_ask_relearn_many_cards(const bool enabled) {
+    m_settings.setValue("dialogs_ask_relearn_many_cards", enabled);
+    m_settings.sync();
+    return {};
+}
+
+
+bool Settings::ask_remove_deck() const {
+    return m_settings.value("dialogs_ask_remove_deck", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_ask_remove_deck(const bool enabled) {
+    m_settings.setValue("dialogs_ask_remove_deck", enabled);
+    m_settings.sync();
+    return {};
+}
+
+
+bool Settings::ask_set_difficulty_for_many_cards() const {
+    return m_settings.value("dialogs_ask_set_difficulty_for_many_cards", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_ask_set_difficulty_for_many_cards(const bool enabled) {
+    m_settings.setValue("dialogs_ask_set_difficulty_for_many_cards", enabled);
+    m_settings.sync();
+    return {};
+}
+
+
+bool Settings::ask_set_state_for_many_cards() const {
+    return m_settings.value("dialogs_ask_set_state_for_many_cards", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_ask_set_state_for_many_cards(const bool enabled) {
+    m_settings.setValue("dialogs_ask_set_state_for_many_cards", enabled);
+    m_settings.sync();
+    return {};
+}
+
 } // namespace io

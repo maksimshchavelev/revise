@@ -99,7 +99,8 @@ Item {
                     }
 
                     onRemoveClicked: {
-                        Revise.DeckService.remove_deck(deckId)
+                        removeDeckDialog.deckId = deckId
+                        removeDeckDialog.requestOpen();
                     }
 
                     onExportClicked: {
@@ -309,5 +310,22 @@ Item {
     Shortcut {
         sequence: "Ctrl+I"
         onActivated: importDialog.open()
+    }
+
+    // ------------------- Action Dialogs -------------------
+    Revise.ConfirmDialog {
+        id: removeDeckDialog
+
+        property int deckId
+
+        titleText: qsTr("Удалить колоду?")
+        messageText: qsTr("Колода будет удалена без возможности восстановления")
+        confirmButtonText: qsTr("Удалить")
+        suppressed: !Revise.SettingsService.askRemoveDeck
+
+        onAccepted: {
+            Revise.DeckService.remove_deck(deckId)
+            Revise.SettingsService.askRemoveDeck = !dontAskAgain
+        }
     }
 }
