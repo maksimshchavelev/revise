@@ -119,11 +119,14 @@ Item {
         width: 350
         height: root.height
         edge: Qt.RightEdge
+        scale: Revise.SettingsService.uiScale
+        transformOrigin: Item.TopRight
 
         background: Revise.Background {}
 
         Overlay.modal: Rectangle {
             color: Qt.rgba(0, 0, 0, 0.4)
+            anchors.fill: parent
         }
 
         ColumnLayout {
