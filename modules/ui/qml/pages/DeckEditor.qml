@@ -227,6 +227,7 @@ Item {
                 Revise.LoadingScreen {
                     id: cardsLoadingScreen
                     anchors.fill: parent
+                    thresholdTime: 15
                 }
             }
         }
