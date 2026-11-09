@@ -230,42 +230,42 @@ Item {
                 header.icon.source: "qrc:/res/img/build.svg"
                 header.label.text: qsTr("Информация о сборке")
 
-                Revise.KeyValue {
-                    key.text: qsTr("Имя компилятора")
+                Revise.CopyableKeyValue {
+                    key.text: qsTr("Название компилятора")
                     value.text: Revise.BuildInfo.compilerId
                 }
 
-                Revise.KeyValue {
+                Revise.CopyableKeyValue {
                     key.text: qsTr("Версия компилятора")
                     value.text: Revise.BuildInfo.compilerVersion
                 }
 
-                Revise.KeyValue {
+                Revise.CopyableKeyValue {
                     key.text: qsTr("Целевая архитектура")
                     value.text: Revise.BuildInfo.targetArch
                 }
 
-                Revise.KeyValue {
+                Revise.CopyableKeyValue {
                     key.text: qsTr("Имя хост-системы")
                     value.text: Revise.BuildInfo.buildHostSystem
                 }
 
-                Revise.KeyValue {
+                Revise.CopyableKeyValue {
                     key.text: qsTr("Хост-архитектура")
                     value.text: Revise.BuildInfo.hostArch
                 }
 
-                Revise.KeyValue {
+                Revise.CopyableKeyValue {
                     key.text: qsTr("Тип сборки")
                     value.text: Revise.BuildInfo.buildType
                 }
 
-                Revise.KeyValue {
+                Revise.CopyableKeyValue {
                     key.text: qsTr("Версия Qt")
                     value.text: Revise.BuildInfo.buildQtVersion
                 }
 
-                Revise.KeyValue {
+                Revise.CopyableKeyValue {
                     key.text: qsTr("Хэш коммита в Git")
                     value.text: Revise.BuildInfo.buildGitCommitHash
                 }

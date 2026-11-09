@@ -95,7 +95,6 @@ Row {
             ? root.keyWidth
             : Math.max(0, root.width - valueText.width)
         color: Revise.Theme.foregroundColor
-        elide: Text.ElideRight
     }
 
     Revise.CopyableText {
