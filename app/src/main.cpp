@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
     QtWebView::initialize();
 
     QGuiApplication app(argc, argv);
+    QGuiApplication::setWindowIcon(QIcon{":/res/img/icon.png"});
 
     revise::Launcher launcher(app);
     return launcher.run();
