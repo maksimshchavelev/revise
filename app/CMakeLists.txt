@@ -6,7 +6,11 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 
 qt_standard_project_setup(REQUIRES 6.8)
 
-qt_add_executable(apprevise ${SOURCES})
+if (WIN32)
+    qt_add_executable(apprevise ${SOURCES} "${CMAKE_SOURCE_DIR}/deploy/windows/revise.rc")
+else()
+    qt_add_executable(apprevise ${SOURCES})
+endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_link_libraries(apprevise PRIVATE

@@ -128,6 +128,8 @@ endif()
 
 # build portable
 if (WIN32)
+    enable_language("RC")
+
     add_custom_target(portable
         COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR}
 
