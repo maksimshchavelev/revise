@@ -49,20 +49,23 @@ Item {
                 Revise.SettingsRow {
                     text: qsTr("Масштаб интерфейса")
 
-                    Revise.ValueSlider {
-                        id: uiScaleSlider
+                    Row {
+                        spacing: 8
 
-                        label.text: `${value.toFixed(0)}%`
-                        slider.from: 70
-                        slider.to: 130
-                        slider.stepSize: 5
+                        Revise.ValueSlider {
+                            id: uiScaleSlider
 
-                        Binding on value {
+                            label.text: `${value.toFixed(0)}%`
+                            slider.from: 70
+                            slider.to: 130
+                            slider.stepSize: 5
                             value: Revise.SettingsService.uiScale * 100
-                            when: !uiScaleSlider.pressed
                         }
 
-                        onMoved: Revise.SettingsService.uiScale = value / 100
+                        Revise.Button {
+                            text: qsTr("Применить")
+                            onClicked: Revise.SettingsService.uiScale = uiScaleSlider.value / 100
+                        }
                     }
                 }
 
