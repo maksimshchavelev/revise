@@ -57,10 +57,8 @@ WebView {
 
         The value is forwarded to the base document when the card is shown
         and re-applied on every \l {CardView::show}{show()} call.
-
-        The default value is \l {Revise.Theme::fontSizeMedium}{Revise.Theme.fontSizeMedium}.
     */
-    property int fontSize: Revise.Theme.fontSizeMedium
+    property int fontSize: (Revise.Theme.fontSizeMedium + Revise.Theme.fontSizeBig) / 2
 
     /*!
         \qmlproperty color CardView::textColor
