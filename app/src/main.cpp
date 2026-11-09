@@ -6,9 +6,8 @@
 #include <QtWebView>             // for QtWebView::initialize()
 
 int main(int argc, char* argv[]) {
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
-
 #ifndef Q_OS_ANDROID
+    qputenv("QT_WEBVIEW_PLUGIN", "webengine");
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
 #endif
 
