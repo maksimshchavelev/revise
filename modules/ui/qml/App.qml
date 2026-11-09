@@ -105,8 +105,9 @@ ApplicationWindow {
     Revise.Toast {
         id: toast
 
-        x: appWindow.width - toast.width - 5
-        y: 10
+        scale: Revise.SettingsService.uiScale
+        transformOrigin: Item.TopRight
+        y: 12
 
         duration: 4000
         onClosed: Revise.ToastService.closed()
