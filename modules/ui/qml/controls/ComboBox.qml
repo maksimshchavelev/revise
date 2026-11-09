@@ -1,7 +1,7 @@
 // ComboBox.qml
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Basic
 import Revise as Revise
 
 /*!
@@ -135,6 +135,12 @@ ComboBox {
         }
     }
 
+    indicator: Revise.Text {
+        x: root.width - width - root.rightPadding
+        y: root.topPadding + (root.availableHeight - height) / 2
+        text: "▼"
+    }
+
     popup: Popup {
         y: root.height
         width: root.width
@@ -148,9 +154,17 @@ ComboBox {
             model: root.delegateModel
             currentIndex: root.highlightedIndex
             boundsBehavior: ListView.StopAtBounds
+
             ScrollBar.vertical: Revise.Scrollbar {
                 backgroundItem.color: Color.lighter(Revise.Theme.surfaceContainerColor, 1.2)
                 sliderItem.color: Revise.Theme.primaryColor
+            }
+
+            transform: Scale {
+                origin.x: 0
+                origin.y: 0
+                xScale: Revise.SettingsService.uiScale
+                yScale: Revise.SettingsService.uiScale
             }
         }
 
@@ -160,6 +174,13 @@ ComboBox {
             border.width: 1
             border.color: Color.lighter(Revise.Theme.surfaceContainerColor, 1.2)
             layer.effect: Revise.Shadow{}
+
+            transform: Scale {
+                origin.x: 0
+                origin.y: 0
+                xScale: Revise.SettingsService.uiScale
+                yScale: Revise.SettingsService.uiScale
+            }
         }
 
         enter: Transition {
