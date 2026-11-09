@@ -1,4 +1,4 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
@@ -44,7 +44,8 @@ class UI_EXPORT LoadingScreen final : public QObject {
     std::atomic_bool m_visible{false}; ///< Is loading screen visible
     QString          m_description;    ///< What's loading now?
 
-    mutable QMutex m_mutex;
+    mutable QMutex m_visible_mutex;     ///< A mutex for visible field
+    mutable QMutex m_description_mutex; ///< A mutex for description field
 };
 
 } // namespace ui
