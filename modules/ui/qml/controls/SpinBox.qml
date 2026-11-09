@@ -55,7 +55,7 @@ SpinBox {
         anchors.margins: 5
         text: root.displayText
         font: root.font
-        color: Revise.Theme.textColor
+        color: Revise.Theme.foregroundColor
         readOnly: !root.editable
         validator: root.validator
         inputMethodHints: root.inputMethodHints

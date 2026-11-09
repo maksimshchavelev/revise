@@ -300,7 +300,7 @@ Item {
                     id: menuButton
                     size: 24
                     icon.source: "qrc:/res/img/menu.svg"
-                    icon.color: Revise.Theme.textColorDark
+                    icon.color: Revise.Theme.secondaryForegroundColor
                     background.color: "transparent"
                     onClicked: {
                         kebabMenu.x = menuButton.x - kebabMenu.implicitWidth - 20

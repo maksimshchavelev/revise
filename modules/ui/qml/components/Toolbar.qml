@@ -87,7 +87,7 @@ Item {
         Revise.VerticalSpacer {}
 
         Revise.Text {
-            color: Revise.Theme.textColorDark
+            color: Revise.Theme.secondaryForegroundColor
             font.pixelSize: Revise.Theme.fontSizeSmall
             text: {
                 if (Revise.BuildInfo.isBetaBuild)

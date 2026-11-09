@@ -87,7 +87,7 @@ Item {
 
         Revise.Button {
             text: qsTr("Плохо")
-            color: Revise.Theme.trainingBarWrong
+            color: Revise.Theme.red
             backgroundItem.color: "white"
             backgroundItem.opacity: 0.05
             font.bold: true
@@ -98,7 +98,7 @@ Item {
 
         Revise.Button {
             text: qsTr("Трудно")
-            color: Revise.Theme.trainingBarHard
+            color: Revise.Theme.foregroundColor
             backgroundItem.color: "white"
             backgroundItem.opacity: 0.05
             font.bold: true
@@ -109,7 +109,7 @@ Item {
 
         Revise.Button {
             text: qsTr("Сойдет")
-            color: Revise.Theme.trainingBarNormal
+            color: Revise.Theme.blue
             backgroundItem.color: "white"
             backgroundItem.opacity: 0.05
             font.bold: true
@@ -120,7 +120,7 @@ Item {
 
         Revise.Button {
             text: qsTr("Легко")
-            color: Revise.Theme.trainingBarEasy
+            color: Revise.Theme.green
             backgroundItem.color: "white"
             backgroundItem.opacity: 0.05
             font.bold: true

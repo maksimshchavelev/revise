@@ -15,12 +15,12 @@ Popup {
 
     background: Rectangle {
         radius: root.height * 0.35
-        color: Revise.Theme.background
+        color: Color.darker(Revise.Theme.backgroundColor, 3)
     }
 
     Revise.Text {
         text: root.text
-        wrapMode: Text.WordWrap
+        wrapMode: Text.Wrap
         elide: Text.ElideRight
         maximumLineCount: 10
         font.pixelSize: Revise.Theme.fontSizeSmall

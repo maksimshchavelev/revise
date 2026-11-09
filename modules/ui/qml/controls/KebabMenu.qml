@@ -213,7 +213,7 @@ Item {
 
         background: Rectangle {
             radius: 10
-            color: Revise.Theme.background
+            color: Color.darker(Revise.Theme.backgroundColor, 3)
         }
 
         ColumnLayout {

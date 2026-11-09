@@ -54,7 +54,7 @@ Rectangle {
         horizontalAlignment: Revise.Text.AlignLeft
         font: root.font
         onTextChanged: root.valid = root.isValid()
-        color: Revise.Theme.textColor
+        color: Revise.Theme.foregroundColor
         readOnly: !root.editable
         clip: true
         enabled: false

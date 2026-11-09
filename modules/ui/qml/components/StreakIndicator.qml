@@ -28,7 +28,7 @@ Item {
             text: streak
             font.pixelSize: Revise.Theme.fontSizeBig
             font.bold: true
-            color: root.updatedToday ? Revise.Theme.streakUpdatedTextColor : Revise.Theme.textColorDark
+            color: root.updatedToday ? Revise.Theme.streakUpdatedTextColor : Revise.Theme.secondaryForegroundColor
         }
     }
 }
