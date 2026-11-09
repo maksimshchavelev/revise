@@ -61,6 +61,10 @@ Revise.Panel {
     implicitWidth: column.childrenRect.width + root.padding * 2
     implicitHeight: column.childrenRect.height + root.padding * 2
 
+    TapHandler {
+        onTapped: root.forceActiveFocus()
+    }
+
     Flickable {
         id: flickable
         anchors.fill: parent
