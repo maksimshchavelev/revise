@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(REVISE_BETA_BUILD "Is the Revise build an early access beta build?" FALSE)
+option(REVISE_WIN32_EXECUTABLE "Build Revise on Windows as Win32 executable?" TRUE)
 
 # Get hash of git last commit
 find_package(Git QUIET)
