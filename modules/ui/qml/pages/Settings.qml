@@ -180,17 +180,10 @@ Item {
                         id: maxIntervalSpinBox
 
                         width: 180
-                        Layout.fillWidth: true
                         from: 1
                         to: 365
 
-                        Binding on value {
-                            value: Revise.SettingsService.maxInterval
-                            when: !maxIntervalSpinBox.activeFocus
-                                && !maxIntervalSpinBox.up.pressed
-                                && !maxIntervalSpinBox.down.pressed
-                        }
-
+                        value: Revise.SettingsService.maxInterval
                         onValueModified: Revise.SettingsService.maxInterval = value
                     }
 
