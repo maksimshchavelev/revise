@@ -38,7 +38,10 @@ ApplicationWindow {
 
     Revise.LoadingScreen {
         id: screen
-        anchors.fill: parent
+        width: appWindow.width / Revise.SettingsService.uiScale
+        height: appWindow.height / Revise.SettingsService.uiScale
+        transformOrigin: Item.TopLeft
+        scale: Revise.SettingsService.uiScale
         description: Revise.LoadingScreenService.description
     }
 
