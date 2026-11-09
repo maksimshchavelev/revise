@@ -219,11 +219,15 @@ Item {
                             Revise.SpinBox {
                                 id: deckTimeLimit
 
-                                minimum: 0
-                                maximum: 3600
+                                from: 0
+                                to: 3600
                                 editable: limitTime.checked
-                                placeholder: qsTr("От 0 до 3600")
                                 value: 0
+                            }
+
+                            Revise.HoverableTooltip {
+                                anchors.fill: parent
+                                text: qsTr("От 0 до 3600")
                             }
                         }
 
@@ -234,10 +238,14 @@ Item {
                             Revise.SpinBox {
                                 id: deckNewLimit
 
-                                minimum: 1
-                                maximum: 1000
-                                placeholder: qsTr("От 1 до 1000")
+                                from: 1
+                                to: 1000
                                 value: 30
+
+                                Revise.HoverableTooltip {
+                                    anchors.fill: parent
+                                    text: qsTr("От 1 до 1000")
+                                }
                             }
                         }
 
@@ -248,10 +256,14 @@ Item {
                             Revise.SpinBox {
                                 id: deckReviewLimit
 
-                                minimum: 1
-                                maximum: 1000
-                                placeholder: qsTr("От 1 до 1000")
+                                from: 1
+                                to: 1000
                                 value: 30
+
+                                Revise.HoverableTooltip {
+                                    anchors.fill: parent
+                                    text: qsTr("От 1 до 1000")
+                                }
                             }
                         }
 
@@ -262,10 +274,14 @@ Item {
                             Revise.SpinBox {
                                 id: deckIncorrectLimit
 
-                                minimum: 1
-                                maximum: 1000
-                                placeholder: qsTr("От 1 до 1000")
+                                from: 1
+                                to: 1000
                                 value: 30
+
+                                Revise.HoverableTooltip {
+                                    anchors.fill: parent
+                                    text: qsTr("От 1 до 1000")
+                                }
                             }
                         }
                     }

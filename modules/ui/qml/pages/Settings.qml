@@ -178,8 +178,8 @@ Item {
 
                         width: 180
                         Layout.fillWidth: true
-                        minimum: 1
-                        maximum: 365
+                        from: 1
+                        to: 365
 
                         Binding on value {
                             value: Revise.SettingsService.maxInterval
@@ -193,7 +193,7 @@ Item {
 
                     Revise.HoverableTooltip {
                         anchors.fill: parent
-                        text: qsTr("Максимальный интервал повторения какой-либо карточки")
+                        text: qsTr("Максимальный интервал повторения какой-либо карточки от 1 до 365")
                     }
                 }
 
