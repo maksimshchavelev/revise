@@ -49,7 +49,7 @@ Item {
                 Revise.SettingsRow {
                     text: qsTr("Масштаб интерфейса")
 
-                    Row {
+                    control: Row {
                         spacing: 8
 
                         Revise.ValueSlider {
@@ -71,6 +71,7 @@ Item {
 
                 // Show notification about early access
                 Revise.LabeledCheckBox {
+                    visible: Revise.BuildInfo.isBetaBuild
                     width: parent.width
                     text: qsTr("Уведомлять о раннем доступе")
                     checked: Revise.SettingsService.notifyAboutEarlyAccess
@@ -78,8 +79,31 @@ Item {
                         Revise.SettingsService.notifyAboutEarlyAccess = checked
                     }
                 }
+
+                // Notify about too old android
+                Revise.LabeledCheckBox {
+                    visible: Revise.BuildInfo.isMobileBuild
+                    width: parent.width
+                    text: qsTr("Предупреждать о слишком старом Android (12 и ниже)")
+                    checked: Revise.SettingsService.notifyAboutTooOldAndroid
+                    onChanged: function(checked) {
+                        Revise.SettingsService.notifyAboutTooOldAndroid = checked
+                    }
+                }
+
+                // Use mobile UI?
+                Revise.LabeledCheckBox {
+                    id: useMobileUiCheckBox
+                    visible: Revise.BuildInfo.isMobileBuild
+                    width: parent.width
+                    text: qsTr("Использовать мобильный интерфейс")
+                    checked: Revise.SettingsService.useMobileUi
+                    onChanged: useMobileUiDialog.requestOpen()
+                }
             }
 
+
+            // Dialogs settings
             Revise.SettingsPanel {
                 width: parent.width
                 header.icon.source: "qrc:/res/img/dialog.svg"
@@ -166,6 +190,7 @@ Item {
                 }
             }
 
+
             // Study algorithm settings
             Revise.SettingsPanel {
                 width: parent.width
@@ -176,7 +201,7 @@ Item {
                 Revise.SettingsRow {
                     text: qsTr("Максимальный интервал (дней)")
 
-                    Revise.SpinBox {
+                    control: Revise.SpinBox {
                         id: maxIntervalSpinBox
 
                         width: 180
@@ -197,7 +222,7 @@ Item {
                 Revise.SettingsRow {
                     text: qsTr("Скорость обучения")
 
-                    Revise.ValueSlider {
+                    control: Revise.ValueSlider {
                         id: learningRateSlider
 
                         label.text: value.toFixed(1)
@@ -219,6 +244,7 @@ Item {
                     }
                 }
             }
+
 
             // Build info
             Revise.SettingsPanel {
@@ -267,6 +293,22 @@ Item {
                 }
             }
         }
+    }
+
+    Revise.ConfirmDialog {
+        id: useMobileUiDialog
+
+        titleText: {
+            if (Revise.SettingsService.useMobileUi)
+                return qsTr("Переключить на десктопный интерфейс?")
+            return qsTr("Переключить на мобильный интерфейс?")
+        }
+
+        messageText: qsTr("В случае подтверждения интерфейс будет переключён. Может потребоваться перезапуск приложения")
+        confirmButtonText: qsTr("Переключить")
+        showDontAskAgainOption: false
+
+        onAccepted: Revise.SettingsService.useMobileUi = useMobileUiCheckBox.checked
     }
 
     function onEnter() {}
