@@ -14,6 +14,7 @@ Item {
 
         anchors.fill: parent
         visible: !loading
+        settings.allowFileAccess: true
 
         Component.onCompleted: {
             web.url = Qt.resolvedUrl(root.editor)
