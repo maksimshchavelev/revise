@@ -71,8 +71,10 @@ if(ANDROID)
 
   include(${ANDROID_SDK_ROOT}/android_openssl/CMakeLists.txt)
 
-  set_property(TARGET apprevise APPEND PROPERTY
-      QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android
+  set_target_properties(apprevise PROPERTIES
+        QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android
+        QT_ANDROID_MIN_SDK_VERSION 30
+        QT_ANDROID_COMPILE_SDK_VERSION 35
   )
 endif()
 
