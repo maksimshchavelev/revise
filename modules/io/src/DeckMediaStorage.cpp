@@ -1,6 +1,4 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
-
-#pragma once
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "DeckMediaStorage.hpp" // for header
 #include <QDir>                 // for QDir
