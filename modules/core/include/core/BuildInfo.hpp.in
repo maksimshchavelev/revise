@@ -22,6 +22,7 @@ inline const auto REVISE_BUILD_HOST_SYSTEM = "@CMAKE_HOST_SYSTEM@";
 inline const auto REVISE_BUILD_GIT_COMMIT_HASH = "@GIT_COMMIT_HASH@";
 
 #cmakedefine01 REVISE_BETA_BUILD
+#cmakedefine01 ANDROID
 
 // Qt info
 inline const auto REVISE_QT_VERSION = "@Qt6_VERSION@";
