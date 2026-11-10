@@ -53,14 +53,43 @@ PACKAGE_NAME="org.maksimshchavelev.revise"
 
 echo "Installing APK: $APK_PATH"
 
-if [ -n "${ANDROID_SERIAL:-}" ]; then
-    "$ADB" -s "$ANDROID_SERIAL" install -r "$APK_PATH"
-    "$ADB" -s "$ANDROID_SERIAL" shell am force-stop "$PACKAGE_NAME"
-    "$ADB" -s "$ANDROID_SERIAL" shell monkey -p "$PACKAGE_NAME" 1
-else
-    "$ADB" install -r "$APK_PATH"
-    "$ADB" shell am force-stop "$PACKAGE_NAME"
-    "$ADB" shell monkey -p "$PACKAGE_NAME" 1
+adb() {
+    if [ -n "${ANDROID_SERIAL:-}" ]; then
+        "$ADB" -s "$ANDROID_SERIAL" "$@"
+    else
+        "$ADB" "$@"
+    fi
+}
+
+adb install -r "$APK_PATH"
+adb shell am force-stop "$PACKAGE_NAME"
+
+adb logcat -c
+
+echo "Launching application..."
+adb shell monkey -p "$PACKAGE_NAME" 1
+
+echo "Waiting for application process..."
+
+APP_PID=""
+
+for i in 1 2 3 4 5; do
+    APP_PID=$(adb shell pidof -s "$PACKAGE_NAME" | tr -d '\r')
+
+    if [ -n "$APP_PID" ]; then
+        break
+    fi
+
+    sleep 1
+done
+
+if [ -z "$APP_PID" ]; then
+    echo "Failed to obtain application PID." >&2
+    exit 1
 fi
 
-echo "Deployment completed."
+echo "Application PID: $APP_PID"
+echo "Application logs:"
+
+adb logcat -v color -s default:W --pid="$APP_PID"
+adb logcat -v color -s default:V --pid="$APP_PID"
