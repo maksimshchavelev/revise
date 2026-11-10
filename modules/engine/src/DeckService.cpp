@@ -504,7 +504,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::create_card(core::Deck::i
 
 QFuture<core::IDeckService::Result<core::Card>> DeckService::card(core::Card::id_type id) const {
     return QtConcurrent::run([this, id]() -> Result<core::Card> {
-        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector{id});
+        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector<core::Card::id_type>{id});
 
         if (!fetch_res) {
             auto error = from_storage_error(fetch_res.error(), "DeckService::card(): failed to fetch card");
