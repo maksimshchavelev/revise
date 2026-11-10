@@ -133,7 +133,7 @@ if (WIN32)
     add_custom_target(portable
         COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR}
 
-        COMMAND windeployqt --no-translations --qmldir dist/qml dist/apprevise.exe
+        COMMAND windeployqt --qmldir dist/qml --dir dist --libdir dist --compiler-runtime dist/apprevise.exe
 
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:zlib>
