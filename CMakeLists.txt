@@ -42,7 +42,7 @@ if(MSVC)
 endif()
 
 
-if (LINUX OR UNIX AND NOT APPLE)
+if (LINUX OR UNIX AND NOT APPLE AND NOT ANDROID)
     set(CMAKE_INSTALL_PREFIX ./AppDir)
 endif()
 
@@ -105,7 +105,7 @@ add_custom_target(cppcheck
 )
 
 # build appimage (for linux)
-if (UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE AND NOT ANDROID)
     get_target_property(QMAKE_EXECUTABLE Qt6::qmake IMPORTED_LOCATION)
 
     add_custom_target(appimage
