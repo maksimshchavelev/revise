@@ -2,7 +2,6 @@
 
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
 Item {
@@ -42,9 +41,9 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.IconButton {
-                    source: "qrc:/res/img/home.svg"
                     size: 32
-                    color: Revise.Router.currentPage.name === "home" ? Revise.Theme.red : Revise.Theme.textColorDark
+                    icon.source: "qrc:/res/img/home.svg"
+                    icon.color: Revise.Router.currentPage.name === "home" ? Revise.Theme.red : Revise.Theme.secondaryForegroundColor
                     onClicked: Revise.Router.navigate("home", {})
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 }
@@ -52,10 +51,10 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.IconButton {
-                    source: "qrc:/res/img/Revise.Settings.svg"
                     size: 32
-                    color: Revise.Router.currentPage.name === "Revise.Settings" ? Revise.Theme.red : Revise.Theme.textColorDark
-                    onClicked: Revise.Router.navigate("Revise.Settings", {})
+                    icon.source: "qrc:/res/img/settings.svg"
+                    icon.color: Revise.Router.currentPage.name === "settings" ? Revise.Theme.red : Revise.Theme.secondaryForegroundColor
+                    onClicked: Revise.Router.navigate("settings", {})
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 }
 

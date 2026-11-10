@@ -114,6 +114,14 @@ Dialog {
     property alias dontAskAgain: dontAskAgainCheckBox.checked
 
     /*!
+        \qmlproperty bool ConfirmDialog::showDontAskAgainOption
+        \brief Should a checkbox be displayed asking whether to stop showing this dialog?
+
+        The default value is \c true.
+    */
+    property bool showDontAskAgainOption: true
+
+    /*!
         \qmlproperty bool ConfirmDialog::suppressed
         \brief Whether the prompt should be skipped entirely.
 
@@ -283,6 +291,7 @@ Dialog {
                     id: dontAskAgainCheckBox
 
                     Layout.fillWidth: true
+                    visible: root.showDontAskAgainOption
 
                     text: qsTr("Больше не спрашивать")
                     color: Revise.Theme.secondaryForegroundColor
@@ -290,6 +299,10 @@ Dialog {
                     onChanged: function (checked) {
                         dontAskAgainCheckBox.checked = checked
                     }
+                }
+
+                Revise.HorizontalSpacer {
+                    visible: !root.showDontAskAgainOption
                 }
 
                 Revise.Button {

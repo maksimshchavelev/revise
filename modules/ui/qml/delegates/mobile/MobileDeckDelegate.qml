@@ -1,4 +1,6 @@
-// A deck that will be displayed on the main page
+// DeckDelegate.qml
+// A mobile version of a deck that will be displayed on the main page
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
@@ -13,14 +15,14 @@ Rectangle {
     radius: 10
     clip: true
 
-    property int newCards: 0 // Cards that have not yet been studied
-    property int consolidateCards: 0 // Cards that have already been studied and need to be reviewed
-    property int incorrectCards: 0 // Cards that the user answered incorrectly during the last training session
-    property int deckId: 0 // deck id
-    property int timeLimit: 0 // time limit
-    property string deckName
-    property string deckDescription
-    property bool repeatableToday: false
+    property int newCardsProperty // Cards that have not yet been studied
+    property int reviewCardsProperty // Cards that have already been studied and need to be reviewed
+    property int incorrectCardsProperty  // Cards that the user answered incorrectly during the last study session
+    property int deckIdProperty // deck id
+    property int timeLimitProperty // time limit
+    property string deckNameProperty // deck name
+    property string deckDescriptionProperty // deck description
+    property bool repeatableTodayProperty // is a deck repeatable today?
 
     signal studyClicked
     signal editClicked
@@ -42,13 +44,13 @@ Rectangle {
 
             Revise.Text {
                 Layout.fillWidth: true
-                text: root.deckName
+                text: root.deckNameProperty
                 elide: Text.ElideRight
                 maximumLineCount: 2
-                color: Revise.Theme.textColor
+                color: Revise.Theme.foregroundColor
                 verticalAlignment: Revise.Text.AlignVCenter
                 font.bold: true
-                wrapMode: Text.WordWrap
+                wrapMode: Revise.Text.Wrap
             }
 
             Revise.IconButton {
@@ -57,9 +59,9 @@ Rectangle {
                 Layout.preferredHeight: 15
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
 
-                source: "qrc:/res/img/menu.svg"
                 size: 15
-                color: Revise.Theme.textColorDark
+                icon.source: "qrc:/res/img/menu.svg"
+                icon.color: Revise.Theme.secondaryForegroundColor
                 opacity: 0.7
 
                 onClicked: {
@@ -89,8 +91,8 @@ Rectangle {
                     key.color: Revise.Theme.green
                     key.font.pixelSize: Revise.Theme.fontSizeSmall
 
-                    value.text: root.newCards
-                    value.color: root.newCards > 0 ? Revise.Theme.green : Revise.Theme.textColorDark
+                    value.text: root.newCardsProperty
+                    value.color: root.newCardsProperty > 0 ? Revise.Theme.green : Revise.Theme.secondaryForegroundColor
                     value.font.pixelSize: Revise.Theme.fontSizeSmall
                 }
 
@@ -102,9 +104,9 @@ Rectangle {
                     key.color: Revise.Theme.blue
                     key.font.pixelSize: Revise.Theme.fontSizeSmall
 
-                    value.text: root.consolidateCards
-                    value.color: root.consolidateCards
-                                 > 0 ? Revise.Theme.blue : Revise.Theme.textColorDark
+                    value.text: root.reviewCardsProperty
+                    value.color: root.reviewCardsProperty
+                                 > 0 ? Revise.Theme.blue : Revise.Theme.secondaryForegroundColor
                     value.font.pixelSize: Revise.Theme.fontSizeSmall
                 }
 
@@ -116,9 +118,9 @@ Rectangle {
                     key.color: Revise.Theme.red
                     key.font.pixelSize: Revise.Theme.fontSizeSmall
 
-                    value.text: root.incorrectCards
-                    value.color: root.incorrectCards
-                                 > 0 ? Revise.Theme.red : Revise.Theme.textColorDark
+                    value.text: root.incorrectCardsProperty
+                    value.color: root.incorrectCardsProperty
+                                 > 0 ? Revise.Theme.red : Revise.Theme.secondaryForegroundColor
                     value.font.pixelSize: Revise.Theme.fontSizeSmall
                 }
 
@@ -126,13 +128,13 @@ Rectangle {
                 RowLayout {
                     width: parent.width
 
-                    property bool timeUnlimited: root.timeLimit === 0
+                    property bool timeUnlimited: root.timeLimitProperty === 0
                     property int iconSize: 16
 
                     Revise.Icon {
                         size: parent.iconSize
                         source: "qrc:/res/img/clocks.svg"
-                        color: Revise.Theme.textColor
+                        color: Revise.Theme.foregroundColor
                     }
 
                     Revise.HorizontalSpacer {}
@@ -141,14 +143,14 @@ Rectangle {
                         visible: parent.timeUnlimited
                         size: parent.iconSize
                         source: "qrc:/res/img/infinity.svg"
-                        color: Revise.Theme.textColorDark
+                        color: Revise.Theme.secondaryForegroundColor
                     }
 
                     Revise.Text {
                         visible: !parent.timeUnlimited
                         text: qsTr(`${root.timeLimit} с`)
                         font.pixelSize: Revise.Theme.fontSizeSmall
-                        color: Revise.Theme.textColor
+                        color: Revise.Theme.foregroundColor
                         verticalAlignment: Revise.Text.AlignVCenter
                     }
                 }
@@ -164,12 +166,12 @@ Rectangle {
                 Revise.Text {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    text: root.deckDescription.length > 0 ? root.deckDescription : qsTr(
+                    text: root.deckDescriptionProperty.length > 0 ? root.deckDescriptionProperty : qsTr(
                                                                 "Без описания...")
                     elide: Text.ElideRight
-                    color: Revise.Theme.textColorDark
+                    color: Revise.Theme.secondaryForegroundColor
                     font.pixelSize: Revise.Theme.fontSizeSmall
-                    wrapMode: Text.WordWrap
+                    wrapMode: Revise.Text.Wrap
                 }
 
                 // Study button
@@ -180,7 +182,7 @@ Rectangle {
 
                     text: "Учить"
                     font.bold: true
-                    clickable: root.repeatableToday
+                    clickable: root.repeatableTodayProperty
 
                     onClicked: root.studyClicked()
                 }
@@ -195,30 +197,30 @@ Rectangle {
         visible: false
 
         sourceComponent: Component {
-            Revise.KekabMenu {
-                id: kekabMenu
+            Revise.KebabMenu {
+                id: kebabMenu
 
-                Revise.KekabMenuButton {
+                Revise.KebabMenuButton {
                     text: qsTr("Редактировать")
                     onClicked: {
-                        kekabMenu.close()
+                        kebabMenu.close()
                         root.editClicked()
                     }
                 }
 
-                Revise.KekabMenuButton {
+                Revise.KebabMenuButton {
                     text: qsTr("Экспортировать")
                     onClicked: {
-                        kekabMenu.close()
+                        kebabMenu.close()
                         root.exportClicked()
                     }
                 }
 
-                Revise.KekabMenuButton {
+                Revise.KebabMenuButton {
                     text: qsTr("Удалить")
                     color: Revise.Theme.red
                     onClicked: {
-                        kekabMenu.close()
+                        kebabMenu.close()
                         root.removeClicked()
                     }
                 }

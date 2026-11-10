@@ -23,15 +23,7 @@ Item {
         anchors.fill: parent
         color: Revise.Theme.surfaceColor
         radius: 10
-        layer.enabled: true
-
-        layer.effect: DropShadow {
-            horizontalOffset: 4
-            verticalOffset: 4
-            radius: 8
-            samples: 32
-            color: "#80000000"
-        }
+        layer.effect: Revise.Shadow {}
     }
 
     ColumnLayout {
@@ -56,7 +48,7 @@ Item {
             Layout.fillWidth: true
             text: root.header
             elide: Text.ElideRight
-            color: Revise.Theme.textColor
+            color: Revise.Theme.foregroundColor
             font.bold: true
         }
 
@@ -71,7 +63,7 @@ Item {
                 width: 150
                 text: root.description
                 elide: Text.ElideRight
-                color: Revise.Theme.textColorDark
+                color: Revise.Theme.secondaryForegroundColor
                 font.pixelSize: Revise.Theme.fontSizeSmall
                 wrapMode: Text.WordWrap
             }
@@ -87,8 +79,6 @@ Item {
 
                     text: qsTr("Создать")
                     font.bold: true
-                    background.color: hovered ? Revise.Theme.grey : "transparent"
-                    background.opacity: 0.2
                     onClicked: root.createClicked()
                 }
 
@@ -99,8 +89,6 @@ Item {
 
                     text: qsTr("Импортировать")
                     font.bold: true
-                    background.color: hovered ? Revise.Theme.grey : "transparent"
-                    background.opacity: 0.2
                     onClicked: root.importClicked()
                 }
             }
@@ -120,13 +108,6 @@ Item {
                 duration: 250
                 easing.type: Easing.InOutQuad
             }
-        }
-    }
-
-    Behavior on scale {
-        NumberAnimation {
-            easing.type: Easing.InOutQuad
-            duration: 60
         }
     }
 }
