@@ -128,6 +128,14 @@ endif()
 
 # build portable
 if (WIN32)
+    get_target_property(QMAKE_EXECUTABLE Qt6::qmake IMPORTED_LOCATION)
+
+    execute_process(
+            COMMAND ${QMAKE_EXECUTABLE} -query QT_INSTALL_QML
+            OUTPUT_VARIABLE QT_QML_DIR
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
     enable_language("RC")
 
     add_custom_target(portable
@@ -138,6 +146,14 @@ if (WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:zlib>
         ${CMAKE_BINARY_DIR}/dist
+
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${QT_QML_DIR}/QtWebEngine"
+        "${CMAKE_BINARY_DIR}/dist/qml/QtWebEngine"
+
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${QT_QML_DIR}/QtWebChannel"
+        "${CMAKE_BINARY_DIR}/dist/qml/QtWebChannel"
 
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         DEPENDS apprevise
