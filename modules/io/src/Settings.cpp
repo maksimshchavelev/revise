@@ -1,6 +1,8 @@
 // Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "io/Settings.hpp" // for header
+#include <QScreen>         // for QScreen
+#include <QSize>           // for QSize
 
 namespace io {
 
@@ -161,6 +163,47 @@ bool Settings::ask_abort_learning() const {
 
 std::expected<void, core::SettingsError> Settings::set_ask_abort_learning(bool enabled) {
     m_settings.setValue("dialogs_ask_abort_learning", enabled);
+    m_settings.sync();
+    return {};
+}
+
+
+bool Settings::notify_about_too_old_android() const {
+    return m_settings.value("main_notify_about_too_old_android", true).toBool();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_notify_about_too_old_android(const bool enabled) {
+    m_settings.setValue("main_notify_about_too_old_android", enabled);
+    m_settings.sync();
+    return {};
+}
+
+
+bool Settings::use_mobile_ui() const {
+    if (m_settings.contains("main_use_mobile_ui")) {
+        return m_settings.value("main_use_mobile_ui").toBool();
+    }
+
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
+#if !defined(Q_OS_ANDROID)
+    return false;
+#endif
+#endif
+
+    const auto* screen = QGuiApplication::primaryScreen();
+
+    if (!screen) {
+        return false;
+    }
+
+    const auto geometry = screen->availableGeometry().size();
+    return geometry.width() < geometry.height();
+}
+
+
+std::expected<void, core::SettingsError> Settings::set_use_mobile_ui(const bool enabled) {
+    m_settings.setValue("main_use_mobile_ui", enabled);
     m_settings.sync();
     return {};
 }

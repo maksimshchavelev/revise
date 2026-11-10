@@ -88,6 +88,18 @@ class Settings : public core::ISettings {
     /// @brief Specify whether to prompt the user when they want to abort learning
     std::expected<void, core::SettingsError> set_ask_abort_learning(bool enabled) override;
 
+    /// @brief Show notification about too old mobile
+    [[nodiscard]] bool notify_about_too_old_android() const override;
+
+    /// @brief Enable or disable notification about too old mobile
+    std::expected<void, core::SettingsError> set_notify_about_too_old_android(bool enabled) override;
+
+    /// @brief Use mobile or desktop UI?
+    [[nodiscard]] bool use_mobile_ui() const override;
+
+    /// @brief Set usage of mobile UI
+    std::expected<void, core::SettingsError> set_use_mobile_ui(bool enabled) override;
+
   private:
     QSettings m_settings;
 };

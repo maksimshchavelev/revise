@@ -22,8 +22,11 @@ class Settings final : public QObject {
 
     // ------------- Main properties -------------
     Q_PROPERTY(float uiScale READ ui_scale WRITE set_ui_scale NOTIFY uiScaleChanged FINAL)
-    Q_PROPERTY(float notifyAboutEarlyAccess READ notify_about_early_access WRITE set_notify_about_early_access NOTIFY
+    Q_PROPERTY(bool notifyAboutEarlyAccess READ notify_about_early_access WRITE set_notify_about_early_access NOTIFY
                    notifyAboutEarlyAccessChanged FINAL)
+    Q_PROPERTY(bool notifyAboutTooOldAndroid READ notify_about_too_old_android WRITE set_notify_about_too_old_android NOTIFY
+                   notifyAboutTooOldAndroidChanged FINAL)
+    Q_PROPERTY(bool useMobileUi READ use_mobile_ui WRITE set_use_mobile_ui NOTIFY useMobileUiChanged FINAL)
 
     // ------------- Dialog properties -------------
     Q_PROPERTY(bool askRemoveOneCard READ ask_remove_one_card WRITE set_ask_remove_one_card NOTIFY askRemoveOneCardChanged FINAL)
@@ -52,6 +55,8 @@ class Settings final : public QObject {
     // ------------- Main settings signals -------------
     void uiScaleChanged();
     void notifyAboutEarlyAccessChanged();
+    void notifyAboutTooOldAndroidChanged();
+    void useMobileUiChanged();
 
     // ------------- Dialog settings signals -------------
     void askRemoveOneCardChanged();
@@ -89,6 +94,18 @@ class Settings final : public QObject {
 
     /// @brief Enable or disable early access notification
     void set_notify_about_early_access(bool enabled);
+
+    /// @brief Show notification about too old mobile
+    [[nodiscard]] bool notify_about_too_old_android() const;
+
+    /// @brief Enable or disable notification about too old mobile
+    void set_notify_about_too_old_android(bool enabled);
+
+    /// @brief Use mobile or desktop UI?
+    [[nodiscard]] bool use_mobile_ui() const;
+
+    /// @brief Set usage of mobile UI
+    void set_use_mobile_ui(bool enabled);
 
     // ----------------------- Dialog settings -----------------------
     /// @brief Ask when user wants to remove one card?

@@ -69,6 +69,36 @@ void Settings::set_notify_about_early_access(const bool enabled) {
     emit notifyAboutEarlyAccessChanged();
 }
 
+
+bool Settings::notify_about_too_old_android() const {
+    return m_settings.notify_about_too_old_android();
+}
+
+
+void Settings::set_notify_about_too_old_android(const bool enabled) {
+    if (auto res = m_settings.set_notify_about_too_old_android(enabled); !res) {
+        qWarning() << res.error().message;
+        return;
+    }
+
+    emit notifyAboutTooOldAndroidChanged();
+}
+
+
+bool Settings::use_mobile_ui() const {
+    return m_settings.use_mobile_ui();
+}
+
+
+void Settings::set_use_mobile_ui(const bool enabled) {
+    if (auto res = m_settings.set_use_mobile_ui(enabled); !res) {
+        qWarning() << res.error().message;
+        return;
+    }
+
+    emit useMobileUiChanged();
+}
+
 // ----------------------- Dialog settings -----------------------
 
 bool Settings::ask_remove_one_card() const {
