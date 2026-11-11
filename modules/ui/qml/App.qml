@@ -14,9 +14,11 @@ ApplicationWindow {
     width: 1075
     height: 720
 
-    Item {
+    Rectangle {
         id: pageHost
+
         anchors.fill: parent
+        color: Revise.Theme.backgroundColor
         clip: true
 
         property real uiScale: Revise.SettingsService.uiScale
@@ -25,13 +27,24 @@ ApplicationWindow {
             id: contentHost
 
             width: pageHost.width / pageHost.uiScale
-            height: pageHost.height / pageHost.uiScale
+            height: Math.max(
+                0,
+                (pageHost.height - Revise.AndroidKeyboardInsets.imeHeight)
+                / pageHost.uiScale
+            )
 
             transform: Scale {
                 xScale: pageHost.uiScale
                 yScale: pageHost.uiScale
                 origin.x: 0
                 origin.y: 0
+            }
+
+            Behavior on height {
+                NumberAnimation {
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
             }
         }
     }

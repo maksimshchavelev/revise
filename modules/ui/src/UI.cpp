@@ -1,16 +1,17 @@
 // Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "ui/UI.hpp"           // for UI header
-#include "CardEditSession.hpp" // for CardEditSession
-#include "CardSearchModel.hpp" // for CardSearchModel
-#include "CardsModel.hpp"      // for CardsModel wrapper
-#include "DeckService.hpp"     // for DeckService wrapper
-#include "DecksModel.hpp"      // for DecksModel wrapper
-#include "Settings.hpp"        // for Settings
-#include "StreakService.hpp"   // for StreakService wrapper
-#include "StudyService.hpp"    // for StudyService
-#include "ToastService.hpp"    // for ToastService
-#include <QQmlContext>         // for QQmlContext
+#include "ui/UI.hpp"                 // for UI header
+#include "AndroidKeyboardInsets.hpp" // for AndroidKeyboardInsets
+#include "CardEditSession.hpp"       // for CardEditSession
+#include "CardSearchModel.hpp"       // for CardSearchModel
+#include "CardsModel.hpp"            // for CardsModel wrapper
+#include "DeckService.hpp"           // for DeckService wrapper
+#include "DecksModel.hpp"            // for DecksModel wrapper
+#include "Settings.hpp"              // for Settings
+#include "StreakService.hpp"         // for StreakService wrapper
+#include "StudyService.hpp"          // for StudyService
+#include "ToastService.hpp"          // for ToastService
+#include <QQmlContext>               // for QQmlContext
 
 namespace ui {
 
@@ -21,6 +22,14 @@ UI::UI() {
 
 
 void UI::init_engine(const QGuiApplication& app) {
+    auto* insets = new AndroidKeyboardInsets{&m_engine};
+
+    if (!m_engine.setExternalSingletonInstance("Revise", "AndroidKeyboardInsets", insets)) {
+        qFatal("Failed to register external Revise.AndroidKeyboardInsets singleton");
+    }
+
+    insets->install();
+
     QObject::connect(
         &m_engine,
         &QQmlApplicationEngine::objectCreationFailed,
