@@ -346,7 +346,7 @@ void Launcher::post_launch() {
 
     auto android_sdk_version = platform::Platform::android_sdk_version();
 
-    if (android_sdk_version && android_sdk_version.value() <= 31 /* android 12 */) {
+    if (android_sdk_version && android_sdk_version.value() <= 31 /* mobile 12 */ && m_settings->notify_about_too_old_android()) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("launch events", "Слишком старый Android"),
                         .message = QString(QCoreApplication::translate("application events",
@@ -355,7 +355,7 @@ void Launcher::post_launch() {
                         .type = core::ToastType::INFO});
     }
 
-    if (android_sdk_version && android_sdk_version.value() > 31 /* android 13+ */) {
+    if (android_sdk_version && android_sdk_version.value() > 31 /* mobile 13+ */) {
         if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
             qDebug() << "Requesting POST_NOTIFICATIONS";
             m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
