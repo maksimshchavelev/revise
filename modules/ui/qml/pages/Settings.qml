@@ -311,6 +311,12 @@ Item {
         onAccepted: Revise.SettingsService.useMobileUi = useMobileUiCheckBox.checked
     }
 
+    Shortcut {
+        sequence: "Back"
+        enabled: Revise.BuildInfo.isMobileBuild
+        onActivated: Revise.Router.back()
+    }
+
     function onEnter() {}
     function onExit() {}
 }

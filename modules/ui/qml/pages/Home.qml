@@ -202,7 +202,7 @@ Item {
                         Revise.SettingsRow {
                             width: parent.width
                             text: qsTr("Ограничить время ответа")
-                            Revise.Switch {
+                            control: Revise.Switch {
                                 id: limitTime
                                 checked: false
                             }
@@ -216,7 +216,7 @@ Item {
                             width: parent.width
                             text: qsTr("Время ответа, сек")
 
-                            Revise.SpinBox {
+                            control: Revise.SpinBox {
                                 id: deckTimeLimit
 
                                 from: 0
@@ -235,7 +235,7 @@ Item {
                             width: parent.width
                             text: qsTr("Ограничение новых карточек")
 
-                            Revise.SpinBox {
+                            control: Revise.SpinBox {
                                 id: deckNewLimit
 
                                 from: 1
@@ -253,7 +253,7 @@ Item {
                             width: parent.width
                             text: qsTr("Ограничение повторяемых карточек")
 
-                            Revise.SpinBox {
+                            control: Revise.SpinBox {
                                 id: deckReviewLimit
 
                                 from: 1
@@ -271,7 +271,7 @@ Item {
                             width: parent.width
                             text: qsTr("Ограничение ошибочных карточек")
 
-                            Revise.SpinBox {
+                            control: Revise.SpinBox {
                                 id: deckIncorrectLimit
 
                                 from: 1
@@ -293,7 +293,7 @@ Item {
                 Layout.fillWidth: true
                 text: qsTr("Создать")
                 backgroundItem.color: Revise.Theme.primaryColor
-                clickable: deckName.textField.text.length > 0 && deckDescription.textField.text.length > 0
+                clickable: deckName.textField.displayText.length > 0 && deckDescription.textField.displayText.length > 0
                 onClicked: {
                     let draft = new Revise.deckDraft()
 

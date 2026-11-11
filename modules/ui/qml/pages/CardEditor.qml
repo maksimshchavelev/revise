@@ -18,6 +18,7 @@ Item {
         color: Revise.Theme.background
     }
 
+
     Revise.Background {
         anchors.fill: parent
     }
@@ -26,6 +27,22 @@ Item {
         anchors.fill: parent
         anchors.margins: 8
         spacing: 16
+
+        // --------------------- Top toolbar ---------------------
+        // Note: WebView will cover Toast notifications, so on Android, the panel is at the top
+        Revise.CardEditorToolbar {
+            id: upToolbar
+            visible: Revise.BuildInfo.isMobileBuild
+            isEditMode: root.pageParams && root.pageParams.editMode
+            onSaveClicked: root.save()
+        }
+
+        Revise.HorizontalDivider {
+            visible: Revise.BuildInfo.isMobileBuild
+            Layout.fillWidth: true
+        }
+        // -------------------------------------------------------
+
 
         Revise.Flickable {
             id: cardFlickable
@@ -37,7 +54,8 @@ Item {
             contentWidth: width
             contentHeight: contentLayout.height
 
-            ScrollBar.vertical: Revise.Scrollbar {
+            ScrollBar.vertical: Revise.Scrollbar
+            {
                 visible: true
             }
 
@@ -76,6 +94,7 @@ Item {
 
                         Revise.HtmlCardEditor {
                             id: frontEditor
+                            visible: Revise.BuildInfo.isMobileBuild
                             anchors.fill: parent
                         }
 
@@ -115,6 +134,7 @@ Item {
 
                         Revise.HtmlCardEditor {
                             id: backEditor
+                            visible: Revise.BuildInfo.isMobileBuild
                             anchors.fill: parent
                         }
 
@@ -130,56 +150,20 @@ Item {
             }
         }
 
+
+        // --------------------- Bottom toolbar ---------------------
         Revise.HorizontalDivider {
+            visible: !Revise.BuildInfo.isMobileBuild
             Layout.fillWidth: true
         }
 
-        // Footer
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 60
-            color: Revise.Theme.surfaceColor
-            radius: 8
-
-            layer.effect: Revise.Shadow {}
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 16
-                anchors.rightMargin: 16
-                anchors.topMargin: 10
-                anchors.bottomMargin: 10
-                spacing: 8
-
-                // Use KaTeX tooltip
-                Revise.IconText {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-
-                    icon.source: "qrc:/res/img/info.svg"
-                    icon.size: 20
-
-                    label.text: qsTr("Используйте KaTeX для формул")
-                    label.font.bold: true
-                    label.wrapMode: Revise.Text.NoWrap
-                    label.elide: Revise.Text.ElideRight
-                    label.maximumLineCount: 1
-                }
-
-                Revise.HorizontalSpacer {}
-
-                Revise.Button {
-                    text: qsTr("Назад")
-                    onClicked: Revise.Router.back()
-                }
-
-                Revise.Button {
-                    text: root.pageParams && root.pageParams.editMode ? qsTr("Обновить") : qsTr("Добавить")
-                    backgroundItem.color: Revise.Theme.primaryColor
-                    onClicked: root.save()
-                }
-            }
+        Revise.CardEditorToolbar {
+            id: bottomToolbar
+            visible: !Revise.BuildInfo.isMobileBuild
+            isEditMode: root.pageParams && root.pageParams.editMode
+            onSaveClicked: root.save()
         }
+        // -----------------------------------------------------------
     }
 
     Shortcut {
@@ -191,8 +175,11 @@ Item {
         id: loadingTimer
         repeat: false
         running: false
-        interval: 500
+        interval: 350
         onTriggered: {
+            frontEditor.visible = true
+            backEditor.visible = true
+
             frontLoadingScreen.endLoading()
             backLoadingScreen.endLoading()
         }
@@ -240,10 +227,14 @@ Item {
             return
         }
 
-        frontLoadingScreen.startLoading()
-        backLoadingScreen.startLoading()
-
-        loadingTimer.start()
+        if (Revise.BuildInfo.isMobileBuild) {
+            frontEditor.active = true
+            backEditor.active = true
+        } else {
+            frontLoadingScreen.startLoading()
+            backLoadingScreen.startLoading()
+            loadingTimer.start()
+        }
 
         frontEditor.setHtml(root.pageParams.card.front)
         backEditor.setHtml(root.pageParams.card.back)
@@ -252,5 +243,18 @@ Item {
     function onExit() {
         frontEditor.clear()
         backEditor.clear()
+
+        // Note: On Android, WebView may remain visible even after setting
+        // `visible = false`, so you must explicitly destroy it
+        if (Revise.BuildInfo.isMobileBuild) {
+            frontEditor.active = false
+            backEditor.active = false
+        }
+    }
+
+    Shortcut {
+        sequence: "Back"
+        enabled: Revise.BuildInfo.isMobileBuild
+        onActivated: Revise.Router.back()
     }
 }

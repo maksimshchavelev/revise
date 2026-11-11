@@ -1,4 +1,5 @@
 // CardPreview.qml
+// Page for Card Preview
 
 import QtQuick
 import QtQuick.Layouts
@@ -25,7 +26,6 @@ Item {
         anchors.fill: parent
         anchors.margins: 4
         spacing: 8
-        visible: !htmlCard.loading
 
         Revise.IconText {
             Layout.fillWidth: true
@@ -70,7 +70,21 @@ Item {
         root.flipped = false
         root.front = Revise.CardEditSession.front
         root.back = Revise.CardEditSession.back
+
+        if (Revise.BuildInfo.isMobileBuild)
+            htmlCard.active = true
     }
 
-    function onExit() {}
+    function onExit() {
+        // Note: On Android, WebView may remain visible even after setting
+        // `visible = false`, so you must explicitly destroy it
+        if (Revise.BuildInfo.isMobileBuild)
+            htmlCard.active = false
+    }
+
+    Shortcut {
+        sequence: "Back"
+        enabled: Revise.BuildInfo.isMobileBuild
+        onActivated: Revise.Router.back()
+    }
 }

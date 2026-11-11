@@ -2,7 +2,7 @@
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+import QtQuick.Controls.Basic
 import Revise as Revise
 
 Item {
@@ -101,15 +101,15 @@ Item {
                     id: searchField
                     Layout.fillWidth: true
                     placeholder.text: qsTr("Поиск карточек")
-                    onTextChanged: searchDebounce.restart()
+                    onDisplayTextChanged: searchDebounce.restart()
 
                     Timer {
                         id: searchDebounce
                         interval: 300
                         repeat: false
                         onTriggered: {
-                            if (searchField.text.trim().length > 0) {
-                                Revise.CardSearchModel.searchFront = searchField.text
+                            if (searchField.displayText.trim().length > 0) {
+                                Revise.CardSearchModel.searchFront = searchField.displayText
                                 listView.model = Revise.CardSearchModel
                             } else {
                                 Revise.CardSearchModel.searchFront = ""
@@ -322,7 +322,7 @@ Item {
                                 Revise.SettingsRow {
                                     width: parent.width
                                     text: qsTr("Ограничить время ответа")
-                                    Revise.Switch {
+                                    control: Revise.Switch {
                                         id: limitTime
                                         checked: root.deck ? root.deck.timeLimit > 0 : false
                                     }
@@ -336,7 +336,7 @@ Item {
                                     width: parent.width
                                     text: qsTr("Время ответа, сек")
 
-                                    Revise.SpinBox {
+                                    control: Revise.SpinBox {
                                         id: deckTimeLimit
 
                                         from: 0
@@ -355,7 +355,7 @@ Item {
                                     width: parent.width
                                     text: qsTr("Ограничение новых карточек")
 
-                                    Revise.SpinBox {
+                                    control: Revise.SpinBox {
                                         id: deckNewLimit
 
                                         from: 1
@@ -373,7 +373,7 @@ Item {
                                     width: parent.width
                                     text: qsTr("Ограничение повторяемых карточек")
 
-                                    Revise.SpinBox {
+                                    control: Revise.SpinBox {
                                         id: deckReviewLimit
 
                                         from: 1
@@ -391,7 +391,7 @@ Item {
                                     width: parent.width
                                     text: qsTr("Ограничение ошибочных карточек")
 
-                                    Revise.SpinBox {
+                                    control: Revise.SpinBox {
                                         id: deckIncorrectLimit
 
                                         from: 1
@@ -984,5 +984,11 @@ Item {
 
             Revise.SettingsService.askSetStateForManyCards = !dontAskAgain
         }
+    }
+
+    Shortcut {
+        sequence: "Back"
+        enabled: Revise.BuildInfo.isMobileBuild
+        onActivated: Revise.Router.back()
     }
 }

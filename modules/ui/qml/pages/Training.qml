@@ -75,12 +75,10 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             html: Revise.StudyService.flipped ? Revise.StudyService.back : Revise.StudyService.front
-            onLoadingChanged: {
-                if (loading) {
-                    Revise.StudyService.pause()
-                } else {
-                    Revise.StudyService.resume()
-                }
+            visible: {
+                if (Revise.BuildInfo.isMobileBuild)
+                    return !abortLearningDialog.visible
+                return true
             }
         }
 
@@ -114,10 +112,26 @@ Item {
     }
 
     function onEnter() {
+        if (Revise.BuildInfo.isMobileBuild)
+            htmlCard.active = true
+
         Revise.StudyService.reloadCurrentCard()
         Revise.StudyService.resume()
     }
 
     function onExit() {
+        // Note: On Android, WebView may remain visible even after setting
+        // `visible = false`, so you must explicitly destroy it
+        if (Revise.BuildInfo.isMobileBuild)
+            htmlCard.active = false
+    }
+
+    Shortcut {
+        sequence: "Back"
+        enabled: Revise.BuildInfo.isMobileBuild
+        onActivated: {
+            Revise.StudyService.pause();
+            abortLearningDialog.requestOpen();
+        }
     }
 }
