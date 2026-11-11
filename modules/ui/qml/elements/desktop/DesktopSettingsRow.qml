@@ -1,85 +1,83 @@
-// SettingsRow.qml
+// DesktopSettingsRow.qml
 
 import QtQuick
 import Revise as Revise
 
 /*!
-    \qmltype SettingsRow
+    \qmltype DesktopSettingsRow
     \inqmlmodule Revise
-    \brief A responsive settings row placing a label on the left and a control on the right.
+    \inherits Item
+    \since 1.0
 
-    The SettingsRow component provides a standard UI layout for application settings.
-    It features an auto-wrapping description text on the left and an interactive
-    control widget on the right. It dynamically recalculates its layout upon window
-    resizing to prevent content overlapping and layout clipping.
+    \brief A settings row with a description on the left and a control on the right.
+    \brief Desktop implementation of the responsive settings row.
 
-    Example of a basic toggle setting:
-    \code
-    Revise.SettingsRow {
+    DesktopSettingsRow provides a horizontal layout for application settings. It places
+    a wrapping description text on the left side and an interactive control widget on the right side.
+    The control is placed inside a dedicated slot that automatically adjusts its width and height
+    based on the control's implicit size.
+
+    This component is typically used internally by \l SettingsRow and is not meant
+    to be instantiated directly.
+
+    \section1 Example Usage
+
+    \qml
+    Revise.DesktopSettingsRow {
         width: parent.width
-        text: qsTr("Enable Notifications")
+        text: qsTr("Enable notifications")
 
-        Revise.Switch {
+        control: Revise.Switch {
             checked: true
         }
     }
-    \endcode
-
-    Example of multiple rows grouped inside a panel:
-    \code
-    Revise.PanelColumn {
-        width: 400
-
-        Revise.SettingsRow {
-            text: qsTr("Response time limit (seconds)")
-
-            Revise.SpinBox {
-                minimum: 1
-                maximum: 60
-                value: 15
-            }
-        }
-    }
-    \endcode
+    \endqml
 */
 Item {
     id: root
 
     /*!
-        This property holds the description text displayed on the left side of the row.
-     */
+        \qmlproperty string DesktopSettingsRow::text
+        \brief The description text displayed on the left side of the row.
+
+        The text wraps automatically if it exceeds the available width.
+    */
     property alias text: label.text
 
     /*!
-        This property holds the interactive control element (e.g., Switch, SpinBox)
-        placed on the right side. This is the default property.
-     */
-    default property alias control: controlSlot.data
+        \qmlproperty Item DesktopSettingsRow::control
+        \brief The interactive control element placed on the right side.
+
+        The control is automatically reparented to the internal slot when this property is set.
+    */
+    property Item control
 
     width: parent ? parent.width : 0
     height: Math.max(label.implicitHeight, controlSlot.height)
 
     Revise.Text {
         id: label
-
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: controlSlot.left
         anchors.rightMargin: 12
         verticalAlignment: Revise.Text.AlignVCenter
-
         wrapMode: Text.Wrap
         width: Math.min(Revise.Theme.settingsLabelWidth, parent.width - controlSlot.width - anchors.rightMargin)
     }
 
     Item {
         id: controlSlot
-
         anchors.top: parent.top
         anchors.right: parent.right
-
         width: childrenRect.width
         height: childrenRect.height
+    }
+
+    onControlChanged: {
+        if (root.control && root.control.parent !== controlSlot) {
+            root.control.parent = controlSlot
+        }
     }
 }
