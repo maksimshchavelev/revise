@@ -1,63 +1,115 @@
-// Single-line text input field. You can set a validator. Multicolored border is present.
+// TextField.qml
 
 import QtQuick
+import QtQuick.Templates as T
 import Revise as Revise
 
-Rectangle {
+/*!
+    \qmltype TextField
+    \brief A single-line text input field with a multi-colored border and soft validation.
+    \inqmlmodule Revise
+    \inherits T.TextField
+    \since 1.0
+
+    TextField provides a styled single-line input. It supports a placeholder text,
+    an optional validator, and soft validation via a custom function. The border
+    color changes based on the validation state. The component is fully editable
+    on both desktop and mobile platforms.
+
+    \section1 Example Usage
+
+    \qml
+    Revise.TextField {
+        width: 200
+        placeholder.text: qsTr("Enter something")
+        validatorFunction: (text) => text.length > 3
+    }
+    \endqml
+*/
+T.TextField {
     id: root
 
-    property alias placeholder: placeholder
-    property alias text: input.text
-    property alias validator: input.validator
-    property alias inputMethodHints: input.inputMethodHints
+    /*!
+        \qmlproperty Revise.Text TextField::placeholder
+        \brief The placeholder text element displayed when the field is empty.
+    */
+    property alias placeholder: placeholderItem
 
-    property var validatorFunction: null // This function is used for soft validation without preventing input
-    property bool valid: true
+    /*!
+        \qmlproperty var TextField::validatorFunction
+        \brief A function used for soft validation without preventing input.
+
+        The function receives the current text and returns a boolean.
+    */
+    property var validatorFunction: null
+
+    /*!
+        \qmlproperty bool TextField::valid
+        \brief Whether the current text passes the soft validation.
+        \readonly
+    */
+    readonly property bool valid: isValid()
+
+    /*!
+        \qmlproperty bool TextField::editable
+        \brief Whether the field allows user input.
+
+        When \c false, the field is read-only and displays a semi-transparent overlay.
+    */
     property bool editable: true
 
-    property font font: Qt.font({
+    /*!
+        \qmlproperty font TextField::font
+        \brief The font used for the input text and placeholder.
+    */
+    property alias font: root.font
+
+    font: Qt.font({
         "family": Revise.Fonts.regular.name,
         "pixelSize": Revise.Theme.fontSizeDefault
     })
 
-    signal editingFinished()
-
     implicitHeight: 35
-    radius: 6
-    color: Color.lighter(Revise.Theme.surfaceColor, 1.2)
-    border.width: 1
-    border.color: Color.lighter(Revise.Theme.surfaceColor, 1.5)
-    clip: true
+    leftPadding: 5
+    rightPadding: 5
+    topPadding: 5
+    bottomPadding: 5
 
-    layer.effect: Revise.Shadow {}
+    verticalAlignment: TextInput.AlignVCenter
+    horizontalAlignment: TextInput.AlignLeft
 
-    Revise.Text {
-        id: placeholder
+    selectByMouse: true
+    color: Revise.Theme.foregroundColor
+    selectionColor: Revise.Theme.primaryColor
+    selectedTextColor: Revise.Theme.foregroundColor
 
-        text: qsTr("Введите что-нибудь")
-        anchors.fill: parent
-        anchors.margins: 5
-        verticalAlignment: Revise.Text.AlignVCenter
-        horizontalAlignment: Revise.Text.AlignLeft
-        font: root.font
-        color: Color.darker(Revise.Theme.foregroundColor, 2)
-        visible: root.text.length === 0
-        elide: Revise.Text.ElideRight
-    }
+    readOnly: !root.editable
 
-    TextInput {
-        id: input
-
-        anchors.fill: parent
-        anchors.margins: 5
-        verticalAlignment: Revise.Text.AlignVCenter
-        horizontalAlignment: Revise.Text.AlignLeft
-        font: root.font
-        onTextChanged: root.valid = root.isValid()
-        color: Revise.Theme.foregroundColor
-        readOnly: !root.editable
+    background: Rectangle {
+        implicitHeight: 35
+        radius: 6
+        color: Color.lighter(Revise.Theme.surfaceColor, 1.2)
+        border.width: 1
+        border.color: {
+            if (!root.valid)
+                return Revise.Theme.red
+            return Color.lighter(Revise.Theme.surfaceColor, 1.5)
+        }
         clip: true
-        enabled: false
+
+        layer.effect: Revise.Shadow {}
+
+        Revise.Text {
+            id: placeholderItem
+            anchors.fill: parent
+            anchors.margins: 5
+            verticalAlignment: Revise.Text.AlignVCenter
+            horizontalAlignment: Revise.Text.AlignLeft
+            font: root.font
+            color: Color.darker(Revise.Theme.foregroundColor, 2)
+            visible: !root.displayText.length && !root.preeditText && (!root.activeFocus || root.horizontalAlignment !== Text.AlignHCenter)
+            elide: Revise.Text.ElideRight
+        }
     }
 
     Rectangle {
@@ -65,36 +117,24 @@ Rectangle {
         opacity: 0.35
         anchors.fill: parent
         visible: !root.editable
-        radius: root.radius
+        radius: 6
+        z: 2
     }
 
     HoverHandler {
         cursorShape: hovered && root.editable ? Qt.IBeamCursor : Qt.ArrowCursor
     }
 
-    TapHandler {
-        onTapped: function (point) {
-            input.enabled = true
-            input.forceActiveFocus()
-            input.cursorPosition = input.positionAt(point.position.x, point.position.y)
-            InputMethod.show()
-        }
-    }
-
-    Connections {
-        target: input
-
-        function onActiveFocusChanged() {
-            if (!input.activeFocus)
-                input.enabled = false
+    onDisplayTextChanged: {
+        if (root.validatorFunction) {
+            root.valid = validatorFunction(root.displayText)
         }
     }
 
     function isValid() {
-        if (!root.validatorFunction) {
+        if (!root.validatorFunction)
             return true
-        }
 
-        return validatorFunction(root.text)
+        return validatorFunction(root.displayText)
     }
 }
