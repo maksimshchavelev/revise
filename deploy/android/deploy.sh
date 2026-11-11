@@ -4,7 +4,7 @@
 # Deploys a previously built Revise APK to a connected Android device.
 #
 # Usage:
-#   ./deploy/android/deploy.sh <path-to-apk>
+#   ./deploy/mobile/deploy.sh <path-to-apk>
 #
 # Requirements:
 #   - Android SDK platform-tools (adb)
@@ -16,7 +16,7 @@
 # If exactly one device is connected, adb selects it automatically.
 # If multiple devices are connected, specify the device using ANDROID_SERIAL:
 #
-#   ANDROID_SERIAL=<device-serial> ./deploy/android/deploy.sh <path-to-apk>
+#   ANDROID_SERIAL=<device-serial> ./deploy/mobile/deploy.sh <path-to-apk>
 
 set -eu
 
@@ -91,5 +91,4 @@ fi
 echo "Application PID: $APP_PID"
 echo "Application logs:"
 
-adb logcat -v color -s default:W --pid="$APP_PID"
-adb logcat -v color -s default:V --pid="$APP_PID"
+adb logcat -v color -s default:V qml:V --pid="$APP_PID"
