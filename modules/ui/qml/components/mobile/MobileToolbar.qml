@@ -1,4 +1,5 @@
-// The sidebar displayed on the left (on the desktop) with the navigation menu and the streak display
+// MobileToolbar.qml
+// Mobile implementation of Toolbar
 
 import QtQuick
 import QtQuick.Layouts

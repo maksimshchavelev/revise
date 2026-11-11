@@ -1,17 +1,18 @@
-// Toolbar.qml
+// DesktopToolbar.qml
+// Desktop implementation of toolbar
 
 import QtQuick
 import QtQuick.Layouts
 import Revise as Revise
 
 /*!
-    \qmltype Sidebar
+    \qmltype Toolbar
     \brief The main navigation sidebar of the application.
     \inqmlmodule Revise
     \inherits Item
     \since 1.0
 
-    Sidebar provides top-level navigation between the main pages of the
+    Toolbar provides top-level navigation between the main pages of the
     application, shows the current streak, and displays the application
     version. It is intended for the desktop layout, where navigation lives
     in a persistent panel alongside the content.
@@ -31,7 +32,7 @@ import Revise as Revise
     \section1 Example Usage
 
     \qml
-    Revise.Sidebar {
+    Revise.Toolbar {
         Layout.fillHeight: true
     }
     \endqml
