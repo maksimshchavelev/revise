@@ -9,7 +9,7 @@ import Revise as Revise
     \qmltype CardView
     \brief Displays an HTML flashcard inside a WebView.
     \inqmlmodule Revise
-    \inherits WebView
+    \inherits Loader
     \since 1.0
 
     CardView renders one side of a flashcard. The content is HTML, and it
@@ -36,8 +36,8 @@ import Revise as Revise
 
     \sa Revise.HtmlCardEditor
 */
-WebView {
-    id: web
+Loader {
+    id: root
 
     /*!
         \qmlproperty string CardView::html
@@ -98,52 +98,56 @@ WebView {
     */
     property string pendingHtml: ""
 
-    settings.allowFileAccess: true
+    sourceComponent: WebView {
+        id: web
 
-    Component.onCompleted: {
-        const base = Qt.resolvedUrl(StandardPaths.writableLocation(StandardPaths.AppDataLocation) + "/web/card/card.html")
-        web.url = base
-    }
+        settings.allowFileAccess: true
 
-    onLoadingChanged: function(loadRequest) {
-        if (loadRequest.status === WebView.LoadSucceededStatus) {
-            web.ready = true
+        Component.onCompleted: {
+            const base = Qt.resolvedUrl(StandardPaths.writableLocation(StandardPaths.AppDataLocation) + "/web/card/card.html")
+            web.url = base
+        }
 
-            web.runJavaScript(`setFontSize(${web.fontSize})`)
-            web.runJavaScript(`setTextColor('${web.textColor}')`)
-            show(html)
+        onLoadingChanged: function (loadRequest) {
+            if (loadRequest.status === WebView.LoadSucceededStatus) {
+                root.ready = true
+
+                web.runJavaScript(`setFontSize(${root.fontSize})`)
+                web.runJavaScript(`setTextColor('${root.textColor}')`)
+                web.show(root.html)
+            }
+        }
+
+        /*!
+            \qmlmethod void CardView::show(string htmlText)
+            \brief Renders the given HTML in the card.
+
+            The method escapes \a htmlText so that it is treated as content
+            rather than markup with embedded scripts, URL-encodes it, and passes
+            it to the base document together with the current \l fontSize and
+            \l textColor. It is called automatically when \l html changes while
+            \l ready is \c true, and from the load handler when the base
+            document finishes loading.
+        */
+        function show(htmlText) {
+            let escaped = htmlText.replace(/'/g, "&#39;")
+            escaped = encodeURIComponent(escaped)
+            escaped = escaped.replace(/"/g, "&quot;")
+            escaped = escaped.replace(/</g, "&lt;")
+            escaped = escaped.replace(/>/g, "&gt;")
+            escaped = escaped.replace(/&/g, "&amp;")
+
+            web.runJavaScript(`setFontSize(${root.fontSize})`)
+            web.runJavaScript(`setTextColor('${root.textColor}')`)
+            web.runJavaScript(`renderCard(decodeURIComponent('${escaped}'))`);
         }
     }
 
-    /*!
-        \qmlmethod void CardView::show(string htmlText)
-        \brief Renders the given HTML in the card.
-
-        The method escapes \a htmlText so that it is treated as content
-        rather than markup with embedded scripts, URL-encodes it, and passes
-        it to the base document together with the current \l fontSize and
-        \l textColor. It is called automatically when \l html changes while
-        \l ready is \c true, and from the load handler when the base
-        document finishes loading.
-    */
-    function show(htmlText) {
-        var escaped = htmlText.replace(/'/g, "&#39;")
-        escaped = encodeURIComponent(escaped)
-        escaped = escaped.replace(/"/g, "&quot;")
-        escaped = escaped.replace(/</g, "&lt;")
-        escaped = escaped.replace(/>/g, "&gt;")
-        escaped = escaped.replace(/&/g, "&amp;")
-
-        web.runJavaScript(`setFontSize(${web.fontSize})`)
-        web.runJavaScript(`setTextColor('${web.textColor}')`)
-        web.runJavaScript(`renderCard(decodeURIComponent('${escaped}'))`);
-    }
-
     onHtmlChanged: {
-        if (web.ready) {
-            show(html)
+        if (root.ready && root.item) {
+            root.item.show(root.html)
         } else {
-            pendingHtml = html
+            root.pendingHtml = root.html
         }
     }
 }
