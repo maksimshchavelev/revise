@@ -211,7 +211,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 12
-        scale: root.hovered ? 1.01 : 1.0
+        scale: root.hovered && !Revise.BuildInfo.isMobileBuild ? 1.01 : 1.0
         color: root.statusColor()
 
         Behavior on scale {
@@ -226,7 +226,7 @@ Item {
     Item {
         anchors.fill: parent
         anchors.leftMargin: 8
-        scale: root.hovered ? 1.01 : 1.0
+        scale: root.hovered && !Revise.BuildInfo.isMobileBuild ? 1.01 : 1.0
 
         // Background tint
         Rectangle {
@@ -238,7 +238,9 @@ Item {
 
             color: {
                 if (root.selected)
-                    return Color.lighter(Revise.Theme.surfaceColor, 1.2)
+                    return Color.lighter(Revise.Theme.surfaceColor, 1.25)
+                if (root.hovered)
+                    return Color.lighter(Revise.Theme.surfaceColor, 1.15)
                 return Revise.Theme.surfaceColor
             }
 

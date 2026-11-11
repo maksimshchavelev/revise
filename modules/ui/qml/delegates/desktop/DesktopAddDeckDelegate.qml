@@ -1,21 +1,80 @@
-// AddDeckDelegate.qml
+// DesktopAddDeckDelegate.qml
+// Desktop implementation of AddDeckDelegate
 
 import QtQuick
 import QtQuick.Layouts
 import Revise as Revise
 
+/*!
+    \qmltype DesktopAddDeckDelegate
+    \brief A desktop delegate for creating or importing a new deck.
+    \inqmlmodule Revise
+    \inherits Item
+    \since 1.0
+
+    DesktopAddDeckDelegate provides a card-like interface for the deck list,
+    allowing the user to either create a new deck or import an existing one.
+    It includes a header, a description, and two action buttons.
+
+    The component supports a loading state that fades out the content and
+    displays a spinner, and a subtle hover animation for visual feedback.
+
+    This component is typically used internally by \l AddDeckDelegate and is not meant
+    to be instantiated directly.
+
+    \section1 Example Usage
+
+    \qml
+    Revise.DesktopAddDeckDelegate {
+        onCreateClicked: openDeckEditor()
+        onImportClicked: openImportDialog()
+    }
+    \endqml
+*/
 Item {
     id: root
 
     width: 170
-    height: 210
+    height: 220
 
-    property bool loading: false // If set to true, a loading animation will be displayed
+    /*!
+        \qmlproperty bool DesktopAddDeckDelegate::loading
+        \brief Whether the delegate is in a loading state.
+
+        When \c true, the main content fades out and a spinner is displayed
+        in the center.
+
+        The default value is \c false.
+    */
+    property bool loading: false
+
+    /*!
+        \qmlproperty string DesktopAddDeckDelegate::header
+        \brief The title text displayed at the top of the delegate.
+
+        The default value is \c qsTr("Добавить колоду").
+    */
     property string header: qsTr("Добавить колоду")
+
+    /*!
+        \qmlproperty string DesktopAddDeckDelegate::description
+        \brief The descriptive text explaining the available actions.
+
+        The default value is \c qsTr("Вы можете создать новую колоду или импортировать существующую из Anki или Revise").
+    */
     property string description: qsTr("Вы можете создать новую колоду или импортировать существующую из Anki или Revise")
 
-    signal importClicked
-    signal createClicked
+    /*!
+        \qmlsignal DesktopAddDeckDelegate::importClicked()
+        \brief Emitted when the "Import" button is clicked.
+    */
+        signal importClicked
+
+    /*!
+        \qmlsignal DesktopAddDeckDelegate::createClicked()
+        \brief Emitted when the "Create" button is clicked.
+    */
+        signal createClicked
 
     scale: hoverHandler.hovered ? 1.02 : 1.0
 

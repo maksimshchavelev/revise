@@ -1,22 +1,80 @@
-// A deck that will be displayed on the main page
+// MobileAddDeckDelegate.qml
+// Mobile implementation of AddDeckDelegate
 
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 import Revise as Revise
 
+/*!
+    \qmltype MobileAddDeckDelegate
+    \brief A mobile delegate for creating or importing a new deck.
+    \inqmlmodule Revise
+    \inherits Item
+    \since 1.0
+
+    MobileAddDeckDelegate provides a horizontally stretched interface for the deck list,
+    allowing the user to either create a new deck or import an existing one.
+    It includes a header, a description, and two action buttons stacked vertically.
+
+    The component supports a loading state that fades out the content and
+    displays a spinner in the center.
+
+    This component is typically used internally by \l AddDeckDelegate and is not meant
+    to be instantiated directly.
+
+    \section1 Example Usage
+
+    \qml
+    Revise.MobileAddDeckDelegate {
+        onCreateClicked: openDeckEditor()
+        onImportClicked: openImportDialog()
+    }
+    \endqml
+*/
 Item {
     id: root
 
     width: parent.width
     height: 140
 
-    property bool loading: false // If set to true, a loading animation will be displayed
+    /*!
+        \qmlproperty bool MobileAddDeckDelegate::loading
+        \brief Whether the delegate is in a loading state.
+
+        When \c true, the main content fades out and a spinner is displayed
+        in the center.
+
+        The default value is \c false.
+    */
+    property bool loading: false
+
+    /*!
+        \qmlproperty string MobileAddDeckDelegate::header
+        \brief The title text displayed at the top of the delegate.
+
+        The default value is \c qsTr("Добавить колоду").
+    */
     property string header: qsTr("Добавить колоду")
+
+    /*!
+        \qmlproperty string MobileAddDeckDelegate::description
+        \brief The descriptive text explaining the available actions.
+
+        The default value is \c qsTr("Вы можете либо создать новую колоду, либо импортировать существующую в формате Anki или Revise").
+    */
     property string description: qsTr("Вы можете либо создать новую колоду, либо импортировать существующую в формате Anki или Revise")
 
-    signal importClicked
-    signal createClicked
+    /*!
+        \qmlsignal MobileAddDeckDelegate::importClicked()
+        \brief Emitted when the "Import" button is clicked.
+    */
+        signal importClicked
+
+    /*!
+        \qmlsignal MobileAddDeckDelegate::createClicked()
+        \brief Emitted when the "Create" button is clicked.
+    */
+        signal createClicked
 
     Rectangle {
         id: tint

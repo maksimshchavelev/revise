@@ -6,6 +6,42 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import Revise as Revise
 
+/*!
+    \qmltype DeckDelegate
+    \brief A mobile representation of a deck on the main page.
+    \inqmlmodule Revise
+    \inherits Rectangle
+    \since 1.0
+
+    DeckDelegate displays information about a specific deck on mobile devices.
+    It features a horizontally stretched layout containing the deck name,
+    card statistics (new, review, incorrect), time limit, description, and a
+    primary action button to start studying.
+
+    The component also includes a lazily loaded kebab menu for secondary actions
+    such as editing, exporting, or removing the deck. The "Study" button is
+    automatically disabled if \l repeatableTodayProperty is \c false.
+
+    \section1 Example Usage
+
+    \qml
+    Revise.DeckDelegate {
+        deckNameProperty: "My Deck"
+        deckDescriptionProperty: "A deck for learning"
+        newCardsProperty: 10
+        reviewCardsProperty: 5
+        incorrectCardsProperty: 2
+        timeLimitProperty: 60
+        deckIdProperty: 1
+        repeatableTodayProperty: true
+
+        onStudyClicked: startStudySession()
+        onEditClicked: openEditor()
+        onRemoveClicked: deleteDeck()
+        onExportClicked: exportDeck()
+    }
+    \endqml
+*/
 Rectangle {
     id: root
 
@@ -15,19 +51,79 @@ Rectangle {
     radius: 10
     clip: true
 
-    property int newCardsProperty // Cards that have not yet been studied
-    property int reviewCardsProperty // Cards that have already been studied and need to be reviewed
-    property int incorrectCardsProperty  // Cards that the user answered incorrectly during the last study session
-    property int deckIdProperty // deck id
-    property int timeLimitProperty // time limit
-    property string deckNameProperty // deck name
-    property string deckDescriptionProperty // deck description
-    property bool repeatableTodayProperty // is a deck repeatable today?
+    /*!
+        \qmlproperty int DeckDelegate::newCardsProperty
+        \brief The number of cards that have not yet been studied.
+    */
+    property int newCardsProperty
 
-    signal studyClicked
-    signal editClicked
-    signal removeClicked
-    signal exportClicked
+    /*!
+        \qmlproperty int DeckDelegate::reviewCardsProperty
+        \brief The number of cards that have already been studied and need to be reviewed.
+    */
+    property int reviewCardsProperty
+
+    /*!
+        \qmlproperty int DeckDelegate::incorrectCardsProperty
+        \brief The number of cards that the user answered incorrectly during the last study session.
+    */
+    property int incorrectCardsProperty
+
+    /*!
+        \qmlproperty int DeckDelegate::deckIdProperty
+        \brief The unique identifier of the deck.
+    */
+    property int deckIdProperty
+
+    /*!
+        \qmlproperty int DeckDelegate::timeLimitProperty
+        \brief The time limit for answering a card, in seconds.
+
+        A value of \c 0 indicates no time limit.
+    */
+    property int timeLimitProperty
+
+    /*!
+        \qmlproperty string DeckDelegate::deckNameProperty
+        \brief The name of the deck.
+    */
+    property string deckNameProperty
+
+    /*!
+        \qmlproperty string DeckDelegate::deckDescriptionProperty
+        \brief The description of the deck.
+    */
+    property string deckDescriptionProperty
+
+    /*!
+        \qmlproperty bool DeckDelegate::repeatableTodayProperty
+        \brief Whether the deck has cards available for review today.
+    */
+    property bool repeatableTodayProperty
+
+    /*!
+        \qmlsignal DeckDelegate::studyClicked()
+        \brief Emitted when the "Study" button is clicked.
+    */
+        signal studyClicked
+
+    /*!
+        \qmlsignal DeckDelegate::editClicked()
+        \brief Emitted when the "Edit" option is selected from the kebab menu.
+    */
+        signal editClicked
+
+    /*!
+        \qmlsignal DeckDelegate::removeClicked()
+        \brief Emitted when the "Remove" option is selected from the kebab menu.
+    */
+        signal removeClicked
+
+    /*!
+        \qmlsignal DeckDelegate::exportClicked()
+        \brief Emitted when the "Export" option is selected from the kebab menu.
+    */
+        signal exportClicked
 
     ColumnLayout {
         id: content
@@ -106,7 +202,7 @@ Rectangle {
 
                     value.text: root.reviewCardsProperty
                     value.color: root.reviewCardsProperty
-                                 > 0 ? Revise.Theme.blue : Revise.Theme.secondaryForegroundColor
+                        > 0 ? Revise.Theme.blue : Revise.Theme.secondaryForegroundColor
                     value.font.pixelSize: Revise.Theme.fontSizeSmall
                 }
 
@@ -120,7 +216,7 @@ Rectangle {
 
                     value.text: root.incorrectCardsProperty
                     value.color: root.incorrectCardsProperty
-                                 > 0 ? Revise.Theme.red : Revise.Theme.secondaryForegroundColor
+                        > 0 ? Revise.Theme.red : Revise.Theme.secondaryForegroundColor
                     value.font.pixelSize: Revise.Theme.fontSizeSmall
                 }
 
@@ -148,13 +244,13 @@ Rectangle {
 
                     Revise.Text {
                         visible: !parent.timeUnlimited
-                        text: qsTr(`${root.timeLimit} с`)
+                        text: qsTr(`${root.timeLimitProperty} с`)
                         font.pixelSize: Revise.Theme.fontSizeSmall
                         color: Revise.Theme.foregroundColor
                         verticalAlignment: Revise.Text.AlignVCenter
                     }
                 }
-            } // end stats
+            }
 
             // Deck description and study button
             ColumnLayout {
@@ -166,8 +262,7 @@ Rectangle {
                 Revise.Text {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    text: root.deckDescriptionProperty.length > 0 ? root.deckDescriptionProperty : qsTr(
-                                                                "Без описания...")
+                    text: root.deckDescriptionProperty.length > 0 ? root.deckDescriptionProperty : qsTr("Без описания")
                     elide: Text.ElideRight
                     color: Revise.Theme.secondaryForegroundColor
                     font.pixelSize: Revise.Theme.fontSizeSmall
@@ -186,7 +281,7 @@ Rectangle {
 
                     onClicked: root.studyClicked()
                 }
-            } // end deck description and study button
+            }
         }
     }
 

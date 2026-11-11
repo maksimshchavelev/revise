@@ -5,25 +5,125 @@ import QtQuick
 import QtQuick.Layouts
 import Revise as Revise
 
+/*!
+    \qmltype DeckDelegate
+    \brief A visual representation of a deck on the main page.
+    \inqmlmodule Revise
+    \inherits Item
+    \since 1.0
+
+    DeckDelegate displays information about a specific deck, including its name,
+    description, card counts (new, review, incorrect), and time limit. It provides
+    actions to start studying, edit, export, or remove the deck through the integrated
+    kebab menu.
+
+    The component includes hover animations and tooltips for truncated text to
+    improve the user experience. The "Study" button is automatically disabled if
+    there are no cards available to review today.
+
+    \section1 Example Usage
+
+    \qml
+    Revise.DeckDelegate {
+        deckNameProperty: "My Deck"
+        deckDescriptionProperty: "A deck for learning"
+        newCardsProperty: 10
+        reviewCardsProperty: 5
+        incorrectCardsProperty: 2
+        timeLimitProperty: 60
+        deckIdProperty: 1
+        repeatableTodayProperty: true
+
+        onStudyClicked: startStudySession()
+        onEditClicked: openEditor()
+        onRemoveClicked: deleteDeck()
+        onExportClicked: exportDeck()
+    }
+    \endqml
+*/
 Item {
     id: root
 
     width: 170
-    height: 210
+    height: 220
 
-    property int newCardsProperty // Cards that have not yet been studied
-    property int reviewCardsProperty // Cards that have already been studied and need to be reviewed
-    property int incorrectCardsProperty  // Cards that the user answered incorrectly during the last study session
-    property int deckIdProperty // deck id
-    property int timeLimitProperty // time limit
-    property string deckNameProperty // deck name
-    property string deckDescriptionProperty // deck description
-    property bool repeatableTodayProperty // is a deck repeatable today?
+    /*!
+        \qmlproperty int DeckDelegate::newCardsProperty
+        \brief The number of cards that have not yet been studied.
+    */
+    property int newCardsProperty
 
-    signal studyClicked
-    signal editClicked
-    signal removeClicked
-    signal exportClicked
+    /*!
+        \qmlproperty int DeckDelegate::reviewCardsProperty
+        \brief The number of cards that have already been studied and need to be reviewed.
+    */
+    property int reviewCardsProperty
+
+    /*!
+        \qmlproperty int DeckDelegate::incorrectCardsProperty
+        \brief The number of cards that the user answered incorrectly during the last study session.
+    */
+    property int incorrectCardsProperty
+
+    /*!
+        \qmlproperty int DeckDelegate::deckIdProperty
+        \brief The unique identifier of the deck.
+    */
+    property int deckIdProperty
+
+    /*!
+        \qmlproperty int DeckDelegate::timeLimitProperty
+        \brief The time limit for answering a card, in seconds.
+
+        A value of \c 0 indicates no time limit.
+    */
+    property int timeLimitProperty
+
+    /*!
+        \qmlproperty string DeckDelegate::deckNameProperty
+        \brief The name of the deck.
+    */
+    property string deckNameProperty
+
+    /*!
+        \qmlproperty string DeckDelegate::deckDescriptionProperty
+        \brief The description of the deck.
+    */
+    property string deckDescriptionProperty
+
+    /*!
+        \qmlproperty bool DeckDelegate::repeatableTodayProperty
+        \brief Whether the deck has cards available for review today.
+    */
+    property bool repeatableTodayProperty
+
+    /*!
+        \qmlsignal DeckDelegate::studyClicked()
+        \brief Emitted when the "Study" button is clicked.
+    */
+        signal
+    studyClicked
+
+    /*!
+        \qmlsignal DeckDelegate::editClicked()
+        \brief Emitted when the "Edit" option is selected from the kebab menu.
+    */
+        signal
+    editClicked
+
+    /*!
+        \qmlsignal DeckDelegate::removeClicked()
+        \brief Emitted when the "Remove" option is selected from the kebab menu.
+    */
+        signal
+    removeClicked
+
+    /*!
+        \qmlsignal DeckDelegate::exportClicked()
+        \brief Emitted when the "Export" option is selected from the kebab menu.
+    */
+        signal
+    exportClicked
 
     Item {
         anchors.fill: parent
@@ -35,7 +135,9 @@ Item {
             anchors.fill: parent
             color: Revise.Theme.surfaceColor
             radius: 10
-            layer.effect: Revise.Shadow {}
+            layer.effect: Revise.Shadow
+            {
+            }
         }
 
         ColumnLayout {
@@ -59,7 +161,7 @@ Item {
                     elide: Text.ElideRight
                     color: Revise.Theme.foregroundColor
                     font.bold: true
-                    wrapMode: Text.Wrap
+                    wrapMode: Revise.Text.Wrap
 
                     Revise.HoverableTooltip {
                         anchors.fill: parent
@@ -95,13 +197,12 @@ Item {
 
                 Revise.Text {
                     anchors.fill: parent
-                    text: root.deckDescriptionProperty.length > 0 ? root.deckDescriptionProperty : qsTr(
-                                                                "Без описания...")
+                    text: root.deckDescriptionProperty.length > 0 ? root.deckDescriptionProperty : qsTr("Без описания")
                     elide: Text.ElideRight
                     verticalAlignment: Revise.Text.AlignVCenter
                     color: Revise.Theme.secondaryForegroundColor
                     font.pixelSize: Revise.Theme.fontSizeSmall
-                    wrapMode: Text.WordWrap
+                    wrapMode: Revise.Text.Wrap
                 }
 
                 Revise.HoverableTooltip {
@@ -121,7 +222,8 @@ Item {
                     color: Revise.Theme.green
                 }
 
-                Revise.HorizontalSpacer {}
+                Revise.HorizontalSpacer {
+                }
 
                 Revise.Text {
                     text: root.newCardsProperty
@@ -140,7 +242,8 @@ Item {
                     color: Revise.Theme.blue
                 }
 
-                Revise.HorizontalSpacer {}
+                Revise.HorizontalSpacer {
+                }
 
                 Revise.Text {
                     text: root.reviewCardsProperty
@@ -159,7 +262,8 @@ Item {
                     color: Revise.Theme.red
                 }
 
-                Revise.HorizontalSpacer {}
+                Revise.HorizontalSpacer {
+                }
 
                 Revise.Text {
                     text: root.incorrectCardsProperty
@@ -182,7 +286,8 @@ Item {
                     color: Revise.Theme.foregroundColor
                 }
 
-                Revise.HorizontalSpacer {}
+                Revise.HorizontalSpacer {
+                }
 
                 Revise.Icon {
                     visible: parent.timeUnlimited
@@ -200,7 +305,8 @@ Item {
                 }
             }
 
-            Revise.Spacer {}
+            Revise.Spacer {
+            }
 
             Revise.Button {
                 Layout.alignment: Qt.AlignHCenter
@@ -220,7 +326,8 @@ Item {
                 }
             }
 
-            Revise.Spacer {}
+            Revise.Spacer {
+            }
         }
 
         Behavior on scale {
