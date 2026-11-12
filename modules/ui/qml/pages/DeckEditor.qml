@@ -788,6 +788,7 @@ Item {
         root.deck = Revise.DeckService.deck(root.deckId)
         Revise.CardSearchModel.searchFront = ""
         Revise.CardsModel.setDeck(root.deckId)
+        searchField.text = ""
     }
 
     function onExit() {
