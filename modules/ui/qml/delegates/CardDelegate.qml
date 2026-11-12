@@ -452,6 +452,12 @@ Item {
 
     TapHandler {
         id: tapHandler
+        onDoubleTapped: {
+            if (selectCheckBox.checked)
+                Revise.CardsModel.deselectCard(root.cardId)
+            else
+                Revise.CardsModel.selectCard(root.cardId)
+        }
     }
 
     HoverHandler {
