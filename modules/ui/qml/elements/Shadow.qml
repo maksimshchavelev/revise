@@ -2,9 +2,11 @@
 
 import QtQuick
 import QtQuick.Effects
+import Revise as Revise
 
 MultiEffect {
-    shadowEnabled: true
+    visible: !Revise.BuildInfo.isMobileBuild
+    shadowEnabled: !Revise.BuildInfo.isMobileBuild
     shadowHorizontalOffset: 4
     shadowVerticalOffset: 4
     shadowBlur: 0.4
