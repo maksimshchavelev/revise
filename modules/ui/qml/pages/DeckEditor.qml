@@ -718,7 +718,7 @@ Item {
                             width: 220
                             anchors.horizontalCenter: parent.horizontalCenter
                             maximum: Revise.CardsModel.cardsCount
-                            value: Revise.CardsModel.cardsCount - Revise.CardsModel.newCardsCount - Revise.CardsModel.incorrectCardsCount
+                            value: Revise.CardsModel.reviewCardsCount
                             valueText: Revise.CardsModel.cardsCount > 0 ? qsTr(`${Math.trunc(value * 100 / maximum)}%`) : "0%"
                             text: qsTr("Прогресс обучения")
                         }
