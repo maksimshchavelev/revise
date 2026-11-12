@@ -151,13 +151,12 @@ Rectangle {
 
             Revise.IconButton {
                 id: menuButton
-                Layout.preferredWidth: 15
-                Layout.preferredHeight: 15
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
 
-                size: 15
                 icon.source: "qrc:/res/img/menu.svg"
-                icon.color: Revise.Theme.secondaryForegroundColor
+                background.color: "transparent"
                 opacity: 0.7
 
                 onClicked: {
