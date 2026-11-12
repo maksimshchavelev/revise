@@ -198,10 +198,7 @@ Item {
                             }, Revise.page.Page)
                         }
 
-                        onResetClicked: {
-                            relearnCardDialog.cardId = parent.id
-                            relearnCardDialog.requestOpen()
-                        }
+                        onResetClicked: dialogs.requestRelearnOneCardDialog(parent.id);
 
                         onRepeatTodayClicked: {
                             let draft = new Revise.updateCardDraft();
@@ -221,10 +218,7 @@ Item {
                             Revise.DeckService.update_cards([parent.id], draft)
                         }
 
-                        onRemoveClicked: {
-                            removeCardDialog.cardId = parent.id
-                            removeCardDialog.requestOpen()
-                        }
+                        onRemoveClicked: dialogs.requestRemoveCardDialog(parent.id)
                     }
                 }
 
@@ -291,8 +285,9 @@ Item {
                     deckReviewLimit.value: root.deck.reviewLimit
                     deckIncorrectLimit.value: root.deck.incorrectLimit
 
-                    onRestartLearningClicked: removeCardsDialog.requestOpen()
-                    onRemoveClicked: removeDeckDialog.requestOpen()
+                    onRestartLearningClicked: dialogs.requestRelearnManyCardsDialog()
+                    onRemoveCardsClicked: dialogs.requestRemoveManyCardsDialog()
+                    onRemoveDeckClicked: dialogs.requestRemoveDeckDialog(root.deckId)
                     onSaveClicked: root.save()
                 }
 
@@ -301,11 +296,10 @@ Item {
                     id: cardActionsTab
 
                     onSetDifficultyClicked: function(value) {
-                        setDifficultyForCardsDialog.difficulty = value;
-                        setDifficultyForCardsDialog.requestOpen()
+                        dialogs.requestSetDifficultyForManyCardsDialog(value);
                     }
 
-                    onSetStateClicked: setStateForCardsDialog.requestOpen()
+                    onSetStateClicked: dialogs.requestSetStateForManyCardsDialog(cardActionsTab.cardStateComboBox.displayText)
                 }
 
                 // Tab with deck statistics
@@ -360,190 +354,9 @@ Item {
         Revise.CardSearchModel.loadingFinished.connect(cardsLoadingScreen.endLoading)
     }
 
-    // --------------------- Dialogs ---------------------
-
-    // Remove one card?
-    Revise.ConfirmDialog {
-        id: removeCardDialog
-
-        property int cardId
-
-        titleText: qsTr("Удалить карточку?")
-        messageText: qsTr("Карточка будет удалена без возможности восстановления")
-        confirmButtonText: qsTr("Удалить")
-        suppressed: !Revise.SettingsService.askRemoveOneCard
-
-        onAccepted: {
-            Revise.SettingsService.askRemoveOneCard = !dontAskAgain
-            Revise.DeckService.remove_cards([cardId])
-        }
-    }
-
-    // Remove many cards?
-    Revise.ConfirmDialog {
-        id: removeCardsDialog
-
-        titleText: {
-            if (Revise.CardsModel.selectedCount > 0)
-                return qsTr("Удалить выбранные карточки?")
-            return qsTr("Удалить все карточки?")
-        }
-
-        messageText: {
-            if (Revise.CardsModel.selectedCount > 0)
-                return qsTr(`Выбранные (${Revise.CardsModel.selectedCount} из ${Revise.CardsModel.cardsCount}) карточки будут удалены без возможности восстановления`)
-            qsTr("Все карточки будут удалены без возможности восстановления")
-        }
-
-        confirmButtonText: qsTr("Удалить")
-        suppressed: !Revise.SettingsService.askRemoveManyCards
-
-        onAccepted: {
-            if (Revise.CardsModel.selectedCount === 0) {
-                Revise.DeckService.remove_cards(Revise.CardsModel.ids());
-            } else {
-                Revise.DeckService.remove_cards(Revise.CardsModel.selectedIds());
-            }
-
-            Revise.SettingsService.askRemoveManyCards = !dontAskAgain
-        }
-    }
-
-    // Relearn one card?
-    Revise.ConfirmDialog {
-        id: relearnCardDialog
-
-        property int cardId
-
-        titleText: qsTr("Учить карточку заново?")
-        messageText: qsTr("Прогресс обучения будет сброшен для этой карточки")
-        confirmButtonText: qsTr("Учить заново")
-        suppressed: !Revise.SettingsService.askRelearnOneCard
-
-        onAccepted: {
-            Revise.DeckService.reset_cards([cardId]);
-            Revise.SettingsService.askRelearnOneCard = !dontAskAgain
-        }
-    }
-
-    // Relearn many cards?
-    Revise.ConfirmDialog {
-        id: relearnCardsDialog
-
-        titleText: {
-            if (Revise.CardsModel.selectedCount > 0)
-                return qsTr("Учить выбранные карточки заново?")
-            return qsTr("Учить все карточки заново?")
-        }
-
-        messageText: {
-            if (Revise.CardsModel.selectedCount > 0)
-                return qsTr(`Для выбранных (${Revise.CardsModel.selectedCount} из ${Revise.CardsModel.cardsCount}) карточек будет сброшен прогресс обучения`)
-            qsTr("Для всех карточек будет сброшен прогресс обучения")
-        }
-
-        confirmButtonText: qsTr("Учить заново")
-        suppressed: !Revise.SettingsService.askRelearnManyCards
-
-        onAccepted: {
-            if (Revise.CardsModel.selectedCount === 0) {
-                Revise.DeckService.reset_cards(Revise.CardsModel.ids());
-            } else {
-                Revise.DeckService.reset_cards(Revise.CardsModel.selectedIds());
-            }
-
-            Revise.SettingsService.askRelearnManyCards = !dontAskAgain
-        }
-    }
-
-    // Remove deck?
-    Revise.ConfirmDialog {
-        id: removeDeckDialog
-
-        titleText: qsTr("Удалить колоду?")
-        messageText: qsTr("Колода будет удалена без возможности восстановления")
-        confirmButtonText: qsTr("Удалить")
-        suppressed: !Revise.SettingsService.askRemoveDeck
-
-        onAccepted: {
-            Revise.DeckService.remove_deck(root.deckId)
-            Revise.Router.navigate("home", {}, Revise.page.Page)
-            Revise.SettingsService.askRemoveDeck = !dontAskAgain
-        }
-    }
-
-    // Set difficulty for many cards?
-    Revise.ConfirmDialog {
-        id: setDifficultyForCardsDialog
-
-        property real difficulty
-
-        titleText: {
-            if (Revise.CardsModel.selectedCount > 0)
-                return qsTr("Задать сложность выбранным карточкам?")
-            return qsTr("Задать сложность всем карточкам?")
-        }
-
-        messageText: {
-            if (Revise.CardsModel.selectedCount > 0)
-                return qsTr(`Для выбранных (${Revise.CardsModel.selectedCount} из ${Revise.CardsModel.cardsCount}) карточек будет установлена сложность ${difficulty.toFixed(1)}`)
-            qsTr(`Для всех карточек будет установлена сложность ${difficulty.toFixed(1)}`)
-        }
-
-        confirmButtonText: qsTr("Задать")
-        suppressed: !Revise.SettingsService.askSetDifficultyForManyCards
-
-        onAccepted: {
-            let draft = new Revise.updateCardDraft();
-            draft.difficulty = difficulty;
-
-            if (Revise.CardsModel.selectedCount === 0) {
-                Revise.DeckService.update_cards(Revise.CardsModel.ids(), draft);
-            } else {
-                Revise.DeckService.update_cards(Revise.CardsModel.selectedIds(), draft);
-            }
-
-            Revise.SettingsService.askSetDifficultyForManyCards = !dontAskAgain
-        }
-    }
-
-    // Set state for many cards?
-    Revise.ConfirmDialog {
-        id: setStateForCardsDialog
-
-        titleText: {
-            if (Revise.CardsModel.selectedCount > 0)
-                return qsTr("Задать статус выбранным карточкам?")
-            return qsTr("Задать статус всем карточкам?")
-        }
-
-        messageText: {
-            if (Revise.CardsModel.selectedCount > 0)
-                return qsTr(`Для выбранных (${Revise.CardsModel.selectedCount} из ${Revise.CardsModel.cardsCount}) карточек будет установлен статус «${cardActionsTab.cardStateComboBox.displayText}»`)
-            qsTr(`Для всех карточек будет установлен статус «${cardActionsTab.cardStateComboBox.displayText}»`)
-        }
-
-        confirmButtonText: qsTr("Задать")
-        suppressed: !Revise.SettingsService.askSetStateForManyCards
-
-        onAccepted: {
-            let draft = new Revise.updateCardDraft();
-
-            if (cardActionsTab.cardStateComboBox.displayText === qsTr("Новая"))
-                draft.state = Revise.card.State.New
-            else if (cardActionsTab.cardStateComboBox.displayText === qsTr("Повторяемая"))
-                draft.state = Revise.card.State.Review
-            else if (cardActionsTab.cardStateComboBox.displayText === qsTr("Ошибочная"))
-                draft.state = Revise.card.State.Incorrect
-
-            if (Revise.CardsModel.selectedCount === 0) {
-                Revise.DeckService.update_cards(Revise.CardsModel.ids(), draft);
-            } else {
-                Revise.DeckService.update_cards(Revise.CardsModel.selectedIds(), draft);
-            }
-
-            Revise.SettingsService.askSetStateForManyCards = !dontAskAgain
-        }
+    // Editor dialogs
+    Revise.DeckEditorDialogs {
+        id: dialogs
     }
 
     Shortcut {
