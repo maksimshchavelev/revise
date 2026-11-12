@@ -35,8 +35,9 @@ import Revise as Revise
         deckDescription.textField.text: deck.description
 
         onSaveClicked: saveDeckChanges()
-        onRemoveClicked: deleteDeck()
+        onRemoveDeckClicked: deleteDeck()
         onRestartLearningClicked: resetDeckProgress()
+        onRemoveCardsClicked: deleteCards()
     }
     \endqml
 */
@@ -92,16 +93,22 @@ ColumnLayout {
     signal restartLearningClicked()
 
     /*!
-        \qmlsignal DeckPropertiesTab::removeClicked()
+        \qmlsignal DeckPropertiesTab::removeDeckClicked()
         \brief Emitted when the "Remove deck" button is clicked.
     */
-    signal removeClicked()
+    signal removeDeckClicked()
 
     /*!
         \qmlsignal DeckPropertiesTab::saveClicked()
         \brief Emitted when the "Save" button is clicked.
     */
     signal saveClicked()
+
+    /*!
+        \qmlsignal DeckPropertiesTab::removeCardsClicked()
+        \brief Emitted when the "Remove cards" button is clicked.
+    */
+    signal removeCardsClicked()
 
     Layout.fillWidth: true
     Layout.fillHeight: true
@@ -251,11 +258,12 @@ ColumnLayout {
                         text: {
                             if (Revise.CardsModel.selectedCount === 0)
                                 return qsTr("Сложность и время следующего повтора будут сброшены для всех карточек")
-                            else qsTr("Сложность и время следующего повтора будут сброшены для выбранных карточек")
+                            else
+                                return qsTr("Сложность и время следующего повтора будут сброшены для выбранных карточек")
                         }
                     }
 
-                    onClicked: relearnCardsDialog.requestOpen()
+                    onClicked: root.restartLearningClicked()
                 }
 
                 // Remove cards
@@ -275,11 +283,12 @@ ColumnLayout {
                         text: {
                             if (Revise.CardsModel.selectedCount === 0)
                                 return qsTr("Все карточки будут удалены. Действие необратимо")
-                            else qsTr("Только выбранные карточки будут удалены. Действие необратимо")
+                            else
+                                return qsTr("Только выбранные карточки будут удалены. Действие необратимо")
                         }
                     }
 
-                    onClicked: root.restartLearningClicked()
+                    onClicked: root.removeCardsClicked()
                 }
 
                 Revise.Button {
@@ -292,7 +301,7 @@ ColumnLayout {
                         text: qsTr("Колода будет удалена. Действие необратимо")
                     }
 
-                    onClicked: root.removeClicked()
+                    onClicked: root.removeDeckClicked()
                 }
             }
         }
