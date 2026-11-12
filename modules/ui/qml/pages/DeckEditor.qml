@@ -89,7 +89,7 @@ Item {
 
                 Revise.Text {
                     Layout.fillWidth: true
-                    Layout.maximumWidth: implicitWidth
+                    Layout.maximumWidth: implicitWidth + 8
                     Layout.minimumWidth: 70
 
                     wrapMode: Revise.Text.Wrap
