@@ -72,6 +72,7 @@ Item {
 
     HoverHandler {
         id: hoverHandler
+        enabled: !Revise.BuildInfo.isMobileBuild
 
         property int mouseX: tooltip.opened ? mouseX : point.position.x
         property int mouseY: tooltip.opened ? mouseY : point.position.y
