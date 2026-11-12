@@ -293,7 +293,7 @@ Item {
                 Layout.fillWidth: true
                 text: qsTr("Создать")
                 backgroundItem.color: Revise.Theme.primaryColor
-                clickable: deckName.textField.displayText.length > 0 && deckDescription.textField.displayText.length > 0
+                clickable: deckName.textField.displayText.length > 0
                 onClicked: {
                     let draft = new Revise.deckDraft()
 
