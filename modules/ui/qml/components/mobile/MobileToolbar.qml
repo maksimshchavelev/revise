@@ -13,7 +13,7 @@ Item {
 
     Rectangle {
         id: background
-        color: Revise.Theme.backgroundColor
+        color: Revise.Theme.surfaceColor
         anchors.fill: parent
     }
 
