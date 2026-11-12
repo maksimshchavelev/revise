@@ -44,7 +44,7 @@ Item {
             Layout.fillHeight: true
 
             Layout.leftMargin: 12
-            Layout.rightMargin: Revise.SettingsService.useMobileUi ? 12 : 2
+            Layout.rightMargin: 4
             Layout.topMargin: 2
             Layout.bottomMargin: 2
 
