@@ -1,3 +1,4 @@
+// Home.qml
 // Home page
 
 import QtQuick
@@ -16,100 +17,49 @@ Item {
 
     Revise.Background {
         id: background
+        anchors.fill: root
+    }
+
+    GridLayout {
         anchors.fill: parent
-    }
+        columns: Revise.SettingsService.useMobileUi ? 1 : 2
+        rowSpacing: 0
+        columnSpacing: 0
 
-    Revise.Toolbar {
-        id: toolbar
-        height: parent.height
-    }
+        Revise.Toolbar {
+            id: toolbar
 
-    // Decks
-    GridView {
-        id: gridView
-
-        anchors {
-            left: toolbar.right
-            top: root.top
-            bottom: root.bottom
-            right: root.right
-            leftMargin: 12
-            rightMargin: 2
-            bottomMargin: 2
-            topMargin: 2
+            Layout.row: Revise.SettingsService.useMobileUi ? 1 : 0
+            Layout.column: 0
+            Layout.fillWidth: Revise.SettingsService.useMobileUi
+            Layout.fillHeight: !Revise.SettingsService.useMobileUi
+            Layout.preferredWidth: Revise.SettingsService.useMobileUi ? -1 : 150
+            Layout.preferredHeight: Revise.SettingsService.useMobileUi ? 60 : -1
         }
 
-        model: Revise.DecksModel
-        boundsBehavior: Flickable.StopAtBounds
-        clip: true
+        Revise.DecksView {
+            Layout.row: 0
+            Layout.column: Revise.SettingsService.useMobileUi ? 0 : 1
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-        cellWidth: 180
-        cellHeight: 220
-        rightMargin: 6
+            Layout.leftMargin: 12
+            Layout.rightMargin: Revise.SettingsService.useMobileUi ? 12 : 2
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
 
-        ScrollBar.vertical: Revise.Scrollbar
-        {
-            visible: gridView.contentHeight > gridView.height
-        }
-
-        delegate: DelegateChooser {
-            role: "isSpecial"
-
-            DelegateChoice {
-                roleValue: true
-
-                delegate: Revise.AddDeckDelegate
-                {
-                    onImportClicked: importDialog.open()
-                    onCreateClicked: createDeckDrawer.open()
-                }
+            onRemoveDeckClicked: function(deckId) {
+                removeDeckDialog.deckId = deckId;
+                removeDeckDialog.requestOpen();
             }
 
-            DelegateChoice {
-                roleValue: false
-
-                delegate: Revise.DeckDelegate
-                {
-                    required property int newCards
-                    required property int reviewCards
-                    required property int incorrectCards
-                    required property int deckId
-                    required property int timeLimit
-                    required property string name
-                    required property string description
-                    required property bool repeatableToday
-
-                    deckNameProperty: name
-                    deckDescriptionProperty: description
-                    timeLimitProperty: timeLimit
-                    newCardsProperty: newCards
-                    reviewCardsProperty: reviewCards
-                    incorrectCardsProperty: incorrectCards
-                    deckIdProperty: deckId
-                    repeatableTodayProperty: repeatableToday
-
-                    onStudyClicked: {
-                        Revise.StudyService.start(deckId)
-                        Revise.Router.navigate("training", {})
-                    }
-
-                    onEditClicked: {
-                        Revise.Router.navigate("deckEditor", {
-                            "deckId": deckId
-                        })
-                    }
-
-                    onRemoveClicked: {
-                        removeDeckDialog.deckId = deckId
-                        removeDeckDialog.requestOpen();
-                    }
-
-                    onExportClicked: {
-                        exportDialog.deckId = deckId
-                        exportDialog.open()
-                    }
-                }
+            onExportDeckClicked: function(deckId) {
+                exportDialog.deckId = deckId;
+                exportDialog.open();
             }
+
+            onImportDeckClicked: importDialog.open()
+            onCreateDeckClicked: createDeckDrawer.open()
         }
     }
 
