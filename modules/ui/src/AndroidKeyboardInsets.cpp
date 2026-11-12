@@ -78,9 +78,6 @@ void AndroidKeyboardInsets::updateInsets(int bottomPx, bool visible) {
     m_imeHeight = height;
     m_imeVisible = visible;
 
-    qInfo() << "IME:"
-            << "visible =" << visible << "height =" << height;
-
     emit imeInsetsChanged();
 }
 
