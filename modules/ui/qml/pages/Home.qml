@@ -67,7 +67,7 @@ Item {
     Drawer {
         id: createDeckDrawer
 
-        width: 350
+        width: Math.min(root.width * 0.8, 350)
         height: root.height
         edge: Qt.RightEdge
         scale: Revise.SettingsService.uiScale
