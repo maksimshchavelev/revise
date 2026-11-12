@@ -88,6 +88,13 @@ Item {
                 Layout.fillWidth: true
 
                 Revise.Text {
+                    Layout.fillWidth: true
+                    Layout.maximumWidth: implicitWidth
+                    Layout.minimumWidth: 70
+
+                    wrapMode: Revise.Text.Wrap
+                    maximumLineCount: 2
+
                     text: {
                         if (searchField.text.trim().length === 0)
                             return qsTr(`Список карточек (всего ${Revise.CardsModel.cardsCount}):`)
@@ -100,6 +107,7 @@ Item {
                 Revise.SearchField {
                     id: searchField
                     Layout.fillWidth: true
+                    Layout.minimumWidth: 150
                     placeholder.text: qsTr("Поиск карточек")
                     onDisplayTextChanged: searchDebounce.restart()
 
