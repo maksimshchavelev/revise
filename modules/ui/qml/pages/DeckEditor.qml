@@ -280,506 +280,57 @@ Item {
                 currentIndex: tabBar.currentIndex
 
                 // Tab with deck properties and actions
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    spacing: 8
+                Revise.DeckPropertiesTab {
+                    id: deckPropertiesTab
 
-                    Revise.Flickable {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                    deckName.textField.text: root.deck.name
+                    deckDescription.textField.text: root.deck.description
+                    limitTime.checked: root.deck ? root.deck.timeLimit > 0 : false
+                    deckTimeLimit.value: root.deck.timeLimit
+                    deckNewLimit.value: root.deck.newLimit
+                    deckReviewLimit.value: root.deck.reviewLimit
+                    deckIncorrectLimit.value: root.deck.incorrectLimit
 
-                        contentWidth: width
-                        contentHeight: deckProperties.implicitHeight
-
-                        Column {
-                            id: deckProperties
-
-                            width: parent.width - 16
-                            spacing: 16
-
-                            // Panel showing deck primary options
-                            Revise.SettingsPanel {
-                                width: parent.width
-                                header.icon.source: "qrc:/res/img/deck.svg"
-                                header.label.text: qsTr("Основные параметры")
-
-                                Revise.FormTextField {
-                                    id: deckName
-                                    width: parent.width
-                                    label.text: qsTr("Название колоды")
-                                    textField.placeholder.text: qsTr("Введите название колоды...")
-                                    textField.text: root.deck.name
-                                }
-
-                                Revise.FormTextField {
-                                    id: deckDescription
-                                    width: parent.width
-                                    label.text: qsTr("Описание колоды (необязательно)")
-                                    textField.placeholder.text: qsTr("Введите описание колоды...")
-                                    textField.text: root.deck.description
-                                }
-                            }
-
-                            // Panel showing deck limits
-                            Revise.SettingsPanel {
-                                width: parent.width
-                                header.icon.source: "qrc:/res/img/restrictions.svg"
-                                header.label.text: qsTr("Ограничения")
-
-                                Revise.SettingsRow {
-                                    width: parent.width
-                                    text: qsTr("Ограничить время ответа")
-                                    control: Revise.Switch {
-                                        id: limitTime
-                                        checked: root.deck ? root.deck.timeLimit > 0 : false
-                                    }
-                                }
-
-                                Revise.HorizontalDivider {
-                                    width: parent.width
-                                }
-
-                                Revise.SettingsRow {
-                                    width: parent.width
-                                    text: qsTr("Время ответа, сек")
-
-                                    control: Revise.SpinBox {
-                                        id: deckTimeLimit
-
-                                        from: 0
-                                        to: 3600
-                                        editable: limitTime.checked
-                                        value: root.deck.timeLimit
-
-                                        Revise.HoverableTooltip {
-                                            anchors.fill: parent
-                                            text: qsTr("От 0 до 3600")
-                                        }
-                                    }
-                                }
-
-                                Revise.SettingsRow {
-                                    width: parent.width
-                                    text: qsTr("Ограничение новых карточек")
-
-                                    control: Revise.SpinBox {
-                                        id: deckNewLimit
-
-                                        from: 1
-                                        to: 1000
-                                        value: root.deck.newLimit
-
-                                        Revise.HoverableTooltip {
-                                            anchors.fill: parent
-                                            text: qsTr("От 1 до 1000")
-                                        }
-                                    }
-                                }
-
-                                Revise.SettingsRow {
-                                    width: parent.width
-                                    text: qsTr("Ограничение повторяемых карточек")
-
-                                    control: Revise.SpinBox {
-                                        id: deckReviewLimit
-
-                                        from: 1
-                                        to: 1000
-                                        value: root.deck.reviewLimit
-
-                                        Revise.HoverableTooltip {
-                                            anchors.fill: parent
-                                            text: qsTr("От 1 до 1000")
-                                        }
-                                    }
-                                }
-
-                                Revise.SettingsRow {
-                                    width: parent.width
-                                    text: qsTr("Ограничение ошибочных карточек")
-
-                                    control: Revise.SpinBox {
-                                        id: deckIncorrectLimit
-
-                                        from: 1
-                                        to: 1000
-                                        value: root.deck.incorrectLimit
-
-                                        Revise.HoverableTooltip {
-                                            anchors.fill: parent
-                                            text: qsTr("От 1 до 1000")
-                                        }
-                                    }
-                                }
-                            }
-
-                            //  A panel showing deck actions
-                            Revise.SettingsPanel {
-                                width: parent.width
-                                header.icon.source: "qrc:/res/img/action.svg"
-                                header.label.text: qsTr("Действия с колодой")
-
-                                // Restart learning
-                                Revise.Button {
-                                    width: parent.width
-                                    clickable: Revise.CardsModel.cardsCount > 0
-
-                                    text: {
-                                        if (Revise.CardsModel.selectedCount === 0)
-                                            return qsTr("Начать обучение заново")
-                                        else return qsTr(`Учить заново (${Revise.CardsModel.selectedCount} / ${Revise.CardsModel.cardsCount})`)
-                                    }
-
-                                    Revise.HoverableTooltip {
-                                        anchors.fill: parent
-                                        text: {
-                                            if (Revise.CardsModel.selectedCount === 0)
-                                                return qsTr("Сложность и время следующего повтора будут сброшены для всех карточек")
-                                            else qsTr("Сложность и время следующего повтора будут сброшены для выбранных карточек")
-                                        }
-                                    }
-
-                                    onClicked: relearnCardsDialog.requestOpen()
-                                }
-
-                                // Remove cards
-                                Revise.Button {
-                                    width: parent.width
-                                    color: Revise.Theme.red
-                                    clickable: Revise.CardsModel.cardsCount > 0
-
-                                    text: {
-                                        if (Revise.CardsModel.selectedCount === 0)
-                                            return qsTr("Удалить все карточки")
-                                        else return qsTr(`Удалить карточки (${Revise.CardsModel.selectedCount} / ${Revise.CardsModel.cardsCount})`)
-                                    }
-
-                                    Revise.HoverableTooltip {
-                                        anchors.fill: parent
-                                        text: {
-                                            if (Revise.CardsModel.selectedCount === 0)
-                                                return qsTr("Все карточки будут удалены. Действие необратимо")
-                                            else qsTr("Только выбранные карточки будут удалены. Действие необратимо")
-                                        }
-                                    }
-
-                                    onClicked: removeCardsDialog.requestOpen()
-                                }
-
-                                Revise.Button {
-                                    width: parent.width
-                                    text: qsTr("Удалить колоду")
-                                    color: Revise.Theme.red
-
-                                    Revise.HoverableTooltip {
-                                        anchors.fill: parent
-                                        text: qsTr("Колода будет удалена. Действие необратимо")
-                                    }
-
-                                    onClicked: removeDeckDialog.requestOpen()
-                                }
-                            }
-                        }
-                    }
-
-                    Revise.Button {
-                        Layout.fillWidth: true
-                        text: qsTr("Сохранить")
-                        icon.source: "qrc:/res/img/save.svg"
-                        backgroundItem.color: Revise.Theme.primaryColor
-                        onClicked: root.save()
-                    }
+                    onRestartLearningClicked: removeCardsDialog.requestOpen()
+                    onRemoveClicked: removeDeckDialog.requestOpen()
+                    onSaveClicked: root.save()
                 }
 
                 // Tab with card actions
-                Revise.Flickable {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                Revise.CardActionsTab {
+                    id: cardActionsTab
 
-                    contentWidth: width
-                    contentHeight: cardActions.implicitHeight
-
-                    Column {
-                        id: cardActions
-                        width: parent.width
-
-                        Revise.SettingsPanel {
-                            width: parent.width
-                            header.label.text: qsTr("Пакетные действия")
-                            header.icon.source: "qrc:/res/img/action.svg"
-
-                            Revise.HorizontalDivider {
-                                width: parent.width
-                            }
-
-                            // Select all cards or deselect selected
-                            Revise.Button {
-                                width: parent.width
-                                clickable: Revise.CardsModel.cardsCount > 0
-
-                                text: {
-                                    if (Revise.CardsModel.selectedCount === 0) {
-                                        if (Revise.CardSearchModel.searchFront.length === 0)
-                                            return qsTr("Выбрать всё")
-                                        return qsTr("Выбрать найденное")
-                                    }
-                                    return qsTr("Снять выделение")
-                                }
-
-                                Revise.HoverableTooltip {
-                                    anchors.fill: parent
-                                    text: {
-                                        if (Revise.CardsModel.selectedCount === 0) {
-                                            if (Revise.CardSearchModel.searchFront.length === 0)
-                                                return qsTr("Выбрать все карточки в колоде")
-                                            return qsTr("Выбрать только найденные карточки")
-                                        }
-                                        return qsTr("Снять выделение со всех карточек в колоде")
-                                    }
-                                }
-
-                                onClicked: {
-                                    if (Revise.CardsModel.selectedCount === 0) {
-                                        if (Revise.CardSearchModel.searchFront.length === 0)
-                                            Revise.CardsModel.selectAll()
-                                        else
-                                            Revise.CardSearchModel.selectFoundCards()
-                                    } else {
-                                        Revise.CardsModel.deselectAll()
-                                    }
-                                }
-                            }
-
-                            Revise.HorizontalDivider {
-                                width: parent.width
-                            }
-
-
-                            // Set cards difficulty
-                            Revise.Text {
-                                width: parent.width
-                                text: qsTr("Задать сложность карточек")
-                                font.bold: true
-                            }
-
-                            Revise.ValueSlider {
-                                id: setDifficultySlider
-
-                                width: parent.width
-
-                                label.text: value.toFixed(1)
-                                slider.from: 0.0
-                                slider.to: 5.0
-                                slider.stepSize: 0.1
-                                value: 2.5
-                            }
-
-                            Revise.Button {
-                                width: parent.width
-                                clickable: Revise.CardsModel.cardsCount > 0
-
-                                text: {
-                                    if (Revise.CardsModel.selectedCount === 0)
-                                        return qsTr("Задать сложность")
-                                    return qsTr(`Задать сложность (${Revise.CardsModel.selectedCount} / ${Revise.CardsModel.cardsCount})`)
-                                }
-
-                                Revise.HoverableTooltip {
-                                    anchors.fill: parent
-                                    text: {
-                                        if (Revise.CardsModel.selectedCount === 0)
-                                            return qsTr("Выбранная сложность будет установлена для всех карточек")
-                                        qsTr("Выбранная сложность будет установлена для выбранных карточек")
-                                    }
-                                }
-
-                                onClicked: {
-                                    setDifficultyForCardsDialog.difficulty = setDifficultySlider.value;
-                                    setDifficultyForCardsDialog.requestOpen()
-                                }
-                            }
-
-                            Revise.HorizontalDivider {
-                                width: parent.width
-                            }
-
-
-                            // Set cards status
-                            Revise.Text {
-                                width: parent.width
-                                text: qsTr("Задать статус карточек")
-                                font.bold: true
-                            }
-
-                            Revise.ComboBox {
-                                id: cardStateComboBox
-
-                                model: ListModel {
-                                    Component.onCompleted: {
-                                        append({
-                                            label: qsTr("Новая"),
-                                            textColor: Revise.Theme.green
-                                        })
-                                        append({
-                                            label: qsTr("Повторяемая"),
-                                            textColor: Revise.Theme.blue
-                                        })
-                                        append({
-                                            label: qsTr("Ошибочная"),
-                                            textColor: Revise.Theme.red
-                                        })
-                                    }
-                                }
-                            }
-
-                            Revise.Button {
-                                width: parent.width
-                                clickable: Revise.CardsModel.cardsCount > 0
-
-                                text: {
-                                    if (Revise.CardsModel.selectedCount === 0)
-                                        return qsTr("Задать статус")
-                                    return qsTr(`Задать статус (${Revise.CardsModel.selectedCount} / ${Revise.CardsModel.cardsCount})`)
-                                }
-
-                                Revise.HoverableTooltip {
-                                    anchors.fill: parent
-                                    text: {
-                                        if (Revise.CardsModel.selectedCount === 0)
-                                            return qsTr("Выбранный статус будет установлен для всех карточек")
-                                        qsTr("Выбранный статус будет установлен для выбранных карточек")
-                                    }
-                                }
-
-                                onClicked: setStateForCardsDialog.requestOpen()
-                            }
-
-                            Revise.HorizontalDivider {
-                                width: parent.width
-                            }
-
-
-                            Revise.Text {
-                                width: parent.width
-                                text: qsTr("Повторить карточки сегодня")
-                                font.bold: true
-                            }
-
-                            // Review today
-                            Revise.Button {
-                                width: parent.width
-                                clickable: Revise.CardsModel.cardsCount > 0
-
-                                text: {
-                                    if (Revise.CardsModel.selectedCount === 0)
-                                        return qsTr("Повторить сегодня")
-                                    return qsTr(`Повторить сегодня (${Revise.CardsModel.selectedCount} / ${Revise.CardsModel.cardsCount})`)
-                                }
-
-                                Revise.HoverableTooltip {
-                                    anchors.fill: parent
-                                    text: {
-                                        if (Revise.CardsModel.selectedCount === 0)
-                                            return qsTr("Все карточки будут повторены сегодня без сброса сложности")
-                                        qsTr("Только выбранные карточки будут повторены сегодня без сброса сложности")
-                                    }
-                                }
-
-                                onClicked: {
-                                    let draft = new Revise.updateCardDraft();
-                                    draft.nextReview = new Date();
-
-                                    if (Revise.CardsModel.selectedCount === 0) {
-                                        Revise.DeckService.update_cards(Revise.CardsModel.ids(), draft);
-                                    } else {
-                                        Revise.DeckService.update_cards(Revise.CardsModel.selectedIds(), draft);
-                                    }
-                                }
-                            }
-                        }
+                    onSetDifficultyClicked: function(value) {
+                        setDifficultyForCardsDialog.difficulty = value;
+                        setDifficultyForCardsDialog.requestOpen()
                     }
+
+                    onSetStateClicked: setStateForCardsDialog.requestOpen()
                 }
 
                 // Tab with deck statistics
-                Revise.Flickable {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-
-                    contentWidth: width
-                    contentHeight: deckStatistics.implicitHeight
-
-                    Revise.PanelColumn {
-                        id: deckStatistics
-                        width: parent.width - 16
-
-                        // Study progress
-                        Revise.RadialGauge {
-                            width: 220
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            maximum: Revise.CardsModel.cardsCount
-                            value: Revise.CardsModel.reviewCardsCount
-                            valueText: Revise.CardsModel.cardsCount > 0 ? qsTr(`${Math.trunc(value * 100 / maximum)}%`) : "0%"
-                            text: qsTr("Прогресс обучения")
-                        }
-
-                        Revise.HorizontalDivider {
-                            width: parent.width
-                        }
-
-                        // New cards
-                        Revise.RadialGauge {
-                            width: 220
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            backgroundColor: Color.darker(Revise.Theme.green, 3)
-                            foregroundColor: Revise.Theme.green
-                            value: Revise.CardsModel.newCardsCount
-                            maximum: Revise.CardsModel.cardsCount
-                            text: qsTr("Новых карточек")
-                        }
-
-                        // Review cards
-                        Revise.RadialGauge {
-                            width: 220
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            backgroundColor: Color.darker(Revise.Theme.blue, 3)
-                            foregroundColor: Revise.Theme.blue
-                            value: Revise.CardsModel.reviewCardsCount
-                            maximum: Revise.CardsModel.cardsCount
-                            text: qsTr("Повторяемых карточек")
-                        }
-
-                        // Incorrect cards
-                        Revise.RadialGauge {
-                            width: 220
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            backgroundColor: Color.darker(Revise.Theme.red, 3)
-                            foregroundColor: Revise.Theme.red
-                            value: Revise.CardsModel.incorrectCardsCount
-                            maximum: Revise.CardsModel.cardsCount
-                            text: qsTr("Ошибочных карточек")
-                        }
-                    }
-                }
+                Revise.DeckStatisticsTab {}
             }
         }
     }
 
     function save() {
-        let draft = createDeckDraft();
+        let draft = buildDeckDraft();
         root.deck.name = draft.name;
         root.deck.description = draft.description;
         Revise.DeckService.update_deck(root.deck.id, draft)
     }
 
-    function createDeckDraft() {
+    function buildDeckDraft() {
+        deckPropertiesTab.deckTimeLimit.value = deckPropertiesTab.limitTime.checked ? deckPropertiesTab.deckTimeLimit.value : 0;
+
         return new Revise.deckDraft(
-            deckName.textField.text,
-            deckDescription.textField.text,
-            deckTimeLimit.value,
-            deckNewLimit.value,
-            deckReviewLimit.value,
-            deckIncorrectLimit.value)
+            deckPropertiesTab.deckName.textField.text,
+            deckPropertiesTab.deckDescription.textField.text,
+            deckPropertiesTab.deckTimeLimit.value,
+            deckPropertiesTab.deckNewLimit.value,
+            deckPropertiesTab.deckReviewLimit.value,
+            deckPropertiesTab.deckIncorrectLimit.value)
     }
 
     Shortcut {
@@ -968,8 +519,8 @@ Item {
 
         messageText: {
             if (Revise.CardsModel.selectedCount > 0)
-                return qsTr(`Для выбранных (${Revise.CardsModel.selectedCount} из ${Revise.CardsModel.cardsCount}) карточек будет установлен статус «${cardStateComboBox.displayText}»`)
-            qsTr(`Для всех карточек будет установлен статус «${cardStateComboBox.displayText}»`)
+                return qsTr(`Для выбранных (${Revise.CardsModel.selectedCount} из ${Revise.CardsModel.cardsCount}) карточек будет установлен статус «${cardActionsTab.cardStateComboBox.displayText}»`)
+            qsTr(`Для всех карточек будет установлен статус «${cardActionsTab.cardStateComboBox.displayText}»`)
         }
 
         confirmButtonText: qsTr("Задать")
@@ -978,11 +529,11 @@ Item {
         onAccepted: {
             let draft = new Revise.updateCardDraft();
 
-            if (cardStateComboBox.displayText === qsTr("Новая"))
+            if (cardActionsTab.cardStateComboBox.displayText === qsTr("Новая"))
                 draft.state = Revise.card.State.New
-            else if (cardStateComboBox.displayText === qsTr("Повторяемая"))
+            else if (cardActionsTab.cardStateComboBox.displayText === qsTr("Повторяемая"))
                 draft.state = Revise.card.State.Review
-            else if (cardStateComboBox.displayText === qsTr("Ошибочная"))
+            else if (cardActionsTab.cardStateComboBox.displayText === qsTr("Ошибочная"))
                 draft.state = Revise.card.State.Incorrect
 
             if (Revise.CardsModel.selectedCount === 0) {
