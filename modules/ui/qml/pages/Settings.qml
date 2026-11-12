@@ -98,7 +98,10 @@ Item {
                     width: parent.width
                     text: qsTr("Использовать мобильный интерфейс")
                     checked: Revise.SettingsService.useMobileUi
-                    onChanged: useMobileUiDialog.requestOpen()
+                    onChanged: function(checked) {
+                        useMobileUiDialog.use = checked;
+                        useMobileUiDialog.requestOpen();
+                    }
                 }
             }
 
@@ -298,6 +301,9 @@ Item {
     Revise.ConfirmDialog {
         id: useMobileUiDialog
 
+        // Use mobile UI?
+        property bool use
+
         titleText: {
             if (Revise.SettingsService.useMobileUi)
                 return qsTr("Переключить на десктопный интерфейс?")
@@ -308,7 +314,7 @@ Item {
         confirmButtonText: qsTr("Переключить")
         showDontAskAgainOption: false
 
-        onAccepted: Revise.SettingsService.useMobileUi = useMobileUiCheckBox.checked
+        onAccepted: Revise.SettingsService.useMobileUi = use
     }
 
     Shortcut {
