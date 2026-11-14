@@ -42,7 +42,8 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.IconButton {
-                    size: 32
+                    size: 36
+                    background.color: "transparent"
                     icon.source: "qrc:/res/img/home.svg"
                     icon.color: Revise.Router.currentPage.name === "home" ? Revise.Theme.red : Revise.Theme.secondaryForegroundColor
                     onClicked: Revise.Router.navigate("home", {})
@@ -52,7 +53,8 @@ Item {
                 Revise.HorizontalSpacer {}
 
                 Revise.IconButton {
-                    size: 32
+                    size: 36
+                    background.color: "transparent"
                     icon.source: "qrc:/res/img/settings.svg"
                     icon.color: Revise.Router.currentPage.name === "settings" ? Revise.Theme.red : Revise.Theme.secondaryForegroundColor
                     onClicked: Revise.Router.navigate("settings", {})
