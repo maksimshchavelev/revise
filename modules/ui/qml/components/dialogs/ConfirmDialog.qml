@@ -101,17 +101,19 @@ Dialog {
         \qmlproperty bool ConfirmDialog::dontAskAgain
         \brief Whether the "don't ask again" checkbox is checked.
 
-        This property is an alias to the internal
-        \l {Revise.LabeledCheckBox::checked}{Revise.LabeledCheckBox.checked}.
-        It is initialized from \l suppressed when the dialog opens, and its
-        value can be read in the \l accepted handler to persist the user's
-        choice. ConfirmDialog does not emit a signal when the checkbox is
-        toggled; consumers should read this property from \c onAccepted
-        instead.
+        This property reflects the state of the active "don't ask again" checkbox.
+        Since the dialog adapts its layout for desktop and mobile platforms, it
+        reads the checked state from the corresponding internal checkbox
+        (\c desktopDontAskAgainCheckBox or \c mobileDontAskAgainCheckBox).
+
+        The value is initialized from \l suppressed when the dialog opens and
+        is typically read in the \l accepted handler to persist the user's choice.
+        ConfirmDialog does not emit a signal when the checkbox is toggled;
+        consumers should read this property from \c onAccepted instead.
 
         The default value is \c false.
     */
-    property alias dontAskAgain: dontAskAgainCheckBox.checked
+    property bool dontAskAgain: desktopDontAskAgainCheckBox.checked || mobileDontAskAgainCheckBox.checked
 
     /*!
         \qmlproperty bool ConfirmDialog::showDontAskAgainOption
@@ -284,11 +286,52 @@ Dialog {
                 width: parent.width
             }
 
+            // Don't ask again, confirm and decline buttons. Visible when mobile UI is enabled
+            Column {
+                visible: Revise.SettingsService.useMobileUi
+                width: parent.width
+                spacing: 16
+
+                Revise.LabeledCheckBox {
+                    id: mobileDontAskAgainCheckBox
+
+                    width: parent.width
+                    visible: root.showDontAskAgainOption
+
+                    text: qsTr("Больше не спрашивать")
+                    color: Revise.Theme.secondaryForegroundColor
+
+                    onChanged: function (checked) {
+                        mobileDontAskAgainCheckBox.checked = checked
+                    }
+                }
+
+                RowLayout {
+                    width: parent.width
+
+                    Revise.HorizontalSpacer {}
+
+                    Revise.Button {
+                        text: root.cancelButtonText
+                        onClicked: root.reject()
+                    }
+
+                    Revise.Button {
+                        text: root.confirmButtonText
+                        backgroundItem.color: Revise.Theme.primaryColor
+                        onClicked: root.accept()
+                        focus: true
+                    }
+                }
+            }
+
+            // Don't ask again, confirm and decline buttons. Visible when desktop UI is enabled
             RowLayout {
+                visible: !Revise.SettingsService.useMobileUi
                 width: parent.width
 
                 Revise.LabeledCheckBox {
-                    id: dontAskAgainCheckBox
+                    id: desktopDontAskAgainCheckBox
 
                     Layout.fillWidth: true
                     visible: root.showDontAskAgainOption
@@ -297,7 +340,7 @@ Dialog {
                     color: Revise.Theme.secondaryForegroundColor
 
                     onChanged: function (checked) {
-                        dontAskAgainCheckBox.checked = checked
+                        desktopDontAskAgainCheckBox.checked = checked
                     }
                 }
 
