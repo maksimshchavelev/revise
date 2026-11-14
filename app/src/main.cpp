@@ -2,9 +2,9 @@
 
 #include "Launcher/Launcher.hpp" // for Launcher
 #include <QtWebView>             // for QtWebView::initialize()
-#include <jni.h>                 // for JNI
 
 #ifdef Q_OS_ANDROID
+#include <jni.h> // for JNI
 extern "C" JNIEXPORT jboolean JNICALL Java_org_qtproject_qt_android_QtNativeAccessibility_accessibilitySupported(JNIEnv*,
                                                                                                                  jobject) {
     return JNI_FALSE;
