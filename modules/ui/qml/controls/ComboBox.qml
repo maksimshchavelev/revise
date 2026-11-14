@@ -73,7 +73,7 @@ import Revise as Revise
 ComboBox {
     id: root
 
-    implicitWidth: 160
+    implicitWidth: 170
     implicitHeight: 30
 
     textRole: "label"
@@ -139,6 +139,7 @@ ComboBox {
         x: root.width - width - root.rightPadding
         y: root.topPadding + (root.availableHeight - height) / 2
         text: "▼"
+        font.pixelSize: Revise.Theme.fontSizeSmall
     }
 
     popup: Popup {
