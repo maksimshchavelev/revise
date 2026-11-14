@@ -1,11 +1,19 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "Launcher/Launcher.hpp" // for Launcher
-#include <QQuickWindow>          // for QQuickWindow
-#include <QSGRendererInterface>  // for QSGRendererInterface
 #include <QtWebView>             // for QtWebView::initialize()
+#include <jni.h>                 // for JNI
+
+extern "C" JNIEXPORT jboolean JNICALL Java_org_qtproject_qt_android_QtNativeAccessibility_accessibilitySupported(JNIEnv*,
+                                                                                                                 jobject) {
+    return JNI_FALSE;
+}
 
 int main(int argc, char* argv[]) {
+#ifdef Q_OS_ANDROID
+    qputenv("QSG_NO_VSYNC", "1");
+#endif
+
 #ifndef Q_OS_ANDROID
     qputenv("QT_WEBVIEW_PLUGIN", "webengine");
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer");
