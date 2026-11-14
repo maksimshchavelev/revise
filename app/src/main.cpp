@@ -4,10 +4,12 @@
 #include <QtWebView>             // for QtWebView::initialize()
 #include <jni.h>                 // for JNI
 
+#ifdef Q_OS_ANDROID
 extern "C" JNIEXPORT jboolean JNICALL Java_org_qtproject_qt_android_QtNativeAccessibility_accessibilitySupported(JNIEnv*,
                                                                                                                  jobject) {
     return JNI_FALSE;
 }
+#endif
 
 int main(int argc, char* argv[]) {
 #ifdef Q_OS_ANDROID
