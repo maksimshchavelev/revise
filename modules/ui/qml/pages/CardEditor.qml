@@ -255,6 +255,14 @@ Item {
     Shortcut {
         sequence: "Back"
         enabled: Revise.BuildInfo.isMobileBuild
-        onActivated: Revise.Router.back()
+        onActivated: exitTimer.start()
+    }
+
+    // If you handle the Back button press immediately, everything will freeze and crash on Android
+    Timer {
+        id: exitTimer
+        interval: 15
+        repeat: false
+        onTriggered: Revise.Router.back()
     }
 }
