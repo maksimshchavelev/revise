@@ -67,7 +67,7 @@ Item {
 
         Item {
             id: controlSlot
-            anchors.right: parent.right
+            anchors.left: parent.left
             width: childrenRect.width
             height: childrenRect.height
         }
