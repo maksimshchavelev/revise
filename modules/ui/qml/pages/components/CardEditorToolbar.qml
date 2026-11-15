@@ -63,8 +63,10 @@ Rectangle {
         anchors.bottomMargin: 10
         spacing: 8
 
-        // Use KaTeX tooltip
+        // Use KaTeX tooltip. Disabled in mobile UI
         Revise.IconText {
+            visible: !Revise.SettingsService.useMobileUi
+
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
 
