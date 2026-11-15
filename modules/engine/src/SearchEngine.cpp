@@ -1,8 +1,9 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "engine/SearchEngine.hpp" // for header
 #include <ranges>                  // std::ranges
 #include <utils/Html.hpp>          // for html utils
+#include <utils/String.hpp>
 
 namespace engine {
 
@@ -41,7 +42,7 @@ bool SearchEngine::card_matches(const core::Card& card, const std::shared_ptr<co
     // By front
     case core::CardFilterKind::Front: {
         const auto&   f = static_cast<const core::CardFrontSearchFilter&>(*filter);
-        const QString plain = utils::Html::plain_text(card.front).trimmed();
+        const QString plain = (utils::Html::plain_text(card.front)).trimmed();
         return plain.contains(f.front.trimmed(), Qt::CaseInsensitive);
     }
 
