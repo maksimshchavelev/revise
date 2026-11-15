@@ -3,38 +3,44 @@
 import QtQuick
 import Revise as Revise
 
-/**
- * \qmltype Switch
- * \brief A modern, animated toggle switch control with smooth transitions and hover support.
- *
- * This control allows users to toggle between two states: checked (on) and unchecked (off).
- * It features built-in animations for track color transitions and thumb positioning
- *
- * \b {Example Usage (Standard Property Binding):}
- * \code
- * Switch {
- *     checked: settings.darkMode
- *     onCheckedChanged: {
- *         console.log("Dark mode status changed to:", checked)
- *     }
- * }
- * \endcode
- *
- * \b {Example Usage (Signal Handling):}
- * \code
- * Switch {
- *     onToggled: (isChecked) => {
- *         audioEngine.setMuted(isChecked)
- *     }
- * }
- * \endcode
- */
+/*!
+    \qmltype Switch
+    \brief An animated toggle switch control.
+    \inqmlmodule Revise
+    \inherits Rectangle
+    \since 1.0
+
+    Switch is a two-state toggle control. It provides smooth animations for
+    track color changes and thumb movement, along with hover cursor support.
+
+    \section1 Example Usage
+
+    \qml
+    Revise.Switch {
+        checked: settings.darkMode
+        onToggled: (isChecked) => {
+            settings.darkMode = isChecked
+        }
+    }
+    \endqml
+*/
 Rectangle {
     id: root
 
-    // Is a switch checked?
+    /*!
+        \qmlproperty bool Switch::checked
+        \brief Whether the switch is in the checked (on) state.
+
+        The default value is \c false.
+    */
     property bool checked: false
 
+    /*!
+        \qmlsignal Switch::toggled(bool isChecked)
+        \brief Emitted when the user toggles the switch.
+
+        The \a isChecked argument contains the new state of the switch.
+    */
     signal toggled(bool isChecked)
 
     width: 48
@@ -66,10 +72,7 @@ Rectangle {
     }
 
     TapHandler {
-        onTapped: {
-            root.checked = !root.checked
-            root.toggled(root.checked)
-        }
+        onTapped: root.toggled(!root.checked)
     }
 
     HoverHandler {
