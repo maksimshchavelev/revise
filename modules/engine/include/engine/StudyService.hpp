@@ -51,6 +51,7 @@ class StudyService final : public core::IStudyService {
   private:
     core::IStudyEngine& m_study_engine;
     QTimer              m_timer;
+    core::Deck::id_type m_current_deck;
     bool                m_running{true};
 };
 

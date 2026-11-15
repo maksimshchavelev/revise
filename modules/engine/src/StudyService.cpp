@@ -37,7 +37,8 @@ void StudyService::start(const int deck_id) {
         m_timer.start();
     }
 
-    dispatch(training_started{});
+    m_current_deck = deck_id;
+    dispatch(training_started{deck_id});
 }
 
 
@@ -56,7 +57,7 @@ void StudyService::answer(const float difficulty) {
         }
 
         m_timer.stop();
-        dispatch(training_finished{});
+        dispatch(training_finished{m_current_deck});
     }
 
     if (res->next_card) {
@@ -87,7 +88,7 @@ void StudyService::abort() {
     }
 
     m_timer.stop();
-    dispatch(training_aborted{});
+    dispatch(training_aborted{m_current_deck});
 }
 
 
