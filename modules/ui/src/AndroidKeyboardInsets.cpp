@@ -1,14 +1,14 @@
 // Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "AndroidKeyboardInsets.hpp" // for AndroidKeyboardInsets
-#include <QJniObject>                // for QJniObject
 #include <QMetaObject>               // for QMetaObject
 #include <QScreen>                   // for QScreen
 #include <QVariant>                  // for QVariant
 #include <QtGlobal>                  // for Q_OS_ANDROID, qFuzzyCompare
 
 #ifdef Q_OS_ANDROID
-#include <jni.h> // for JNI types and JNIEXPORT
+#include <QJniObject> // for QJniObject
+#include <jni.h>      // for JNI types and JNIEXPORT
 #endif
 
 namespace ui {
