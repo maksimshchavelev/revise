@@ -34,7 +34,6 @@
                 android:theme="@style/ReviseTheme"
                 android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
                 android:launchMode="singleTop"
-                android:screenOrientation="unspecified"
                 android:exported="true"
                 android:label="Revise"
                 android:windowSoftInputMode="adjustNothing">
