@@ -359,7 +359,7 @@ Item {
                             return Revise.Theme.blue
                         }
 
-                        return Revise.Theme.textColorDark
+                        return Revise.Theme.secondaryForegroundColor
                     }
                 }
 
