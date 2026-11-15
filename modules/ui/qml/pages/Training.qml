@@ -80,6 +80,12 @@ Item {
                     return !abortLearningDialog.visible
                 return true
             }
+            onReadyChanged: {
+                if (ready)
+                    Revise.StudyService.resume();
+                else
+                    Revise.StudyService.pause();
+            }
         }
 
         Revise.TrainingBar {
