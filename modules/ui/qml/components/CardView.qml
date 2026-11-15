@@ -58,7 +58,11 @@ Loader {
         The value is forwarded to the base document when the card is shown
         and re-applied on every \l {CardView::show}{show()} call.
     */
-    property int fontSize: (Revise.Theme.fontSizeMedium + Revise.Theme.fontSizeBig) / 2
+    property int fontSize: {
+        if (Revise.SettingsService.useMobileUi)
+            return Revise.Theme.fontSizeMedium;
+        return (Revise.Theme.fontSizeMedium + Revise.Theme.fontSizeBig) / 2;
+    }
 
     /*!
         \qmlproperty color CardView::textColor
