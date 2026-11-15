@@ -4,6 +4,7 @@
 
 #include <core/Notifiable.hpp>   // for core::Notifiable
 #include <core/structs/Card.hpp> // for core::Card
+#include <core/structs/Deck.hpp> // for core::Deck::id_type
 #include <optional>              // for std::optional
 
 namespace core {
