@@ -92,8 +92,7 @@ void DecksModel::reload() {
 
     if (auto res = m_deck_service.deck_summaries().result<>()) {
         std::ranges::sort(*res, [](const core::DeckSummary& a, const core::DeckSummary& b) {
-            return a.new_cards + a.review_cards + a.incorrect_cards >
-                   b.new_cards + b.review_cards + b.incorrect_cards;
+            return a.new_cards + a.review_cards + a.incorrect_cards > b.new_cards + b.review_cards + b.incorrect_cards;
         });
         m_decks.append(std::move(res.value()));
     }
@@ -124,9 +123,7 @@ void DecksModel::on_deck_created(const core::Deck& deck) {
     // Fetch the full summary for the new deck from the service.
     // This is the only reliable way to get the aggregated counters.
     if (auto res = m_deck_service.deck_summaries().result<>()) {
-        auto it = std::ranges::find_if(*res, [&deck](const core::DeckSummary& s) {
-            return s.deck.id == deck.id;
-        });
+        auto it = std::ranges::find_if(*res, [&deck](const core::DeckSummary& s) { return s.deck.id == deck.id; });
         if (it != res->end()) {
             insert_deck_summary(*it);
         }
@@ -155,9 +152,7 @@ void DecksModel::on_deck_updated(const core::Deck& deck) {
     // Update deck fields. Counters are not expected to change here,
     // but if the service can provide a fresh summary, use it.
     if (auto res = m_deck_service.deck_summaries().result<>()) {
-        auto it = std::ranges::find_if(*res, [&deck](const core::DeckSummary& s) {
-            return s.deck.id == deck.id;
-        });
+        auto it = std::ranges::find_if(*res, [&deck](const core::DeckSummary& s) { return s.deck.id == deck.id; });
         if (it != res->end()) {
             update_deck_summary(row, *it);
             return;
@@ -167,7 +162,7 @@ void DecksModel::on_deck_updated(const core::Deck& deck) {
     // Fallback: update only the deck part, keep counters.
     m_decks[row].deck = deck;
     const QModelIndex idx = index(row);
-    emit dataChanged(idx, idx, {NameRole, DescriptionRole, TimeLimitRole, DeckId});
+    emit              dataChanged(idx, idx, {NameRole, DescriptionRole, TimeLimitRole, DeckId});
 }
 
 
@@ -206,25 +201,15 @@ void DecksModel::on_cards_updated(const QVector<core::Card>& cards) {
 
 
 void DecksModel::on_training_finished() {
-    // Training can change counters for many decks. Fetch all summaries
-    // and update only the rows whose data actually changed.
     if (auto res = m_deck_service.deck_summaries().result<>()) {
-        // Build a map for quick lookup.
-        QHash<int, const core::DeckSummary*> newSummaries;
-        newSummaries.reserve(res->size());
-        std::ranges::for_each(*res, [&newSummaries](const core::DeckSummary& s) {
-            newSummaries.insert(s.deck.id, &s);
+        emit beginResetModel();
+
+        m_decks = std::move(*res);
+        std::ranges::sort(m_decks, [](const auto& a, const auto& b) {
+            return a.new_cards + a.review_cards + a.incorrect_cards > b.new_cards + b.review_cards + b.incorrect_cards;
         });
 
-        for (int row = 1; row < m_decks.size(); ++row) { // skip special deck
-            const int id = m_decks[row].deck.id;
-            auto it = newSummaries.constFind(id);
-            if (it != newSummaries.constEnd()) {
-                if (m_decks[row] != *it.value()) {
-                    update_deck_summary(row, *it.value());
-                }
-            }
-        }
+        emit endResetModel();
     }
 }
 
@@ -237,9 +222,7 @@ void DecksModel::refresh_decks(const QSet<int>& affectedDeckIds) {
     if (auto res = m_deck_service.deck_summaries().result<>()) {
         QHash<int, const core::DeckSummary*> newSummaries;
         newSummaries.reserve(res->size());
-        std::ranges::for_each(*res, [&newSummaries](const core::DeckSummary& s) {
-            newSummaries.insert(s.deck.id, &s);
-        });
+        std::ranges::for_each(*res, [&newSummaries](const core::DeckSummary& s) { newSummaries.insert(s.deck.id, &s); });
 
         std::ranges::for_each(affectedDeckIds, [this, &newSummaries](const int deckId) {
             const int row = find_row(deckId);
@@ -257,13 +240,12 @@ void DecksModel::refresh_decks(const QSet<int>& affectedDeckIds) {
 
 void DecksModel::insert_deck_summary(const core::DeckSummary& summary) {
     // Find insertion position: after the special deck, preserving sort order.
-    int insertPos = 1; // after special deck
+    int       insertPos = 1; // after special deck
     const int total = summary.new_cards + summary.review_cards + summary.incorrect_cards;
 
     for (; insertPos < m_decks.size(); ++insertPos) {
-        const int otherTotal = m_decks[insertPos].new_cards +
-                               m_decks[insertPos].review_cards +
-                               m_decks[insertPos].incorrect_cards;
+        const int otherTotal =
+            m_decks[insertPos].new_cards + m_decks[insertPos].review_cards + m_decks[insertPos].incorrect_cards;
         if (total > otherTotal) {
             break;
         }
@@ -287,9 +269,10 @@ void DecksModel::update_deck_summary(const int row, const core::DeckSummary& sum
     m_decks[row] = summary;
 
     const QModelIndex idx = index(row);
-    emit dataChanged(idx, idx, {NameRole, DescriptionRole, TimeLimitRole,
-                                NewCardsRole, ReviewCardsRole, IncorrectCardsRole,
-                                DeckId, RepeatableToday});
+    emit              dataChanged(
+        idx,
+        idx,
+        {NameRole, DescriptionRole, TimeLimitRole, NewCardsRole, ReviewCardsRole, IncorrectCardsRole, DeckId, RepeatableToday});
 }
 
 } // namespace ui
