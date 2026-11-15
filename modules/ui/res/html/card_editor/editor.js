@@ -154,6 +154,16 @@ document.addEventListener("DOMContentLoaded", async function () {
         return textToDelta(text);
     });
 
+    quill.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+        delta.forEach(function(op) {
+            if (op.attributes) {
+                delete op.attributes.color;
+                delete op.attributes.background;
+            }
+        });
+        return delta;
+    });
+
     window.editor = {
         getText: function () {
             return quill.getText();
