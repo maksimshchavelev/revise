@@ -154,7 +154,7 @@ ColumnLayout {
                 header.icon.source: "qrc:/res/img/restrictions.svg"
                 header.label.text: qsTr("Ограничения")
 
-                Revise.SettingsRow {
+                Revise.DesktopSettingsRow {
                     width: parent.width
                     text: qsTr("Ограничить время ответа")
                     control: Revise.Switch {
@@ -166,7 +166,7 @@ ColumnLayout {
                     width: parent.width
                 }
 
-                Revise.SettingsRow {
+                Revise.DesktopSettingsRow {
                     width: parent.width
                     text: qsTr("Время ответа, сек")
 
@@ -184,7 +184,7 @@ ColumnLayout {
                     }
                 }
 
-                Revise.SettingsRow {
+                Revise.DesktopSettingsRow {
                     width: parent.width
                     text: qsTr("Ограничение новых карточек")
 
@@ -201,7 +201,7 @@ ColumnLayout {
                     }
                 }
 
-                Revise.SettingsRow {
+                Revise.DesktopSettingsRow {
                     width: parent.width
                     text: qsTr("Ограничение повторяемых карточек")
 
@@ -218,7 +218,7 @@ ColumnLayout {
                     }
                 }
 
-                Revise.SettingsRow {
+                Revise.DesktopSettingsRow {
                     width: parent.width
                     text: qsTr("Ограничение ошибочных карточек")
 
