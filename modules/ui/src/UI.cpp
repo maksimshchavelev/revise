@@ -70,14 +70,14 @@ void UI::bind_decks_model(core::IDeckService& deck_service, core::IStudyService&
 }
 
 
-void UI::bind_cards_model(core::IDeckService& deck_service) {
-    auto* model = new CardsModel(deck_service, &m_engine);
+void UI::bind_cards_model(core::IDeckService& deck_service, core::IStudyService& study_service) {
+    auto* model = new CardsModel(deck_service, study_service, &m_engine);
 
     if (!model) {
         qFatal("Failed to construct CardsModel");
     }
 
-    auto* search_model = new CardSearchModel(deck_service, *model, &m_engine);
+    auto* search_model = new CardSearchModel(deck_service, study_service, *model, &m_engine);
 
     if (!search_model) {
         qFatal("Failed to construct CardSearchModel");

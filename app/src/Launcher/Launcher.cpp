@@ -40,7 +40,7 @@ int Launcher::run() {
     m_ui.bind_streak_service(*m_streak_service);
     m_ui.bind_deck_service(*m_deck_service);
     m_ui.bind_decks_model(*m_deck_service, *m_study_service);
-    m_ui.bind_cards_model(*m_deck_service);
+    m_ui.bind_cards_model(*m_deck_service, *m_study_service);
     m_ui.bind_study_service(*m_study_service);
     m_ui.bind_card_edit_session(*m_card_edit_session);
     m_ui.bind_settings(*m_settings);

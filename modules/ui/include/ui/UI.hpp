@@ -45,8 +45,8 @@ class UI_EXPORT UI {
     /// Make DecksModel accessible from qml
     void bind_decks_model(core::IDeckService& deck_service, core::IStudyService& study_service);
 
-    /// Make CardsModel accessible from qml
-    void bind_cards_model(core::IDeckService& deck_service);
+    /// Make CardsModel and CardSearchModel accessible from qml
+    void bind_cards_model(core::IDeckService& deck_service, core::IStudyService& study_service);
 
     /// Make StudyService accessible from qml
     void bind_study_service(core::IStudyService& study_service);

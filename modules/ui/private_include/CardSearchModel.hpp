@@ -7,6 +7,7 @@
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
 #include <atomic>                             // for std::atomic
 #include <core/service/IDeckService.hpp>      // for core::IDeckService
+#include <core/service/IStudyService.hpp>     // for core::IStudyService
 #include <wrappers/CardWrapper.hpp>           // for ui::Card
 
 namespace ui {
@@ -20,7 +21,9 @@ class CardsModel;
 ///          events are applied incrementally, so the scroll position of the
 ///          view is preserved. Selection state is mirrored from CardsModel
 ///          through the cardSelectionChanged signal and cleared when the
-///          deck changes.
+///          deck changes. When a training session finishes for the current
+///          deck, the search results are reloaded to reflect the updated
+///          card states while preserving the active search filter.
 class CardSearchModel final : public QAbstractListModel {
     Q_OBJECT
 
@@ -37,9 +40,13 @@ class CardSearchModel final : public QAbstractListModel {
 
     /// @brief Construct the search model
     /// @param service Deck service used to perform the search
+    /// @param study_service Study service used to track training completion
     /// @param cards_model Main cards model, used for deck tracking and selection sync
     /// @param parent Parent object
-    explicit CardSearchModel(core::IDeckService& service, CardsModel& cards_model, QObject* parent = nullptr);
+    explicit CardSearchModel(core::IDeckService&  service,
+                             core::IStudyService& study_service,
+                             CardsModel&          cards_model,
+                             QObject*             parent = nullptr);
 
     /// @brief Roles of cards search model
     enum CardRoles {
@@ -64,8 +71,8 @@ class CardSearchModel final : public QAbstractListModel {
     /// @return Count of matching cards
     [[nodiscard]] int found_cards_count() const noexcept;
 
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
-    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] int                    rowCount(const QModelIndex& parent) const override;
+    [[nodiscard]] QVariant               data(const QModelIndex& index, int role) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
     /// @brief Select only found cards via CardsModel
@@ -110,12 +117,13 @@ class CardSearchModel final : public QAbstractListModel {
     ///         front contains the current query
     [[nodiscard]] bool matches(const core::Card& card) const;
 
-    core::IDeckService& m_deck_service;   ///< Deck service
-    CardsModel& m_cards_model;            ///< Main cards model (deck state source)
-    QVector<Card> m_cards;                ///< Found cards
-    QSet<int> m_selected_ids;             ///< Selected card IDs, mirrored from CardsModel
-    QString m_search_front;               ///< Search query
-    std::atomic_int m_last_request_id{0}; ///< Last search request ID
+    core::IDeckService&  m_deck_service;       ///< Deck service
+    core::IStudyService& m_study_service;      ///< Study service
+    CardsModel&          m_cards_model;        ///< Main cards model (deck state source)
+    QVector<Card>        m_cards;              ///< Found cards
+    QSet<int>            m_selected_ids;       ///< Selected card IDs, mirrored from CardsModel
+    QString              m_search_front;       ///< Search query
+    std::atomic_int      m_last_request_id{0}; ///< Last search request ID
 };
 
 } // namespace ui

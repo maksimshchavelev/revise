@@ -4,13 +4,12 @@
 #include "CardsModel.hpp" // for CardsModel::deck_id(), deckChanged, cardSelectionChanged
 #include <QThreadPool>    // for QThreadPool
 #include <algorithm>      // for std::ranges::for_each
-#include <cstddef>        // for std::size_t
 #include <utility>        // for std::move
 
 namespace ui {
 
-CardSearchModel::CardSearchModel(core::IDeckService& service, CardsModel& cards_model, QObject* parent) :
-    QAbstractListModel(parent), m_deck_service(service), m_cards_model(cards_model) {
+CardSearchModel::CardSearchModel(core::IDeckService& service, core::IStudyService& study_service, CardsModel& cards_model, QObject* parent) :
+    QAbstractListModel(parent), m_deck_service(service), m_study_service(study_service), m_cards_model(cards_model) {
     connect(&m_cards_model, &CardsModel::deckChanged, this, [this](int) {
         m_selected_ids.clear();
         reload();
@@ -21,6 +20,12 @@ CardSearchModel::CardSearchModel(core::IDeckService& service, CardsModel& cards_
     m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) { on_card_created(e.card); });
     m_deck_service.connect<core::IDeckService::cards_removed>([this](auto& e) { on_cards_removed(e.cards); });
     m_deck_service.connect<core::IDeckService::cards_updated>([this](auto& e) { on_cards_updated(e.cards); });
+
+    m_study_service.connect<core::IStudyService::training_finished>([this](const auto& e) {
+        if (e.deck_id == m_cards_model.deck_id()) {
+            reload();
+        }
+    });
 }
 
 

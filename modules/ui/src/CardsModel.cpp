@@ -4,22 +4,27 @@
 
 #include <QThreadPool> // for QThreadPool
 #include <algorithm>   // for std::ranges::for_each
-#include <cstddef>     // for std::size_t
 
 namespace ui {
 
-CardsModel::CardsModel(core::IDeckService& service, QObject* parent) : QAbstractListModel(parent), m_deck_service(service) {
-    m_deck_service.connect<core::IDeckService::card_created>([this](auto& e) {
+CardsModel::CardsModel(core::IDeckService& deck_service, core::IStudyService& study_service, QObject* parent) :
+    QAbstractListModel{parent}, m_deck_service{deck_service}, m_study_service{study_service} {
+    m_deck_service.connect<core::IDeckService::card_created>([this](const auto& e) {
         on_card_created(e.card);
         emit updated();
     });
-    m_deck_service.connect<core::IDeckService::cards_removed>([this](auto& e) {
+    m_deck_service.connect<core::IDeckService::cards_removed>([this](const auto& e) {
         on_cards_removed(e.cards);
         emit updated();
     });
-    m_deck_service.connect<core::IDeckService::cards_updated>([this](auto& e) {
+    m_deck_service.connect<core::IDeckService::cards_updated>([this](const auto& e) {
         on_cards_updated(e.cards);
         emit updated();
+    });
+    m_study_service.connect<core::IStudyService::training_finished>([this](const auto& e) {
+        if (e.deck_id == m_last_deck_id.load(std::memory_order_relaxed)) {
+            setDeck(e.deck_id);
+        }
     });
 }
 

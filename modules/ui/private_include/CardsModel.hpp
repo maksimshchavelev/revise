@@ -6,6 +6,7 @@
 #include <QtQmlIntegration/qqmlintegration.h> // for QML_ELEMENT, QML_SINGLETON, QML_UNCREATABLE
 #include <atomic>                             // for std::atomic
 #include <core/service/IDeckService.hpp>      // for core::IDeckService
+#include <core/service/IStudyService.hpp>     // for core::IStudyService
 #include <wrappers/CardWrapper.hpp>           // for ui::Card
 
 namespace ui {
@@ -43,9 +44,10 @@ class CardsModel final : public QAbstractListModel {
     Q_PROPERTY(int selectedCount READ selected_count NOTIFY cardSelectionChanged FINAL)
 
     /// @brief Construct the model and subscribe to deck service events
-    /// @param service Deck service used to fetch cards
+    /// @param deck_service Deck service used to fetch cards
+    /// @param study_service Study service to reload model when training finished
     /// @param parent Parent object
-    explicit CardsModel(core::IDeckService& service, QObject* parent = nullptr);
+    explicit CardsModel(core::IDeckService& deck_service, core::IStudyService& study_service, QObject* parent = nullptr);
 
     /// @brief Roles of cards model
     enum CardRoles {
@@ -122,11 +124,12 @@ class CardsModel final : public QAbstractListModel {
     /// @brief Handle card_updated or cards_updated events
     void on_cards_updated(const QVector<core::Card>& cards);
 
-    core::IDeckService& m_deck_service;       ///< Deck service
-    QVector<Card>       m_cards;              ///< All cards
-    int                 m_selected_count{0};  ///< Count of selected cards
-    std::atomic_int     m_last_deck_id{0};    ///< ID of the most recently loaded deck
-    std::atomic_int     m_last_request_id{0}; ///< Last deck load request ID
+    core::IDeckService&  m_deck_service;       ///< Deck service
+    core::IStudyService& m_study_service;      ///< Study service to update model when studying finished
+    QVector<Card>        m_cards;              ///< All cards
+    int                  m_selected_count{0};  ///< Count of selected cards
+    std::atomic_int      m_last_deck_id{0};    ///< ID of the most recently loaded deck
+    std::atomic_int      m_last_request_id{0}; ///< Last deck load request ID
 
     /// @brief Get cards count
     /// @return Count of the cards
