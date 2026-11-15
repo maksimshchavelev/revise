@@ -1,4 +1,3 @@
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -171,7 +170,8 @@ Dialog {
         \c onAccepted handler runs exactly as if the user had confirmed.
     */
     function requestOpen() {
-        dontAskAgain = suppressed
+        desktopDontAskAgainCheckBox.checked = suppressed
+        mobileDontAskAgainCheckBox.checked = suppressed
 
         if (suppressed)
             accepted()
