@@ -55,6 +55,7 @@ ListView {
     model: Revise.DecksModel
     boundsBehavior: Flickable.StopAtBounds
     clip: true
+    reuseItems: true
     spacing: 12
 
     ScrollBar.vertical: Revise.Scrollbar {
