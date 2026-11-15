@@ -1,10 +1,9 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #pragma once
 
 #include <core/Notifiable.hpp>   // for core::Notifiable
 #include <core/structs/Card.hpp> // for core::Card
-#include <expected>              // for std::expected
 #include <optional>              // for std::optional
 
 namespace core {
@@ -12,13 +11,13 @@ namespace core {
 /// @brief Service that manages the learning process
 class IStudyService : public Notifiable {
   public:
-    EVENT(training_started)                          ///< Training started
-    EVENT(training_finished)                         ///< Training finished
-    EVENT(training_aborted)                          ///< Training aborted
-    EVENT(card_changed, QString front; QString back) ///< Card changed (for example, next card)
-    EVENT(remaining_time_changed, float remaining)   ///< Remaining time changed
-    EVENT(flipped_changed, bool flipped)             ///< Card flip changed
-    EVENT(error, QString message)                    ///< Error occurred
+    EVENT(training_started, core::Deck::id_type deck_id)  ///< Training started
+    EVENT(training_finished, core::Deck::id_type deck_id) ///< Training finished
+    EVENT(training_aborted, core::Deck::id_type deck_id)  ///< Training aborted
+    EVENT(card_changed, QString front; QString back)      ///< Card changed (for example, next card)
+    EVENT(remaining_time_changed, float remaining)        ///< Remaining time changed
+    EVENT(flipped_changed, bool flipped)                  ///< Card flip changed
+    EVENT(error, QString message)                         ///< Error occurred
 
     virtual ~IStudyService() = default;
 
@@ -64,7 +63,7 @@ class IStudyService : public Notifiable {
      * @brief Get current card
      * @return `const std::optional<core::Card>&` with `core::Card&` if success
      */
-    virtual const std::optional<core::Card>& current_card() const = 0;
+    [[nodiscard]] virtual const std::optional<Card>& current_card() const = 0;
 
     /**
      * @brief Reload current card (if exists)
@@ -77,19 +76,19 @@ class IStudyService : public Notifiable {
      * @brief Get total time limit for the current card
      * @return Time limit
      */
-    virtual int time_limit() const = 0;
+    [[nodiscard]] virtual int time_limit() const = 0;
 
     /**
      * @brief Get remaining time for the current card
      * @return Remaining time
      */
-    virtual float time_remaining() const = 0;
+    [[nodiscard]] virtual float time_remaining() const = 0;
 
     /**
      * @brief Is card flipped
      * @return `true` if card flipped
      */
-    virtual bool flipped() const = 0;
+    [[nodiscard]] virtual bool flipped() const = 0;
 
     /// @brief Pause training
     virtual void pause() = 0;
