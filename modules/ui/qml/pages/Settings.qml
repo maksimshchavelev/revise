@@ -59,8 +59,10 @@ Item {
                     Revise.SettingsRow {
                         text: qsTr("Масштаб интерфейса")
 
-                        control: Row {
-                            spacing: 8
+                        control: GridLayout {
+                            flow: Revise.SettingsService.useMobileUi ? GridLayout.TopToBottom : GridLayout.LeftToRight
+                            rowSpacing: 8
+                            columnSpacing: 8
 
                             Revise.ValueSlider {
                                 id: uiScaleSlider
@@ -268,41 +270,49 @@ Item {
                     Revise.CopyableKeyValue {
                         key.text: qsTr("Название компилятора")
                         value.text: Revise.BuildInfo.compilerId
+                        isVertical: Revise.SettingsService.useMobileUi
                     }
 
                     Revise.CopyableKeyValue {
                         key.text: qsTr("Версия компилятора")
                         value.text: Revise.BuildInfo.compilerVersion
+                        isVertical: Revise.SettingsService.useMobileUi
                     }
 
                     Revise.CopyableKeyValue {
                         key.text: qsTr("Целевая архитектура")
                         value.text: Revise.BuildInfo.targetArch
+                        isVertical: Revise.SettingsService.useMobileUi
                     }
 
                     Revise.CopyableKeyValue {
                         key.text: qsTr("Имя хост-системы")
                         value.text: Revise.BuildInfo.buildHostSystem
+                        isVertical: Revise.SettingsService.useMobileUi
                     }
 
                     Revise.CopyableKeyValue {
                         key.text: qsTr("Хост-архитектура")
                         value.text: Revise.BuildInfo.hostArch
+                        isVertical: Revise.SettingsService.useMobileUi
                     }
 
                     Revise.CopyableKeyValue {
                         key.text: qsTr("Тип сборки")
                         value.text: Revise.BuildInfo.buildType
+                        isVertical: Revise.SettingsService.useMobileUi
                     }
 
                     Revise.CopyableKeyValue {
                         key.text: qsTr("Версия Qt")
                         value.text: Revise.BuildInfo.buildQtVersion
+                        isVertical: Revise.SettingsService.useMobileUi
                     }
 
                     Revise.CopyableKeyValue {
                         key.text: qsTr("Хэш коммита в Git")
                         value.text: Revise.BuildInfo.buildGitCommitHash
+                        isVertical: Revise.SettingsService.useMobileUi
                     }
                 }
             }
