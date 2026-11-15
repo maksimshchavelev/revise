@@ -67,7 +67,7 @@ Item {
     Drawer {
         id: createDeckDrawer
 
-        width: Math.min(root.width * 0.8, 350)
+        width: Math.min(root.width * 0.85, 350)
         height: root.height
         edge: Qt.RightEdge
         scale: Revise.SettingsService.uiScale
@@ -112,9 +112,7 @@ Item {
                 contentWidth: width
                 contentHeight: deckCreateTab.implicitHeight
 
-                ScrollBar.vertical: Revise.Scrollbar
-                {
-                }
+                ScrollBar.vertical: Revise.Scrollbar{}
 
                 Column {
                     id: deckCreateTab
@@ -149,12 +147,16 @@ Item {
                         header.icon.source: "qrc:/res/img/restrictions.svg"
                         header.label.text: qsTr("Ограничения")
 
-                        Revise.SettingsRow {
+                        Revise.DesktopSettingsRow {
                             width: parent.width
                             text: qsTr("Ограничить время ответа")
                             control: Revise.Switch {
                                 id: limitTime
                                 checked: false
+
+                                onToggled: function (checked) {
+                                    limitTime.checked = checked;
+                                }
                             }
                         }
 
