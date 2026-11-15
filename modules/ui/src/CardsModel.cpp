@@ -2,8 +2,10 @@
 
 #include "CardsModel.hpp"
 
-#include <QThreadPool> // for QThreadPool
-#include <algorithm>   // for std::ranges::for_each
+#include <QRegularExpression> // for QRegularExpression
+#include <QThreadPool>        // for QThreadPool
+#include <algorithm>          // for std::ranges::for_each
+#include <utils/String.hpp>   // for String::replace_katex
 
 namespace ui {
 
@@ -46,7 +48,7 @@ QVariant CardsModel::data(const QModelIndex& index, int role) const {
 
     switch (role) {
     case FrontRole:
-        return card.front();
+        return utils::String::replace_katex(card.front());
     case BackRole:
         return card.back();
     case IdRole:

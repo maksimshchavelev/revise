@@ -1,14 +1,18 @@
 // Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
-#include "CardSearchModel.hpp"
-#include "CardsModel.hpp" // for CardsModel::deck_id(), deckChanged, cardSelectionChanged
-#include <QThreadPool>    // for QThreadPool
-#include <algorithm>      // for std::ranges::for_each
-#include <utility>        // for std::move
+#include "CardSearchModel.hpp" // for header
+#include "CardsModel.hpp"      // for CardsModel::deck_id(), deckChanged, cardSelectionChanged
+#include <QThreadPool>         // for QThreadPool
+#include <algorithm>           // for std::ranges::for_each
+#include <utility>             // for std::move
+#include <utils/String.hpp>    // for String::replace_katex
 
 namespace ui {
 
-CardSearchModel::CardSearchModel(core::IDeckService& service, core::IStudyService& study_service, CardsModel& cards_model, QObject* parent) :
+CardSearchModel::CardSearchModel(core::IDeckService&  service,
+                                 core::IStudyService& study_service,
+                                 CardsModel&          cards_model,
+                                 QObject*             parent) :
     QAbstractListModel(parent), m_deck_service(service), m_study_service(study_service), m_cards_model(cards_model) {
     connect(&m_cards_model, &CardsModel::deckChanged, this, [this](int) {
         m_selected_ids.clear();
@@ -46,7 +50,7 @@ QVariant CardSearchModel::data(const QModelIndex& index, int role) const {
 
     switch (role) {
     case FrontRole:
-        return card.front();
+        return utils::String::replace_katex(card.front());
     case BackRole:
         return card.back();
     case IdRole:
