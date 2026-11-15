@@ -91,7 +91,7 @@ Row {
         width: root.width - root.spacing - checkbox.width
         wrapMode: Revise.Text.Wrap
         elide: Revise.Text.ElideRight
-        maximumLineCount: 2
+        maximumLineCount: 3
         text: root.text
     }
 }
