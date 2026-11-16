@@ -1,8 +1,8 @@
 // Copyright (C) 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <QCoreApplication>
-#include <gtest/gtest.h>
+#include <QCoreApplication> // for QCoreApplication
+#include <gtest/gtest.h>    // for gtest
 
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
