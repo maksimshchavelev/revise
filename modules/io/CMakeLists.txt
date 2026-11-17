@@ -1,3 +1,4 @@
+# io/CMakeLists.txt
 
 file(GLOB_RECURSE IO_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
@@ -87,6 +88,27 @@ set_target_properties(io PROPERTIES
     AUTOUIC ON
 )
 
+
+# Database migrations
+file(GLOB_RECURSE ABS_MIGRATIONS CONFIGURE_DEPENDS
+        ${CMAKE_CURRENT_LIST_DIR}/migrations/*)
+
+set(MIGRATIONS)
+foreach(abs_file ${ABS_MIGRATIONS})
+    file(RELATIVE_PATH rel_file
+            ${CMAKE_CURRENT_SOURCE_DIR}
+            ${abs_file})
+    list(APPEND MIGRATIONS ${rel_file})
+endforeach()
+
+qt_add_resources(io
+    "sql_migrations"
+    PREFIX "/sql_migrations"
+    BASE "${CMAKE_CURRENT_LIST_DIR}/migrations"
+    FILES ${MIGRATIONS})
+
+
+# Deploy
 if (UNIX AND NOT APPLE)
     install(TARGETS QuaZip
         LIBRARY DESTINATION usr/lib

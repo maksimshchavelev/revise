@@ -1,12 +1,13 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright (C) 2025-2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "io/Database.hpp" // for Database header
-#include <QDateTime>       // for QDateTime
-#include <QDebug>          // for QDebug, QWarning
-#include <QDir>            // for QDir
-#include <QFileInfo>       // for QFileInfo
-#include <QSqlError>       // for QSqlError
-#include <QSqlQuery>       // for QSqlQuery
+#include "io/Database.hpp"    // for Database header
+#include <QCryptographicHash> // for QCryptographicHash
+#include <QDebug>             // for QDebug, QWarning
+#include <QDir>               // for QDir
+#include <QFileInfo>          // for QFileInfo
+#include <QSqlError>          // for QSqlError
+#include <QSqlQuery>          // for QSqlQuery
 
 namespace io {
 
@@ -19,8 +20,7 @@ Database::Database(const QString& connection_name, const QString& db_name, QObje
     QDir      dir = info.dir();
 
     if (!dir.mkpath(".")) {
-        throw std::runtime_error(
-            QString("Failed to create database directory: %1").arg(dir.absolutePath()).toStdString());
+        throw std::runtime_error(QString("Failed to create database directory: %1").arg(dir.absolutePath()).toStdString());
     }
 
     auto res = open_connection(db_name);
@@ -41,82 +41,107 @@ Database::~Database() {
 
 
 // Public method
-std::expected<void, QString> Database::init_db() {
-    QSqlQuery streak_query(m_db);
-    QSqlQuery decks_query(m_db);
-    QSqlQuery cards_query(m_db);
-    QSqlQuery fk_query(m_db);
-    QSqlQuery schema_versions_query(m_db);
+std::expected<void, QString> Database::migrate() {
+    QSqlQuery query(m_db);
 
-    // Enable foreign key support
-    if (!fk_query.exec("PRAGMA foreign_keys = ON")) {
+    const auto calculate_checksum = [](const QByteArray& data) {
+        return QCryptographicHash::hash(data, QCryptographicHash::Sha256).toHex();
+    };
+
+    const auto migration_id = [](const QString& migration_filename) { return migration_filename.section('_', 0, 0).toInt(); };
+
+    if (!query.exec("PRAGMA foreign_keys = ON")) {
         return std::unexpected(
-            QString("Failed to exec 'PRAGMA foreign_keys = ON' query: %1").arg(fk_query.lastError().text()));
+            QString("Database::migrate(): failed to exec 'PRAGMA foreign_keys = ON' query: %1").arg(query.lastError().text()));
     }
 
-    // Insert streak
-    // streak_query.prepare("INSERT OR IGNORE INTO streak (id, value, last_updated) VALUES (1, :val, :date)");
-    // streak_query.bindValue(":val", 0);
-    // streak_query.bindValue(":date", QDateTime::currentDateTime().addDays(-1).toString("yyyy-MM-dd HH:mm:ss"));
-
-    // if (!streak_query.exec()) {
-    //     return std::unexpected(QString("Failed to exec streak init query: %1").arg(streak_query.lastError().text()));
-    // }
-
-    // Create DECKS table
-    decks_query.prepare(R"(
-        CREATE TABLE IF NOT EXISTS decks (
+    if (!query.exec(R"(
+        CREATE TABLE IF NOT EXISTS schema_migrations (
             id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL UNIQUE,
-            description TEXT,
-            time_limit INTEGER DEFAULT 0,
-            new_limit INTEGER DEFAULT 30,
-            consolidate_limit INTEGER DEFAULT 30,
-            incorrect_limit INTEGER DEFAULT 30)
-    )");
-
-    if (!decks_query.exec()) {
-        return std::unexpected(QString("Failed to exec decks init query: %1").arg(decks_query.lastError().text()));
+            name TEXT NOT NULL,
+            checksum TEXT NOT NULL,
+            applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );)")) {
+        return std::unexpected(QString("Database::migrate(): failed to exec query to create 'schema_migrations' query: %1")
+                                   .arg(query.lastError().text()));
     }
 
-    // Create CARDS table
-    cards_query.prepare(R"(
-        CREATE TABLE IF NOT EXISTS cards (
-            id INTEGER PRIMARY KEY,
-            deck_id INTEGER NOT NULL,
-            front TEXT NOT NULL,
-            back TEXT NOT NULL,
-            state INTEGER DEFAULT 0,             -- 0=new, 1=consolidate, 2=incorrect (relearn)
-            difficulty REAL DEFAULT 2.5,         -- SM-2, 1.0–5.0
-            interval INTEGER DEFAULT 0,          -- interval between repeats in days
-            next_review DATETIME DEFAULT CURRENT_TIMESTAMP,
-            incorrect_streak INTEGER DEFAULT 0,  -- number of consecutive incorrect answers
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE,
-            UNIQUE(deck_id, front)
-    ))");
-
-    if (!cards_query.exec()) {
-        return std::unexpected(QString("Failed to exec cards init query: %1").arg(cards_query.lastError().text()));
-    }
-
-    // create schema_versions table
-    if (!schema_versions_query.exec(R"(
-        CREATE TABLE IF NOT EXISTS schema_versions (
-            table_name TEXT PRIMARY KEY,
-            version INTEGER DEFAULT 1
-        )
-    )")) {
+    if (!query.exec("SELECT id, name, checksum FROM schema_migrations ORDER BY id ASC")) {
         return std::unexpected(
-            QString("Failed to create 'schema_versions' table: %1").arg(schema_versions_query.lastError().text()));
+            QString("Database::migrate(): failed to select applied migrations from 'schema_migrations' table: %1")
+                .arg(query.lastError().text()));
     }
 
-    if (auto migration_res = migrate(); !migration_res.has_value()) {
-        return std::unexpected(QString("Failed to migrate schema: %1").arg(migration_res.error()));
+    int last_migration_id{0};
+
+    while (query.next()) {
+        last_migration_id = query.value(0).toInt();
+        QString name = query.value(1).toString();
+        QString checksum = query.value(2).toString();
+
+        QFile file{":/sql_migrations/" + name};
+
+        if (!file.open(QIODevice::ReadOnly)) {
+            return std::unexpected(QString("Database::migrate(): failed to open migration file: %1").arg(name));
+        }
+
+        if (const auto raw_data = file.readAll(); calculate_checksum(raw_data) != checksum) {
+            return std::unexpected(QString("Database::migrate(): change of migration file detected: %1").arg(name));
+        }
     }
 
-    qDebug() << "Migrations applied";
+    QDir dir{":/sql_migrations"};
+    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
+    dir.setSorting(QDir::Name);
+    dir.setNameFilters(QStringList() << "*.sql");
+
+    for (const auto& migration : dir.entryInfoList()) {
+        const auto id = migration_id(migration.fileName());
+
+        if (id <= last_migration_id) {
+            continue;
+        }
+
+        QFile file(migration.absoluteFilePath());
+
+        if (!file.open(QIODevice::ReadOnly)) {
+            return std::unexpected(QString("Database::migrate(): failed to open migration file: %1").arg(migration.fileName()));
+        }
+
+        const auto raw_data = file.readAll();
+
+        const auto checksum = calculate_checksum(raw_data);
+        const auto sql_text = QString::fromUtf8(raw_data);
+
+        if (const auto res = begin_transaction(); !res) {
+            return std::unexpected(res.error());
+        }
+
+        if (!query.exec(sql_text)) {
+            m_db.rollback();
+            return std::unexpected(QString("Database::migrate(): failed to apply migration '%1': %2")
+                                       .arg(migration.fileName(), query.lastError().text()));
+        }
+
+        query.prepare("INSERT INTO schema_migrations (id, name, checksum) VALUES (:id, :name, :checksum)");
+        query.bindValue(":id", id);
+        query.bindValue(":name", migration.fileName());
+        query.bindValue(":checksum", checksum);
+
+        if (!query.exec()) {
+            m_db.rollback();
+            return std::unexpected(
+                QString("Database::migrate(): failed to update 'schema_migrations' table after applying migration: %1")
+                    .arg(query.lastError().text()));
+        }
+
+        if (const auto res = commit_transaction(); !res) {
+            m_db.rollback();
+            return std::unexpected(res.error());
+        }
+
+        qDebug() << QString("The new database migration '%1' was successfully completed").arg(migration.fileName());
+    }
 
     return {};
 }
@@ -190,137 +215,6 @@ void Database::close_connection() {
     }
 
     QSqlDatabase::removeDatabase(m_connection_name);
-}
-
-
-// Private method
-std::expected<int, QString> Database::get_db_schema_version() const {
-    if (!m_db.isOpen()) {
-        return std::unexpected("DB is not opened");
-    }
-
-    QSqlQuery q(m_db);
-    if (!q.exec("PRAGMA user_version")) {
-        return std::unexpected(QString("Failed to get schema version: %1").arg(q.lastError().text()));
-    }
-
-    if (q.next()) {
-        return q.value(0).toInt();
-    }
-
-    return 0; // default
-}
-
-
-// Private method
-std::expected<void, QString> Database::set_db_schema_version(int version) {
-    if (!m_db.isOpen()) {
-        return std::unexpected("DB is not opened");
-    }
-
-    QSqlQuery q(m_db);
-
-    if (!q.exec(QString("PRAGMA user_version = %1").arg(version))) {
-        return std::unexpected(QString("Failed to set schema version: %1").arg(q.lastError().text()));
-    }
-
-    return {};
-}
-
-
-// Private method
-std::expected<void, QString> Database::migrate() {
-    // Migrate to 2
-    if (auto version = get_db_schema_version(); version.has_value() && version.value() <= 1) {
-        if (auto res = migrage_1_to_2(); !res.has_value()) {
-            return std::unexpected(QString("Failed to migrate from schema 1 to 2: %1").arg(res.error()));
-        }
-    } else if (!version.has_value()) {
-        return std::unexpected(QString("Failed to get schema version: %1").arg(version.error()));
-    }
-
-    return {};
-}
-
-
-// Private method
-std::expected<void, QString> Database::migrage_1_to_2() {
-    if (!m_db.isOpen()) {
-        return std::unexpected("DB is not opened");
-    }
-
-    if (!m_db.transaction()) {
-        return std::unexpected("Failed to begin transaction");
-    }
-
-    QSqlQuery q(m_db);
-
-    // Create events table
-    q.prepare(R"(
-        CREATE TABLE IF NOT EXISTS events (
-            id INTEGER PRIMARY KEY,
-            type TEXT NOT NULL,            -- type of event (for example, card_review)
-            created_at DATETIME NOT NULL,
-            payload TEXT NOT NULL,         -- payload (for example, JSON description)
-            synced INTEGER DEFAULT 0       -- synced with server?
-        )
-    )");
-
-    if (!q.exec()) {
-        m_db.rollback();
-        return std::unexpected(QString("Failed to create table 'events'. Query: %1, cause: %2")
-                                   .arg(q.lastQuery())
-                                   .arg(q.lastError().text()));
-    }
-
-    // Update decks table
-    if (!q.exec("ALTER TABLE decks ADD COLUMN global_id INTEGER DEFAULT 0")) {
-        m_db.rollback();
-        return std::unexpected(QString("Failed to update table 'decks'. Query: %1, cause: %2")
-                                   .arg(q.lastQuery())
-                                   .arg(q.lastError().text()));
-    }
-
-    if (!q.exec("ALTER TABLE decks ADD COLUMN source TEXT DEFAULT 'local'")) /* local or remote */ {
-        m_db.rollback();
-        return std::unexpected(QString("Failed to update table 'decks'. Query: %1, cause: %2")
-                                   .arg(q.lastQuery())
-                                   .arg(q.lastError().text()));
-    }
-
-    if (!q.exec("ALTER TABLE decks ADD COLUMN version INTEGER DEFAULT 0") /* version of the deck */) {
-        m_db.rollback();
-        return std::unexpected(QString("Failed to update table 'decks'. Query: %1, cause: %2")
-                                   .arg(q.lastQuery())
-                                   .arg(q.lastError().text()));
-    }
-
-    // Update cards table
-    if (!q.exec("ALTER TABLE cards ADD COLUMN global_id INTEGER DEFAULT 0")) {
-        m_db.rollback();
-        return std::unexpected(QString("Failed to update table 'cards'. Query: %1, cause: %2")
-                                   .arg(q.lastQuery())
-                                   .arg(q.lastError().text()));
-    }
-
-    if (!q.exec("ALTER TABLE cards ADD COLUMN deck_global_id INTEGER DEFAULT 0")) {
-        m_db.rollback();
-        return std::unexpected(QString("Failed to update table 'cards'. Query: %1, cause: %2")
-                                   .arg(q.lastQuery())
-                                   .arg(q.lastError().text()));
-    }
-
-    if (auto res = set_db_schema_version(m_app_schema_version); !res.has_value()) {
-        m_db.rollback();
-        return std::unexpected(QString("Failed to set schema version, cause: %1").arg(res.error()));
-    }
-
-    if (!m_db.commit()) {
-        m_db.rollback();
-        return std::unexpected("Failed to commit transaction");
-    }
-
-    return {}; // success
 }
 
 } // namespace io

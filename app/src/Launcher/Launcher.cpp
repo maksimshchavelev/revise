@@ -60,8 +60,8 @@ int Launcher::run() {
 void Launcher::init() {
     m_db.emplace("revise_main", global_data_dir() + "/revise.db");
 
-    if (auto res = m_db->init_db(); !res) {
-        qWarning() << "Failed to init db:" << res.error();
+    if (auto res = m_db->migrate(); !res) {
+        qWarning() << "Failed to migrate the database:" << res.error();
     }
 
     if (m_toast_service = engine::create_toast_service(); !m_toast_service) {
@@ -331,10 +331,6 @@ void Launcher::post_launch() {
     m_router.push_page("cardPreview", m_ui.create_page(QUrl("qrc:/qml/pages/CardPreview.qml")));
 
     m_loading_screen.set_description(QCoreApplication::translate("loading screen", "Настройка базы данных..."));
-
-    if (auto res = m_streak_storage->migrate(); !res) {
-        qWarning() << "Failed to apply streak storage migrations:" << res.error();
-    }
 
     if (auto res = m_streak_service->reset_if_overdue(); !res.result()) {
         qWarning() << "failed to reset streak:" << res.result().error().message;

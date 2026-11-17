@@ -59,9 +59,6 @@ endif()
 option(REVISE_BUILD_TESTS "Need to build tests?" OFF)
 option(REVISE_BUILD_APP "Need to build revise application?" ON)
 
-# Versions
-set(REVISE_DB_SCHEMA_VERSION 2)
-
 find_package(Qt6 REQUIRED COMPONENTS
   Quick
   Sql

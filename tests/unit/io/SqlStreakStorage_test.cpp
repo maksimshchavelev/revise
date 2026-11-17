@@ -14,27 +14,12 @@ TEST(sql_streak_storage, new_storage_contains_zero_streak) {
     auto database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    auto storage = SqlStreakStorage{database.database, context};
-
-    ASSERT_TRUE(storage.migrate());
-
+    const auto storage = SqlStreakStorage{database.database, context};
     const auto streak = storage.read();
 
     ASSERT_TRUE(streak);
     EXPECT_LE(streak->value, 0);
     EXPECT_LE(streak->updated_at, QDateTime::currentDateTime().addDays(-1));
-}
-
-
-// ------------------------ Migration idempotency ------------------------
-TEST(sql_streak_storage, migrate_is_idempotent) {
-    auto database = helpers::create_database();
-    DatabaseExecutionContext context{};
-
-    auto storage = SqlStreakStorage{database.database, context};
-
-    ASSERT_TRUE(storage.migrate());
-    ASSERT_TRUE(storage.migrate());
 }
 
 
@@ -44,7 +29,6 @@ TEST(sql_streak_storage, save_and_read_streak) {
     DatabaseExecutionContext context{};
 
     auto storage = SqlStreakStorage{database.database, context};
-    ASSERT_TRUE(storage.migrate());
 
     const QDateTime expected_date = QDateTime::currentDateTime().addDays(-5);
     const core::Streak expected_streak{42, expected_date};
@@ -65,7 +49,6 @@ TEST(sql_streak_storage, save_overwrites_existing_streak) {
     DatabaseExecutionContext context{};
 
     auto storage = SqlStreakStorage{database.database, context};
-    ASSERT_TRUE(storage.migrate());
 
     const core::Streak first_streak{10, QDateTime::currentDateTime().addDays(-2)};
     const core::Streak second_streak{20, QDateTime::currentDateTime()};

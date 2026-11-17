@@ -1,4 +1,5 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright (C) 2025-2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
 
@@ -19,23 +20,14 @@ class SqlStreakStorage final : public core::IStreakStorage {
     SqlStreakStorage(Database& db, DatabaseExecutionContext& context);
 
     /// @copydoc core::IStreakStorage::save
-    Result<void> save(const core::Streak streak) override;
+    [[nodiscard]] Result<void> save(core::Streak streak) override;
 
     /// @copydoc core::IStreakStorage::read
-    Result<core::Streak> read() const override;
-
-    /**
-     * @brief Method for database migration. Called by external code.
-     * @return `std::expected<void, QString>` with `void` if success, otherwise error description
-     */
-    std::expected<void, QString> migrate();
+    [[nodiscard]] Result<core::Streak> read() const override;
 
   private:
     Database&                 m_db;
     DatabaseExecutionContext& m_context;
-
-    /// @brief Creates streak table if not exists
-    std::expected<void, QString> create_streak_table();
 
     /// @brief Make error from sql error
     static Error from_sql(const QSqlError& error, QString context = {});

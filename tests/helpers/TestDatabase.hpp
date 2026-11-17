@@ -18,7 +18,11 @@ struct TestDatabase {
 
     /// Create `TestDatabase` instance
     explicit TestDatabase(QTemporaryDir dir) :
-        database_directory{std::move(dir)}, database{"revise_test", database_directory.path() + "/revise_test.db"} {}
+        database_directory{std::move(dir)}, database{"revise_test", database_directory.path() + "/revise_test.db"} {
+        if (const auto res = database.migrate(); !res) {
+            throw std::runtime_error(QString("TestDatabase(): failed to apply migrations: %1").arg(res.error()).toStdString());
+        }
+    }
 
     friend TestDatabase create_database();
 };

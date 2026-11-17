@@ -15,8 +15,6 @@ TEST(sql_deck_storage, empty_storage_returns_empty_vectors) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     const auto storage = SqlDeckStorage{database.database, context};
 
     const auto decks = storage.fetch_decks();
@@ -33,8 +31,6 @@ TEST(sql_deck_storage, empty_storage_returns_empty_vectors) {
 TEST(sql_deck_storage, create_and_fetch_decks) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -65,8 +61,6 @@ TEST(sql_deck_storage, update_deck) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Old Name", "Old Desc", 0, 0, 10, 20, 30, 40}});
@@ -94,8 +88,6 @@ TEST(sql_deck_storage, remove_decks) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Deck 1", "Description 1", 0, 0, 10, 20, 30, 40}});
@@ -116,8 +108,6 @@ TEST(sql_deck_storage, remove_decks) {
 TEST(sql_deck_storage, create_and_fetch_cards) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -181,8 +171,6 @@ TEST(sql_deck_storage, update_card) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0, 0}});
@@ -226,8 +214,6 @@ TEST(sql_deck_storage, remove_cards) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0, 0}});
@@ -265,8 +251,6 @@ TEST(sql_deck_storage, create_decks_with_empty_input_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto result = storage.create_decks(QVector<core::Deck>{});
@@ -279,8 +263,6 @@ TEST(sql_deck_storage, create_decks_with_empty_input_returns_empty) {
 TEST(sql_deck_storage, update_decks_with_empty_input_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -295,8 +277,6 @@ TEST(sql_deck_storage, remove_decks_with_empty_input_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto result = storage.remove_decks(QVector<core::Deck::id_type>{});
@@ -310,8 +290,6 @@ TEST(sql_deck_storage, fetch_decks_with_empty_ids_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     const auto storage = SqlDeckStorage{database.database, context};
 
     const auto result = storage.fetch_decks(QVector<core::Deck::id_type>{});
@@ -324,8 +302,6 @@ TEST(sql_deck_storage, fetch_decks_with_empty_ids_returns_empty) {
 TEST(sql_deck_storage, fetch_decks_with_non_existent_ids_returns_empty_or_not_found) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     const auto storage = SqlDeckStorage{database.database, context};
 
@@ -341,8 +317,6 @@ TEST(sql_deck_storage, fetch_decks_with_non_existent_ids_returns_empty_or_not_fo
 TEST(sql_deck_storage, update_non_existent_deck_returns_not_found_or_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -361,8 +335,6 @@ TEST(sql_deck_storage, remove_non_existent_deck_is_safe) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     if (const auto result = storage.remove_decks(QVector<core::Deck::id_type>{999})) {
@@ -378,8 +350,6 @@ TEST(sql_deck_storage, create_deck_with_empty_strings_is_allowed) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto result = storage.create_decks(QVector<core::Deck>{{"", "", 0, 0, 0, 0, 0, 0}});
@@ -394,8 +364,6 @@ TEST(sql_deck_storage, create_cards_with_empty_input_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto result = storage.create_cards(QVector<core::Card>{});
@@ -408,8 +376,6 @@ TEST(sql_deck_storage, create_cards_with_empty_input_returns_empty) {
 TEST(sql_deck_storage, update_cards_with_empty_input_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -424,8 +390,6 @@ TEST(sql_deck_storage, remove_cards_with_empty_input_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto result = storage.remove_cards(QVector<core::Card::id_type>{});
@@ -438,8 +402,6 @@ TEST(sql_deck_storage, remove_cards_with_empty_input_returns_empty) {
 TEST(sql_deck_storage, fetch_cards_with_empty_ids_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -454,8 +416,6 @@ TEST(sql_deck_storage, fetch_cards_for_non_existent_deck_returns_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     const auto storage = SqlDeckStorage{database.database, context};
 
     const auto result = storage.fetch_cards(999);
@@ -468,8 +428,6 @@ TEST(sql_deck_storage, fetch_cards_for_non_existent_deck_returns_empty) {
 TEST(sql_deck_storage, create_card_with_invalid_deck_id_returns_error) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -497,8 +455,6 @@ TEST(sql_deck_storage, create_card_with_invalid_deck_id_returns_error) {
 TEST(sql_deck_storage, update_non_existent_card_returns_not_found_or_empty) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -528,8 +484,6 @@ TEST(sql_deck_storage, update_non_existent_card_returns_not_found_or_empty) {
 TEST(sql_deck_storage, fetch_cards_with_mixed_existing_and_non_existing_ids) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -564,8 +518,6 @@ TEST(sql_deck_storage, fetch_cards_with_mixed_existing_and_non_existing_ids) {
 TEST(sql_deck_storage, fetch_all_cards_returns_cards_from_multiple_decks) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 
@@ -614,8 +566,6 @@ TEST(sql_deck_storage, removing_deck_cascades_or_fails_gracefully_if_has_cards) 
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto decks = storage.create_decks(QVector<core::Deck>{{"Deck to delete", "", 0, 0, 0, 0, 0, 0}});
@@ -652,8 +602,6 @@ TEST(sql_deck_storage, handles_unicode_and_long_strings_correctly) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
 
-    ASSERT_TRUE(database.database.init_db());
-
     auto storage = SqlDeckStorage{database.database, context};
 
     const QString unicode_name = "Колода 🚀 с эмодзи и юникодом";
@@ -674,8 +622,6 @@ TEST(sql_deck_storage, handles_unicode_and_long_strings_correctly) {
 TEST(sql_deck_storage, card_with_empty_fields_is_saved_and_fetched) {
     auto                     database = helpers::create_database();
     DatabaseExecutionContext context{};
-
-    ASSERT_TRUE(database.database.init_db());
 
     auto storage = SqlDeckStorage{database.database, context};
 

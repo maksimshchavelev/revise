@@ -1,4 +1,5 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright (C) 2025-2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "io/SqlStreakStorage.hpp" // for header
 #include <QSqlError>               // for QSqlError
@@ -10,7 +11,7 @@ SqlStreakStorage::SqlStreakStorage(Database& db, DatabaseExecutionContext& conte
 
 
 core::IStreakStorage::Result<void> SqlStreakStorage::save(const core::Streak streak) {
-    return m_context.exec([this, &streak]() -> core::IStreakStorage::Result<void> {
+    return m_context.exec([this, &streak]() -> Result<void> {
         QSqlQuery q(m_db.raw_db());
 
         q.prepare(R"(
@@ -33,7 +34,7 @@ core::IStreakStorage::Result<void> SqlStreakStorage::save(const core::Streak str
 
 
 core::IStreakStorage::Result<core::Streak> SqlStreakStorage::read() const {
-    return m_context.exec([this]() -> core::IStreakStorage::Result<core::Streak> {
+    return m_context.exec([this]() -> Result<core::Streak> {
         QSqlQuery q(m_db.raw_db());
 
         if (!q.exec("SELECT * FROM streak WHERE id = 1 LIMIT 1")) {
@@ -42,48 +43,10 @@ core::IStreakStorage::Result<core::Streak> SqlStreakStorage::read() const {
 
         if (!q.next()) {
             return std::unexpected(
-                core::IStreakStorage::Error::missing_value("There are no records in the ‘streak’ SQL table"));
+                Error::missing_value("There are no records in the ‘streak’ SQL table"));
         }
 
         return core::Streak{.value = q.value("value").toInt(), .updated_at = q.value("last_updated").toDateTime()};
-    });
-}
-
-
-std::expected<void, QString> SqlStreakStorage::migrate() {
-    return create_streak_table();
-}
-
-
-std::expected<void, QString> SqlStreakStorage::create_streak_table() {
-    return m_context.exec([this]() -> std::expected<void, QString> {
-        QSqlQuery q(m_db.raw_db());
-
-        q.prepare(R"(
-            CREATE TABLE IF NOT EXISTS streak (
-                id INTEGER PRIMARY KEY CHECK (id = 1),
-                value INTEGER DEFAULT 0,
-                last_updated DATETIME DEFAULT (DATETIME('now', 'localtime', '-1 day')))
-        )");
-
-        if (!q.exec()) {
-            return std::unexpected(QString("Failed to create table 'streak'. Query: %1, cause: %2")
-                                       .arg(q.lastQuery())
-                                       .arg(q.lastError().text()));
-        }
-
-        q.prepare(R"(
-            INSERT OR IGNORE INTO streak (id, value, last_updated)
-            VALUES (1, 0, DATETIME('now', 'localtime', '-1 day'));
-        )");
-
-        if (!q.exec()) {
-            return std::unexpected(QString("Failed to insert streak into 'streak' table. Query: %1, cause: %2")
-                                       .arg(q.lastQuery())
-                                       .arg(q.lastError().text()));
-        }
-
-        return {};
     });
 }
 
@@ -92,10 +55,6 @@ core::IStreakStorage::Error SqlStreakStorage::from_sql(const QSqlError& error, Q
     switch (error.type()) {
     case QSqlError::ConnectionError:
         return Error::unavailable(std::move(context));
-
-    case QSqlError::StatementError:
-    case QSqlError::TransactionError:
-        return Error::internal_error(std::move(context));
 
     default:
         return Error::internal_error(std::move(context));

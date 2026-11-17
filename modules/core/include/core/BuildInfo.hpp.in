@@ -4,8 +4,6 @@
 
 namespace core {
 
-constexpr int REVISE_DB_SCHEMA_VERSION = @REVISE_DB_SCHEMA_VERSION@;
-
 // Version
 constexpr int REVISE_VERSION_MAJOR = @PROJECT_VERSION_MAJOR@;
 constexpr int REVISE_VERSION_MINOR = @PROJECT_VERSION_MINOR@;
