@@ -34,8 +34,8 @@ TEST(sql_deck_storage, create_and_fetch_decks) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const QVector<core::Deck> decks_to_create = {{"Deck 1", "Description 1", 0, 0, 10, 20, 30, 40},
-                                                 {"Deck 2", "Description 2", 0, 0, 5, 15, 25, 35}};
+    const QVector<core::Deck> decks_to_create = {{"Deck 1", "Description 1", 0, 10, 20, 30, 40},
+                                                 {"Deck 2", "Description 2", 0, 5, 15, 25, 35}};
 
     const auto created_decks = storage.create_decks(decks_to_create);
     ASSERT_TRUE(created_decks);
@@ -63,7 +63,7 @@ TEST(sql_deck_storage, update_deck) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Old Name", "Old Desc", 0, 0, 10, 20, 30, 40}});
+    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Old Name", "Old Desc", 0, 10, 20, 30, 40}});
     ASSERT_TRUE(created_decks);
     const auto deck_id = (*created_decks)[0].id;
 
@@ -90,7 +90,7 @@ TEST(sql_deck_storage, remove_decks) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Deck 1", "Description 1", 0, 0, 10, 20, 30, 40}});
+    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Deck 1", "Description 1", 0, 10, 20, 30, 40}});
     ASSERT_TRUE(created_decks);
     const auto deck_id = (*created_decks)[0].id;
 
@@ -111,7 +111,7 @@ TEST(sql_deck_storage, create_and_fetch_cards) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0, 0}});
+    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0}});
     ASSERT_TRUE(created_decks);
     const auto deck_id = (*created_decks)[0].id;
 
@@ -155,7 +155,7 @@ TEST(sql_deck_storage, create_and_fetch_cards) {
     ASSERT_TRUE(cards_by_deck);
     EXPECT_EQ(cards_by_deck->size(), 2);
 
-    const auto cards_by_id = storage.fetch_cards(QVector<core::Card::id_type>{card1_id});
+    const auto cards_by_id = storage.fetch_cards(QVector{card1_id});
     ASSERT_TRUE(cards_by_id);
     EXPECT_EQ(cards_by_id->size(), 1);
     EXPECT_EQ((*cards_by_id)[0].front, "Front 1");
@@ -173,7 +173,7 @@ TEST(sql_deck_storage, update_card) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0, 0}});
+    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0}});
     ASSERT_TRUE(created_decks);
     const auto deck_id = (*created_decks)[0].id;
 
@@ -198,10 +198,10 @@ TEST(sql_deck_storage, update_card) {
     card_to_update.difficulty = 4.5f;
     card_to_update.state = core::Card::State::Incorrect;
 
-    const auto updated_cards = storage.update_cards(QVector<core::Card>{card_to_update});
+    const auto updated_cards = storage.update_cards(QVector{card_to_update});
     ASSERT_TRUE(updated_cards);
 
-    const auto fetched_cards = storage.fetch_cards(QVector<core::Card::id_type>{card_id});
+    const auto fetched_cards = storage.fetch_cards(QVector{card_id});
     ASSERT_TRUE(fetched_cards);
     EXPECT_EQ((*fetched_cards)[0].front, "Updated Front");
     EXPECT_FLOAT_EQ((*fetched_cards)[0].difficulty, 4.5f);
@@ -216,7 +216,7 @@ TEST(sql_deck_storage, remove_cards) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0, 0}});
+    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0}});
     ASSERT_TRUE(created_decks);
     const auto deck_id = (*created_decks)[0].id;
 
@@ -305,7 +305,7 @@ TEST(sql_deck_storage, fetch_decks_with_non_existent_ids_returns_empty_or_not_fo
 
     const auto storage = SqlDeckStorage{database.database, context};
 
-    if (const auto result = storage.fetch_decks(QVector<core::Deck::id_type>{999, 1000})) {
+    if (const auto result = storage.fetch_decks(QVector{999, 1000})) {
         EXPECT_TRUE(result->isEmpty());
     } else {
         EXPECT_EQ(result.error().kind, core::IDeckStorage::ErrorKind::NotFound);
@@ -320,9 +320,9 @@ TEST(sql_deck_storage, update_non_existent_deck_returns_not_found_or_empty) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const core::Deck non_existent{"Ghost Deck", "", 999, 0, 0, 0, 0, 0};
+    const core::Deck non_existent{"Ghost Deck", "", 999, 0, 0, 0, 0};
 
-    if (const auto result = storage.update_decks(QVector<core::Deck>{non_existent})) {
+    if (const auto result = storage.update_decks(QVector{non_existent})) {
         EXPECT_TRUE(result->isEmpty());
     } else {
         EXPECT_EQ(result.error().kind, core::IDeckStorage::ErrorKind::NotFound);
@@ -337,7 +337,7 @@ TEST(sql_deck_storage, remove_non_existent_deck_is_safe) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    if (const auto result = storage.remove_decks(QVector<core::Deck::id_type>{999})) {
+    if (const auto result = storage.remove_decks(QVector{999})) {
         EXPECT_TRUE(result->isEmpty());
     } else {
         EXPECT_EQ(result.error().kind, core::IDeckStorage::ErrorKind::NotFound);
@@ -352,7 +352,7 @@ TEST(sql_deck_storage, create_deck_with_empty_strings_is_allowed) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto result = storage.create_decks(QVector<core::Deck>{{"", "", 0, 0, 0, 0, 0, 0}});
+    const auto result = storage.create_decks(QVector<core::Deck>{{"", "", 0, 0, 0, 0, 0}});
     ASSERT_TRUE(result);
     ASSERT_EQ(result->size(), 1);
     EXPECT_TRUE((*result)[0].name.isEmpty());
@@ -487,7 +487,7 @@ TEST(sql_deck_storage, fetch_cards_with_mixed_existing_and_non_existing_ids) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0, 0}});
+    const auto created_decks = storage.create_decks(QVector<core::Deck>{{"Test Deck", "", 0, 0, 0, 0, 0}});
     ASSERT_TRUE(created_decks);
     const auto deck_id = (*created_decks)[0].id;
 
@@ -507,7 +507,7 @@ TEST(sql_deck_storage, fetch_cards_with_mixed_existing_and_non_existing_ids) {
     ASSERT_TRUE(created_cards);
     const auto valid_id = (*created_cards)[0].id;
 
-    const auto result = storage.fetch_cards(QVector<core::Card::id_type>{valid_id, 999});
+    const auto result = storage.fetch_cards(QVector{valid_id, 999});
     ASSERT_TRUE(result);
     EXPECT_EQ(result->size(), 1);
     EXPECT_EQ((*result)[0].id, valid_id);
@@ -522,7 +522,7 @@ TEST(sql_deck_storage, fetch_all_cards_returns_cards_from_multiple_decks) {
     auto storage = SqlDeckStorage{database.database, context};
 
     const auto decks =
-        storage.create_decks(QVector<core::Deck>{{"Deck A", "", 0, 0, 0, 0, 0, 0}, {"Deck B", "", 0, 0, 0, 0, 0, 0}});
+        storage.create_decks(QVector<core::Deck>{{"Deck A", "", 0, 0, 0, 0, 0}, {"Deck B", "", 0, 0, 0, 0, 0}});
     ASSERT_TRUE(decks);
     const auto deck_a = (*decks)[0].id;
     const auto deck_b = (*decks)[1].id;
@@ -568,7 +568,7 @@ TEST(sql_deck_storage, removing_deck_cascades_or_fails_gracefully_if_has_cards) 
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto decks = storage.create_decks(QVector<core::Deck>{{"Deck to delete", "", 0, 0, 0, 0, 0, 0}});
+    const auto decks = storage.create_decks(QVector<core::Deck>{{"Deck to delete", "", 0, 0, 0, 0, 0}});
     ASSERT_TRUE(decks);
     const auto deck_id = (*decks)[0].id;
 
@@ -587,7 +587,7 @@ TEST(sql_deck_storage, removing_deck_cascades_or_fails_gracefully_if_has_cards) 
                                                                          "Back"}});
     ASSERT_TRUE(created_cards);
 
-    if (const auto remove_result = storage.remove_decks(QVector<core::Deck::id_type>{deck_id})) {
+    if (const auto remove_result = storage.remove_decks(QVector{deck_id})) {
         const auto remaining_cards = storage.fetch_cards(deck_id);
         ASSERT_TRUE(remaining_cards);
         EXPECT_TRUE(remaining_cards->isEmpty()) << "Cards were not deleted after deck removal (no cascade)";
@@ -607,11 +607,11 @@ TEST(sql_deck_storage, handles_unicode_and_long_strings_correctly) {
     const QString unicode_name = "Колода 🚀 с эмодзи и юникодом";
     const QString long_description(1000, 'A');
 
-    const auto decks = storage.create_decks(QVector<core::Deck>{{unicode_name, long_description, 0, 0, 0, 0, 0, 0}});
+    const auto decks = storage.create_decks(QVector<core::Deck>{{unicode_name, long_description, 0, 0, 0, 0, 0}});
     ASSERT_TRUE(decks);
     const auto deck_id = (*decks)[0].id;
 
-    const auto fetched = storage.fetch_decks(QVector<core::Deck::id_type>{deck_id});
+    const auto fetched = storage.fetch_decks(QVector{deck_id});
     ASSERT_TRUE(fetched);
     EXPECT_EQ((*fetched)[0].name, unicode_name);
     EXPECT_EQ((*fetched)[0].description, long_description);
@@ -625,7 +625,7 @@ TEST(sql_deck_storage, card_with_empty_fields_is_saved_and_fetched) {
 
     auto storage = SqlDeckStorage{database.database, context};
 
-    const auto decks = storage.create_decks(QVector<core::Deck>{{"Deck", "", 0, 0, 0, 0, 0, 0}});
+    const auto decks = storage.create_decks(QVector<core::Deck>{{"Deck", "", 0, 0, 0, 0, 0}});
     ASSERT_TRUE(decks);
     const auto deck_id = (*decks)[0].id;
 
