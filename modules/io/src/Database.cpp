@@ -117,10 +117,12 @@ std::expected<void, QString> Database::migrate() {
             return std::unexpected(res.error());
         }
 
-        if (!query.exec(sql_text)) {
-            m_db.rollback();
-            return std::unexpected(QString("Database::migrate(): failed to apply migration '%1': %2")
-                                       .arg(migration.fileName(), query.lastError().text()));
+        for (const auto& statement : sql_text.split("-- revise:statement")) {
+            if (!query.exec(sql_text)) {
+                m_db.rollback();
+                return std::unexpected(QString("Database::migrate(): failed to apply statement '%1' in migration '%2': %3")
+                                           .arg(statement, migration.fileName(), query.lastError().text()));
+            }
         }
 
         query.prepare("INSERT INTO schema_migrations (id, name, checksum) VALUES (:id, :name, :checksum)");

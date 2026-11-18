@@ -35,6 +35,7 @@ class Database : public QObject {
     /**
      * @brief Read database migrations from `migrations` resource directory and apply them
      * @return std::expected<void, QString> empty on success, error string otherwise.
+     * @note To write multiple SQL statements in a single file, separate them using the `-- revise:statement` comment.
      */
     std::expected<void, QString> migrate();
 
@@ -77,4 +78,4 @@ class Database : public QObject {
     void                         close_connection();
 };
 
-} // namespace revise
+} // namespace io
