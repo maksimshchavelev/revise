@@ -50,9 +50,33 @@ std::expected<void, QString> Database::migrate() {
 
     const auto migration_id = [](const QString& migration_filename) { return migration_filename.section('_', 0, 0).toInt(); };
 
-    if (!query.exec("PRAGMA foreign_keys = ON")) {
-        return std::unexpected(
-            QString("Database::migrate(): failed to exec 'PRAGMA foreign_keys = ON' query: %1").arg(query.lastError().text()));
+    const auto set_foreign_keys = [&](const bool enabled) -> std::expected<void, QString> {
+        if (const QString pragma =
+                enabled ? QStringLiteral("PRAGMA foreign_keys = ON") : QStringLiteral("PRAGMA foreign_keys = OFF");
+            !query.exec(pragma)) {
+            return std::unexpected(
+                QString("Database::migrate(): failed to exec '%1' query: %2").arg(pragma, query.lastError().text()));
+        }
+
+        return {};
+    };
+
+    const auto rollback_and_restore_foreign_keys = [&](QString error) -> std::unexpected<QString> {
+        query.finish();
+
+        if (!m_db.rollback()) {
+            error += QString("; failed to rollback transaction: %1").arg(m_db.lastError().text());
+        }
+
+        if (const auto res = set_foreign_keys(true); !res) {
+            error += QString("; %1").arg(res.error());
+        }
+
+        return std::unexpected(std::move(error));
+    };
+
+    if (const auto res = set_foreign_keys(true); !res) {
+        return std::unexpected(res.error());
     }
 
     if (!query.exec(R"(
@@ -76,8 +100,8 @@ std::expected<void, QString> Database::migrate() {
 
     while (query.next()) {
         last_migration_id = query.value(0).toInt();
-        QString name = query.value(1).toString();
-        QString checksum = query.value(2).toString();
+        const QString name = query.value(1).toString();
+        const QString checksum = query.value(2).toString();
 
         QFile file{":/sql_migrations/" + name};
 
@@ -89,6 +113,8 @@ std::expected<void, QString> Database::migrate() {
             return std::unexpected(QString("Database::migrate(): change of migration file detected: %1").arg(name));
         }
     }
+
+    query.finish();
 
     QDir dir{":/sql_migrations"};
     dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
@@ -113,15 +139,26 @@ std::expected<void, QString> Database::migrate() {
         const auto checksum = calculate_checksum(raw_data);
         const auto sql_text = QString::fromUtf8(raw_data);
 
-        if (const auto res = begin_transaction(); !res) {
+        if (const auto res = set_foreign_keys(false); !res) {
             return std::unexpected(res.error());
+        }
+
+        if (const auto res = begin_transaction(); !res) {
+            QString error = res.error();
+
+            if (const auto restore = set_foreign_keys(true); !restore) {
+                error += QString("; %1").arg(restore.error());
+            }
+
+            return std::unexpected(std::move(error));
         }
 
         for (const auto& statement : sql_text.split("-- revise:statement")) {
             if (!query.exec(statement)) {
-                m_db.rollback();
-                return std::unexpected(QString("Database::migrate(): failed to apply statement '%1' in migration '%2': %3")
-                                           .arg(statement, migration.fileName(), query.lastError().text()));
+                const auto error = QString("Database::migrate(): failed to apply statement '%1' in migration '%2': %3")
+                                       .arg(statement, migration.fileName(), query.lastError().text());
+
+                return rollback_and_restore_foreign_keys(error);
             }
         }
 
@@ -131,15 +168,50 @@ std::expected<void, QString> Database::migrate() {
         query.bindValue(":checksum", checksum);
 
         if (!query.exec()) {
-            m_db.rollback();
-            return std::unexpected(
+            const auto error =
                 QString("Database::migrate(): failed to update 'schema_migrations' table after applying migration: %1")
-                    .arg(query.lastError().text()));
+                    .arg(query.lastError().text());
+
+            return rollback_and_restore_foreign_keys(error);
+        }
+
+        if (!query.exec("PRAGMA foreign_key_check")) {
+            const auto error = QString("Database::migrate(): failed to execute foreign key check after migration '%1': %2")
+                                   .arg(migration.fileName(), query.lastError().text());
+
+            return rollback_and_restore_foreign_keys(error);
+        }
+
+        QStringList foreign_key_violations;
+
+        while (query.next()) {
+            const QString table = query.value(0).toString();
+            const QString rowid = query.value(1).isNull() ? QStringLiteral("NULL") : query.value(1).toString();
+            const QString parent = query.value(2).toString();
+            const int     foreign_key_index = query.value(3).toInt();
+
+            foreign_key_violations.append(QString("table='%1', rowid=%2, parent='%3', foreign_key_index=%4")
+                                              .arg(table, rowid, parent)
+                                              .arg(foreign_key_index));
+        }
+
+        query.finish();
+
+        if (!foreign_key_violations.isEmpty()) {
+            const auto error = QString("Database::migrate(): foreign key violations detected after migration '%1': %2")
+                                   .arg(migration.fileName(), foreign_key_violations.join("; "));
+
+            return rollback_and_restore_foreign_keys(error);
         }
 
         if (const auto res = commit_transaction(); !res) {
-            m_db.rollback();
-            return std::unexpected(res.error());
+            return rollback_and_restore_foreign_keys(res.error());
+        }
+
+        if (const auto res = set_foreign_keys(true); !res) {
+            return std::unexpected(
+                QString("Database::migrate(): migration '%1' was committed, but failed to restore foreign keys: %2")
+                    .arg(migration.fileName(), res.error()));
         }
 
         qDebug() << QString("The new database migration '%1' was successfully completed").arg(migration.fileName());
