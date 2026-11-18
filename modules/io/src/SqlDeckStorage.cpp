@@ -293,7 +293,6 @@ core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::fetch_decks(cons
         const QString query_string = QString(R"(
             SELECT
                 id,
-                global_id,
                 name,
                 description,
                 time_limit,
@@ -328,7 +327,6 @@ core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::fetch_decks(cons
             core::Deck deck{.name = q.value("name").toString(),
                             .description = q.value("description").toString(),
                             .id = q.value("id").toInt(),
-                            .global_id = q.value("global_id").toInt(),
                             .time_limit = q.value("time_limit").toInt(),
                             .new_limit = q.value("new_limit").toInt(),
                             .review_limit = q.value("consolidate_limit").toInt(),
@@ -352,7 +350,6 @@ core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::fetch_decks() co
         if (!q.prepare(R"(
             SELECT
                 id,
-                global_id,
                 name,
                 description,
                 time_limit,
@@ -374,7 +371,6 @@ core::IDeckStorage::Result<QVector<core::Deck>> SqlDeckStorage::fetch_decks() co
             core::Deck deck{.name = q.value("name").toString(),
                             .description = q.value("description").toString(),
                             .id = q.value("id").toInt(),
-                            .global_id = q.value("global_id").toInt(),
                             .time_limit = q.value("time_limit").toInt(),
                             .new_limit = q.value("new_limit").toInt(),
                             .review_limit = q.value("consolidate_limit").toInt(),

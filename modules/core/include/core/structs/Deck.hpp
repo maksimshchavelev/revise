@@ -13,7 +13,6 @@ struct Deck {
     QString name;               ///< Deck name
     QString description;        ///< Description of the deck
     id_type id{0};              ///< Deck ID
-    id_type global_id{0};       ///< Global ID
     int     time_limit{0};      ///< Time limit for response
     int     new_limit{0};       ///< Limit on the number of new cards during training
     int     review_limit{0};    ///< Limit on the number of reviewed cards during training

@@ -20,7 +20,6 @@ struct Deck final : core::Deck {
     Q_PROPERTY(int reviewLimit MEMBER review_limit FINAL)
     Q_PROPERTY(int incorrectLimit MEMBER incorrect_limit FINAL)
     Q_PROPERTY(int id MEMBER id FINAL)
-    Q_PROPERTY(int globalId MEMBER global_id FINAL)
 
   public:
     Q_INVOKABLE Deck() = default;
@@ -28,12 +27,11 @@ struct Deck final : core::Deck {
     Q_INVOKABLE Deck(const QString& name,
                      const QString& description,
                      const int      id,
-                     const int      global_id,
                      const int      time_limit,
                      const int      new_limit,
                      const int      review_limit,
                      const int      incorrect_limit) :
-        core::Deck{name, description, id, global_id, time_limit, new_limit, review_limit, incorrect_limit} {}
+        core::Deck{name, description, id, time_limit, new_limit, review_limit, incorrect_limit} {}
 
     explicit Deck(const core::Deck& other) : core::Deck{other} {}
 
