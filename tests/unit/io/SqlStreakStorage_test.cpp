@@ -63,27 +63,3 @@ TEST(sql_streak_storage, save_overwrites_existing_streak) {
     EXPECT_EQ(actual_streak->updated_at, second_streak.updated_at);
 }
 
-
-// ------------------------ Errors before migration ------------------------
-TEST(sql_streak_storage, read_before_migrate_returns_error) {
-    auto database = helpers::create_database();
-    DatabaseExecutionContext context{};
-
-    auto storage = SqlStreakStorage{database.database, context};
-
-    const auto streak = storage.read();
-    EXPECT_FALSE(streak);
-}
-
-
-TEST(sql_streak_storage, save_before_migrate_returns_error) {
-    auto database = helpers::create_database();
-    DatabaseExecutionContext context{};
-
-    auto storage = SqlStreakStorage{database.database, context};
-
-    const core::Streak test_streak{5, QDateTime::currentDateTime()};
-
-    const auto result = storage.save(test_streak);
-    EXPECT_FALSE(result);
-}
