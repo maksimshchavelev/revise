@@ -118,7 +118,7 @@ std::expected<void, QString> Database::migrate() {
         }
 
         for (const auto& statement : sql_text.split("-- revise:statement")) {
-            if (!query.exec(sql_text)) {
+            if (!query.exec(statement)) {
                 m_db.rollback();
                 return std::unexpected(QString("Database::migrate(): failed to apply statement '%1' in migration '%2': %3")
                                            .arg(statement, migration.fileName(), query.lastError().text()));
