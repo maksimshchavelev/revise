@@ -45,3 +45,12 @@ VALUES (1, 0, DATETIME('now', 'localtime', '-1 day'));
 -- revise:statement
 -- Remove unused schema_versions table
 DROP TABLE IF EXISTS schema_versions;
+
+-- revise:statement
+-- Remove cards referencing non-existent decks
+DELETE FROM cards
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM decks
+    WHERE decks.id = cards.deck_id
+);
