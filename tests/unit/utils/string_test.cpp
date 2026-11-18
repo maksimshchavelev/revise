@@ -7,12 +7,12 @@ using namespace utils;
 
 TEST(StringReplaceKatexTest, EmptyAndPlainText) {
     EXPECT_EQ(String::replace_katex(""), QString(""));
-    EXPECT_EQ(String::replace_katex("Обычный текст без формул 123"), QString("Обычный текст без формул 123"));
+    EXPECT_EQ(String::replace_katex("A regular text without formula 123"), QString("A regular text without formula 123"));
 }
 
 TEST(StringReplaceKatexTest, DelimitersRemoval) {
     EXPECT_EQ(String::replace_katex(R"(\(x + y = 5\))"), QString("x + y = 5"));
-    EXPECT_EQ(String::replace_katex(R"(Формула \(a + b\) и ещё \(c - d\))"), QString("Формула a + b и ещё c - d"));
+    EXPECT_EQ(String::replace_katex(R"(Formula \(a + b\) and \(c - d\))"), QString("Formula a + b and c - d"));
     EXPECT_EQ(String::replace_katex(R"(\left(x + y\right))"), QString("(x + y)"));
 }
 

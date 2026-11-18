@@ -10,6 +10,7 @@ QString String::replace_katex(const QString& input) {
                                                 {"\\)", ""},
                                                 {"\\left", ""},
                                                 {"\\right", ""},
+                                                {"\\middle", ""},
                                                 {"\\times", "×"},
                                                 {"\\cdot", "·"},
                                                 {"\\div", "÷"},
@@ -166,13 +167,52 @@ QString String::replace_katex(const QString& input) {
                                                 {"\\Upsilon", "Υ"},
                                                 {"\\Phi", "Φ"},
                                                 {"\\Psi", "Ψ"},
-                                                {"\\Omega", "Ω"}};
+                                                {"\\Omega", "Ω"},
+
+                                                {"\\big", ""},
+                                                {"\\Big", ""},
+                                                {"\\bigg", ""},
+                                                {"\\Bigg", ""},
+                                                {"\\bigl", ""},
+                                                {"\\bigr", ""},
+                                                {"\\Bigl", ""},
+                                                {"\\Bigr", ""},
+                                                {"\\biggl", ""},
+                                                {"\\biggr", ""},
+                                                {"\\Biggl", ""},
+                                                {"\\Biggr", ""},
+
+                                                {"\\langle", "⟨"},
+                                                {"\\rangle", "⟩"},
+                                                {"\\lvert", "|"},
+                                                {"\\rvert", "|"},
+                                                {"\\lVert", "‖"},
+                                                {"\\rVert", "‖"},
+                                                {"\\vert", "|"},
+                                                {"\\Vert", "‖"},
+                                                {"\\lfloor", "⌊"},
+                                                {"\\rfloor", "⌋"},
+                                                {"\\lceil", "⌈"},
+                                                {"\\rceil", "⌉"},
+                                                {"\\lbrace", "{"},
+                                                {"\\rbrace", "}"},
+                                                {"\\lbrack", "["},
+                                                {"\\rbrack", "]"},
+                                                {"\\backslash", "\\"},
+
+                                                {"\\{", "{"},
+                                                {"\\}", "}"},
+                                                {"\\|", "‖"}};
 
     static const QRegularExpression textWrapperRe(R"(\\(?:text|mathrm|mathbf|mathit|ce)\{([^{}]*)\})");
     QString processed = input;
     processed.replace(textWrapperRe, "\\1");
 
-    static const QRegularExpression re(R"(\\\(|\\\)|\\[a-zA-Z]+)");
+    processed.replace("\\left.", "");
+    processed.replace("\\right.", "");
+    processed.replace("\\middle.", "");
+
+    static const QRegularExpression re(R"(\\\(|\\\)|\\[a-zA-Z]+|\\[{}|])");
 
     QString result;
     result.reserve(processed.size());
