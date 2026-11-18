@@ -1,9 +1,10 @@
-// Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright (C) 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "engine/SearchEngine.hpp" // for header
 #include <ranges>                  // std::ranges
 #include <utils/Html.hpp>          // for html utils
-#include <utils/String.hpp>
+#include <utils/String.hpp>        // for utils::String::replace_katex
 
 namespace engine {
 
@@ -42,7 +43,7 @@ bool SearchEngine::card_matches(const core::Card& card, const std::shared_ptr<co
     // By front
     case core::CardFilterKind::Front: {
         const auto&   f = static_cast<const core::CardFrontSearchFilter&>(*filter);
-        const QString plain = (utils::Html::plain_text(card.front)).trimmed();
+        const QString plain = utils::String::replace_katex(utils::Html::plain_text(card.front)).trimmed();
         return plain.contains(f.front.trimmed(), Qt::CaseInsensitive);
     }
 
