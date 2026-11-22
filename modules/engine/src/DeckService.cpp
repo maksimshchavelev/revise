@@ -116,7 +116,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
             return match.captured(1).toLower();
         };
 
-        std::expected<core::ImportResult, QString> import_res;
+        std::expected<core::ImportResult, core::IDeckImporter::Error> import_res;
 
         // Select importer automatically
         if (auto suffix = extract_extension(QFileInfo(local_path).fileName()); suffix == "apkg") {
@@ -136,7 +136,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
         QVector<core::Card> cards_to_insert;
 
         if (!import_res) {
-            auto error = Error::internal_error(QString("DeckService::import_deck(): importer error: %1").arg(import_res.error()));
+            auto error = Error::internal_error(QString("DeckService::import_deck(): importer error: %1").arg(import_res.error().message));
 
             dispatch(import_failed{error});
             return std::unexpected(error);

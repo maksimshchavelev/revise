@@ -1,4 +1,5 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright (C) 2025-2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "AnkiDeckImporter.hpp"            // for AnkiDeckImporter
 #include <QDir>                            // for QDir
@@ -15,8 +16,8 @@
 namespace io {
 
 // Public method
-std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(const QString& path) {
-    core::ImportResult res;
+core::IDeckImporter::Result<core::ImportResult> AnkiDeckImporter::import_from_file(const QString& path) const {
+    core::ImportResult result;
 
     const QString base_temp_dir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
     const QString import_dir = base_temp_dir + "/anki_import_" + QUuid::createUuid().toString(QUuid::WithoutBraces);
@@ -24,7 +25,9 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
     const QString unpacked_media_path = import_dir + "/unpacked_media";
     QMap<QString /* image name */, QByteArray /* binary image */> mapped_images;
 
-    QDir().mkdir(import_dir);
+    if (!QDir().mkdir(import_dir)) {
+        return std::unexpected(Error::internal(QString("Failed to create temporary import directory: %1").arg(import_dir)));
+    }
 
     QSqlDatabase anki_db = QSqlDatabase::addDatabase("QSQLITE", "anki_import");
     anki_db.setDatabaseName(db_path);
@@ -37,26 +40,28 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
                         });
 
     // Unzip .apkg
-    if (auto res = unzip(path, import_dir); !res.has_value()) {
-        return std::unexpected(res.error());
+    if (const auto res = unzip(path, import_dir); !res.has_value()) {
+        return std::unexpected(Error::extraction_failed(QString("Failed to unzip .apkg file: %1").arg(res.error())));
     }
 
     // Unzip collection.anki21b
     if (auto res = decompress_zstd_file(import_dir + "/collection.anki21b", db_path); !res.has_value()) {
-        return std::unexpected(res.error());
+        return std::unexpected(
+            Error::extraction_failed(QString("Failed to decompress collection.anki21b file: %1").arg(res.error())));
     }
 
     if (!QFile::exists(db_path)) {
-        return std::unexpected(QString("DB %1 not found").arg(db_path));
+        return std::unexpected(Error::file_corrupted(QString("Internal database by path '%1' not found").arg(db_path)));
     }
 
     // Unzip media
     if (auto res = decompress_zstd_file(import_dir + "/media", unpacked_media_path); !res.has_value()) {
-        return std::unexpected(res.error());
+        return std::unexpected(Error::extraction_failed(QString("Failed to decompress media: %1").arg(res.error())));
     }
 
     if (!QFile::exists(unpacked_media_path)) {
-        return std::unexpected(QString("Unpacked media '%1' not found").arg(unpacked_media_path));
+        return std::unexpected(
+            Error::file_corrupted(QString("Unzipped media directory not found by path: %1").arg(unpacked_media_path)));
     }
 
     // Map media
@@ -64,24 +69,25 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
         const QString archive_path = QString("%1/%2").arg(import_dir).arg(archive_name);
         const QString unpacked_path = QString("%1/unpacked_%2").arg(import_dir).arg(archive_name);
         if (auto res = decompress_zstd_file(archive_path, unpacked_path); !res.has_value()) {
-            return std::unexpected(res.error());
+            return std::unexpected(
+                Error::extraction_failed(QString("Failed to image file '%1', cause: %2").arg(image_name, res.error())));
         }
 
-        QFile file(unpacked_path);
-        if (file.open(QIODevice::ReadOnly)) {
+        if (QFile file(unpacked_path); file.open(QIODevice::ReadOnly)) {
             QByteArray data = file.readAll();
             file.close();
             mapped_images[image_name] = std::move(data);
         } else {
-            return std::unexpected(QString("Failed to read unpacked image file '%1'").arg(unpacked_path));
+            return std::unexpected(Error::failed_to_open_file(QString("Failed to open unzipped image file: %1").arg(unpacked_path)));
         }
     }
 
     // Save to res
-    res.user_data = QVariant::fromValue(std::move(mapped_images));
+    result.user_data = QVariant::fromValue(std::move(mapped_images));
 
     if (!anki_db.open()) {
-        return std::unexpected(QString("Failed to import anki DB: %1").arg(anki_db.lastError().text()));
+        return std::unexpected(
+            Error::file_corrupted(QString("Failed to open anki DB in provided .apkg: %1").arg(anki_db.lastError().text())));
     }
 
     // Select cards
@@ -92,21 +98,22 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
     deck_name_query.prepare("SELECT name FROM decks");
 
     if (!cards_query.exec()) {
-        return std::unexpected(QString("Failed to fetch cards from Anki DB: %1").arg(cards_query.lastError().text()));
+        return std::unexpected(
+            Error::internal(QString("Failed to fetch cards from provided .apkg: %1").arg(anki_db.lastError().text())));
     }
 
     if (!deck_name_query.exec()) {
         return std::unexpected(
-            QString("Failed to fetch name from Anki DB: %1").arg(deck_name_query.lastError().text()));
+            Error::internal(QString("Failed to fetch deck name from provided .apkg: %1").arg(anki_db.lastError().text())));
     }
 
     deck_name_query.next(); // skip `Default`
     if (!deck_name_query.next()) {
-        return std::unexpected(QString("Decks table is empty (Anki DB)"));
+        return std::unexpected(Error::internal("Table with decks in provided .apkg is empty"));
     }
 
-    res.deck_name = deck_name_query.value("name").toString();
-    res.deck_description = QString(); // TODO: implement reading description from Anki DB
+    result.deck_name = deck_name_query.value("name").toString();
+    result.deck_description = QString(); // TODO: implement reading description from Anki DB
 
     constexpr QChar FIELD_SEP{31}; // anki separator
 
@@ -121,25 +128,25 @@ std::expected<core::ImportResult, QString> AnkiDeckImporter::import_from_file(co
         QString front = fields.at(0).trimmed();
         QString back = fields.at(1).trimmed();
 
-        res.cards.push_back(core::Card{.id = 0,      // not taken into account
-                                       .deck_id = 0, // not taken into account
-                                       .difficulty = 2.5f,
-                                       .state = core::Card::State::New, // new
-                                       .incorrect_streak = 0,
-                                       .interval = 0,
-                                       .time_limit = 0, // not taken into account
-                                       .next_review = QDateTime::currentDateTime(),
-                                       .created_at = QDateTime::currentDateTime(),
-                                       .updated_at = QDateTime::currentDateTime(),
-                                       .front = std::move(front),
-                                       .back = std::move(back)});
+        result.cards.push_back(core::Card{.id = 0,      // not taken into account
+                                          .deck_id = 0, // not taken into account
+                                          .difficulty = 2.5f,
+                                          .state = core::Card::State::New, // new
+                                          .incorrect_streak = 0,
+                                          .interval = 0,
+                                          .time_limit = 0, // not taken into account
+                                          .next_review = QDateTime::currentDateTime(),
+                                          .created_at = QDateTime::currentDateTime(),
+                                          .updated_at = QDateTime::currentDateTime(),
+                                          .front = std::move(front),
+                                          .back = std::move(back)});
     }
 
-    return res;
+    return result;
 }
 
 // Public method
-QString AnkiDeckImporter::format_name() const noexcept {
+QString AnkiDeckImporter::format_name() const {
     return "anki";
 }
 
@@ -151,7 +158,7 @@ std::expected<void, QString> AnkiDeckImporter::unzip(const QString& zip_path, co
     }
 
     QuaZipFile file(&zip);
-    QDir       dir(target_dir);
+    const QDir dir(target_dir);
 
     for (bool more = zip.goToFirstFile(); more; more = zip.goToNextFile()) {
         file.open(QIODevice::ReadOnly);
@@ -159,9 +166,15 @@ std::expected<void, QString> AnkiDeckImporter::unzip(const QString& zip_path, co
         QString out_path = dir.filePath(zip.getCurrentFileName());
 
         QFile out(out_path);
-        QDir().mkpath(QFileInfo(out).absolutePath());
 
-        out.open(QIODevice::WriteOnly);
+        if (!QDir().mkpath(QFileInfo(out).absolutePath())) {
+            return std::unexpected(QString("Failed to create out file '%1' when decompressing").arg(out_path));
+        }
+
+        if (!out.open(QIODevice::WriteOnly)) {
+            return std::unexpected(QString("Failed to open out file '%1' when decompressing").arg(out_path));
+        }
+
         out.write(file.readAll());
 
         file.close();
@@ -278,8 +291,7 @@ QMap<QString, QString> AnkiDeckImporter::map_images(const QString& media_path) {
     //   paste-<hex-or-alphanum>.jpg
     //   paste-<...>.png
     // Adjust regex if you have other naming schemes.
-    static const QRegularExpression re(R"(paste-[A-Za-z0-9_\-]+(?:\.[A-Za-z0-9]+))",
-                                       QRegularExpression::CaseInsensitiveOption);
+    static const QRegularExpression re(R"(paste-[A-Za-z0-9_\-]+(?:\.[A-Za-z0-9]+))", QRegularExpression::CaseInsensitiveOption);
 
     QRegularExpressionMatchIterator it = re.globalMatch(text);
 

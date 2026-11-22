@@ -1,4 +1,5 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright (C) 2025-2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
 
@@ -19,13 +20,13 @@ class ReviseDeckImporter : public core::IDeckImporter {
      * @note `ImportResult` contains `QMap<QString, QByteArray>`, where QString is image name,
      * QByteArray - binary data of the image
      */
-    std::expected<core::ImportResult, QString> import_from_file(const QString& path) override;
+    [[nodiscard]] Result<core::ImportResult> import_from_file(const QString& path) const override;
 
     /**
      * @brief Format of deck
      * @return `revise` string
      */
-    QString format_name() const noexcept override;
+    [[nodiscard]] QString format_name() const override;
 
   private:
     /**
@@ -34,7 +35,7 @@ class ReviseDeckImporter : public core::IDeckImporter {
      * @param target_dir Which directory should the archive be extracted to?
      * @return `std::expected<void, QString>` with `void` if success, otherwise with error description
      */
-    std::expected<void, QString> unzip(const QString& zip_path, const QString& target_dir);
+    static std::expected<void, QString> unzip(const QString& zip_path, const QString& target_dir);
 };
 
 } // namespace io

@@ -1,4 +1,5 @@
-// Copyright 2025 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// Copyright (C) 2025-2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
 
@@ -13,19 +14,17 @@ namespace io {
 class AnkiDeckImporter final : public core::IDeckImporter {
   public:
     /**
-     * @brief Import anki deck
-     * @param path Path to anki deck
-     * @return std::expected<ImportResult, QString>
+     * @copydoc core::IDeckImporter::import_from_file
      * @note `ImportResult` contains `QMap<QString, QByteArray>`, where QString is image name,
      * QByteArray - binary data of the image
      */
-    std::expected<core::ImportResult, QString> import_from_file(const QString& path) override;
+    [[nodiscard]] Result<core::ImportResult> import_from_file(const QString& path) const override;
 
     /**
      * @brief Format of deck
      * @return `anki` string
      */
-    QString format_name() const noexcept override;
+    [[nodiscard]] QString format_name() const override;
 
   private:
     /**
@@ -34,13 +33,13 @@ class AnkiDeckImporter final : public core::IDeckImporter {
      * @param target_dir Which directory should the archive be extracted to?
      * @return `std::expected<void, QString>` with `void` if success, otherwise with error description
      */
-    std::expected<void, QString> unzip(const QString& zip_path, const QString& target_dir);
+    static std::expected<void, QString> unzip(const QString& zip_path, const QString& target_dir);
 
     /**
      * @brief Decompress entire zstd file into `dest_path`
      * @return std::expected<void, QString> error or empty on success
      */
-    std::expected<void, QString> decompress_zstd_file(const QString& src_path, const QString& dest_path);
+    static std::expected<void, QString> decompress_zstd_file(const QString& src_path, const QString& dest_path);
 
     /**
      * @brief Parse Anki 'media' binary file and map embedded image names to archive indices.
@@ -60,7 +59,8 @@ class AnkiDeckImporter final : public core::IDeckImporter {
      * @return QMap where key is the original image name (as seen in <img src="...">) and value is the
      *         corresponding archive name (index as QString). Empty map on error/no matches.
      */
-    QMap<QString /* image name */, QString /* archive name */> map_images(const QString& media_path);
+    static QMap<QString /* image name */, QString /* archive name */> map_images(const QString& media_path);
 };
 
 } // namespace io
+
