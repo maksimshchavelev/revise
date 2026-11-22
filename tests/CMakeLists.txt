@@ -31,3 +31,10 @@ target_include_directories(unit_tests PRIVATE
 include(GoogleTest)
 gtest_add_tests(TARGET unit_tests)
 
+add_custom_command(
+        TARGET unit_tests POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/testdata"
+        "$<TARGET_FILE_DIR:unit_tests>/testdata"
+        COMMENT "Copying testdata directory to binary output folder"
+)
