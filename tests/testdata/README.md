@@ -12,3 +12,11 @@ The `testdata` directory contains test fixtures used to verify the functionality
         - Front: `"<p>Card 2</p>"` | Back: `"<p>Back of card 2</p>"`
 
 - **`broken.rpkg`** — A broken file with random binary data inside
+
+- **`deck.apkg`** — A sample deck file in Anki format containing:
+    - **Metadata:** Name `"deck"`.
+    - **Limits:** 0s time limit, 1 new cards and 2 reviews.
+    - **Cards (no images):**
+        - Front: `"Card 1"` | Back: `"Back of card 1"`
+        - Front: `"Card 2"` | Back: `"Back of card 2"`
+      
