@@ -173,9 +173,29 @@ void Launcher::connect_signals() {
     });
 
     m_deck_service->connect<core::IDeckService::deck_create_failed>([this](const auto& e) {
-        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Не удалось создать колоду"),
-                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
-                                             .type = core::ToastType::ERROR});
+        const QString header = QCoreApplication::translate("deck events", "Не удалось создать колоду");
+        QString       message;
+
+        if (e.error.kind == core::IDeckService::Error::Kind::AlreadyExists) {
+            message = QCoreApplication::translate("deck events", "Колода с таким именем уже существует");
+        } else {
+            message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message;
+        }
+
+        m_toast_service->request(core::Toast{.header = header, .message = message, .type = core::ToastType::ERROR});
+    });
+
+    m_deck_service->connect<core::IDeckService::deck_update_failed>([this](const auto& e) {
+        const QString header = QCoreApplication::translate("deck events", "Не удалось обновить колоду");
+        QString       message;
+
+        if (e.error.kind == core::IDeckService::Error::Kind::AlreadyExists) {
+            message = QCoreApplication::translate("deck events", "Колода с таким именем уже существует");
+        } else {
+            message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message;
+        }
+
+        m_toast_service->request(core::Toast{.header = header, .message = message, .type = core::ToastType::ERROR});
     });
 
     m_deck_service->connect<core::IDeckService::deck_exported>([this](auto& e) {
@@ -238,9 +258,16 @@ void Launcher::connect_signals() {
     });
 
     m_deck_service->connect<core::IDeckService::card_update_failed>([this](const auto& e) {
-        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Не удалось обновить карточку"),
-                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
-                                             .type = core::ToastType::ERROR});
+        const QString header = QCoreApplication::translate("deck events", "Не удалось обновить карточку");
+        QString       message;
+
+        if (e.error.kind == core::IDeckService::Error::Kind::AlreadyExists) {
+            message = QCoreApplication::translate("deck events", "Карточка с таким именем уже существует");
+        } else {
+            message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message;
+        }
+
+        m_toast_service->request(core::Toast{.header = header, .message = message, .type = core::ToastType::ERROR});
     });
 
     m_deck_service->connect<core::IDeckService::card_remove_failed>([this](const auto& e) {
@@ -250,9 +277,16 @@ void Launcher::connect_signals() {
     });
 
     m_deck_service->connect<core::IDeckService::card_create_failed>([this](const auto& e) {
-        m_toast_service->request(core::Toast{.header = QCoreApplication::translate("deck events", "Не удалось создать карточку"),
-                                             .message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message,
-                                             .type = core::ToastType::ERROR});
+        const QString header = QCoreApplication::translate("deck events", "Не удалось создать карточку");
+        QString       message;
+
+        if (e.error.kind == core::IDeckService::Error::Kind::AlreadyExists) {
+            message = QCoreApplication::translate("deck events", "Карточка с таким именем уже существует");
+        } else {
+            message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message;
+        }
+
+        m_toast_service->request(core::Toast{.header = header, .message = message, .type = core::ToastType::ERROR});
     });
 
     // Study
@@ -342,7 +376,7 @@ void Launcher::post_launch() {
 
     auto android_sdk_version = platform::Platform::android_sdk_version();
 
-    if (android_sdk_version && android_sdk_version.value() <= 31 /* mobile 12 */ && m_settings->notify_about_too_old_android()) {
+    if (android_sdk_version && android_sdk_version.value() <= 31 /* android 12 */ && m_settings->notify_about_too_old_android()) {
         m_toast_service->request(
             core::Toast{.header = QCoreApplication::translate("launch events", "Слишком старый Android"),
                         .message = QString(QCoreApplication::translate("application events",
@@ -351,7 +385,7 @@ void Launcher::post_launch() {
                         .type = core::ToastType::INFO});
     }
 
-    if (android_sdk_version && android_sdk_version.value() > 31 /* mobile 13+ */) {
+    if (android_sdk_version && android_sdk_version.value() > 31 /* android 13+ */) {
         if (!m_permission_service->check(core::Permission::POST_NOTIFICATIONS)) {
             qDebug() << "Requesting POST_NOTIFICATIONS";
             m_permission_service->request(core::Permission::POST_NOTIFICATIONS);
