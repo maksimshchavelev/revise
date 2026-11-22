@@ -17,7 +17,7 @@ namespace io {
 
 // Public method
 core::IDeckImporter::Result<core::ImportResult> AnkiDeckImporter::import_from_file(const QString& path) const {
-    core::ImportResult result;
+    core::ImportResult result{};
 
     const QString base_temp_dir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
     const QString import_dir = base_temp_dir + "/anki_import_" + QUuid::createUuid().toString(QUuid::WithoutBraces);
@@ -78,7 +78,8 @@ core::IDeckImporter::Result<core::ImportResult> AnkiDeckImporter::import_from_fi
             file.close();
             mapped_images[image_name] = std::move(data);
         } else {
-            return std::unexpected(Error::failed_to_open_file(QString("Failed to open unzipped image file: %1").arg(unpacked_path)));
+            return std::unexpected(
+                Error::failed_to_open_file(QString("Failed to open unzipped image file: %1").arg(unpacked_path)));
         }
     }
 
@@ -114,6 +115,10 @@ core::IDeckImporter::Result<core::ImportResult> AnkiDeckImporter::import_from_fi
 
     result.deck_name = deck_name_query.value("name").toString();
     result.deck_description = QString(); // TODO: implement reading description from Anki DB
+    result.new_limit = 30;               // TODO: implement fetching from Anki DB
+    result.review_limit = 30;            // TODO: implement fetching from Anki DB
+    result.incorrect_limit = 30;         // TODO: implement fetching from import settings
+    result.time_limit = 0;               // TODO: implement fetching from import settings
 
     constexpr QChar FIELD_SEP{31}; // anki separator
 
