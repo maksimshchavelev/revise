@@ -154,9 +154,9 @@ Item {
 
                     text: {
                         if (searchField.text.trim().length === 0)
-                            return qsTr(`Список карточек (всего ${Revise.CardsModel.cardsCount}):`)
+                            return qsTr(`Всего ${Revise.CardsModel.cardsCount}`)
 
-                        return qsTr(`Список карточек (найдено ${Revise.CardSearchModel.foundCardsCount}):`)
+                        return qsTr(`Найдено ${Revise.CardSearchModel.foundCardsCount}`)
                     }
                 }
 
