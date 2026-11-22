@@ -437,28 +437,28 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_deck(core::Deck::i
 
 QFuture<core::IDeckService::Result<void>> DeckService::create_card(core::Deck::id_type deck_id, const CreateCardDraft& card) {
     return QtConcurrent::run([this, deck_id, card]() -> Result<void> {
-        if (card.front.isEmpty()) {
+        if (utils::Html::plain_text(card.front).isEmpty()) {
             auto error = Error::validation_failed("DeckService::create_card(): card front is empty");
 
             dispatch(card_create_failed{error});
             return std::unexpected(error);
         }
 
-        if (card.front.length() > 4096) {
+        if (utils::Html::plain_text(card.front).length() > 4096) {
             auto error = Error::validation_failed("DeckService::create_card(): card front is too long");
 
             dispatch(card_create_failed{error});
             return std::unexpected(error);
         }
 
-        if (card.back.isEmpty()) {
+        if (utils::Html::plain_text(card.back).isEmpty()) {
             auto error = Error::validation_failed("DeckService::create_card(): card back is empty");
 
             dispatch(card_create_failed{error});
             return std::unexpected(error);
         }
 
-        if (card.back.length() > 16384) {
+        if (utils::Html::plain_text(card.back).length() > 16384) {
             auto error = Error::validation_failed("DeckService::create_card(): card back is too long");
 
             dispatch(card_create_failed{error});
@@ -560,28 +560,28 @@ QFuture<core::IDeckService::Result<void>> DeckService::remove_cards(const QVecto
 QFuture<core::IDeckService::Result<void>> DeckService::update_cards(const QVector<UpdateCardDraft>& cards) {
     return QtConcurrent::run([this, cards]() -> Result<void> {
         for (const auto& card : cards) {
-            if (card.front && card.front->isEmpty()) {
+            if (card.front && utils::Html::plain_text(*card.front).isEmpty()) {
                 auto error = Error::validation_failed("DeckService::update_cards(): card front is empty");
 
                 dispatch(card_update_failed{error});
                 return std::unexpected(error);
             }
 
-            if (card.front && card.front->length() > 4096) {
+            if (card.front && utils::Html::plain_text(*card.front).length() > 4096) {
                 auto error = Error::validation_failed("DeckService::update_cards(): card front is too long");
 
                 dispatch(card_update_failed{error});
                 return std::unexpected(error);
             }
 
-            if (card.back && card.back->isEmpty()) {
+            if (card.back && utils::Html::plain_text(*card.back).isEmpty()) {
                 auto error = Error::validation_failed("DeckService::update_cards(): card back is empty");
 
                 dispatch(card_update_failed{error});
                 return std::unexpected(error);
             }
 
-            if (card.back && card.back->length() > 16384) {
+            if (card.back && utils::Html::plain_text(*card.back).length() > 16384) {
                 auto error = Error::validation_failed("DeckService::update_cards(): card back is too long");
 
                 dispatch(card_update_failed{error});
