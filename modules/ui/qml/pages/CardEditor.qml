@@ -203,8 +203,6 @@ Item {
                 } else {
                     let draft = new Revise.createCardDraft(frontHtml, backHtml)
                     Revise.DeckService.create_card(root.pageParams.card.deckId, draft)
-                    frontEditor.clear()
-                    backEditor.clear()
                 }
             }
         }
@@ -249,6 +247,15 @@ Item {
         if (Revise.BuildInfo.isMobileBuild) {
             frontEditor.active = false
             backEditor.active = false
+        }
+    }
+
+    Connections {
+        target: Revise.DeckService
+
+        function onCardCreated() {
+            frontEditor.clear();
+            backEditor.clear();
         }
     }
 

@@ -21,6 +21,12 @@ class DeckService final : public QObject {
     QML_SINGLETON
     QML_UNCREATABLE("DeckService is provided by C++")
 
+  signals:
+    void deckCreated(core::Deck::id_type deck_id);
+    void deckUpdated(core::Deck::id_type deck_id);
+    void cardCreated(core::Card::id_type card_id);
+    void cardUpdated(core::Card::id_type card_id);
+
   public:
     /**
      * @brief DeckService constructor

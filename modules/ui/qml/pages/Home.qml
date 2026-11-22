@@ -48,12 +48,12 @@ Item {
             Layout.topMargin: 2
             Layout.bottomMargin: 2
 
-            onRemoveDeckClicked: function(deckId) {
+            onRemoveDeckClicked: function (deckId) {
                 removeDeckDialog.deckId = deckId;
                 removeDeckDialog.requestOpen();
             }
 
-            onExportDeckClicked: function(deckId) {
+            onExportDeckClicked: function (deckId) {
                 exportDialog.deckId = deckId;
                 exportDialog.open();
             }
@@ -73,7 +73,9 @@ Item {
         scale: Revise.SettingsService.uiScale
         transformOrigin: Item.TopRight
 
-        background: Revise.Background{}
+        background: Revise.Background
+        {
+        }
 
         Overlay.modal: Rectangle {
             color: Qt.rgba(0, 0, 0, 0.4)
@@ -112,7 +114,9 @@ Item {
                 contentWidth: width
                 contentHeight: deckCreateTab.implicitHeight
 
-                ScrollBar.vertical: Revise.Scrollbar{}
+                ScrollBar.vertical: Revise.Scrollbar
+                {
+                }
 
                 Column {
                     id: deckCreateTab
@@ -150,7 +154,8 @@ Item {
                         Revise.DesktopSettingsRow {
                             width: parent.width
                             text: qsTr("Ограничить время ответа")
-                            control: Revise.Switch {
+                            control: Revise.Switch
+                            {
                                 id: limitTime
                                 checked: false
 
@@ -168,7 +173,8 @@ Item {
                             width: parent.width
                             text: qsTr("Время ответа, сек")
 
-                            control: Revise.SpinBox {
+                            control: Revise.SpinBox
+                            {
                                 id: deckTimeLimit
 
                                 from: 0
@@ -187,7 +193,8 @@ Item {
                             width: parent.width
                             text: qsTr("Ограничение новых карточек")
 
-                            control: Revise.SpinBox {
+                            control: Revise.SpinBox
+                            {
                                 id: deckNewLimit
 
                                 from: 1
@@ -205,7 +212,8 @@ Item {
                             width: parent.width
                             text: qsTr("Ограничение повторяемых карточек")
 
-                            control: Revise.SpinBox {
+                            control: Revise.SpinBox
+                            {
                                 id: deckReviewLimit
 
                                 from: 1
@@ -223,7 +231,8 @@ Item {
                             width: parent.width
                             text: qsTr("Ограничение ошибочных карточек")
 
-                            control: Revise.SpinBox {
+                            control: Revise.SpinBox
+                            {
                                 id: deckIncorrectLimit
 
                                 from: 1
@@ -257,15 +266,6 @@ Item {
                     draft.incorrectLimit = deckIncorrectLimit.value
 
                     Revise.DeckService.create_deck(draft)
-
-                    createDeckDrawer.close()
-
-                    deckName.textField.text = ""
-                    deckDescription.textField.text = ""
-                    deckTimeLimit.value = 0
-                    deckNewLimit.value = 30
-                    deckReviewLimit.value = 30
-                    deckIncorrectLimit.value = 30
                 }
             }
         }
@@ -275,6 +275,27 @@ Item {
     }
 
     function onExit() {
+    }
+
+    Connections {
+        target: Revise.DeckService
+
+        function onDeckCreated(deckId) {
+            createDeckDrawer.close()
+
+            deckName.textField.text = ""
+            deckDescription.textField.text = ""
+            deckTimeLimit.value = 0
+            deckNewLimit.value = 30
+            deckReviewLimit.value = 30
+            deckIncorrectLimit.value = 30
+
+            onEditClicked: {
+                Revise.Router.navigate("deckEditor", {
+                    "deckId": deckId
+                })
+            }
+        }
     }
 
     FileDialog {

@@ -5,7 +5,24 @@
 
 namespace ui {
 
-DeckService::DeckService(core::IDeckService& deck_service, QObject* parent) : QObject(parent), m_deck_service(deck_service) {}
+DeckService::DeckService(core::IDeckService& deck_service, QObject* parent) : QObject(parent), m_deck_service(deck_service) {
+    m_deck_service.connect<core::IDeckService::deck_created>(
+        [this](const auto& e) { QMetaObject::invokeMethod(this, [this, &e] { emit deckCreated(e.deck.id); }); });
+
+    m_deck_service.connect<core::IDeckService::deck_updated>(
+        [this](const auto& e) { QMetaObject::invokeMethod(this, [this, &e] { emit deckUpdated(e.deck.id); }); });
+
+    m_deck_service.connect<core::IDeckService::card_created>(
+        [this](const auto& e) { QMetaObject::invokeMethod(this, [this, &e] { emit cardCreated(e.card.id); }); });
+
+    m_deck_service.connect<core::IDeckService::cards_updated>([this](const auto& e) {
+        QMetaObject::invokeMethod(this, [this, &e] {
+            if (e.cards.size() == 1) {
+                emit cardUpdated(e.cards[0].id);
+            }
+        });
+    });
+}
 
 
 void DeckService::create_deck(const DeckDraft& deck) {
