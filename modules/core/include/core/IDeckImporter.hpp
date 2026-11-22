@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <QString>               // for QString
 #include <core/structs/Card.hpp> // for core::Card
 #include <expected>              // for std::expected
 
@@ -15,14 +14,14 @@ namespace core {
  * Contains logical deck name and the list of cards parsed from the source file.
  */
 struct ImportResult {
-    QString       deck_name;         ///< Deck name
-    QString       deck_description;  ///< Deck description
-    int           time_limit;        ///< Time limit
-    int           new_limit;         ///< Limit of new cards
-    int           consolidate_limit; ///< Limit of consolidate cards
-    int           incorrect_limit;   ///< Limit of incorrect cards
-    QVector<Card> cards;             ///< parsed cards (front/back and meta). Use repository Card DTO.
-    QVariant      user_data;         ///< Custom data. Depends on the specific implementation of the importer.
+    QString       deck_name;        ///< Deck name
+    QString       deck_description; ///< Deck description
+    int           time_limit;       ///< Time limit
+    int           new_limit;        ///< Limit of new cards
+    int           review_limit;     ///< Limit of review cards
+    int           incorrect_limit;  ///< Limit of incorrect cards
+    QVector<Card> cards;            ///< parsed cards (front/back and meta). Use repository Card DTO.
+    QVariant      user_data;        ///< Custom data. Depends on the specific implementation of the importer.
 };
 
 /**

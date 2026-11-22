@@ -195,7 +195,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
                                                                     .id = deck_id,
                                                                     .time_limit = import_res->time_limit,
                                                                     .new_limit = import_res->new_limit,
-                                                                    .review_limit = import_res->consolidate_limit,
+                                                                    .review_limit = import_res->review_limit,
                                                                     .incorrect_limit = import_res->incorrect_limit}});
             !res) {
             auto error = from_storage_error(res.error(), "DeckService::import_deck(): failed to update deck");

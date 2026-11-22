@@ -93,7 +93,7 @@ core::IDeckImporter::Result<core::ImportResult> ReviseDeckImporter::import_from_
     result.deck_description = q.value("description").toString();
     result.time_limit = q.value("time_limit").toInt();
     result.new_limit = q.value("new_limit").toInt();
-    result.consolidate_limit = q.value("consolidate_limit").toInt();
+    result.review_limit = q.value("consolidate_limit").toInt();
     result.incorrect_limit = q.value("incorrect_limit").toInt();
 
     // Import cards
