@@ -374,6 +374,7 @@ Item {
 
         root.deck = Revise.DeckService.deck(root.deckId)
         deckPropertiesTab.limitTime.checked = root.deck ? root.deck.timeLimit > 0 : false
+        Revise.CardsModel.deselectAll()
         Revise.CardSearchModel.searchFront = ""
         Revise.CardsModel.setDeck(root.deckId)
         searchField.text = ""
