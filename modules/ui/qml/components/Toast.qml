@@ -155,7 +155,7 @@ Rectangle {
                 maximumLineCount: 2
                 color: "black"
                 opacity: 0.75
-                wrapMode: Text.WordWrap
+                wrapMode: Text.Wrap
             }
 
             // Message
@@ -167,7 +167,7 @@ Rectangle {
                 color: "black"
                 maximumLineCount: 10
                 opacity: 0.75
-                wrapMode: Text.WordWrap
+                wrapMode: Text.Wrap
             }
         }
 
