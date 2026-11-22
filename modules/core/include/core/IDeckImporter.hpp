@@ -68,7 +68,7 @@ class IDeckImporter {
             return Error{FileCorrupted, std::move(message)};
         }
 
-        /// @brief Make `FileCorrupted` error with message
+        /// @brief Make `ExtractionFailed` error with message
         static Error extraction_failed(QString message) {
             return Error{ExtractionFailed, std::move(message)};
         }
