@@ -105,8 +105,29 @@ class IDeckImporter {
      * - It must not persist parsed cards into the application's DB. Return parsed cards
      *   and let higher level (decks storage / service) decide how/where to store them.
      * - Because this runs in a worker thread, make sure to avoid touching QObjects that live in the main thread.
+     *
+     * @note You do not need to implement this method; if you do not, a `NotSupported` error will be returned when it is called.
      */
-    [[nodiscard]] virtual Result<ImportResult> import_from_file(const QString& path) const = 0;
+    [[nodiscard]] virtual Result<ImportResult> import_from_file(const QString& path) const {
+        return std::unexpected(Error::not_supported("File format not supported"));
+    }
+
+    /**
+     * @brief Import deck from the provided text.
+     * @param text The text from which you need to extract the deck and the cards
+     * @return `Result` containing ImportResult on success or `Error` error message on failure.
+     *
+     * Notes for implementors:
+     * - The method must not perform any UI interaction.
+     * - It must not persist parsed cards into the application's DB. Return parsed cards
+     *   and let higher level (decks storage / service) decide how/where to store them.
+     * - Because this runs in a worker thread, make sure to avoid touching QObjects that live in the main thread.
+     *
+     * @note You do not need to implement this method; if you do not, a `NotSupported` error will be returned when it is called.
+     */
+    [[nodiscard]] virtual Result<ImportResult> import_from_text(const QString& text) const {
+        return std::unexpected(Error::not_supported("Text format not supported"));
+    }
 
     /**
      * @brief Short identifier of importer (e.g. "anki", "csv", "json").
