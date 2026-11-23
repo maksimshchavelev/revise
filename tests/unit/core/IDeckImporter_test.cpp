@@ -38,6 +38,14 @@ TEST(IDeckImporter_test, create_extraction_failed) {
 }
 
 
+TEST(IDeckImporter_test, create_not_supported_error) {
+    const auto [kind, message] = IDeckImporter::Error::not_supported("error description");
+
+    EXPECT_EQ(message, "error description");
+    EXPECT_EQ(kind, IDeckImporter::ErrorKind::NotSupported);
+}
+
+
 TEST(IDeckImporter_test, create_failed_to_open_file_error) {
     const auto [kind, message] = IDeckImporter::Error::failed_to_open_file("error description");
 

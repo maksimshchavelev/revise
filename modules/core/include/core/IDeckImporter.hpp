@@ -45,6 +45,7 @@ class IDeckImporter {
             FileCorrupted,    ///< The input file is corrupted or does not contain the necessary data
             ExtractionFailed, ///< Failed to extract data from input file
             FailedToOpenFile, ///< Unable to open the file for import
+            NotSupported,     ///< Method of import is not supported
             OutdatedFormat,   ///< The data format is outdated (for example, the deck was exported using a version of the app that
                               ///< is too old)
         };
@@ -75,6 +76,11 @@ class IDeckImporter {
         /// @brief Make `FailedToOpenFile` error with message
         static Error failed_to_open_file(QString message) {
             return Error{FailedToOpenFile, std::move(message)};
+        }
+
+        /// @brief Make `NotSupported` error with message
+        static Error not_supported(QString message) {
+            return Error{NotSupported, std::move(message)};
         }
 
         /// @brief Make `OutdatedFormat` error with message
