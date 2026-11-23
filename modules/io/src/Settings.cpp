@@ -194,11 +194,26 @@ bool Settings::use_mobile_ui() const {
     const auto* screen = QGuiApplication::primaryScreen();
 
     if (!screen) {
-        return false;
+        return true;
     }
 
-    const auto geometry = screen->availableGeometry().size();
-    return geometry.width() < geometry.height();
+    auto phys_mm = screen->physicalSize();
+
+    if (phys_mm.width() <= 10.0 || phys_mm.height() <= 10.0) {
+        const auto native_res = screen->size() * screen->devicePixelRatio();
+        const auto dpi_x = screen->physicalDotsPerInchX();
+        const auto dpi_y = screen->physicalDotsPerInchY();
+
+        if (dpi_x <= 0.0 || dpi_y <= 0.0) {
+            return true;
+        }
+
+        phys_mm.setWidth((native_res.width() / dpi_x) * 25.4);
+        phys_mm.setHeight((native_res.height() / dpi_y) * 25.4);
+    }
+
+    const auto min_side_mm = qMin(phys_mm.width(), phys_mm.height());
+    return min_side_mm < 95.0;
 }
 
 
