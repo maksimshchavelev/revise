@@ -121,10 +121,12 @@ ApplicationWindow {
     Revise.Toast {
         id: toast
 
+        parent: Overlay.overlay
         width: Math.min(340 / scale, appWindow.width * 0.9 / scale)
         scale: Revise.SettingsService.uiScale
         transformOrigin: Item.TopRight
         y: 12
+        z: 1
 
         duration: 4000
         onClosed: Revise.ToastService.closed()
