@@ -49,6 +49,11 @@ class IUpdateChecker {
             return Error{.kind = ServerError, .message = std::move(message)};
         }
 
+        /// @brief Make `ServerError` with custom message
+        static Error parsing_error(QString message) {
+            return Error{.kind = ParsingError, .message = std::move(message)};
+        }
+
         /// @brief Make `InternalError` with custom message
         static Error internal_error(QString message) {
             return Error{.kind = InternalError, .message = std::move(message)};
