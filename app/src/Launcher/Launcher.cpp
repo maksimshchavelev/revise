@@ -263,6 +263,8 @@ void Launcher::connect_signals() {
 
         if (e.error.kind == core::IDeckService::Error::Kind::AlreadyExists) {
             message = QCoreApplication::translate("deck events", "Карточка с таким именем уже существует");
+        } else if (e.error.kind == core::IDeckService::Error::Kind::EmptyInput) {
+            message = QCoreApplication::translate("deck events", "Заполните лицевую и обратную сторону карточки");
         } else {
             message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message;
         }
@@ -282,6 +284,8 @@ void Launcher::connect_signals() {
 
         if (e.error.kind == core::IDeckService::Error::Kind::AlreadyExists) {
             message = QCoreApplication::translate("deck events", "Карточка с таким именем уже существует");
+        } else if (e.error.kind == core::IDeckService::Error::Kind::EmptyInput) {
+            message = QCoreApplication::translate("deck events", "Заполните лицевую и обратную сторону карточки");
         } else {
             message = QCoreApplication::translate("deck events", "Причина: ") + e.error.message;
         }

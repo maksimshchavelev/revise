@@ -24,6 +24,7 @@ class IDeckService : public Notifiable {
             NotFound,          ///< Requested entity does not exist
             AlreadyExists,     ///< Entity already exists
             ValidationFailed,  ///< Input data is invalid
+            EmptyInput,        ///< No input data provided
             ImportFailed,      ///< Import operation failed
             ExportFailed,      ///< Export operation failed
             UnsupportedFormat, ///< Unsupported import/export format
@@ -41,6 +42,10 @@ class IDeckService : public Notifiable {
 
         static Error already_exists(QString message) {
             return Error{.kind = Kind::AlreadyExists, .message = std::move(message)};
+        }
+
+        static Error empty_input(QString message) {
+            return Error{.kind = Kind::EmptyInput, .message = std::move(message)};
         }
 
         static Error validation_failed(QString message) {

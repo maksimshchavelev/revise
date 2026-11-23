@@ -438,7 +438,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_deck(core::Deck::i
 QFuture<core::IDeckService::Result<void>> DeckService::create_card(core::Deck::id_type deck_id, const CreateCardDraft& card) {
     return QtConcurrent::run([this, deck_id, card]() -> Result<void> {
         if (utils::Html::plain_text(card.front).isEmpty()) {
-            auto error = Error::validation_failed("DeckService::create_card(): card front is empty");
+            auto error = Error::empty_input("DeckService::create_card(): card front is empty");
 
             dispatch(card_create_failed{error});
             return std::unexpected(error);
@@ -452,7 +452,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::create_card(core::Deck::i
         }
 
         if (utils::Html::plain_text(card.back).isEmpty()) {
-            auto error = Error::validation_failed("DeckService::create_card(): card back is empty");
+            auto error = Error::empty_input("DeckService::create_card(): card back is empty");
 
             dispatch(card_create_failed{error});
             return std::unexpected(error);
@@ -504,7 +504,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::create_card(core::Deck::i
 
 QFuture<core::IDeckService::Result<core::Card>> DeckService::card(core::Card::id_type id) const {
     return QtConcurrent::run([this, id]() -> Result<core::Card> {
-        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector<core::Card::id_type>{id});
+        auto fetch_res = m_deps.deck_storage.fetch_cards(QVector{id});
 
         if (!fetch_res) {
             auto error = from_storage_error(fetch_res.error(), "DeckService::card(): failed to fetch card");
@@ -561,7 +561,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_cards(const QVecto
     return QtConcurrent::run([this, cards]() -> Result<void> {
         for (const auto& card : cards) {
             if (card.front && utils::Html::plain_text(*card.front).isEmpty()) {
-                auto error = Error::validation_failed("DeckService::update_cards(): card front is empty");
+                auto error = Error::empty_input("DeckService::update_cards(): card front is empty");
 
                 dispatch(card_update_failed{error});
                 return std::unexpected(error);
@@ -575,7 +575,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_cards(const QVecto
             }
 
             if (card.back && utils::Html::plain_text(*card.back).isEmpty()) {
-                auto error = Error::validation_failed("DeckService::update_cards(): card back is empty");
+                auto error = Error::empty_input("DeckService::update_cards(): card back is empty");
 
                 dispatch(card_update_failed{error});
                 return std::unexpected(error);
@@ -665,7 +665,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::update_cards(const QVecto
 QFuture<core::IDeckService::Result<void>> DeckService::reset_cards(const QVector<core::Card::id_type>& ids) {
     return QtConcurrent::run([this, ids]() -> Result<void> {
         if (ids.empty()) {
-            auto error = Error::validation_failed("DeckService::reset_cards(): an empty list of IDs was passed for resetting");
+            auto error = Error::empty_input("DeckService::reset_cards(): an empty list of IDs was passed for resetting");
 
             dispatch(card_update_failed{error});
             return std::unexpected(error);
@@ -803,7 +803,7 @@ core::IDeckService::Error DeckService::from_storage_error(const core::IDeckStora
 
 core::IDeckService::Result<void> DeckService::validate_deck_parameters(const DeckDraft& deck, const std::string_view caller) {
     if (deck.name.isEmpty()) {
-        auto error = Error::validation_failed(QString("DeckService::%1(): deck name is empty").arg(caller));
+        auto error = Error::empty_input(QString("DeckService::%1(): deck name is empty").arg(caller));
         return std::unexpected(error);
     }
 
