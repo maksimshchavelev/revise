@@ -44,6 +44,9 @@ class Settings final : public QObject {
     Q_PROPERTY(bool askAbortLearning READ ask_abort_learning WRITE set_ask_abort_learning NOTIFY
                    askAbortLearningChanged FINAL)
 
+    // ------------- License properties -------------
+    Q_PROPERTY(bool licenseShown READ license_shown WRITE set_license_shown FINAL)
+    Q_PROPERTY(QString licenseText READ license_text CONSTANT FINAL)
 
     explicit Settings(core::ISettings& settings, QObject* parent = nullptr);
 
@@ -155,6 +158,16 @@ class Settings final : public QObject {
 
     /// @brief Specify whether to prompt the user when they want to abort learning
     void set_ask_abort_learning(bool enabled);
+
+    // ----------------------- License settings -----------------------
+    /// @brief Has the license already been shown at first launch, or not?
+    [[nodiscard]] bool license_shown() const;
+
+    /// @brief Specify whether the license is displayed on first launch or not yet
+    void set_license_shown(bool shown) const;
+
+    /// @brief View the license text
+    [[nodiscard]] QString license_text() const;
 
     core::ISettings& m_settings;
 };

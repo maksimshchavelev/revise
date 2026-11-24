@@ -220,4 +220,19 @@ void Settings::set_ask_abort_learning(const bool enabled) {
     emit askAbortLearningChanged();
 }
 
+
+bool Settings::license_shown() const {
+    return m_settings.license_shown();
+}
+
+
+void Settings::set_license_shown(const bool shown) const {
+    m_settings.set_license_shown(shown);
+}
+
+
+QString Settings::license_text() const {
+    return m_settings.license_text();
+}
+
 } // namespace ui

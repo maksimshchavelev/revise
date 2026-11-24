@@ -1,6 +1,7 @@
 // Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 #include "io/Settings.hpp" // for header
+#include <QFile>           // for QFile
 #include <QScreen>         // for QScreen
 #include <QSize>           // for QSize
 
@@ -221,6 +222,29 @@ std::expected<void, core::SettingsError> Settings::set_use_mobile_ui(const bool 
     m_settings.setValue("main_use_mobile_ui", enabled);
     m_settings.sync();
     return {};
+}
+
+
+bool Settings::license_shown() const {
+    return m_settings.value("license_shown", false).toBool();
+}
+
+
+void Settings::set_license_shown(const bool shown) {
+    m_settings.setValue("license_shown", shown);
+    m_settings.sync();
+}
+
+
+QString Settings::license_text() const {
+    QFile file{":/res/text/GPLv3_license.txt"};
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return {};
+    }
+
+    QTextStream in(&file);
+    return in.readAll();
 }
 
 } // namespace io

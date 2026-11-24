@@ -100,6 +100,16 @@ class Settings : public core::ISettings {
     /// @brief Set usage of mobile UI
     std::expected<void, core::SettingsError> set_use_mobile_ui(bool enabled) override;
 
+    // ----------------------- License settings -----------------------
+    /// @brief Has the license already been shown at first launch, or not?
+    [[nodiscard]] bool license_shown() const override;
+
+    /// @brief Specify whether the license is displayed on first launch or not yet
+    void set_license_shown(bool shown) override;
+
+    /// @brief View the license text
+    [[nodiscard]] QString license_text() const override;
+
   private:
     QSettings m_settings;
 };

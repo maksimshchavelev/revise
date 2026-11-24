@@ -131,4 +131,17 @@ ApplicationWindow {
         duration: 4000
         onClosed: Revise.ToastService.closed()
     }
+
+    Revise.LicenseDialog {
+        id: licenseDialog
+        titleText: qsTr("Ознакомьтесь с лицензией")
+    }
+
+    Component.onCompleted: {
+        if (!Revise.SettingsService.licenseShown) {
+            licenseDialog.messageText = Revise.SettingsService.licenseText
+            Revise.SettingsService.licenseShown = true
+            licenseDialog.open()
+        }
+    }
 }

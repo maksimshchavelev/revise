@@ -315,6 +315,27 @@ Item {
                         isVertical: Revise.SettingsService.useMobileUi
                     }
                 }
+
+
+                // License text
+                Revise.SettingsPanel {
+                    width: parent.width
+                    header.icon.source: "qrc:/res/img/info.svg"
+                    header.label.text: qsTr("Текст лицензии")
+
+                    Revise.Button {
+                        text: qsTr("Показать лицензию")
+                        onClicked: {
+                            licenseDialog.messageText = Revise.SettingsService.licenseText;
+                            licenseDialog.open();
+                        }
+                    }
+
+                    Revise.LicenseDialog {
+                        id: licenseDialog
+                        titleText: qsTr("Текст лицензии")
+                    }
+                }
             }
         }
     }
