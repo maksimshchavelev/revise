@@ -32,13 +32,15 @@ class RequestExecutionContext {
 
         if constexpr (std::is_void_v<InvokeResult>) {
             QMetaObject::invokeMethod(
-                &m_manager, [this, fn = std::forward<Fn>(fn)] { fn(m_manager); }, Qt::BlockingQueuedConnection);
+                &m_manager,
+                [this, fn = std::forward<Fn>(fn)] { std::invoke(std::forward<Fn>(fn), m_manager); },
+                Qt::BlockingQueuedConnection);
             return;
         } else {
             std::optional<InvokeResult> result;
             QMetaObject::invokeMethod(
                 &m_manager,
-                [this, fn = std::forward<Fn>(fn), &result] { result.emplace(fn(m_manager)); },
+                [this, fn = std::forward<Fn>(fn), &result] { result.emplace(std::invoke(std::forward<Fn>(fn), m_manager)); },
                 Qt::BlockingQueuedConnection);
             return std::move(*result);
         }
