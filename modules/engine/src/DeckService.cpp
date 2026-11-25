@@ -136,7 +136,8 @@ QFuture<core::IDeckService::Result<void>> DeckService::import_deck(const QString
         QVector<core::Card> cards_to_insert;
 
         if (!import_res) {
-            auto error = Error::internal_error(QString("DeckService::import_deck(): importer error: %1").arg(import_res.error().message));
+            auto error =
+                Error::internal_error(QString("DeckService::import_deck(): importer error: %1").arg(import_res.error().message));
 
             dispatch(import_failed{error});
             return std::unexpected(error);
@@ -308,9 +309,6 @@ QFuture<core::IDeckService::Result<void>> DeckService::export_deck(core::Deck::i
                 dispatch(export_finished{});
             });
 
-        QUrl          url(path);
-        const QString local_path = url.toLocalFile();
-
         core::Deck          deck;
         QVector<core::Card> cards;
         QString             media_dir;
@@ -320,7 +318,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::export_deck(core::Deck::i
         }
 
         // Fetch deck
-        if (auto res = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id}); res) {
+        if (auto res = m_deps.deck_storage.fetch_decks(QVector<int>{deck_id})) {
             deck = std::move(res->first());
         } else {
             auto error = from_storage_error(res.error(), "DeckService::export_deck(): failed to fetch decks");
@@ -330,7 +328,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::export_deck(core::Deck::i
         }
 
         // Fetch card
-        if (auto res = m_deps.deck_storage.fetch_cards(deck_id); res) {
+        if (auto res = m_deps.deck_storage.fetch_cards(deck_id)) {
             cards = std::move(*res);
         } else {
             auto error = from_storage_error(res.error(), "DeckService::export_deck(): failed to fetch cards");
@@ -340,8 +338,7 @@ QFuture<core::IDeckService::Result<void>> DeckService::export_deck(core::Deck::i
         }
 
         auto export_res = m_deps.deck_exporter.export_to_file(
-            core::ExportData{.deck = std::move(deck), .media_directory = std::move(media_dir), .cards = std::move(cards)},
-            local_path);
+            core::ExportData{.deck = std::move(deck), .media_directory = std::move(media_dir), .cards = std::move(cards)}, path);
 
         if (!export_res) {
             auto error =

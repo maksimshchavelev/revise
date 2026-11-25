@@ -2,6 +2,7 @@
 // Home page
 
 import QtQuick
+import QtCore
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Controls
@@ -55,6 +56,7 @@ Item {
 
             onExportDeckClicked: function (deckId) {
                 exportDialog.deckId = deckId;
+                exportDialog.deckName = Revise.DeckService.deck(deckId).name;
                 exportDialog.open();
             }
 
@@ -301,20 +303,24 @@ Item {
     FileDialog {
         id: importDialog
 
-        title: qsTr("Выберите файл")
+        fileMode: FileDialog.OpenFile
+        title: qsTr("Выберите файл для импорта")
         onAccepted: Revise.DeckService.import_deck(selectedFile)
-
-        nameFilters: [qsTr("Колода Revise (*.rpkg)"), qsTr(
-            "Колода Anki (*.apkg)")]
+        nameFilters: [qsTr("Колода Revise (*.rpkg)"), qsTr("Колода Anki (*.apkg)")]
     }
 
-    FolderDialog {
+    FileDialog {
         id: exportDialog
 
-        property int deckId: 0
+        property int deckId
+        property string deckName
 
+        fileMode: FileDialog.SaveFile
         title: qsTr("Экспортировать как .rpkg")
-        onAccepted: Revise.DeckService.export_deck(deckId, selectedFolder)
+        nameFilters: [qsTr("Колода Revise (*.rpkg)")]
+        currentFolder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+        selectedFile: currentFolder + `/${exportDialog.deckName}.rpkg`
+        onAccepted: Revise.DeckService.export_deck(deckId, selectedFile)
     }
 
     Shortcut {
