@@ -1,4 +1,3 @@
-
 // Copyright 2026 Maksim Shchavelev <maksimshchavelev@gmail.com>
 
 package org.maksimshchavelev.revise;
@@ -17,7 +16,9 @@ public final class ReviseActivity extends QtActivity {
 
     private static final String TAG = "ReviseActivity";
 
-    private static final int STATUS_BAR_COLOR = Color.rgb(10, 16, 30);
+    private static final int SYSTEM_BARS_APPEARANCE_MASK =
+        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+        | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,23 @@ public final class ReviseActivity extends QtActivity {
         super.onCreate(savedInstanceState);
 
         requestMaximumRefreshRate();
-        configureStatusBar();
+        configureSystemBars();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        configureSystemBars();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus) {
+            configureSystemBars();
+        }
     }
 
     /**
@@ -66,27 +83,49 @@ public final class ReviseActivity extends QtActivity {
     }
 
     /**
-     * Configures the status bar appearance for the dark application theme.
+     * Configures black system bars with light-colored system indicators.
      *
-     * The window background provides a fallback color when the system
-     * enforces edge-to-edge rendering and makes the status bar transparent.
+     * On Android 15 and later, system bar colors are provided by the
+     * application content drawn behind the transparent system bars.
+     * The window background acts as a fallback outside the Qt surface.
      */
-    private void configureStatusBar() {
+    @SuppressWarnings("deprecation")
+    private void configureSystemBars() {
         final Window window = getWindow();
 
-        window.setStatusBarColor(STATUS_BAR_COLOR);
-        window.setBackgroundDrawable(
-            new ColorDrawable(STATUS_BAR_COLOR)
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
         );
 
-        final WindowInsetsController controller =
-            window.getInsetsController();
+        window.clearFlags(
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+            | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+        );
 
-        if (controller != null) {
+        // Legacy fallback for Android versions without enforced edge-to-edge.
+        window.setStatusBarColor(Color.BLACK);
+        window.setNavigationBarColor(Color.BLACK);
+
+        window.setStatusBarContrastEnforced(false);
+        window.setNavigationBarContrastEnforced(false);
+
+        window.setBackgroundDrawable(
+            new ColorDrawable(Color.BLACK)
+        );
+
+        window.getDecorView().post(() -> {
+            final WindowInsetsController controller =
+                window.getInsetsController();
+
+            if (controller == null) {
+                return;
+            }
+
+            // Clear both light-system-bar flags to request light indicators.
             controller.setSystemBarsAppearance(
                 0,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                SYSTEM_BARS_APPEARANCE_MASK
             );
-        }
+        });
     }
 }

@@ -14,6 +14,10 @@ ApplicationWindow {
     width: 1075
     height: 720
 
+    background: Rectangle {
+        color: "#000000"
+    }
+
     Rectangle {
         id: pageHost
 
@@ -125,7 +129,7 @@ ApplicationWindow {
         width: Math.min(340 / scale, appWindow.width * 0.9 / scale)
         scale: Revise.SettingsService.uiScale
         transformOrigin: Item.TopRight
-        y: 12
+        y: parent.SafeArea.margins.top + 12
         z: 1
 
         duration: 4000
